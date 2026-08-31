@@ -86,17 +86,6 @@ export function MainContent() {
           Explore developer tools, infrastructure, APIs, and platforms — and
           discover the products people are already building with them
         </p>
-
-        <div className="relative w-full max-w-2xl">
-          <Search className="absolute top-1/2 left-4 size-5 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            className="h-14 w-full rounded-none border-2 border-dashed border-slate-200 bg-white pr-28 pl-12"
-            placeholder="Search products, categories, or builders..."
-          />
-          <Button className="absolute top-1/2 right-2 h-10 -translate-y-1/2 rounded-none bg-indigo-600 px-6 font-medium text-white hover:bg-indigo-700">
-            Search
-          </Button>
-        </div>
       </div>
 
       <div className="border-t border-dashed border-border" />
