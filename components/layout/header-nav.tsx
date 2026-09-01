@@ -12,7 +12,7 @@ export function HeaderNav() {
           placeholder="Search products..."
         />
       </div>
-      <Link href="/pricing" className="hover:text-foreground shrink-0">
+      <Link href="/pricing" className="hover:text-foreground shrink-0 text-slate-900 font-semibold">
         Pricing
       </Link>
     </nav>

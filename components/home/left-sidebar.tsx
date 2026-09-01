@@ -1,40 +1,53 @@
-import { Bot, CreditCard, Code, Megaphone } from "lucide-react"
+import { Home, Package, TrendingUp, Grid, Calendar, Blocks, PlusCircle } from "lucide-react"
 
 export function LeftSidebar() {
   return (
     <div className="flex flex-col gap-8 p-6">
-      {/* Filter by Type */}
+      {/* Discover */}
       <div className="flex flex-col gap-3">
-        <h3 className="font-semibold text-sm">Filter by Type</h3>
-        <nav className="flex flex-col gap-2 mt-2 text-sm text-muted-foreground font-medium">
+        <h3 className="font-semibold text-xs tracking-wider uppercase text-muted-foreground">Discover</h3>
+        <nav className="flex flex-col gap-2 mt-2 text-sm font-medium">
           <a href="#" className="flex items-center gap-3 py-1.5 hover:text-foreground">
-            <Bot className="size-4" /> AI Tools
+            <Home className="size-4" /> Home
           </a>
-          <a href="#" className="flex items-center gap-3 py-1.5 hover:text-foreground">
-            <CreditCard className="size-4" /> Payments
+          <a href="#" className="flex items-center gap-3 py-1.5 text-muted-foreground hover:text-foreground">
+            <Package className="size-4" /> Products
           </a>
-          <a href="#" className="flex items-center gap-3 py-1.5 hover:text-foreground">
-            <Code className="size-4" /> Developer Tools
+          <a href="#" className="flex items-center gap-3 py-1.5 text-muted-foreground hover:text-foreground">
+            <TrendingUp className="size-4" /> Trending
           </a>
-          <a href="#" className="flex items-center gap-3 py-1.5 hover:text-foreground">
-            <Megaphone className="size-4" /> Marketing
+          <a href="#" className="flex items-center gap-3 py-1.5 text-muted-foreground hover:text-foreground">
+            <Grid className="size-4" /> Categories
           </a>
         </nav>
       </div>
 
-      <div className="border-t border-dashed border-border" />
-
-      {/* Trending */}
+      {/* Recaps */}
       <div className="flex flex-col gap-3">
-        <h3 className="font-semibold text-sm">Trending</h3>
-        <nav className="flex flex-col gap-3 mt-2 text-sm font-medium">
-          <a href="#" className="flex items-center gap-3 py-1.5">
-            <span className="flex size-6 items-center justify-center rounded bg-indigo-100 text-xs font-semibold text-indigo-700">1</span>
-            NextFlow AI
+        <h3 className="font-semibold text-xs tracking-wider uppercase text-muted-foreground">Recaps</h3>
+        <nav className="flex flex-col gap-2 mt-2 text-sm font-medium text-muted-foreground">
+          <a href="#" className="flex items-center gap-3 py-1.5 hover:text-foreground">
+            <Calendar className="size-4" /> Recaps
           </a>
-          <a href="#" className="flex items-center gap-3 py-1.5">
-            <span className="flex size-6 items-center justify-center rounded bg-indigo-100 text-xs font-semibold text-indigo-700">2</span>
-            CloudScale Pro
+        </nav>
+      </div>
+
+      {/* Ecosystem */}
+      <div className="flex flex-col gap-3">
+        <h3 className="font-semibold text-xs tracking-wider uppercase text-muted-foreground">Ecosystem</h3>
+        <nav className="flex flex-col gap-2 mt-2 text-sm font-medium text-muted-foreground">
+          <a href="#" className="flex items-center gap-3 py-1.5 hover:text-foreground">
+            <Blocks className="size-4" /> Built With
+          </a>
+        </nav>
+      </div>
+
+      {/* Community */}
+      <div className="flex flex-col gap-3">
+        <h3 className="font-semibold text-xs tracking-wider uppercase text-muted-foreground">Community</h3>
+        <nav className="flex flex-col gap-2 mt-2 text-sm font-medium text-muted-foreground">
+          <a href="#" className="flex items-center gap-3 py-1.5 hover:text-foreground">
+            <PlusCircle className="size-4" /> Submit Product
           </a>
         </nav>
       </div>
