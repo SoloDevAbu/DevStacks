@@ -10,7 +10,7 @@ import {
 
 export function LeftSidebar() {
   return (
-    <div className="flex flex-col gap-8 p-6">
+    <div className="flex flex-col gap-8 p-8 xl:p-10">
       {/* Discover */}
       <div className="flex flex-col gap-3">
         <h3 className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">

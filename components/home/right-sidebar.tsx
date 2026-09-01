@@ -3,7 +3,7 @@ import { Megaphone, Sparkles, Clock } from "lucide-react"
 
 export function RightSidebar() {
   return (
-    <div className="flex flex-col gap-8 p-6">
+    <div className="flex flex-col gap-8 p-8 xl:p-10">
       
       {/* Featured / Promoted */}
       <div className="flex flex-col gap-4">
