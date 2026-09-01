@@ -65,57 +65,24 @@ const TRENDING_PRODUCTS: Product[] = [
 
 export function MainContent() {
   return (
-    <div className="relative flex h-full flex-col">
-      {/* Background Grid Pattern */}
-      <div
-        className="pointer-events-none absolute inset-0 z-0"
-        style={{
-          backgroundImage:
-            "linear-gradient(to right, #8b5cf61a 1px, transparent 1px), linear-gradient(to bottom, #8b5cf61a 1px, transparent 1px)",
-          backgroundSize: "3rem 3rem",
-          maskImage: "linear-gradient(to bottom, white 40%, transparent 80%)",
-        }}
-      />
-
-      {/* Header Section */}
-      <div className="relative z-10 flex flex-col items-center justify-center px-8 pt-24 pb-16 text-center">
-        <h1 className="mb-4 text-4xl font-bold tracking-tight text-slate-900 md:text-[2.75rem]">
-          Discover what you can build with
-        </h1>
-        <p className="mx-auto mb-10 max-w-2xl text-lg text-slate-600">
-          Explore developer tools, infrastructure, APIs, and platforms — and
-          discover the products people are already building with them
-        </p>
+    <div className="relative flex min-h-full flex-col bg-slate-50/50">
+      {/* Header & Controls Section */}
+      <div className="sticky top-0 z-10 flex flex-col justify-between gap-6 border-b border-dashed border-border bg-white px-6 pt-8 pb-6 md:px-8 lg:flex-row lg:items-end">
+        {/* Left: Hero Texts */}
+        <div className="flex max-w-2xl flex-col">
+          <h1 className="mb-2 text-2xl font-bold tracking-tight text-slate-900 md:text-3xl">
+            Discover what you can build with
+          </h1>
+          <p className="text-base leading-relaxed text-slate-600">
+            Explore developer tools, infrastructure, APIs, and platforms — and
+            discover the products people are already building with them.
+          </p>
+        </div>
       </div>
 
-      <div className="border-t border-dashed border-border" />
-
-      {/* Launches Section */}
-      <div className="relative z-10 flex-1 bg-slate-50/50 px-8 py-10">
-        <div className="mx-auto mb-8 flex max-w-3xl items-center justify-between">
-          <h2 className="text-2xl font-bold tracking-tight">
-            Trending Launches
-          </h2>
-          <div className="flex items-center rounded-none border border-dashed border-slate-200 bg-white p-1 text-sm font-medium">
-            <div className="border border-slate-200 bg-slate-100 px-4 py-1.5">
-              Today
-            </div>
-            <div className="cursor-pointer px-4 py-1.5 text-muted-foreground transition-colors hover:text-foreground">
-              This Week
-            </div>
-          </div>
-        </div>
-
-        <div className="mx-auto flex max-w-3xl flex-col gap-6">
-          <ProductList products={TRENDING_PRODUCTS} />
-
-          <Button
-            variant="secondary"
-            className="h-14 w-full rounded-none border border-dashed border-slate-300 bg-white text-base font-semibold text-indigo-700 hover:bg-slate-50"
-          >
-            Load More Launches
-          </Button>
-        </div>
+      {/* Product List Section (Full Width, No Gaps) */}
+      <div className="flex w-full flex-1 flex-col">
+        <ProductList products={TRENDING_PRODUCTS} />
       </div>
     </div>
   )
