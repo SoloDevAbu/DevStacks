@@ -1,0 +1,48 @@
+import { Card, CardContent } from "@/components/ui/card"
+import { cn } from "@/lib/utils"
+import { VerifiedBadge, SectionHeader } from "./shared"
+
+const BUILDING_BLOCKS = [
+  { name: "Supabase", builds: 82, category: "Database - BaaS", logo: "⚡", logoBg: "bg-emerald-100 text-emerald-500", tier: "premium+" },
+  { name: "Stripe", builds: 71, category: "Payments - Billing", logo: "S", logoBg: "bg-indigo-500 text-white", tier: "premium" },
+  { name: "Vercel", builds: 68, category: "Hosting - Edge", logo: "▲", logoBg: "bg-black text-white", tier: "premium+" },
+  { name: "Dodo Payments", builds: 37, category: "Payments - API", logo: "D", logoBg: "bg-purple-500 text-white", tier: "free" },
+  { name: "PostHog", builds: 34, category: "Analytics - Open Source", logo: "🦔", logoBg: "bg-amber-100 text-amber-500", tier: "free" },
+  { name: "Resend", builds: 29, category: "Email - API", logo: "R", logoBg: "bg-black text-white", tier: "free" },
+]
+
+export function PopularBuildingBlocks() {
+  return (
+    <section>
+      <SectionHeader
+        title="Popular building blocks"
+        subtitle="The most used tools by developers"
+        viewAllText="View all tools"
+      />
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-2 2xl:grid-cols-3">
+        {BUILDING_BLOCKS.map((block) => (
+          <Card
+            key={block.name}
+            className="group cursor-pointer rounded-none bg-white transition-colors hover:border-slate-300"
+          >
+            <CardContent className="flex flex-col gap-3 p-4">
+              <div className="flex items-center gap-3">
+                <div className={cn("flex size-10 shrink-0 items-center justify-center rounded-lg text-lg font-bold", block.logoBg)}>
+                  {block.logo}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-1.5">
+                    <h3 className="truncate text-sm font-bold text-slate-900">{block.name}</h3>
+                    <VerifiedBadge tier={block.tier} />
+                  </div>
+                  <p className="text-xs font-semibold text-blue-600">{block.builds} builds</p>
+                </div>
+              </div>
+              <p className="mt-auto text-xs font-medium text-slate-500">{block.category}</p>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    </section>
+  )
+}

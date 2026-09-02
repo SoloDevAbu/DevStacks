@@ -14,7 +14,7 @@ export function LeftSidebar() {
       {/* Discover */}
       <div className="flex flex-col gap-3">
         <h3 className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
-          Discover
+          Explore
         </h3>
         <nav className="mt-2 flex flex-col gap-2 text-sm font-medium">
           <a
@@ -24,10 +24,10 @@ export function LeftSidebar() {
             <Home className="size-4" /> Home
           </a>
           <a
-            href="#"
+            href="/discover"
             className="flex items-center gap-3 py-1.5 text-muted-foreground hover:text-foreground"
           >
-            <Package className="size-4" /> Products
+            <Package className="size-4" /> Discover
           </a>
           <a
             href="/trending"
