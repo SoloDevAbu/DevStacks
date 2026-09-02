@@ -45,7 +45,7 @@ utils/
 
 ## UI & Components
 
-- Use **shadcn/ui** for UI components whenever an appropriate component exists.
+- Use **shadcn/ui** for UI components everywhere and if the component doesn't exists then asks for install if first then use it.
 - Before implementing a component, check the relevant **shadcn skill** for the use case and follow its recommended approach.
 - Prefer composition and reusable components over large monolithic components.
 
