@@ -1,7 +1,7 @@
 import Image from "next/image"
 import { ProductList, type Product } from "@/components/home/product-list"
 
-const TRENDING_PRODUCTS: Product[] = [
+export const TRENDING_PRODUCTS: Product[] = [
   {
     id: "1",
     rank: 1,
