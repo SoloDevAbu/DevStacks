@@ -18,12 +18,14 @@ export function ProductList({ products }: { products: Product[] }) {
     <div className="flex flex-col">
       {products.map((product, index) => (
         <Card key={product.id} className={cn("p-0 rounded-none relative z-0", index > 0 && "-mt-px")}>
-          <CardContent className="p-6 flex items-start gap-4 md:gap-6 bg-white/50 backdrop-blur-sm">
-            <div className="text-sm font-bold text-muted-foreground w-6 shrink-0 pt-2 text-center hidden sm:block">#{product.rank}</div>
-            <div className="size-16 bg-slate-100 flex items-center justify-center shrink-0 overflow-hidden border border-slate-200">
+          <CardContent className="flex items-center gap-4 bg-white/50 px-6 py-3 backdrop-blur-sm md:gap-6">
+            <div className="hidden w-6 shrink-0 text-center text-sm font-bold text-muted-foreground sm:block">
+              #{product.rank}
+            </div>
+            <div className="flex size-16 shrink-0 items-center justify-center overflow-hidden border border-slate-200 bg-slate-100">
               {product.logo}
             </div>
-            <div className="flex-1 flex flex-col gap-1.5 pt-1 min-w-0">
+            <div className="flex min-w-0 flex-1 flex-col gap-1.5">
               <h3 className="text-base font-bold truncate">{product.name}</h3>
               <p className="text-sm text-slate-600 line-clamp-2">{product.tagline}</p>
               <div className="flex flex-wrap items-center gap-4 mt-1 text-xs text-muted-foreground font-medium">
