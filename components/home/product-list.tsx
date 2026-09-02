@@ -38,7 +38,8 @@ export function ProductList({
     <div className="flex flex-col">
       {products.map((product, index) => {
         // Mock data to match the screenshot perfectly
-        const isVerified = true
+        const tier = index % 3 === 0 ? "free" : index % 3 === 1 ? "premium" : "premium+"
+        const isVerified = tier !== "free"
         const isTrending = index < 2
         const pricing =
           index % 4 === 0
@@ -63,11 +64,30 @@ export function ProductList({
           <Card
             key={product.id}
             className={cn(
-              "group relative z-0 rounded-none p-0 transition-colors hover:bg-slate-50/50",
+              "group relative z-0 rounded-none p-0 transition-colors",
+              tier === "free" ? "hover:bg-slate-50/50" : 
+              tier === "premium" ? "bg-blue-50/50 hover:bg-blue-100/50" : 
+              "bg-amber-50/50 hover:bg-amber-100/50",
               index > 0 && "-mt-px"
             )}
           >
-            <CardContent className="flex items-center gap-4 bg-white/50 px-6 py-5 backdrop-blur-sm md:gap-6">
+            <CardContent className={cn(
+              "flex items-center gap-4 px-6 py-5 backdrop-blur-sm md:gap-6 relative overflow-hidden",
+              tier === "free" ? "bg-white/50" : "bg-transparent"
+            )}>
+              {/* Shimmer Effect */}
+              {tier !== "free" && (
+                <div className="pointer-events-none absolute inset-0 z-[-1] overflow-hidden">
+                  <div
+                    className={cn(
+                      "absolute inset-0 -translate-x-full animate-[shimmer_3s_infinite]",
+                      tier === "premium"
+                        ? "bg-[linear-gradient(110deg,transparent_35%,rgba(219,234,254,0.6)_50%,transparent_65%)]"
+                        : "bg-[linear-gradient(110deg,transparent_35%,rgba(254,243,199,0.6)_50%,transparent_65%)]"
+                    )}
+                  />
+                </div>
+              )}
             {/* Rank */}
             <div className="hidden w-6 shrink-0 sm:flex sm:items-center sm:justify-center">
               <div
@@ -99,7 +119,12 @@ export function ProductList({
                   {product.name}
                 </h3>
                 {isVerified && (
-                  <BadgeCheck className="size-4 fill-blue-500 text-white" />
+                  <BadgeCheck
+                    className={cn(
+                      "size-4 text-white",
+                      tier === "premium+" ? "fill-amber-500" : "fill-blue-500"
+                    )}
+                  />
                 )}
                 {showTrendingBadge && isTrending && (
                   <Badge variant="outline" className="flex items-center gap-0.5 rounded-none border-transparent bg-green-100/50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-green-700 hover:bg-green-100/50">
