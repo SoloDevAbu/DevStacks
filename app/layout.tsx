@@ -6,14 +6,14 @@ import { LeftSidebar } from "@/components/home/left-sidebar"
 import { RightSidebar } from "@/components/home/right-sidebar"
 
 import "./globals.css"
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils"
 
 const fontSans = Geist({
   subsets: ["latin"],
   variable: "--font-sans",
 })
 
-const geistMono = Geist_Mono({subsets:['latin'],variable:'--font-mono'})
+const geistMono = Geist_Mono({ subsets: ["latin"], variable: "--font-mono" })
 
 export default function RootLayout({
   children,
@@ -24,46 +24,56 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={cn("antialiased", fontSans.variable, "font-mono", geistMono.variable)}
+      className={cn(
+        "antialiased",
+        fontSans.variable,
+        "font-mono",
+        geistMono.variable
+      )}
     >
       <body>
-        <div className="flex flex-col min-h-dvh bg-slate-50/30">
-          
+        <div className="flex min-h-dvh flex-col bg-slate-50/30">
           {/* --- TOP ROW (Navbar) --- */}
-          <header className="sticky top-0 z-50 grid h-16 shrink-0 grid-cols-1 lg:grid-cols-[320px_1fr] xl:grid-cols-[320px_1fr_380px] bg-white border-b border-dashed border-border">
+          <header className="sticky top-0 z-50 grid h-16 shrink-0 grid-cols-1 border-b border-dashed border-border bg-white lg:grid-cols-[320px_1fr] xl:grid-cols-[320px_1fr_380px]">
             {/* Top Left */}
-            <div className="hidden lg:flex border-r border-dashed border-border items-center px-6">
+            <div className="hidden items-center border-r border-dashed border-border px-6 lg:flex">
               <HeaderLogo />
             </div>
-            
+
             {/* Top Center */}
-            <div className="flex items-center justify-between px-4 lg:px-6 w-full gap-4">
+            <div className="flex w-full items-center justify-between gap-4 px-4 lg:px-6">
               {/* On mobile, we might need logo here */}
-              <div className="lg:hidden shrink-0"><HeaderLogo /></div>
-              <div className="hidden md:flex w-full justify-center"><HeaderNav /></div>
-              <div className="xl:hidden shrink-0"><HeaderActions /></div>
+              <div className="shrink-0 lg:hidden">
+                <HeaderLogo />
+              </div>
+              <div className="hidden w-full justify-center md:flex">
+                <HeaderNav />
+              </div>
+              <div className="shrink-0 xl:hidden">
+                <HeaderActions />
+              </div>
             </div>
-            
+
             {/* Top Right */}
-            <div className="hidden xl:flex border-l border-dashed border-border items-center justify-end px-6">
+            <div className="hidden items-center justify-end border-l border-dashed border-border px-6 xl:flex">
               <HeaderActions />
             </div>
           </header>
 
           {/* --- BOTTOM ROW (Content) --- */}
-          <div className="flex-1 grid grid-cols-1 lg:grid-cols-[320px_1fr] xl:grid-cols-[320px_1fr_380px]">
+          <div className="grid flex-1 grid-cols-1 lg:grid-cols-[320px_1fr] xl:grid-cols-[320px_1fr_380px]">
             {/* Bottom Left (Sidebar) */}
-            <aside className="hidden lg:flex flex-col border-r border-dashed border-border bg-slate-50/50 sticky top-16 h-[calc(100vh-64px)] overflow-y-auto">
+            <aside className="sticky top-16 hidden h-[calc(100vh-64px)] flex-col overflow-y-auto border-r border-dashed border-border bg-white lg:flex">
               <LeftSidebar />
             </aside>
 
             {/* Bottom Center (Main) */}
-            <main className="relative bg-white min-h-[calc(100vh-64px)]">
+            <main className="relative min-h-[calc(100vh-64px)] bg-white">
               {children}
             </main>
 
             {/* Bottom Right (Sidebar) */}
-            <aside className="hidden xl:flex flex-col border-l border-dashed border-border bg-white sticky top-16 h-[calc(100vh-64px)] overflow-y-auto">
+            <aside className="sticky top-16 hidden h-[calc(100vh-64px)] flex-col overflow-y-auto border-l border-dashed border-border bg-white xl:flex">
               <RightSidebar />
             </aside>
           </div>
@@ -72,4 +82,3 @@ export default function RootLayout({
     </html>
   )
 }
-
