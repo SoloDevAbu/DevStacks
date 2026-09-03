@@ -5,6 +5,6 @@ export const ROUTES = {
   PRICING: "/pricing",
   SUBMIT: "/submit",
   CATEGORIES: "#",
-  BUILT_WITH: "#",
+  BUILT_WITH: "/built-with",
   SHOWCASE: "#",
 } as const
