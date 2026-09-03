@@ -2,7 +2,6 @@ import { AI_PROMPTS } from "@/lib/prompts"
 import { PageHeader } from "@/components/shared/page-header"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { BuiltWithList } from "./built-with-list"
-import { TRENDING_PRODUCTS } from "@/constants/products"
 
 export const BuiltWithContent = () => {
   return (
@@ -27,11 +26,11 @@ export const BuiltWithContent = () => {
           </div>
 
           <TabsContent value="products" className="mt-0">
-            <BuiltWithList products={TRENDING_PRODUCTS} />
+            <BuiltWithList />
           </TabsContent>
 
           <TabsContent value="trending" className="mt-0">
-            <BuiltWithList products={TRENDING_PRODUCTS} showMedals={true} />
+            <BuiltWithList showMedals={true} />
           </TabsContent>
         </Tabs>
       </div>

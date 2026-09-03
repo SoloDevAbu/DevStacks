@@ -1,4 +1,8 @@
-import { ArrowUp, Bookmark, Eye } from "lucide-react"
+"use client"
+
+import { useState } from "react"
+import { ArrowUp, Bookmark } from "lucide-react"
+import { Eye } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -13,39 +17,77 @@ import {
   tierShimmerGradient,
   pricingBadgeColor,
 } from "@/utils/styles"
-import type { Product } from "@/constants/types"
+import { useUpvote } from "@/hooks/products/use-upvote"
+import { useBookmark } from "@/hooks/products/use-bookmark"
 
-export type { Product }
+export type DbProduct = {
+  id: string
+  slug: string
+  name: string
+  tagline: string
+  tags: string[]
+  upvotesCount: number
+  buildsCount: number
+  commentsCount: number
+  viewsCount: number
+  pricing: "Free" | "Freemium" | "Paid" | "Open Source"
+  tier: "free" | "premium" | "premium+"
+  logoUrl?: string | null
+  category?: string | null
+}
+
+const DEMO_USER_ID = "demo-user"
 
 export const ProductList = ({
   products,
   showMedals = false,
   showTrendingBadge = true,
 }: {
-  products: Product[]
+  products: DbProduct[]
   showMedals?: boolean
   showTrendingBadge?: boolean
 }) => {
+  const upvoteMutation = useUpvote()
+  const bookmarkMutation = useBookmark()
+  const [bookmarked, setBookmarked] = useState<Record<string, boolean>>({})
+  const [localUpvotes, setLocalUpvotes] = useState<Record<string, number>>({})
+
   return (
     <div className="flex flex-col">
       {products.map((product, index) => {
-        const tier: Tier =
-          index % 3 === 0
-            ? TIER.FREE
-            : index % 3 === 1
-              ? TIER.PREMIUM
-              : TIER.PREMIUM_PLUS
+        const tier: Tier = product.tier as Tier
+        const pricing: Pricing = product.pricing as Pricing
         const isTrending = index < 2
-        const pricing: Pricing =
-          index % 4 === 0
-            ? PRICING.FREE
-            : index % 4 === 1
-              ? PRICING.FREEMIUM
-              : index % 4 === 2
-                ? PRICING.PAID
-                : PRICING.OPEN_SOURCE
+        const views = ((product.viewsCount) / 1000).toFixed(1) + "K"
+        const upvoteCount = localUpvotes[product.id] ?? product.upvotesCount
 
-        const views = ((product.upvotes * 11.6) / 1000).toFixed(1) + "K"
+        const handleUpvote = () => {
+          upvoteMutation.mutate(
+            { slug: product.slug, userId: DEMO_USER_ID },
+            {
+              onSuccess: (data) => {
+                setLocalUpvotes((prev) => ({
+                  ...prev,
+                  [product.id]: data.upvotesCount,
+                }))
+              },
+            }
+          )
+        }
+
+        const handleBookmark = () => {
+          bookmarkMutation.mutate(
+            { slug: product.slug, userId: DEMO_USER_ID },
+            {
+              onSuccess: (data) => {
+                setBookmarked((prev) => ({
+                  ...prev,
+                  [product.id]: data.action === "added",
+                }))
+              },
+            }
+          )
+        }
 
         return (
           <Card
@@ -77,21 +119,23 @@ export const ProductList = ({
                 <div
                   className={cn(
                     "flex items-center justify-center text-sm font-bold",
-                    showMedals && product.rank === 1
+                    showMedals && index + 1 === 1
                       ? "size-6 rounded-full bg-amber-400 text-white"
-                      : showMedals && product.rank === 2
+                      : showMedals && index + 1 === 2
                         ? "size-6 rounded-full bg-slate-300 text-white"
-                        : showMedals && product.rank === 3
+                        : showMedals && index + 1 === 3
                           ? "size-6 rounded-full bg-orange-400 text-white"
                           : "w-4 text-slate-400"
                   )}
                 >
-                  {product.rank}
+                  {index + 1}
                 </div>
               </div>
 
               <ProductLogo
-                {...product.logo}
+                text={product.name.slice(0, 2).toUpperCase()}
+                bgColor="bg-slate-900"
+                textColor="text-white"
                 className="size-14 shrink-0 overflow-hidden rounded-xl border border-slate-200 text-xl"
               />
 
@@ -111,13 +155,12 @@ export const ProductList = ({
                   )}
                 </div>
 
-
                 <p className="line-clamp-1 text-sm font-medium text-slate-500">
                   {product.tagline}
                 </p>
 
                 <div className="mt-2 flex flex-wrap items-center gap-3">
-                  {product.tags.map((tag) => (
+                  {product.tags.slice(0, 3).map((tag) => (
                     <Badge
                       key={tag}
                       variant="secondary"
@@ -131,7 +174,7 @@ export const ProductList = ({
                     {views}
                   </div>
                   <div className="flex items-center text-sm font-semibold text-blue-600">
-                    {product.builds} builds
+                    {product.buildsCount} builds
                   </div>
                 </div>
               </div>
@@ -151,10 +194,12 @@ export const ProductList = ({
                   <div className="group/btn relative inline-flex">
                     <Button
                       variant="outline"
+                      onClick={handleUpvote}
+                      disabled={upvoteMutation.isPending}
                       className="relative z-10 h-8 gap-1.5 rounded-lg border-slate-200 bg-white px-3 text-sm font-bold text-slate-600 hover:bg-slate-50"
                     >
                       <ArrowUp className="size-4 text-slate-400" />
-                      {product.upvotes.toLocaleString()}
+                      {upvoteCount.toLocaleString()}
                     </Button>
                     <HoverOutline />
                   </div>
@@ -162,9 +207,19 @@ export const ProductList = ({
                   <div className="group/btn relative inline-flex">
                     <Button
                       variant="outline"
-                      className="relative z-10 size-8 rounded-lg border-slate-200 bg-white p-0 text-slate-400 hover:bg-slate-50 hover:text-slate-600"
+                      onClick={handleBookmark}
+                      disabled={bookmarkMutation.isPending}
+                      className={cn(
+                        "relative z-10 size-8 rounded-lg border-slate-200 bg-white p-0 hover:bg-slate-50",
+                        bookmarked[product.id]
+                          ? "text-indigo-500"
+                          : "text-slate-400 hover:text-slate-600"
+                      )}
                     >
-                      <Bookmark className="size-4" />
+                      <Bookmark
+                        className="size-4"
+                        fill={bookmarked[product.id] ? "currentColor" : "none"}
+                      />
                     </Button>
                     <HoverOutline />
                   </div>

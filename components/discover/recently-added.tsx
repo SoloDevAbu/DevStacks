@@ -1,10 +1,36 @@
+"use client"
+
 import { Card, CardContent } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 import { VerifiedBadge } from "@/components/shared/verified-badge"
 import { SectionHeader } from "@/components/shared/section-header"
+import { useRecentlyAdded } from "@/hooks/products/use-recently-added"
 import { RECENTLY_ADDED } from "@/constants/products"
 
+type RecentItem = {
+  name: string
+  desc: string
+  category: string
+  logo: string
+  logoBg: string
+  tier: "free" | "premium" | "premium+"
+}
+
 export const RecentlyAdded = () => {
+  const { data } = useRecentlyAdded(6)
+
+  const items = data
+    ? data.map((p: { id: string; name: string; tagline: string; category: string | null; tier: string }) => ({
+        id: p.id,
+        name: p.name,
+        desc: p.tagline,
+        category: p.category ?? "Product",
+        logo: p.name.slice(0, 1).toUpperCase(),
+        logoBg: "bg-slate-900 text-white",
+        tier: p.tier as "free" | "premium" | "premium+",
+      }))
+    : RECENTLY_ADDED
+
   return (
     <section>
       <SectionHeader
@@ -13,7 +39,7 @@ export const RecentlyAdded = () => {
         viewAllText="View all"
       />
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-1 2xl:grid-cols-2">
-        {RECENTLY_ADDED.map((item) => (
+        {(items as RecentItem[]).map((item) => (
           <Card
             key={item.name}
             className="group cursor-pointer rounded-none bg-white transition-colors hover:border-slate-300"

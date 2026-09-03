@@ -1,3 +1,5 @@
+"use client"
+
 import { Eye, Heart, Bookmark } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -7,7 +9,6 @@ import { HoverOutline } from "@/components/shared/hover-outline"
 import { VerifiedBadge } from "@/components/shared/verified-badge"
 import { SectionHeader } from "@/components/shared/section-header"
 import { ProductLogo } from "@/components/shared/product-logo"
-import { TRENDING_PRODUCTS } from "@/constants/products"
 import { TIER, PRICING, type Tier, type Pricing } from "@/constants/tiers"
 import {
   tierCardBg,
@@ -15,8 +16,38 @@ import {
   tierShimmerGradient,
   pricingBadgeColor,
 } from "@/utils/styles"
+import { useTrending } from "@/hooks/products/use-trending"
+import { TRENDING_PRODUCTS } from "@/constants/products"
+
+type TrendingItem = {
+  id: string
+  slug: string
+  name: string
+  tagline: string
+  tags: string[]
+  upvotesCount: number
+  buildsCount: number
+  viewsCount: number
+  pricing: "Free" | "Freemium" | "Paid" | "Open Source"
+  tier: "free" | "premium" | "premium+"
+}
 
 export const TrendingNow = () => {
+  const { data, isLoading } = useTrending(3)
+
+  const products = data ?? TRENDING_PRODUCTS.slice(0, 3).map((p, i) => ({
+    id: p.id,
+    slug: p.name.toLowerCase().replace(/\s+/g, "-"),
+    name: p.name,
+    tagline: p.tagline,
+    tags: p.tags,
+    upvotesCount: p.upvotes,
+    buildsCount: p.builds,
+    viewsCount: Math.round(p.upvotes * 11.6),
+    pricing: "Free" as const,
+    tier: (i === 0 ? "premium+" : i === 1 ? "premium" : "free") as "free" | "premium" | "premium+",
+  }))
+
   return (
     <section>
       <SectionHeader
@@ -25,26 +56,10 @@ export const TrendingNow = () => {
         viewAllText="View all trending"
       />
       <div className="flex flex-col">
-        {TRENDING_PRODUCTS.slice(0, 3).map((product, index) => {
-          const tier: Tier =
-            index === 0
-              ? TIER.PREMIUM_PLUS
-              : index === 1
-                ? TIER.PREMIUM
-                : TIER.FREE
-          const views = ((product.upvotes * 11.6) / 1000).toFixed(1) + "K"
-          const builtWith =
-            index === 0
-              ? ["Next.js", "Supabase"]
-              : index === 1
-                ? ["React", "Stripe"]
-                : ["Vue", "Firebase"]
-          const pricing: Pricing =
-            index === 0
-              ? PRICING.FREEMIUM
-              : index === 1
-                ? PRICING.PAID
-                : PRICING.OPEN_SOURCE
+        {(products as TrendingItem[]).map((product, index) => {
+          const tier: Tier = product.tier as Tier
+          const pricing: Pricing = product.pricing as Pricing
+          const views = ((product.viewsCount) / 1000).toFixed(1) + "K"
 
           return (
             <Card
@@ -76,7 +91,9 @@ export const TrendingNow = () => {
                   {index + 1}
                 </div>
                 <ProductLogo
-                  {...product.logo}
+                  text={product.name.slice(0, 2).toUpperCase()}
+                  bgColor="bg-slate-900"
+                  textColor="text-white"
                   className="size-10 shrink-0 overflow-hidden rounded-lg"
                 />
 
@@ -95,16 +112,16 @@ export const TrendingNow = () => {
                   <div className="mt-1 flex flex-wrap items-center gap-2">
                     <div className="flex items-center gap-1.5">
                       <span className="text-[10px] font-bold tracking-wider text-slate-400 uppercase">
-                        Built with
+                        Tags
                       </span>
                       <div className="flex items-center gap-1">
-                        {builtWith.map((tool) => (
+                        {product.tags.slice(0, 2).map((tag: string) => (
                           <Badge
-                            key={tool}
+                            key={tag}
                             variant="secondary"
                             className="rounded-none px-1.5 py-0 text-[9px]"
                           >
-                            {tool}
+                            {tag}
                           </Badge>
                         ))}
                       </div>
@@ -134,7 +151,7 @@ export const TrendingNow = () => {
                         className="relative z-10 h-8 gap-1.5 rounded-lg border-slate-200 bg-white px-3 text-sm font-bold text-slate-600 hover:bg-slate-50 hover:text-red-500"
                       >
                         <Heart className="size-4" />
-                        {product.upvotes.toLocaleString()}
+                        {product.upvotesCount.toLocaleString()}
                       </Button>
                       <HoverOutline />
                     </div>
