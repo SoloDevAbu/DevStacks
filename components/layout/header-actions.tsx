@@ -1,15 +1,13 @@
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
+import { ROUTES } from "@/constants/routes"
 
-export function HeaderActions() {
+export const HeaderActions = () => {
   return (
     <div className="flex items-center gap-4">
-      <Link
-        href="/submit"
-        className="bg-gray-900 px-4 py-2 text-sm font-medium text-slate-200 hover:bg-slate-800"
-      >
+      <Button className="rounded-none" render={<Link href={ROUTES.SUBMIT} />}>
         List a Product
-      </Link>
+      </Button>
       <Button
         variant="outline"
         className="rounded-md border-dashed border-slate-300"

@@ -1,4 +1,5 @@
 import { Geist, Geist_Mono } from "next/font/google"
+import type { Metadata } from "next"
 import { HeaderLogo } from "@/components/layout/header-logo"
 import { HeaderNav } from "@/components/layout/header-nav"
 import { HeaderActions } from "@/components/layout/header-actions"
@@ -7,6 +8,16 @@ import { RightSidebar } from "@/components/home/right-sidebar"
 
 import "./globals.css"
 import { cn } from "@/lib/utils"
+
+export const metadata: Metadata = {
+  title: {
+    default: "DevStack — Discover Developer Tools & Products",
+    template: "%s | DevStack",
+  },
+  description:
+    "Discover developer tools, APIs, and infrastructure, and the products people are already building with them.",
+}
+
 
 const fontSans = Geist({
   subsets: ["latin"],

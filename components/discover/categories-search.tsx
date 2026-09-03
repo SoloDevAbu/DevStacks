@@ -11,9 +11,12 @@ import {
   Search,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { HoverOutline } from "./shared"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { HoverOutline } from "@/components/shared/hover-outline"
+import type { Category } from "@/constants/types"
 
-const CATEGORIES = [
+const CATEGORIES: Category[] = [
   { name: "AI", icon: Sparkles, color: "text-purple-500" },
   { name: "Payments", icon: CreditCard, color: "text-orange-500" },
   { name: "Database", icon: Database, color: "text-emerald-500" },
@@ -25,7 +28,7 @@ const CATEGORIES = [
   { name: "More", icon: MoreHorizontal, color: "text-slate-600" },
 ]
 
-export function CategoriesSearch() {
+export const CategoriesSearch = () => {
   return (
     <div className="border-b border-dashed border-border bg-white px-6 py-2 md:px-8">
       <div className="scrollbar-hide flex min-w-0 items-center gap-3 overflow-x-auto py-2">
@@ -34,20 +37,23 @@ export function CategoriesSearch() {
             key={cat.name}
             className="group/btn relative inline-flex shrink-0"
           >
-            <button className="relative z-10 flex items-center gap-2 rounded-none border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold whitespace-nowrap text-slate-700 hover:bg-slate-50">
+            <Button
+              variant="outline"
+              className="relative z-10 gap-2 rounded-none border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold whitespace-nowrap text-slate-700 hover:bg-slate-50"
+            >
               <cat.icon className={cn("size-4", cat.color)} />
               {cat.name}
-            </button>
+            </Button>
             <HoverOutline />
           </div>
         ))}
         <div className="group/btn relative ml-auto inline-flex min-w-48 shrink-0">
           <div className="relative z-10 w-full">
             <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-slate-400" />
-            <input
+            <Input
               type="text"
               placeholder="Ask anything..."
-              className="w-full rounded-none border border-slate-200 bg-white py-1.5 pr-3 pl-9 text-sm outline-none placeholder:text-slate-400 focus:border-slate-300"
+              className="w-full rounded-none border-slate-200 bg-white py-1.5 pr-3 pl-9 text-sm placeholder:text-slate-400 focus:border-slate-300"
             />
           </div>
           <HoverOutline />

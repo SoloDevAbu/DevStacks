@@ -1,8 +1,9 @@
 import Link from "next/link"
 import { Search } from "lucide-react"
 import { Input } from "@/components/ui/input"
+import { ROUTES } from "@/constants/routes"
 
-export function HeaderNav() {
+export const HeaderNav = () => {
   return (
     <nav className="flex w-full items-center justify-around gap-6 text-sm font-medium text-muted-foreground">
       <div className="relative w-full max-w-sm">
@@ -13,7 +14,7 @@ export function HeaderNav() {
         />
       </div>
       <Link
-        href="/pricing"
+        href={ROUTES.PRICING}
         className="shrink-0 font-semibold text-slate-900 hover:text-foreground"
       >
         Pricing

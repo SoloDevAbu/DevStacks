@@ -1,25 +1,15 @@
 import { ChevronDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
+import { HoverOutline } from "@/components/shared/hover-outline"
 
-function HoverOutline() {
-  return (
-    <div className="pointer-events-none absolute -inset-[6px] z-0 opacity-0 transition-opacity group-hover/btn:opacity-100">
-      <div className="absolute top-0 left-0 h-2 w-2 border-t-2 border-l-2 border-slate-500" />
-      <div className="absolute top-0 right-0 h-2 w-2 border-t-2 border-r-2 border-slate-500" />
-      <div className="absolute bottom-0 left-0 h-2 w-2 border-b-2 border-l-2 border-slate-500" />
-      <div className="absolute bottom-0 right-0 h-2 w-2 border-b-2 border-r-2 border-slate-500" />
-    </div>
-  )
-}
-
-function FilterTab({
+const FilterTab = ({
   children,
   active,
 }: {
   children: React.ReactNode
   active?: boolean
-}) {
+}) => {
   return (
     <div className="group/btn relative inline-flex">
       <Button
@@ -38,10 +28,9 @@ function FilterTab({
   )
 }
 
-export function FilterBar() {
+export const FilterBar = () => {
   return (
     <div className="flex flex-col gap-4 border-b border-dashed border-border bg-white px-6 py-4 sm:flex-row sm:items-center sm:justify-between md:px-8">
-      {/* Time Filters */}
       <div className="flex items-center gap-1 rounded-lg border border-slate-200 bg-white p-1 shadow-sm">
         <FilterTab active>Today</FilterTab>
         <FilterTab>This Week</FilterTab>
@@ -49,7 +38,6 @@ export function FilterBar() {
         <FilterTab>All Time</FilterTab>
       </div>
 
-      {/* Category Filter */}
       <div className="group/btn relative inline-flex">
         <Button
           variant="outline"

@@ -1,63 +1,81 @@
 ## General
 
-- Follow clean-code and production-grade best practices.
+- Follow clean-code and production-grade best practices at all times.
 - Keep logic modular, reusable, and separated by responsibility.
 - Prefer simple, readable implementations over unnecessary abstraction.
 - Use **arrow functions** consistently.
-- Do not add comments unless they explain non-obvious logic or an important decision.
-- Do not over-engineer.
+- Do not add comments unless they explain non-obvious logic or a deliberate decision.
+- Never repeat yourself — if something is written twice, it belongs in a shared location.
 
 ## Project Structure
 
-Keep related code organized into dedicated subfolders.
-
 ```text
 components/
+  shared/          ← any component used in more than one place
   home/
   products/
-  ...
 hooks/
-  products/
   home/
-  ...
+  products/
 lib/
   api/
   auth/
-  ...
 utils/
+  styles.ts        ← reusable Tailwind class strings, cn() compositions, hover/focus patterns
   products/
-  ...
+constants/
+  plans.ts         ← subscription tiers, badge config, feature flags
+  routes.ts
 ```
 
-- Page-specific components belong in `components/<page-or-feature>/`.
-- Custom hooks belong in `hooks/<feature>/`.
-- API/data-fetching logic must **never** be written directly inside pages or components.
-- Keep reusable utilities in `utils/<feature>/`.
-- Keep shared libraries/configuration in `lib/<feature>/`.
-- Follow the same separation pattern for other code whenever appropriate.
+## Constants
 
-## Data Fetching
+- **Never hardcode** plan names (`"free"`, `"premium"`), badge labels, tier logic, or feature flags inline inside components.
+- Every shared value belongs in `constants/` and must be imported wherever needed.
+- Example: all subscription tier metadata (label, badge variant, feature list, access rules) is defined once in `constants/plans.ts` and reused across filtering, badge rendering, and access checks.
 
-- Always use **TanStack Query + Axios** for client-side data fetching and mutations.
-- Create API functions separately and call them through custom hooks.
-- Never write Axios/API/fetch calls directly inside components or pages.
-- Keep query and mutation hooks organized under the appropriate `hooks/<feature>/` folder.
+## Reusable Styles & Class Patterns
+
+- **Never copy-paste** Tailwind class strings or style logic across components.
+- Any repeated visual pattern — hover effects, focus rings, card styles, transition configs, conditional class combinations — must be extracted to `utils/styles.ts` as a named constant or utility function and imported wherever needed.
+- Use `cn()` from `lib/utils` for all conditional class merging.
+
+```ts
+// utils/styles.ts
+export const hoverCard = " "
+export const focusRing = " "
+```
 
 ## UI & Components
 
-- Use **shadcn/ui** for UI components everywhere and if the component doesn't exists then asks for install if first then use it.
-- Before implementing a component, check the relevant **shadcn skill** for the use case and follow its recommended approach.
-- Prefer composition and reusable components over large monolithic components.
+- Use **shadcn/ui** for every UI element — buttons, inputs, badges, dialogs, cards, selects, tooltips, etc.
+- Before building any UI element, check if a shadcn component covers it.
+  - If it exists and is **installed** → use it.
+  - If it exists but is **not installed** → output the install command (`npx shadcn@latest add <component>`) and wait before proceeding.
+  - Only build a custom component if shadcn genuinely has no equivalent.
+- **Never** use native HTML elements (`<button>`, `<input>`, `<select>`) or build from scratch when a shadcn component exists.
+- Any component used in more than one place must immediately be moved to `components/shared/` — never duplicate it.
 
-## Pages, API, SSR, SSE & Next.js
+## Data Fetching
 
-- Before working on pages, API routes, Server Components, SSR, SSE, caching, routing, or other Next.js-specific functionality, **always read and follow the `vercel-react-best-practices` skill first**.
-- Follow Next.js/React recommended patterns rather than introducing custom patterns unnecessarily.
+- Always use **TanStack Query + Axios** for client-side fetching and mutations.
+- API functions belong in `lib/api/` and are called only through custom hooks in `hooks/<feature>/`.
+- Never write Axios or fetch calls directly inside components or pages.
 
-## Before Implementing
+## Next.js, SSR & SEO
 
-1. Check the relevant skills/documentation when required above.
-2. Inspect the existing project structure and patterns.
-3. Reuse existing components, utilities, hooks, and abstractions where appropriate.
-4. Keep new code consistent with the existing architecture.
-5. Ensure responsibilities remain separated and files stay focused.
+- Always read the `vercel-react-best-practices` skill before working on pages, API routes, Server Components, SSR, caching, or routing.
+- Default to **Server Components**. Only add `'use client'` when interactivity or browser APIs genuinely require it.
+- Use the `metadata` export or `generateMetadata` for all SEO — never insert `<head>` tags manually.
+- Follow Next.js recommended patterns. Do not introduce custom workarounds.
+
+## Before Implementing Anything
+
+Before writing a single line of code, answer these:
+
+1. **Does a shadcn component exist for this UI?** → Install it if missing. Never build it yourself.
+2. **Is this value used in more than one place?** → It belongs in `constants/`.
+3. **Is this class pattern or style repeated elsewhere?** → Extract it to `utils/styles.ts`.
+4. **Is this component rendered in more than one place?** → It belongs in `components/shared/`.
+5. **Is this a page, route, or SSR concern?** → Read the `vercel-react-best-practices` skill first.
+6. **Does this hook/utility/component already exist?** → Reuse it, don't recreate it.
