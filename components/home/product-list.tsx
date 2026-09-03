@@ -111,6 +111,7 @@ export const ProductList = ({
                   )}
                 </div>
 
+
                 <p className="line-clamp-1 text-sm font-medium text-slate-500">
                   {product.tagline}
                 </p>
@@ -128,6 +129,9 @@ export const ProductList = ({
                   <div className="ml-2 flex items-center gap-1.5 text-sm font-semibold text-slate-400">
                     <Eye className="size-4" />
                     {views}
+                  </div>
+                  <div className="flex items-center text-sm font-semibold text-blue-600">
+                    {product.builds} builds
                   </div>
                 </div>
               </div>

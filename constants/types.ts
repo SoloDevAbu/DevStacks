@@ -8,6 +8,7 @@ export type Product = {
   comments: number
   tags: string[]
   upvotes: number
+  builds: number
   logo: {
     text: string
     bgColor: string

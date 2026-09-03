@@ -10,6 +10,7 @@ export const TRENDING_PRODUCTS: Product[] = [
     comments: 24,
     tags: ["AI", "Productivity"],
     upvotes: 1245,
+    builds: 142,
     logo: { text: "|||", bgColor: "bg-slate-900", textColor: "text-blue-400" },
   },
   {
@@ -20,6 +21,7 @@ export const TRENDING_PRODUCTS: Product[] = [
     comments: 18,
     tags: ["Marketing", "AI", "Productivity"],
     upvotes: 982,
+    builds: 98,
     logo: { text: "DS", bgColor: "bg-slate-800", textColor: "text-teal-400" },
   },
   {
@@ -30,6 +32,7 @@ export const TRENDING_PRODUCTS: Product[] = [
     comments: 42,
     tags: ["Design Resources", "SaaS", "Other"],
     upvotes: 754,
+    builds: 76,
     logo: { text: "ISO", bgColor: "bg-white", textColor: "text-slate-800", borderColor: "border border-slate-200" },
   },
   {
@@ -40,6 +43,7 @@ export const TRENDING_PRODUCTS: Product[] = [
     comments: 12,
     tags: ["Marketing", "SaaS", "SEO Tools"],
     upvotes: 412,
+    builds: 54,
     logo: { text: "D", bgColor: "bg-indigo-500", textColor: "text-white" },
   },
   {
@@ -50,6 +54,7 @@ export const TRENDING_PRODUCTS: Product[] = [
     comments: 38,
     tags: ["Design Tools", "SaaS"],
     upvotes: 389,
+    builds: 112,
     logo: { text: "SN", bgColor: "bg-pink-500", textColor: "text-white" },
   },
   {
@@ -60,6 +65,7 @@ export const TRENDING_PRODUCTS: Product[] = [
     comments: 21,
     tags: ["Marketing", "DevTools"],
     upvotes: 310,
+    builds: 89,
     logo: { text: "O", bgColor: "bg-purple-600", textColor: "text-white" },
   },
   {
@@ -70,6 +76,7 @@ export const TRENDING_PRODUCTS: Product[] = [
     comments: 54,
     tags: ["AI", "Engineering"],
     upvotes: 295,
+    builds: 134,
     logo: { text: "FX", bgColor: "bg-emerald-500", textColor: "text-slate-900" },
   },
   {
@@ -80,6 +87,7 @@ export const TRENDING_PRODUCTS: Product[] = [
     comments: 47,
     tags: ["Developer Tools", "AI"],
     upvotes: 278,
+    builds: 201,
     logo: { text: "CS", bgColor: "bg-slate-900", textColor: "text-sky-400" },
   },
   {
@@ -90,6 +98,7 @@ export const TRENDING_PRODUCTS: Product[] = [
     comments: 15,
     tags: ["Data", "Privacy"],
     upvotes: 241,
+    builds: 67,
     logo: { text: "SY", bgColor: "bg-orange-500", textColor: "text-white" },
   },
   {
@@ -100,6 +109,7 @@ export const TRENDING_PRODUCTS: Product[] = [
     comments: 32,
     tags: ["Infrastructure", "Performance"],
     upvotes: 210,
+    builds: 145,
     logo: { text: "V", bgColor: "bg-blue-600", textColor: "text-white" },
   },
   {
@@ -110,6 +120,7 @@ export const TRENDING_PRODUCTS: Product[] = [
     comments: 63,
     tags: ["Video", "AI"],
     upvotes: 198,
+    builds: 42,
     logo: { text: "LM", bgColor: "bg-rose-500", textColor: "text-white" },
   },
   {
@@ -120,6 +131,7 @@ export const TRENDING_PRODUCTS: Product[] = [
     comments: 11,
     tags: ["Security", "Cloud"],
     upvotes: 185,
+    builds: 88,
     logo: { text: "ST", bgColor: "bg-slate-800", textColor: "text-amber-400" },
   },
   {
@@ -130,6 +142,7 @@ export const TRENDING_PRODUCTS: Product[] = [
     comments: 42,
     tags: ["API", "Infrastructure"],
     upvotes: 164,
+    builds: 110,
     logo: { text: "NX", bgColor: "bg-cyan-600", textColor: "text-white" },
   },
   {
@@ -140,6 +153,7 @@ export const TRENDING_PRODUCTS: Product[] = [
     comments: 29,
     tags: ["Analytics", "Finance"],
     upvotes: 142,
+    builds: 55,
     logo: { text: "PR", bgColor: "bg-violet-600", textColor: "text-white" },
   },
 ]
