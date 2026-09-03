@@ -6,5 +6,5 @@ export const ROUTES = {
   SUBMIT: "/submit",
   CATEGORIES: "#",
   BUILT_WITH: "/built-with",
-  SHOWCASE: "#",
+  SHOWCASE: "/showcase",
 } as const

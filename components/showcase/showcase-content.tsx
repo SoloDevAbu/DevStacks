@@ -15,42 +15,59 @@ import {
 } from "@/components/ui/select"
 import { PRICING } from "@/constants/tiers"
 
-export const SubmitContent = () => {
+export const ShowcaseContent = () => {
   return (
     <div className="relative flex min-h-full flex-col bg-slate-50/50 pb-20">
       <PageHeader
-        heading="Submit a Product"
-        description="List your developer tool, API, or infrastructure product for the community to discover."
+        heading="Showcase a Build"
+        description="Share what you've built and the tools you used to build it."
         aiPrompt={AI_PROMPTS.home}
       />
 
       <div className="flex w-full flex-1 flex-col bg-white">
         <form className="flex flex-col">
-          {/* Section: General Information */}
+          {/* Section: Project Information */}
           <div className="flex flex-col gap-6 border-b border-dashed border-border px-6 py-8 md:px-8">
             <div>
-              <h2 className="text-lg font-bold text-slate-900">General Information</h2>
+              <h2 className="text-lg font-bold text-slate-900">Project Information</h2>
               <p className="text-sm text-slate-500">
-                The basic details about your product.
+                The basic details about your project.
               </p>
             </div>
             
             <div className="flex flex-col gap-4">
               <div className="grid gap-2">
-                <Label htmlFor="name">Product Name</Label>
-                <Input id="name" placeholder="e.g. Next.js" />
+                <Label htmlFor="name">Project Name</Label>
+                <Input id="name" placeholder="e.g. Acme Dashboard" />
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="tagline">Tagline</Label>
-                <Input id="tagline" placeholder="Brief, catchy description (max 60 chars)" />
+                <Input id="tagline" placeholder="Brief, catchy description (max 60 chars)" maxLength={60} />
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="description">Full Description</Label>
+                <Label htmlFor="description">Short Description</Label>
                 <Textarea 
                   id="description" 
-                  placeholder="What does your product do? Why should developers use it?" 
-                  rows={4}
+                  placeholder="What does your project do?" 
+                  rows={3}
                 />
+              </div>
+            </div>
+          </div>
+
+          {/* Section: Tech Stack */}
+          <div className="flex flex-col gap-6 border-b border-dashed border-border px-6 py-8 md:px-8">
+            <div>
+              <h2 className="text-lg font-bold text-slate-900">Tech Stack</h2>
+              <p className="text-sm text-slate-500">
+                What developer tools and APIs did you use to build this?
+              </p>
+            </div>
+            
+            <div className="flex flex-col gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="tools">Built With</Label>
+                <Input id="tools" placeholder="e.g. Next.js, Supabase, Tailwind CSS, Vercel (comma separated)" />
               </div>
             </div>
           </div>
@@ -60,7 +77,7 @@ export const SubmitContent = () => {
             <div>
               <h2 className="text-lg font-bold text-slate-900">Links & Media</h2>
               <p className="text-sm text-slate-500">
-                Where can people find your product?
+                Where can people find your project?
               </p>
             </div>
             
@@ -81,15 +98,11 @@ export const SubmitContent = () => {
             <div>
               <h2 className="text-lg font-bold text-slate-900">Details</h2>
               <p className="text-sm text-slate-500">
-                Categorize your product to help users find it.
+                Additional information about your project.
               </p>
             </div>
             
             <div className="flex flex-col gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="tags">Tags</Label>
-                <Input id="tags" placeholder="e.g. AI, Productivity, SaaS (comma separated)" />
-              </div>
               <div className="grid gap-2">
                 <Label htmlFor="tier">Pricing Model</Label>
                 <Select>
@@ -114,7 +127,7 @@ export const SubmitContent = () => {
               Cancel
             </Button>
             <Button type="submit">
-              Submit Product
+              Submit Showcase
             </Button>
           </div>
         </form>
