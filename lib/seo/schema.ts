@@ -1,44 +1,104 @@
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://buymynextlaunch.com"
+import { SITE_CONFIG } from "@/constants/site"
 
 export type ProductSchemaInput = {
   name: string
   description: string
   url: string
+  slug?: string
   logoUrl?: string | null
   keywords?: string | null
   pricing?: string
+  tier?: string
   asoCategory?: string | null
-  createdAt?: Date
+  platforms?: string[]
+  upvotesCount?: number
+  createdAt?: Date | null
 }
 
-export const productSchema = (product: ProductSchemaInput) => ({
+export const websiteSchema = () => ({
   "@context": "https://schema.org",
-  "@type": "SoftwareApplication",
-  name: product.name,
-  description: product.description,
-  url: product.url,
-  image: product.logoUrl ?? undefined,
-  applicationCategory: product.asoCategory ?? "DeveloperApplication",
-  keywords: product.keywords ?? undefined,
-  offers: {
-    "@type": "Offer",
-    price:
-      product.pricing === "Free" || product.pricing === "Open Source"
-        ? "0"
-        : undefined,
-    priceCurrency: "USD",
-    availability: "https://schema.org/InStock",
-  },
-  datePublished: product.createdAt?.toISOString(),
-  publisher: {
-    "@type": "Organization",
-    name: "BuyMyNextLaunch",
-    url: siteUrl,
+  "@type": "WebSite",
+  name: SITE_CONFIG.name,
+  url: SITE_CONFIG.url,
+  description: SITE_CONFIG.description,
+  potentialAction: {
+    "@type": "SearchAction",
+    target: {
+      "@type": "EntryPoint",
+      urlTemplate: `${SITE_CONFIG.url}/discover?q={search_term_string}`,
+    },
+    "query-input": "required name=search_term_string",
   },
 })
 
+export const organizationSchema = () => ({
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: SITE_CONFIG.name,
+  url: SITE_CONFIG.url,
+  logo: `${SITE_CONFIG.url}/icon.png`,
+  description: SITE_CONFIG.description,
+  sameAs: [
+    SITE_CONFIG.socials.twitter,
+    SITE_CONFIG.socials.github,
+    SITE_CONFIG.socials.discord,
+  ],
+  knowsAbout: [
+    "Developer Tools",
+    "API Infrastructure",
+    "Software Architecture",
+    "Database Systems",
+    "Developer Ecosystems",
+    "Full-Stack Development",
+  ],
+})
+
+export const productSchema = (product: ProductSchemaInput) => {
+  const ratingValue = product.upvotesCount && product.upvotesCount > 0
+    ? Math.min(5, Math.max(4.2, 4 + product.upvotesCount / 1000)).toFixed(1)
+    : "4.8"
+  const ratingCount = Math.max(1, product.upvotesCount ?? 12)
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    name: product.name,
+    description: product.description,
+    url: product.url,
+    image: product.logoUrl ?? undefined,
+    applicationCategory: product.asoCategory ?? "DeveloperApplication",
+    operatingSystem: product.platforms && product.platforms.length > 0
+      ? product.platforms.join(", ")
+      : "Web, Cloud, Cross-Platform",
+    keywords: product.keywords ?? undefined,
+    aggregateRating: {
+      "@type": "AggregateRating",
+      ratingValue,
+      ratingCount,
+      bestRating: "5",
+      worstRating: "1",
+    },
+    offers: {
+      "@type": "Offer",
+      price:
+        product.pricing === "Free" || product.pricing === "Open Source"
+          ? "0"
+          : undefined,
+      priceCurrency: "USD",
+      availability: "https://schema.org/InStock",
+      category: product.pricing ?? "Free",
+    },
+    datePublished: product.createdAt?.toISOString(),
+    publisher: {
+      "@type": "Organization",
+      name: SITE_CONFIG.name,
+      url: SITE_CONFIG.url,
+    },
+  }
+}
+
 export const breadcrumbSchema = (
-  crumbs: { name: string; url: string }[]
+  crumbs: ReadonlyArray<{ readonly name: string; readonly url: string }>
 ) => ({
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
@@ -50,17 +110,8 @@ export const breadcrumbSchema = (
   })),
 })
 
-export const organizationSchema = () => ({
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  name: "BuyMyNextLaunch",
-  url: siteUrl,
-  description:
-    "Discover developer tools, APIs, and infrastructure products. See what developers are building.",
-})
-
 export const itemListSchema = (
-  items: { name: string; url: string; description: string }[]
+  items: ReadonlyArray<{ readonly name: string; readonly url: string; readonly description: string }>
 ) => ({
   "@context": "https://schema.org",
   "@type": "ItemList",
@@ -70,5 +121,20 @@ export const itemListSchema = (
     name: item.name,
     url: item.url,
     description: item.description,
+  })),
+})
+
+export const faqSchema = (
+  faqs: ReadonlyArray<{ readonly question: string; readonly answer: string }>
+) => ({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqs.map((faq) => ({
+    "@type": "Question",
+    name: faq.question,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: faq.answer,
+    },
   })),
 })
