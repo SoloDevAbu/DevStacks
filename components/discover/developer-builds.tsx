@@ -1,5 +1,6 @@
 "use client"
 
+import Link from "next/link"
 import { Eye, Heart, ExternalLink } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
@@ -7,6 +8,7 @@ import { VerifiedBadge } from "@/components/shared/verified-badge"
 import { SectionHeader } from "@/components/shared/section-header"
 import { useBuilds } from "@/hooks/builds/use-builds"
 import { DEVELOPER_BUILDS } from "@/constants/products"
+import { ROUTES } from "@/constants/routes"
 
 type BuildItem = {
   id: string
@@ -21,7 +23,7 @@ type BuildItem = {
 }
 
 export const DeveloperBuilds = () => {
-  const { data, isLoading } = useBuilds({ limit: 4 })
+  const { data } = useBuilds({ limit: 4 })
 
   const builds = data ?? DEVELOPER_BUILDS.map((b) => ({
     id: b.name,
@@ -41,12 +43,13 @@ export const DeveloperBuilds = () => {
         title="See what developers are building"
         subtitle="Real products built with the tools developers love"
         viewAllText="View all builds"
+        viewAllHref={ROUTES.SHOWCASE}
       />
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-1 2xl:grid-cols-2">
         {(builds as BuildItem[]).map((build) => (
           <Card
             key={build.id}
-            className="group flex cursor-pointer flex-col rounded-none bg-white transition-colors hover:border-slate-300"
+            className="group flex flex-col rounded-none bg-white transition-colors hover:border-slate-300"
           >
             <CardContent className="flex flex-1 flex-col gap-4 p-5">
               <div className="flex items-center gap-3">
@@ -73,14 +76,18 @@ export const DeveloperBuilds = () => {
                   Built with
                 </p>
                 <div className="flex flex-wrap gap-1.5">
-                  {build.builtWith.map((tool: { name: string }) => (
-                    <span
-                      key={tool.name}
-                      className="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-semibold text-slate-600"
-                    >
-                      {tool.name}
-                    </span>
-                  ))}
+                  {build.builtWith.map((tool: { name: string }) => {
+                    const toolSlug = tool.name.toLowerCase().replace(/\s+/g, "-")
+                    return (
+                      <Link
+                        key={tool.name}
+                        href={`/products/${toolSlug}`}
+                        className="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-semibold text-slate-600 transition-colors hover:bg-slate-200 hover:text-slate-900"
+                      >
+                        {tool.name}
+                      </Link>
+                    )
+                  })}
                 </div>
               </div>
               <div className="mt-2 flex items-center justify-between border-t border-slate-100 pt-2 text-slate-400">
@@ -92,7 +99,9 @@ export const DeveloperBuilds = () => {
                     <Heart className="size-3.5" /> {build.likesCount}
                   </span>
                 </div>
-                <ExternalLink className="size-3.5 hover:text-slate-600" />
+                <Link href={ROUTES.SHOWCASE} aria-label={`View ${build.name} build details`}>
+                  <ExternalLink className="size-3.5 hover:text-slate-600" />
+                </Link>
               </div>
             </CardContent>
           </Card>

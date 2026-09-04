@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import Link from "next/link"
 import { Eye, Heart, Bookmark } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -124,16 +125,28 @@ export const BuiltWithList = ({
                 )}
               </div>
 
-              <ProductLogo
-                text={product.name.slice(0, 2).toUpperCase()}
-                bgColor="bg-slate-900"
-                textColor="text-white"
-                className="size-10 shrink-0 overflow-hidden rounded-lg"
-              />
+              <Link
+                href={`/products/${product.slug}`}
+                className="shrink-0 transition-opacity hover:opacity-80"
+              >
+                <ProductLogo
+                  text={product.name.slice(0, 2).toUpperCase()}
+                  bgColor="bg-slate-900"
+                  textColor="text-white"
+                  className="size-10 overflow-hidden rounded-lg"
+                />
+              </Link>
 
               <div className="flex min-w-0 flex-1 flex-col gap-1">
                 <div className="flex items-center gap-1.5">
-                  <h3 className="truncate text-sm font-bold text-slate-900">{product.name}</h3>
+                  <h3 className="truncate text-sm font-bold text-slate-900">
+                    <Link
+                      href={`/products/${product.slug}`}
+                      className="transition-colors hover:text-indigo-600"
+                    >
+                      {product.name}
+                    </Link>
+                  </h3>
                   <VerifiedBadge tier={tier} />
                 </div>
                 <p className="line-clamp-1 text-xs font-medium text-slate-500">{product.tagline}</p>

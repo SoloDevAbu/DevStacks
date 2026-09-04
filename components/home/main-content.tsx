@@ -1,5 +1,6 @@
 import { ProductList } from "@/components/home/product-list"
 import { PageHeader } from "@/components/shared/page-header"
+import { FaqSection } from "@/components/home/faq-section"
 import { getTrendingProducts } from "@/db/queries/products/trending"
 import { AI_PROMPTS } from "@/lib/prompts"
 import { TRENDING_PRODUCTS } from "@/constants/products"
@@ -44,6 +45,8 @@ export const MainContent = async () => {
       <div className="flex w-full flex-1 flex-col">
         <ProductList products={products} />
       </div>
+
+      <FaqSection />
     </div>
   )
 }

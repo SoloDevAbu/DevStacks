@@ -1,5 +1,6 @@
 "use client"
 
+import Link from "next/link"
 import { Eye, Heart, Bookmark } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -10,6 +11,7 @@ import { VerifiedBadge } from "@/components/shared/verified-badge"
 import { SectionHeader } from "@/components/shared/section-header"
 import { ProductLogo } from "@/components/shared/product-logo"
 import { TIER, PRICING, type Tier, type Pricing } from "@/constants/tiers"
+import { ROUTES } from "@/constants/routes"
 import {
   tierCardBg,
   tierContentBg,
@@ -33,7 +35,7 @@ type TrendingItem = {
 }
 
 export const TrendingNow = () => {
-  const { data, isLoading } = useTrending(3)
+  const { data } = useTrending(3)
 
   const products = data ?? TRENDING_PRODUCTS.slice(0, 3).map((p, i) => ({
     id: p.id,
@@ -54,6 +56,7 @@ export const TrendingNow = () => {
         title="Trending right now"
         subtitle="Top trending products across the ecosystem"
         viewAllText="View all trending"
+        viewAllHref={ROUTES.TRENDING}
       />
       <div className="flex flex-col">
         {(products as TrendingItem[]).map((product, index) => {
@@ -90,17 +93,27 @@ export const TrendingNow = () => {
                 <div className="w-5 shrink-0 text-center text-sm font-bold text-slate-500">
                   {index + 1}
                 </div>
-                <ProductLogo
-                  text={product.name.slice(0, 2).toUpperCase()}
-                  bgColor="bg-slate-900"
-                  textColor="text-white"
-                  className="size-10 shrink-0 overflow-hidden rounded-lg"
-                />
+                <Link
+                  href={`/products/${product.slug}`}
+                  className="shrink-0 transition-opacity hover:opacity-80"
+                >
+                  <ProductLogo
+                    text={product.name.slice(0, 2).toUpperCase()}
+                    bgColor="bg-slate-900"
+                    textColor="text-white"
+                    className="size-10 overflow-hidden rounded-lg"
+                  />
+                </Link>
 
                 <div className="flex min-w-0 flex-1 flex-col gap-1">
                   <div className="flex items-center gap-1.5">
                     <h3 className="truncate text-sm font-bold text-slate-900">
-                      {product.name}
+                      <Link
+                        href={`/products/${product.slug}`}
+                        className="transition-colors hover:text-indigo-600"
+                      >
+                        {product.name}
+                      </Link>
                     </h3>
                     <VerifiedBadge tier={tier} />
                   </div>

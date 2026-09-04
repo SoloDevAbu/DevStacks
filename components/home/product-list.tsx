@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import Link from "next/link"
 import { ArrowUp, Bookmark } from "lucide-react"
 import { Eye } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
@@ -132,17 +133,27 @@ export const ProductList = ({
                 </div>
               </div>
 
-              <ProductLogo
-                text={product.name.slice(0, 2).toUpperCase()}
-                bgColor="bg-slate-900"
-                textColor="text-white"
-                className="size-14 shrink-0 overflow-hidden rounded-xl border border-slate-200 text-xl"
-              />
+              <Link
+                href={`/products/${product.slug}`}
+                className="shrink-0 transition-opacity hover:opacity-80"
+              >
+                <ProductLogo
+                  text={product.name.slice(0, 2).toUpperCase()}
+                  bgColor="bg-slate-900"
+                  textColor="text-white"
+                  className="size-14 overflow-hidden rounded-xl border border-slate-200 text-xl"
+                />
+              </Link>
 
               <div className="flex min-w-0 flex-1 flex-col gap-1">
                 <div className="flex items-center gap-2">
                   <h3 className="truncate text-base font-bold text-slate-900">
-                    {product.name}
+                    <Link
+                      href={`/products/${product.slug}`}
+                      className="transition-colors hover:text-indigo-600"
+                    >
+                      {product.name}
+                    </Link>
                   </h3>
                   <VerifiedBadge tier={tier} />
                   {showTrendingBadge && isTrending && (

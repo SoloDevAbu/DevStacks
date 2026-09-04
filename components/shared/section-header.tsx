@@ -1,10 +1,11 @@
 import Link from "next/link"
+import { ROUTES } from "@/constants/routes"
 
 export const SectionHeader = ({
   title,
   subtitle,
   viewAllText,
-  viewAllHref = "#",
+  viewAllHref = ROUTES.DISCOVER,
 }: {
   title: string
   subtitle: string
