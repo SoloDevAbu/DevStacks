@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { getProductBySlug } from "@/db/queries/products/get"
+import { resolveProduct } from "@/lib/products/resolve-product"
 
 export const GET = async (
   _req: NextRequest,
@@ -12,7 +12,7 @@ export const GET = async (
       return NextResponse.json({ error: "Invalid slug" }, { status: 400 })
     }
 
-    const product = await getProductBySlug(slug)
+    const product = await resolveProduct(slug)
 
     if (!product) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 })

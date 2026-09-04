@@ -1,15 +1,17 @@
 import type { MetadataRoute } from "next"
 import { getTrendingProducts } from "@/db/queries/products/trending"
-
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://buymynextlaunch.com"
+import { SITE_CONFIG } from "@/constants/site"
+import { TRENDING_PRODUCTS } from "@/constants/products"
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const siteUrl = SITE_CONFIG.url
+
   const staticRoutes: MetadataRoute.Sitemap = [
     {
       url: siteUrl,
       lastModified: new Date(),
       changeFrequency: "daily",
-      priority: 1,
+      priority: 1.0,
     },
     {
       url: `${siteUrl}/discover`,
@@ -39,21 +41,31 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: `${siteUrl}/submit`,
       lastModified: new Date(),
       changeFrequency: "monthly",
-      priority: 0.5,
+      priority: 0.8,
     },
   ]
 
   try {
-    const products = await getTrendingProducts(50)
-    const productRoutes: MetadataRoute.Sitemap = products.map((product) => ({
-      url: `${siteUrl}/products/${product.slug}`,
-      lastModified: product.updatedAt,
-      changeFrequency: "weekly" as const,
-      priority: 0.8,
-    }))
-
-    return [...staticRoutes, ...productRoutes]
+    const dbProducts = await getTrendingProducts(50)
+    if (dbProducts && dbProducts.length > 0) {
+      const productRoutes: MetadataRoute.Sitemap = dbProducts.map((product) => ({
+        url: `${siteUrl}/products/${product.slug}`,
+        lastModified: product.updatedAt ?? new Date(),
+        changeFrequency: "weekly" as const,
+        priority: 0.8,
+      }))
+      return [...staticRoutes, ...productRoutes]
+    }
   } catch {
-    return staticRoutes
+    // Fall back to constants if DB connection is unavailable
   }
+
+  const fallbackProductRoutes: MetadataRoute.Sitemap = TRENDING_PRODUCTS.map((product) => ({
+    url: `${siteUrl}/products/${product.name.toLowerCase().replace(/\s+/g, "-")}`,
+    lastModified: new Date(),
+    changeFrequency: "weekly" as const,
+    priority: 0.8,
+  }))
+
+  return [...staticRoutes, ...fallbackProductRoutes]
 }

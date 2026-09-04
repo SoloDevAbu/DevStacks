@@ -1,6 +1,5 @@
 import type { MetadataRoute } from "next"
-
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://buymynextlaunch.com"
+import { SITE_CONFIG } from "@/constants/site"
 
 export default function robots(): MetadataRoute.Robots {
   return {
@@ -8,21 +7,45 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/api/", "/admin/"],
+        disallow: ["/api/users", "/admin/"],
       },
       {
-        userAgent: "GPTBot",
+        userAgent: [
+          "Googlebot",
+          "Bingbot",
+          "DuckDuckBot",
+          "Slurp",
+          "Baiduspider",
+          "YandexBot",
+        ],
         allow: "/",
+        disallow: ["/api/users", "/admin/"],
       },
+      // AI Crawlers, Answer Engines & LLM Agents
       {
-        userAgent: "Claude-Web",
+        userAgent: [
+          "GPTBot",
+          "ChatGPT-User",
+          "OAI-SearchBot",
+          "ClaudeBot",
+          "Claude-Web",
+          "anthropic-ai",
+          "PerplexityBot",
+          "Google-Extended",
+          "GoogleOther",
+          "Applebot-Extended",
+          "Applebot",
+          "Amazonbot",
+          "cohere-ai",
+          "Meta-ExternalAgent",
+          "FacebookBot",
+          "Bytespider",
+        ],
         allow: "/",
-      },
-      {
-        userAgent: "PerplexityBot",
-        allow: "/",
+        disallow: ["/api/users", "/admin/"],
       },
     ],
-    sitemap: `${siteUrl}/sitemap.xml`,
+    sitemap: `${SITE_CONFIG.url}/sitemap.xml`,
+    host: SITE_CONFIG.url,
   }
 }

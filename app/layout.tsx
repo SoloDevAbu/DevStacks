@@ -7,56 +7,54 @@ import { LeftSidebar } from "@/components/home/left-sidebar"
 import { RightSidebar } from "@/components/home/right-sidebar"
 import { Providers } from "@/app/providers"
 
+import { SITE_CONFIG } from "@/constants/site"
+import { organizationSchema, websiteSchema } from "@/lib/seo/schema"
+
 import "./globals.css"
 import { cn } from "@/lib/utils"
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://buymynextlaunch.com"
-
 export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
+  metadataBase: new URL(SITE_CONFIG.url),
   title: {
-    default: "BuyMyNextLaunch — Discover Developer Tools & Products",
-    template: "%s | BuyMyNextLaunch",
+    default: `${SITE_CONFIG.name} — ${SITE_CONFIG.tagline}`,
+    template: `%s | ${SITE_CONFIG.name}`,
   },
-  description:
-    "Discover developer tools, APIs, and infrastructure products. See what developers are building and find your next essential tool.",
-  keywords: [
-    "developer tools",
-    "API discovery",
-    "software products",
-    "developer infrastructure",
-    "SaaS tools",
-    "open source",
-    "devtools marketplace",
-  ],
-  authors: [{ name: "BuyMyNextLaunch" }],
-  creator: "BuyMyNextLaunch",
-  publisher: "BuyMyNextLaunch",
+  description: SITE_CONFIG.description,
+  keywords: [...SITE_CONFIG.keywords],
+  authors: [{ name: SITE_CONFIG.name, url: SITE_CONFIG.url }],
+  creator: SITE_CONFIG.creator,
+  publisher: SITE_CONFIG.publisher,
+  category: "technology",
+  applicationName: SITE_CONFIG.name,
   robots: {
     index: true,
     follow: true,
-    googleBot: { index: true, follow: true, "max-image-preview": "large" },
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: siteUrl,
-    siteName: "BuyMyNextLaunch",
-    title: "BuyMyNextLaunch — Discover Developer Tools & Products",
-    description:
-      "Discover developer tools, APIs, and infrastructure products. See what developers are building.",
+    url: SITE_CONFIG.url,
+    siteName: SITE_CONFIG.name,
+    title: `${SITE_CONFIG.name} — ${SITE_CONFIG.tagline}`,
+    description: SITE_CONFIG.description,
   },
   twitter: {
     card: "summary_large_image",
-    title: "BuyMyNextLaunch — Discover Developer Tools & Products",
-    description:
-      "Discover developer tools, APIs, and infrastructure products.",
+    title: `${SITE_CONFIG.name} — ${SITE_CONFIG.tagline}`,
+    description: SITE_CONFIG.description,
+    creator: "@devstacks",
   },
   alternates: {
-    canonical: siteUrl,
+    canonical: SITE_CONFIG.url,
   },
 }
-
 
 const fontSans = Geist({
   subsets: ["latin"],
@@ -70,6 +68,9 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const orgSchema = organizationSchema()
+  const webSchema = websiteSchema()
+
   return (
     <html
       lang="en"
@@ -82,6 +83,14 @@ export default function RootLayout({
       )}
     >
       <body>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(orgSchema) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(webSchema) }}
+        />
         <Providers>
           <div className="flex min-h-dvh flex-col bg-slate-50/30">
             {/* --- TOP ROW (Navbar) --- */}
