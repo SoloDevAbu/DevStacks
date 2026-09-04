@@ -14,7 +14,7 @@ import { submitBuildSchema } from "@/lib/validation/build"
 import { useSession } from "@/lib/auth/client"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
-const DEMO_LOGO_BG = "bg-slate-900 text-white"
+const DEFAULT_BUILD_LOGO_BG = "bg-slate-900 text-white"
 
 const emptyForm = {
   name: "",
@@ -60,7 +60,7 @@ export const ShowcaseContent = () => {
       name: form.name,
       description: form.description,
       logoText: form.logoText || form.name.slice(0, 2).toUpperCase(),
-      logoBg: DEMO_LOGO_BG,
+      logoBg: DEFAULT_BUILD_LOGO_BG,
       productIds: [],
     })
 
@@ -75,7 +75,7 @@ export const ShowcaseContent = () => {
         name: form.name,
         description: form.description,
         logoText: form.logoText || form.name.slice(0, 2).toUpperCase(),
-        logoBg: DEMO_LOGO_BG,
+        logoBg: DEFAULT_BUILD_LOGO_BG,
         productIds: [],
       },
       {

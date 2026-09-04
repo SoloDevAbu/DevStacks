@@ -1,11 +1,26 @@
 import { NextResponse } from "next/server"
 import { SITE_CONFIG } from "@/constants/site"
-import { TRENDING_PRODUCTS, BUILDING_BLOCKS } from "@/constants/products"
+import { getProducts } from "@/db/queries/products/list"
+import { getTrendingProducts } from "@/db/queries/products/trending"
 
-export const dynamic = "force-static"
 export const revalidate = 86400
 
-export const GET = () => {
+export const GET = async () => {
+  let buildingBlocks: Awaited<ReturnType<typeof getProducts>> = []
+  let featuredTools: Awaited<ReturnType<typeof getTrendingProducts>> = []
+
+  try {
+    const [blocks, tools] = await Promise.all([
+      getProducts({ sortBy: "builds", limit: 6 }),
+      getTrendingProducts(10),
+    ])
+    buildingBlocks = blocks ?? []
+    featuredTools = tools ?? []
+  } catch {
+    buildingBlocks = []
+    featuredTools = []
+  }
+
   const content = `# ${SITE_CONFIG.name}
 
 > ${SITE_CONFIG.description}
@@ -22,10 +37,10 @@ ${SITE_CONFIG.name} (${SITE_CONFIG.domain}) is a curated discovery directory and
 - [Submit a Product](${SITE_CONFIG.url}/submit): Submission portal for developers and founders to list developer tools.
 
 ## Popular Developer Building Blocks
-${BUILDING_BLOCKS.map((b) => `- [${b.name}](${SITE_CONFIG.url}/products/${b.name.toLowerCase().replace(/\s+/g, "-")}): ${b.category} (${b.builds} builds)`).join("\n")}
+${buildingBlocks.map((b) => `- [${b.name}](${SITE_CONFIG.url}/products/${b.slug}): ${b.category ?? "Tool"} (${b.buildsCount} builds)`).join("\n")}
 
 ## Featured Developer Tools
-${TRENDING_PRODUCTS.slice(0, 10).map((p) => `- [${p.name}](${SITE_CONFIG.url}/products/${p.name.toLowerCase().replace(/\s+/g, "-")}): ${p.tagline} (Tags: ${p.tags.join(", ")})`).join("\n")}
+${featuredTools.map((p) => `- [${p.name}](${SITE_CONFIG.url}/products/${p.slug}): ${p.tagline} (Tags: ${(p.tags ?? []).join(", ")})`).join("\n")}
 
 ## API Access
 - GET ${SITE_CONFIG.url}/api/products: JSON list of approved developer tools.

@@ -23,7 +23,7 @@ export const createProduct = async (
 
   const [product] = await db
     .insert(products)
-    .values({ ...data, slug, status: "pending" })
+    .values({ ...data, slug, status: "approved" })
     .returning()
 
   return product

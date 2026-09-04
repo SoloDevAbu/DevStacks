@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import { BuiltWithContent } from "@/components/built-with/built-with-content"
 import { breadcrumbSchema, itemListSchema } from "@/lib/seo/schema"
 import { SITE_CONFIG } from "@/constants/site"
-import { BUILDING_BLOCKS } from "@/constants/products"
+import { getProducts } from "@/db/queries/products/list"
 
 export const metadata: Metadata = {
   title: "Built With — Developer Products & Tools Directory",
@@ -34,17 +34,24 @@ export const metadata: Metadata = {
   },
 }
 
-export default function BuiltWithPage() {
+export default async function BuiltWithPage() {
   const breadcrumbs = breadcrumbSchema([
     { name: "Home", url: SITE_CONFIG.url },
     { name: "Built With", url: `${SITE_CONFIG.url}/built-with` },
   ])
 
+  let products: Awaited<ReturnType<typeof getProducts>> = []
+  try {
+    products = await getProducts({ sortBy: "builds", limit: 20 })
+  } catch {
+    products = []
+  }
+
   const items = itemListSchema(
-    BUILDING_BLOCKS.map((b) => ({
+    (products ?? []).map((b) => ({
       name: b.name,
-      url: `${SITE_CONFIG.url}/products/${b.name.toLowerCase().replace(/\s+/g, "-")}`,
-      description: `${b.category} - Used in ${b.builds} verified projects`,
+      url: `${SITE_CONFIG.url}/products/${b.slug}`,
+      description: `${b.tagline} - Used in ${b.buildsCount} verified projects`,
     }))
   )
 

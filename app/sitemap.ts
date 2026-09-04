@@ -1,7 +1,6 @@
 import type { MetadataRoute } from "next"
 import { getTrendingProducts } from "@/db/queries/products/trending"
 import { SITE_CONFIG } from "@/constants/site"
-import { TRENDING_PRODUCTS } from "@/constants/products"
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const siteUrl = SITE_CONFIG.url
@@ -57,15 +56,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       return [...staticRoutes, ...productRoutes]
     }
   } catch {
-    // Fall back to constants if DB connection is unavailable
+    // Return static routes if DB is temporarily unreachable
   }
 
-  const fallbackProductRoutes: MetadataRoute.Sitemap = TRENDING_PRODUCTS.map((product) => ({
-    url: `${siteUrl}/products/${product.name.toLowerCase().replace(/\s+/g, "-")}`,
-    lastModified: new Date(),
-    changeFrequency: "weekly" as const,
-    priority: 0.8,
-  }))
-
-  return [...staticRoutes, ...fallbackProductRoutes]
+  return staticRoutes
 }

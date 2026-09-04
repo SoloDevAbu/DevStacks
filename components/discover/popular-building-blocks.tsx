@@ -1,12 +1,19 @@
+"use client"
+
 import Link from "next/link"
 import { Card, CardContent } from "@/components/ui/card"
-import { cn } from "@/lib/utils"
 import { VerifiedBadge } from "@/components/shared/verified-badge"
 import { SectionHeader } from "@/components/shared/section-header"
-import { BUILDING_BLOCKS } from "@/constants/products"
+import { ProductLogo } from "@/components/shared/product-logo"
 import { ROUTES } from "@/constants/routes"
+import { useProducts } from "@/hooks/products/use-products"
+import type { DbProduct } from "@/components/home/product-list"
+import type { Tier } from "@/constants/tiers"
 
 export const PopularBuildingBlocks = () => {
+  const { data, isLoading } = useProducts({ sortBy: "builds", limit: 6 })
+  const products = (data ?? []) as DbProduct[]
+
   return (
     <section>
       <SectionHeader
@@ -16,41 +23,49 @@ export const PopularBuildingBlocks = () => {
         viewAllHref={ROUTES.BUILT_WITH}
       />
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-2 2xl:grid-cols-3">
-        {BUILDING_BLOCKS.map((block) => {
-          const slug = block.name.toLowerCase().replace(/\s+/g, "-")
-          return (
-            <Link key={block.name} href={`/products/${slug}`} className="block">
-              <Card className="group h-full cursor-pointer rounded-none bg-white transition-colors hover:border-slate-300">
-                <CardContent className="flex flex-col gap-3 p-4">
-                  <div className="flex items-center gap-3">
-                    <div
-                      className={cn(
-                        "flex size-10 shrink-0 items-center justify-center rounded-lg text-lg font-bold",
-                        block.logoBg
-                      )}
-                    >
-                      {block.logo}
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-1.5">
-                        <h3 className="truncate text-sm font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">
-                          {block.name}
-                        </h3>
-                        <VerifiedBadge tier={block.tier} />
+        {isLoading ? (
+          Array.from({ length: 6 }).map((_, i) => (
+            <Card key={i} className="h-28 rounded-none border border-slate-200 animate-pulse bg-slate-50/50" />
+          ))
+        ) : products.length === 0 ? (
+          <div className="col-span-full py-8 text-center text-sm text-slate-400">
+            No building blocks available yet.
+          </div>
+        ) : (
+          products.map((product) => {
+            const category = product.category ?? product.tags?.[0] ?? "Developer Tool"
+            return (
+              <Link key={product.id} href={`/products/${product.slug}`} className="block">
+                <Card className="group h-full cursor-pointer rounded-none bg-white transition-colors hover:border-slate-300">
+                  <CardContent className="flex flex-col gap-3 p-4">
+                    <div className="flex items-center gap-3">
+                      <ProductLogo
+                        text={product.name.slice(0, 2).toUpperCase()}
+                        bgColor="bg-slate-900"
+                        textColor="text-white"
+                        className="size-10 shrink-0 overflow-hidden rounded-lg font-bold"
+                      />
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-1.5">
+                          <h3 className="truncate text-sm font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">
+                            {product.name}
+                          </h3>
+                          <VerifiedBadge tier={(product.tier ?? "free") as Tier} />
+                        </div>
+                        <p className="text-xs font-semibold text-blue-600">
+                          {product.buildsCount} builds
+                        </p>
                       </div>
-                      <p className="text-xs font-semibold text-blue-600">
-                        {block.builds} builds
-                      </p>
                     </div>
-                  </div>
-                  <p className="mt-auto text-xs font-medium text-slate-500">
-                    {block.category}
-                  </p>
-                </CardContent>
-              </Card>
-            </Link>
-          )
-        })}
+                    <p className="mt-auto text-xs font-medium text-slate-500">
+                      {category}
+                    </p>
+                  </CardContent>
+                </Card>
+              </Link>
+            )
+          })
+        )}
       </div>
     </section>
   )

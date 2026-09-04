@@ -6,10 +6,11 @@ import { cn } from "@/lib/utils"
 import { VerifiedBadge } from "@/components/shared/verified-badge"
 import { SectionHeader } from "@/components/shared/section-header"
 import { useRecentlyAdded } from "@/hooks/products/use-recently-added"
-import { RECENTLY_ADDED } from "@/constants/products"
 import { ROUTES } from "@/constants/routes"
 
 type RecentItem = {
+  id: string
+  slug: string
   name: string
   desc: string
   category: string
@@ -19,19 +20,29 @@ type RecentItem = {
 }
 
 export const RecentlyAdded = () => {
-  const { data } = useRecentlyAdded(6)
+  const { data, isLoading } = useRecentlyAdded(6)
 
-  const items = data
-    ? data.map((p: { id: string; name: string; tagline: string; category: string | null; tier: string }) => ({
-        id: p.id,
-        name: p.name,
-        desc: p.tagline,
-        category: p.category ?? "Product",
-        logo: p.name.slice(0, 1).toUpperCase(),
-        logoBg: "bg-slate-900 text-white",
-        tier: p.tier as "free" | "premium" | "premium+",
-      }))
-    : RECENTLY_ADDED
+  const items: RecentItem[] = data
+    ? data.map(
+        (p: {
+          id: string
+          slug?: string
+          name: string
+          tagline: string
+          category: string | null
+          tier: string
+        }) => ({
+          id: p.id,
+          slug: p.slug ?? p.name.toLowerCase().replace(/\s+/g, "-"),
+          name: p.name,
+          desc: p.tagline,
+          category: p.category ?? "Product",
+          logo: p.name.slice(0, 1).toUpperCase(),
+          logoBg: "bg-slate-900 text-white",
+          tier: (p.tier as "free" | "premium" | "premium+") ?? "free",
+        })
+      )
+    : []
 
   return (
     <section>
@@ -42,10 +53,17 @@ export const RecentlyAdded = () => {
         viewAllHref={ROUTES.DISCOVER}
       />
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-1 2xl:grid-cols-2">
-        {(items as RecentItem[]).map((item) => {
-          const slug = item.name.toLowerCase().replace(/\s+/g, "-")
-          return (
-            <Link key={item.name} href={`/products/${slug}`} className="block">
+        {isLoading ? (
+          Array.from({ length: 6 }).map((_, i) => (
+            <Card key={i} className="h-20 rounded-none border border-slate-200 animate-pulse bg-slate-50/50" />
+          ))
+        ) : items.length === 0 ? (
+          <div className="col-span-full py-8 text-center text-sm text-slate-400">
+            No recently added products yet.
+          </div>
+        ) : (
+          items.map((item) => (
+            <Link key={item.id} href={`/products/${item.slug}`} className="block">
               <Card className="group cursor-pointer rounded-none bg-white transition-colors hover:border-slate-300">
                 <CardContent className="flex items-center gap-3 p-4">
                   <div
@@ -73,8 +91,8 @@ export const RecentlyAdded = () => {
                 </CardContent>
               </Card>
             </Link>
-          )
-        })}
+          ))
+        )}
       </div>
     </section>
   )

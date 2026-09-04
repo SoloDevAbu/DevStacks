@@ -5,6 +5,8 @@ import { ArrowUp, Bookmark, ExternalLink, Code2 } from "lucide-react"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { useUpvote } from "@/hooks/products/use-upvote"
 import { useBookmark } from "@/hooks/products/use-bookmark"
+import { useSession } from "@/lib/auth/client"
+import { useAuthModal } from "@/hooks/auth/use-auth-modal"
 import { cn } from "@/lib/utils"
 
 interface ProductActionButtonsProps {
@@ -14,37 +16,55 @@ interface ProductActionButtonsProps {
   githubUrl?: string | null
 }
 
-const DEMO_USER_ID = "demo-user"
-
 export const ProductActionButtons = ({
   slug,
   initialUpvotes,
   websiteUrl,
   githubUrl,
 }: ProductActionButtonsProps) => {
+  const { data: session } = useSession()
+  const { requireAuth } = useAuthModal()
   const upvoteMutation = useUpvote()
   const bookmarkMutation = useBookmark()
   const [upvotes, setUpvotes] = useState(initialUpvotes)
   const [isBookmarked, setIsBookmarked] = useState(false)
 
   const handleUpvote = () => {
-    upvoteMutation.mutate(
-      { slug, userId: DEMO_USER_ID },
+    requireAuth(
+      () => {
+        if (!session?.user?.id) return
+        upvoteMutation.mutate(
+          { slug, userId: session.user.id },
+          {
+            onSuccess: (data) => {
+              setUpvotes(data.upvotesCount)
+            },
+          }
+        )
+      },
       {
-        onSuccess: (data) => {
-          setUpvotes(data.upvotesCount)
-        },
+        title: "Sign in to upvote",
+        description: "Sign in with your Google account to upvote and support developer tools.",
       }
     )
   }
 
   const handleBookmark = () => {
-    bookmarkMutation.mutate(
-      { slug, userId: DEMO_USER_ID },
+    requireAuth(
+      () => {
+        if (!session?.user?.id) return
+        bookmarkMutation.mutate(
+          { slug, userId: session.user.id },
+          {
+            onSuccess: (data) => {
+              setIsBookmarked(data.action === "added")
+            },
+          }
+        )
+      },
       {
-        onSuccess: (data) => {
-          setIsBookmarked(data.action === "added")
-        },
+        title: "Sign in to bookmark",
+        description: "Sign in with your Google account to bookmark tools to your library.",
       }
     )
   }

@@ -8,7 +8,7 @@ import { SITE_CONFIG } from "@/constants/site"
 import { ROUTES } from "@/constants/routes"
 import { AI_PROVIDERS } from "@/constants/ai-providers"
 import { AI_PROMPTS } from "@/lib/prompts"
-import { TRENDING_PRODUCTS, BUILDING_BLOCKS, RECENTLY_ADDED } from "@/constants/products"
+import { getProducts } from "@/db/queries/products/list"
 import { productSchema, breadcrumbSchema, faqSchema } from "@/lib/seo/schema"
 import { ProductLogo } from "@/components/shared/product-logo"
 import { VerifiedBadge } from "@/components/shared/verified-badge"
@@ -24,18 +24,12 @@ interface ProductPageProps {
 }
 
 export const generateStaticParams = async () => {
-  const slugs = new Set<string>()
-  TRENDING_PRODUCTS.forEach((p) =>
-    slugs.add(p.name.toLowerCase().replace(/\s+/g, "-"))
-  )
-  BUILDING_BLOCKS.forEach((b) =>
-    slugs.add(b.name.toLowerCase().replace(/\s+/g, "-"))
-  )
-  RECENTLY_ADDED.forEach((r) =>
-    slugs.add(r.name.toLowerCase().replace(/\s+/g, "-"))
-  )
-
-  return Array.from(slugs).map((slug) => ({ slug }))
+  try {
+    const products = await getProducts({ limit: 50 })
+    return (products ?? []).map((p) => ({ slug: p.slug }))
+  } catch {
+    return []
+  }
 }
 
 export const generateMetadata = async ({

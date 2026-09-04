@@ -3,7 +3,6 @@ import { TrendingContent } from "@/components/trending/trending-content"
 import { breadcrumbSchema, itemListSchema } from "@/lib/seo/schema"
 import { getTrendingProducts } from "@/db/queries/products/trending"
 import { SITE_CONFIG } from "@/constants/site"
-import { TRENDING_PRODUCTS } from "@/constants/products"
 
 export const metadata: Metadata = {
   title: "Trending Developer Products & Tools",
@@ -41,31 +40,20 @@ export default async function TrendingPage() {
     { name: "Trending", url: `${siteUrl}/trending` },
   ])
 
-  let jsonLd = null
+  let products: Awaited<ReturnType<typeof getTrendingProducts>> = []
   try {
-    const products = await getTrendingProducts(15)
-    if (products && products.length > 0) {
-      jsonLd = itemListSchema(
-        products.map((p) => ({
-          name: p.name,
-          url: `${siteUrl}/products/${p.slug}`,
-          description: p.tagline,
-        }))
-      )
-    }
+    products = await getTrendingProducts(15)
   } catch {
-    // Fall back to static constants if DB unavailable
+    products = []
   }
 
-  if (!jsonLd) {
-    jsonLd = itemListSchema(
-      TRENDING_PRODUCTS.map((p) => ({
-        name: p.name,
-        url: `${siteUrl}/products/${p.name.toLowerCase().replace(/\s+/g, "-")}`,
-        description: p.tagline,
-      }))
-    )
-  }
+  const jsonLd = itemListSchema(
+    (products ?? []).map((p) => ({
+      name: p.name,
+      url: `${siteUrl}/products/${p.slug}`,
+      description: p.tagline,
+    }))
+  )
 
   return (
     <>

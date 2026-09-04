@@ -1,12 +1,37 @@
 import { NextResponse } from "next/server"
 import { SITE_CONFIG } from "@/constants/site"
-import { TRENDING_PRODUCTS, BUILDING_BLOCKS, DEVELOPER_BUILDS, RECENTLY_ADDED } from "@/constants/products"
 import { PLATFORMS } from "@/constants/platforms"
+import { getProducts } from "@/db/queries/products/list"
+import { getTrendingProducts } from "@/db/queries/products/trending"
+import { getRecentlyAddedProducts } from "@/db/queries/products/recently-added"
+import { getBuilds } from "@/db/queries/builds/list"
 
-export const dynamic = "force-static"
 export const revalidate = 86400
 
-export const GET = () => {
+export const GET = async () => {
+  let trendingProducts: Awaited<ReturnType<typeof getTrendingProducts>> = []
+  let buildingBlocks: Awaited<ReturnType<typeof getProducts>> = []
+  let devBuilds: Awaited<ReturnType<typeof getBuilds>> = []
+  let recentlyAdded: Awaited<ReturnType<typeof getRecentlyAddedProducts>> = []
+
+  try {
+    const [trending, blocks, buildsData, recent] = await Promise.all([
+      getTrendingProducts(15),
+      getProducts({ sortBy: "builds", limit: 10 }),
+      getBuilds({ limit: 10 }),
+      getRecentlyAddedProducts(10),
+    ])
+    trendingProducts = trending ?? []
+    buildingBlocks = blocks ?? []
+    devBuilds = buildsData ?? []
+    recentlyAdded = recent ?? []
+  } catch {
+    trendingProducts = []
+    buildingBlocks = []
+    devBuilds = []
+    recentlyAdded = []
+  }
+
   const content = `# ${SITE_CONFIG.name} — Comprehensive Directory & Ecosystem Specification
 
 > Platform: ${SITE_CONFIG.name} (${SITE_CONFIG.domain})
@@ -44,35 +69,35 @@ ${PLATFORMS.map((p) => `- **${p.label}**`).join("\n")}
 
 ## 3. Top Developer Tools & Products
 
-${TRENDING_PRODUCTS.map((p) => `### ${p.name}
-- Slug: ${p.name.toLowerCase().replace(/\s+/g, "-")}
-- URL: ${SITE_CONFIG.url}/products/${p.name.toLowerCase().replace(/\s+/g, "-")}
+${trendingProducts.map((p) => `### ${p.name}
+- Slug: ${p.slug}
+- URL: ${SITE_CONFIG.url}/products/${p.slug}
 - Tagline: ${p.tagline}
-- Tags: ${p.tags.join(", ")}
-- Community Upvotes: ${p.upvotes}
-- Builds Using Tool: ${p.builds}
+- Tags: ${(p.tags ?? []).join(", ")}
+- Community Upvotes: ${p.upvotesCount}
+- Builds Using Tool: ${p.buildsCount}
 `).join("\n")}
 
 ---
 
 ## 4. Popular Building Blocks ("Built With" Ecosystem)
 
-${BUILDING_BLOCKS.map((b) => `- **${b.name}** (${b.category}): Used in ${b.builds} verified developer projects. Page: ${SITE_CONFIG.url}/products/${b.name.toLowerCase().replace(/\s+/g, "-")}`).join("\n")}
+${buildingBlocks.map((b) => `- **${b.name}** (${b.category ?? "Tool"}): Used in ${b.buildsCount} verified developer projects. Page: ${SITE_CONFIG.url}/products/${b.slug}`).join("\n")}
 
 ---
 
 ## 5. Developer Project Showcases
 
-${DEVELOPER_BUILDS.map((b) => `- **${b.name}**: ${b.desc}
-  - Tech Stack: ${b.builtWith.join(" + ")}
-  - Metrics: ${b.views} views, ${b.likes} likes
+${devBuilds.map((b) => `- **${b.name}**: ${b.description}
+  - Tech Stack: ${(b.builtWith ?? []).map((t: { name: string }) => t.name).join(" + ")}
+  - Metrics: ${b.viewsCount} views, ${b.likesCount} likes
 `).join("\n")}
 
 ---
 
 ## 6. Recently Added Products
 
-${RECENTLY_ADDED.map((r) => `- **${r.name}** (${r.category}): ${r.desc}`).join("\n")}
+${recentlyAdded.map((r) => `- **${r.name}** (${r.category ?? "Product"}): ${r.tagline}`).join("\n")}
 
 ---
 
