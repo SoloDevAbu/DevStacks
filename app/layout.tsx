@@ -13,6 +13,8 @@ import { organizationSchema, websiteSchema } from "@/lib/seo/schema"
 import "./globals.css"
 import { cn } from "@/lib/utils"
 
+import { Analytics } from "@vercel/analytics/next"
+
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_CONFIG.url),
   title: {
@@ -127,7 +129,7 @@ export default function RootLayout({
               </aside>
 
               {/* Bottom Center (Main) */}
-              <main className="relative min-w-0 min-h-[calc(100vh-64px)] bg-white">
+              <main className="relative min-h-[calc(100vh-64px)] min-w-0 bg-white">
                 {children}
               </main>
 
@@ -138,6 +140,7 @@ export default function RootLayout({
             </div>
           </div>
         </Providers>
+        <Analytics />
       </body>
     </html>
   )
