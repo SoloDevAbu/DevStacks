@@ -1,4 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server"
+import { auth } from "@/lib/auth"
 import { getProducts } from "@/db/queries/products/list"
 import { createProduct } from "@/db/queries/products/create"
 import { submitProductSchema } from "@/lib/validation/product"
@@ -66,9 +67,24 @@ export const GET = async (req: NextRequest) => {
 }
 
 export const POST = async (req: NextRequest) => {
+
   try {
+    const session = await auth.api.getSession({
+      headers: req.headers,
+    })
+
+    if (!session?.user) {
+      return NextResponse.json(
+        { error: "Unauthorized. Please sign in to list a product." },
+        { status: 401 }
+      )
+    }
+
     const body = await req.json()
-    const parsed = submitProductSchema.safeParse(body)
+    const parsed = submitProductSchema.safeParse({
+      ...body,
+      submitterId: session.user.id,
+    })
 
     if (!parsed.success) {
       return NextResponse.json(
@@ -80,11 +96,13 @@ export const POST = async (req: NextRequest) => {
     const { tags, ...rest } = parsed.data
     const product = await createProduct({
       ...rest,
+      submitterId: session.user.id,
       tags: Array.isArray(tags) ? tags : [],
       platforms: rest.platforms ?? [],
     })
 
     return NextResponse.json({ data: product }, { status: 201 })
+
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : "Unknown error"
     if (message.includes("unique")) {

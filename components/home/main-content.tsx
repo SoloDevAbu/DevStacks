@@ -1,4 +1,4 @@
-import { ProductList } from "@/components/home/product-list"
+import { ProductList, type DbProduct } from "@/components/home/product-list"
 import { PageHeader } from "@/components/shared/page-header"
 import { FaqSection } from "@/components/home/faq-section"
 import { getTrendingProducts } from "@/db/queries/products/trending"
@@ -6,11 +6,17 @@ import { AI_PROMPTS } from "@/lib/prompts"
 import { TRENDING_PRODUCTS } from "@/constants/products"
 
 export const MainContent = async () => {
-  let products
+  let products: DbProduct[] = []
   try {
-    products = await getTrendingProducts(14)
+    const dbProducts = await getTrendingProducts(14)
+    if (dbProducts && dbProducts.length > 0) {
+      products = dbProducts as DbProduct[]
+    }
   } catch {
-    // Fall back to static data if DB is unavailable (e.g. during build)
+    // Fall back to static data if DB is unavailable
+  }
+
+  if (!products || products.length === 0) {
     products = TRENDING_PRODUCTS.map((p, i) => ({
       id: p.id,
       slug: p.name.toLowerCase().replace(/\s+/g, "-"),
@@ -33,6 +39,7 @@ export const MainContent = async () => {
       submitter: null,
     }))
   }
+
 
   return (
     <div className="relative flex min-h-full flex-col bg-slate-50/50">

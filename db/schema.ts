@@ -1,5 +1,7 @@
 import { defineRelations } from "drizzle-orm"
 import {
+  boolean,
+  index,
   integer,
   pgEnum,
   pgTable,
@@ -30,15 +32,20 @@ export const productStatusEnum = pgEnum("product_status", [
 ])
 
 // ---------------------------------------------------------------------------
-// users
+// users (Better Auth user table)
 // ---------------------------------------------------------------------------
 
 export const users = pgTable("users", {
-  id: text("id").primaryKey(), // auth-provider user ID (e.g. Clerk)
+  id: text("id").primaryKey(),
   name: text("name").notNull(),
   email: text("email").notNull().unique(),
+  emailVerified: boolean("email_verified").notNull().default(false),
+  image: text("image"),
   avatarUrl: text("avatar_url"),
-  createdAt: timestamp("created_at", { withTimezone: true })
+  createdAt: timestamp("created_at")
+    .notNull()
+    .defaultNow(),
+  updatedAt: timestamp("updated_at")
     .notNull()
     .defaultNow(),
 })
@@ -214,11 +221,104 @@ export const buildProducts = pgTable(
 )
 
 // ---------------------------------------------------------------------------
+// sessions (Better Auth session table)
+// ---------------------------------------------------------------------------
+
+export const sessions = pgTable(
+  "sessions",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    token: text("token").notNull().unique(),
+    expiresAt: timestamp("expires_at").notNull(),
+    ipAddress: text("ip_address"),
+    userAgent: text("user_agent"),
+    createdAt: timestamp("created_at")
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at")
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [index("sessions_userId_idx").on(table.userId)]
+)
+
+// ---------------------------------------------------------------------------
+// accounts (Better Auth account table)
+// ---------------------------------------------------------------------------
+
+export const accounts = pgTable(
+  "accounts",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    accountId: text("account_id").notNull(),
+    providerId: text("provider_id").notNull(),
+    issuer: text("issuer").notNull(),
+    accessToken: text("access_token"),
+    refreshToken: text("refresh_token"),
+    idToken: text("id_token"),
+    accessTokenExpiresAt: timestamp("access_token_expires_at"),
+    refreshTokenExpiresAt: timestamp("refresh_token_expires_at"),
+    scope: text("scope"),
+    password: text("password"),
+    createdAt: timestamp("created_at")
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at")
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    uniqueIndex("accounts_issuer_accountId_uidx").on(
+      table.issuer,
+      table.accountId
+    ),
+    index("accounts_userId_idx").on(table.userId),
+  ]
+)
+
+// ---------------------------------------------------------------------------
+// verifications (Better Auth verification tokens table)
+// ---------------------------------------------------------------------------
+
+export const verifications = pgTable(
+  "verifications",
+  {
+    id: text("id").primaryKey(),
+    identifier: text("identifier").notNull(),
+    value: text("value").notNull(),
+    expiresAt: timestamp("expires_at").notNull(),
+    createdAt: timestamp("created_at")
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at")
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [index("verifications_identifier_idx").on(table.identifier)]
+)
+
+// ---------------------------------------------------------------------------
 // Relations (Drizzle ORM v1 API)
 // ---------------------------------------------------------------------------
 
 export const relations = defineRelations(
-  { users, products, upvotes, bookmarks, comments, builds, buildProducts },
+  {
+    users,
+    products,
+    upvotes,
+    bookmarks,
+    comments,
+    builds,
+    buildProducts,
+    sessions,
+    accounts,
+  },
   (r) => ({
     users: {
       products: r.many.products(),
@@ -226,6 +326,20 @@ export const relations = defineRelations(
       bookmarks: r.many.bookmarks(),
       comments: r.many.comments(),
       builds: r.many.builds(),
+      sessions: r.many.sessions(),
+      accounts: r.many.accounts(),
+    },
+    sessions: {
+      user: r.one.users({
+        from: r.sessions.userId,
+        to: r.users.id,
+      }),
+    },
+    accounts: {
+      user: r.one.users({
+        from: r.accounts.userId,
+        to: r.users.id,
+      }),
     },
     products: {
       submitter: r.one.users({
@@ -294,6 +408,15 @@ export const relations = defineRelations(
 export type User = typeof users.$inferSelect
 export type NewUser = typeof users.$inferInsert
 
+export type Session = typeof sessions.$inferSelect
+export type NewSession = typeof sessions.$inferInsert
+
+export type Account = typeof accounts.$inferSelect
+export type NewAccount = typeof accounts.$inferInsert
+
+export type Verification = typeof verifications.$inferSelect
+export type NewVerification = typeof verifications.$inferInsert
+
 export type Product = typeof products.$inferSelect
 export type NewProduct = typeof products.$inferInsert
 
@@ -311,3 +434,4 @@ export type NewBuild = typeof builds.$inferInsert
 
 export type BuildProduct = typeof buildProducts.$inferSelect
 export type NewBuildProduct = typeof buildProducts.$inferInsert
+

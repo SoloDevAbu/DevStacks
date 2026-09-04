@@ -1,4 +1,7 @@
 import type { Metadata } from "next"
+import { headers } from "next/headers"
+import { redirect } from "next/navigation"
+import { auth } from "@/lib/auth"
 import { ShowcaseContent } from "@/components/showcase/showcase-content"
 import { SITE_CONFIG } from "@/constants/site"
 import { breadcrumbSchema } from "@/lib/seo/schema"
@@ -36,7 +39,21 @@ export const metadata: Metadata = {
   },
 }
 
-export default function ShowcasePage() {
+const ShowcasePage = async () => {
+  let session = null
+  try {
+    const headerList = await headers()
+    session = await auth.api.getSession({
+      headers: headerList,
+    })
+  } catch {
+    session = null
+  }
+
+  if (!session?.user) {
+    redirect("/?redirect=/showcase")
+  }
+
   const breadcrumbs = breadcrumbSchema([
     { name: "Home", url: SITE_CONFIG.url },
     { name: "Showcase", url: `${SITE_CONFIG.url}/showcase` },
@@ -52,3 +69,5 @@ export default function ShowcasePage() {
     </>
   )
 }
+
+export default ShowcasePage

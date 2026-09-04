@@ -1,6 +1,7 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import { PageHeader } from "@/components/shared/page-header"
 import { AI_PROMPTS } from "@/lib/prompts"
 import { Input } from "@/components/ui/input"
@@ -20,9 +21,8 @@ import { PRICING } from "@/constants/tiers"
 import { PLATFORMS } from "@/constants/platforms"
 import { useSubmitProduct } from "@/hooks/products/use-submit-product"
 import { submitProductSchema } from "@/lib/validation/product"
-import { z } from "zod"
-
-const DEMO_USER_ID = "demo-user"
+import { useSession } from "@/lib/auth/client"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 const emptyForm = {
   name: "",
@@ -55,7 +55,26 @@ export const SubmitContent = () => {
   const [errors, setErrors] = useState<Record<string, string[]>>({})
   const [submitted, setSubmitted] = useState(false)
 
-  const { mutate, isPending, isError, error } = useSubmitProduct()
+  const { data: session, isPending } = useSession()
+  const router = useRouter()
+  const { mutate, isPending: isSubmitting, isError, error } = useSubmitProduct()
+
+  useEffect(() => {
+    if (!isPending && !session?.user) {
+      router.replace("/?redirect=/submit")
+    }
+  }, [isPending, session?.user, router])
+
+  if (isPending || !session?.user) {
+    return (
+      <div className="relative flex min-h-[60vh] flex-col items-center justify-center gap-4 bg-slate-50/50 p-12 text-center">
+        <Loader2 className="size-8 animate-spin text-slate-400" />
+        <p className="text-sm text-slate-500">Checking authentication...</p>
+      </div>
+    )
+  }
+
+  const user = session.user
 
   const set = (key: keyof typeof emptyForm) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setForm((prev) => ({ ...prev, [key]: e.target.value }))
@@ -71,17 +90,15 @@ export const SubmitContent = () => {
     }))
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-
-    const parsed = submitProductSchema.safeParse({ ...form, submitterId: DEMO_USER_ID })
+  const executeSubmit = (userId: string) => {
+    const parsed = submitProductSchema.safeParse({ ...form, submitterId: userId })
     if (!parsed.success) {
       setErrors(parsed.error.flatten().fieldErrors as Record<string, string[]>)
       return
     }
 
     mutate(
-      { ...form, submitterId: DEMO_USER_ID },
+      { ...form, submitterId: userId },
       {
         onSuccess: () => {
           setSubmitted(true)
@@ -90,6 +107,11 @@ export const SubmitContent = () => {
         },
       }
     )
+  }
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    executeSubmit(user.id)
   }
 
   if (submitted) {
@@ -115,6 +137,21 @@ export const SubmitContent = () => {
         aiPrompt={AI_PROMPTS.home}
       />
 
+      {/* Auth Status Bar */}
+      <div className="border-b border-dashed border-border bg-white px-6 py-4 md:px-8">
+        <div className="flex items-center gap-3 text-xs text-slate-600">
+          <Avatar className="size-6 border border-border">
+            {user.image && <AvatarImage src={user.image} alt={user.name || "User"} />}
+            <AvatarFallback className="bg-slate-900 text-white text-[10px]">
+              {user.name?.slice(0, 2).toUpperCase() || "ME"}
+            </AvatarFallback>
+          </Avatar>
+          <span>
+            Submitting as <span className="font-semibold text-slate-900">{user.name || user.email}</span>
+          </span>
+        </div>
+      </div>
+
       <div className="flex w-full flex-1 flex-col bg-white">
         <form onSubmit={handleSubmit} className="flex flex-col">
           {/* Section: General Information */}
@@ -123,6 +160,7 @@ export const SubmitContent = () => {
               <h2 className="text-lg font-bold text-slate-900">General Information</h2>
               <p className="text-sm text-slate-500">The basic details about your product.</p>
             </div>
+
             <div className="flex flex-col gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="name">Product Name</Label>
@@ -321,8 +359,8 @@ export const SubmitContent = () => {
               <Button variant="outline" type="button" onClick={() => { setForm(emptyForm); setErrors({}) }}>
                 Cancel
               </Button>
-              <Button type="submit" disabled={isPending}>
-                {isPending ? (
+              <Button type="submit" disabled={isSubmitting}>
+                {isSubmitting ? (
                   <><Loader2 className="size-4 animate-spin" /> Submitting...</>
                 ) : (
                   "Submit Product"

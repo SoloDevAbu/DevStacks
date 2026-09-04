@@ -1,6 +1,7 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import { PageHeader } from "@/components/shared/page-header"
 import { AI_PROMPTS } from "@/lib/prompts"
 import { Input } from "@/components/ui/input"
@@ -10,8 +11,9 @@ import { Button } from "@/components/ui/button"
 import { CheckCircle2, AlertCircle, Loader2 } from "lucide-react"
 import { useSubmitBuild } from "@/hooks/builds/use-submit-build"
 import { submitBuildSchema } from "@/lib/validation/build"
+import { useSession } from "@/lib/auth/client"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
-const DEMO_USER_ID = "demo-user"
 const DEMO_LOGO_BG = "bg-slate-900 text-white"
 
 const emptyForm = {
@@ -26,19 +28,35 @@ export const ShowcaseContent = () => {
   const [errors, setErrors] = useState<Record<string, string[]>>({})
   const [submitted, setSubmitted] = useState(false)
 
-  const { mutate, isPending, isError, error } = useSubmitBuild()
+  const { data: session, isPending } = useSession()
+  const router = useRouter()
+  const { mutate, isPending: isSubmitting, isError, error } = useSubmitBuild()
+
+  useEffect(() => {
+    if (!isPending && !session?.user) {
+      router.replace("/?redirect=/showcase")
+    }
+  }, [isPending, session?.user, router])
+
+  if (isPending || !session?.user) {
+    return (
+      <div className="relative flex min-h-[60vh] flex-col items-center justify-center gap-4 bg-slate-50/50 p-12 text-center">
+        <Loader2 className="size-8 animate-spin text-slate-400" />
+        <p className="text-sm text-slate-500">Checking authentication...</p>
+      </div>
+    )
+  }
+
+  const user = session.user
 
   const set = (key: keyof typeof emptyForm) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setForm((prev) => ({ ...prev, [key]: e.target.value }))
     setErrors((prev) => ({ ...prev, [key]: [] }))
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-
-    // Client-side validation with Zod
+  const executeSubmit = (userId: string) => {
     const parsed = submitBuildSchema.safeParse({
-      authorId: DEMO_USER_ID,
+      authorId: userId,
       name: form.name,
       description: form.description,
       logoText: form.logoText || form.name.slice(0, 2).toUpperCase(),
@@ -53,7 +71,7 @@ export const ShowcaseContent = () => {
 
     mutate(
       {
-        authorId: DEMO_USER_ID,
+        authorId: userId,
         name: form.name,
         description: form.description,
         logoText: form.logoText || form.name.slice(0, 2).toUpperCase(),
@@ -68,6 +86,11 @@ export const ShowcaseContent = () => {
         },
       }
     )
+  }
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    executeSubmit(user.id)
   }
 
   if (submitted) {
@@ -90,6 +113,22 @@ export const ShowcaseContent = () => {
         description="Share what you've built and the tools you used to build it."
         aiPrompt={AI_PROMPTS.home}
       />
+
+      {/* Auth Status Bar */}
+      <div className="border-b border-dashed border-border bg-white px-6 py-4 md:px-8">
+        <div className="flex items-center gap-3 text-xs text-slate-600">
+          <Avatar className="size-6 border border-border">
+            {user.image && <AvatarImage src={user.image} alt={user.name || "User"} />}
+            <AvatarFallback className="bg-slate-900 text-white text-[10px]">
+              {user.name?.slice(0, 2).toUpperCase() || "ME"}
+            </AvatarFallback>
+          </Avatar>
+          <span>
+            Showcasing as <span className="font-semibold text-slate-900">{user.name || user.email}</span>
+          </span>
+        </div>
+      </div>
+
 
       <div className="flex w-full flex-1 flex-col bg-white">
         <form onSubmit={handleSubmit} className="flex flex-col">
@@ -146,8 +185,8 @@ export const ShowcaseContent = () => {
               <Button variant="outline" type="button" onClick={() => { setForm(emptyForm); setErrors({}) }}>
                 Cancel
               </Button>
-              <Button type="submit" disabled={isPending}>
-                {isPending ? (
+              <Button type="submit" disabled={isSubmitting}>
+                {isSubmitting ? (
                   <><Loader2 className="size-4 animate-spin" /> Submitting...</>
                 ) : (
                   "Submit Showcase"
