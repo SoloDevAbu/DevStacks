@@ -4,7 +4,9 @@ export const ROUTES = {
   TRENDING: "/trending",
   PRICING: "/pricing",
   SUBMIT: "/submit",
-  CATEGORIES: "#",
+  CATEGORIES: "/categories",
   BUILT_WITH: "/built-with",
   SHOWCASE: "/showcase",
+  PRODUCTS: "/products",
+  PRODUCT: (slug: string) => `/products/${slug}`,
 } as const
