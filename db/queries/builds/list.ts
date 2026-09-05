@@ -7,6 +7,7 @@ export type BuildListFilters = {
   authorId?: string
   page?: number
   limit?: number
+  sortBy?: "recent" | "likes" | "views"
 }
 
 export const getBuilds = async ({
@@ -14,6 +15,7 @@ export const getBuilds = async ({
   authorId,
   page = 1,
   limit = 20,
+  sortBy = "recent",
 }: BuildListFilters = {}) => {
   const safePage = Math.max(1, page)
   const safeLimit = Math.min(50, Math.max(1, limit))
@@ -31,6 +33,12 @@ export const getBuilds = async ({
     const buildIds = links.map((l) => l.buildId)
     if (buildIds.length === 0) return []
     conditions.push(inArray(builds.id, buildIds))
+  }
+
+  const orderMap = {
+    recent: desc(builds.createdAt),
+    likes: desc(builds.likesCount),
+    views: desc(builds.viewsCount),
   }
 
   const rows = await db
@@ -53,7 +61,7 @@ export const getBuilds = async ({
     .from(builds)
     .leftJoin(users, eq(builds.authorId, users.id))
     .where(conditions.length > 0 ? and(...conditions) : undefined)
-    .orderBy(desc(builds.createdAt))
+    .orderBy(orderMap[sortBy] ?? desc(builds.createdAt))
     .limit(safeLimit)
     .offset(offset)
 

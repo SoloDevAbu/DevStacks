@@ -32,7 +32,7 @@ export const DeveloperBuildsSection = () => {
         title="See what developers are building"
         subtitle="Real products built with the tools developers love"
         viewAllText="View all builds"
-        viewAllHref={ROUTES.SHOWCASE}
+        viewAllHref={ROUTES.BUILT_WITH}
       />
       <div
         className={cn(

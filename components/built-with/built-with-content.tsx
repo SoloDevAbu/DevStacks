@@ -8,29 +8,32 @@ export const BuiltWithContent = () => {
     <div className="relative flex min-h-full flex-col bg-slate-50/50">
       <PageHeader
         heading="Built With"
-        description="Explore the best products built with modern developer tools, APIs, and infrastructure"
-        aiPrompt={AI_PROMPTS.discover}
+        description="Explore real products and developer projects built with modern tools, APIs, and infrastructure"
+        aiPrompt={AI_PROMPTS.builtWith}
       />
 
       <div className="flex w-full flex-1 flex-col">
-        <Tabs defaultValue="products" className="flex w-full flex-col">
-          <div className="px-6 md:px-8">
-            <TabsList variant="line" className="w-full justify-start border-b border-slate-200 pb-0 gap-6">
-              <TabsTrigger value="products" className="text-sm pb-3 px-1">
-                Products
+        <Tabs defaultValue="all" className="flex w-full flex-col">
+          <div className="border-b border-dashed border-border bg-white px-6 md:px-8">
+            <TabsList
+              variant="line"
+              className="w-full justify-start gap-6 border-b-0 pb-0"
+            >
+              <TabsTrigger value="all" className="px-1 pb-3 text-sm">
+                Latest Builds
               </TabsTrigger>
-              <TabsTrigger value="trending" className="text-sm pb-3 px-1">
-                Trending
+              <TabsTrigger value="trending" className="px-1 pb-3 text-sm">
+                Most Liked
               </TabsTrigger>
             </TabsList>
           </div>
 
-          <TabsContent value="products" className="mt-0">
-            <BuiltWithList />
+          <TabsContent value="all" className="mt-0">
+            <BuiltWithList sortBy="recent" />
           </TabsContent>
 
           <TabsContent value="trending" className="mt-0">
-            <BuiltWithList showMedals={true} />
+            <BuiltWithList sortBy="likes" showMedals={true} />
           </TabsContent>
         </Tabs>
       </div>
