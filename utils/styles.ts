@@ -20,6 +20,12 @@ export const tierShimmerGradient = (tier: Tier) =>
 
 export const pricingBadgeColor = (pricing: Pricing) => PRICING_COLORS[pricing]
 
+export const sectionHeaderWrapper =
+  "flex items-center justify-between border-b border-dashed border-border bg-white px-6 py-4 md:px-8"
+
+export const sectionGridWrapper =
+  "grid grid-cols-1 gap-4 border-b border-dashed border-border px-6 py-6 md:px-8"
+
 export const sectionWrapper = "border-b border-dashed border-border px-6 py-8 md:px-8"
 
 export const upvoteButtonActive =

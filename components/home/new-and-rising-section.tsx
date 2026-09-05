@@ -1,12 +1,12 @@
 "use client"
 
+import { cn } from "@/lib/utils"
 import { Card } from "@/components/ui/card"
 import { SectionHeader } from "@/components/shared/section-header"
 import { ProductCard } from "@/components/shared/product-card"
 import { ROUTES } from "@/constants/routes"
 import { HOMEPAGE_LIMITS } from "@/constants/rankings"
 import { useNewAndRising } from "@/hooks/products/use-new-and-rising"
-import { sectionWrapper } from "@/utils/styles"
 import type { DbProduct } from "@/components/home/product-list"
 
 export const NewAndRisingSection = () => {
@@ -16,23 +16,26 @@ export const NewAndRisingSection = () => {
   const products = (data ?? []) as DbProduct[]
 
   return (
-    <section className={sectionWrapper}>
+    <section className="flex w-full flex-col">
       <SectionHeader
         title="New & Rising"
         subtitle="Recently added tools and products gaining attention"
         viewAllText="View all"
         viewAllHref={ROUTES.DISCOVER_NEW_RISING}
       />
-      <div className="flex flex-col">
+      <div className="-mt-px flex flex-col">
         {isLoading ? (
           Array.from({ length: HOMEPAGE_LIMITS.NEW_AND_RISING }).map((_, i) => (
             <Card
               key={i}
-              className="h-24 animate-pulse rounded-none border border-slate-200 bg-slate-50/50"
+              className={cn(
+                "h-24 animate-pulse rounded-none border border-slate-200 bg-slate-50/50",
+                i > 0 && "-mt-px"
+              )}
             />
           ))
         ) : products.length === 0 ? (
-          <div className="py-8 text-center text-sm text-slate-400">
+          <div className="border-b border-dashed border-border bg-white py-8 text-center text-sm text-slate-400">
             No newly submitted products in the discovery window yet. Be the
             first to launch!
           </div>

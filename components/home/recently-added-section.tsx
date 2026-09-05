@@ -8,7 +8,7 @@ import { SectionHeader } from "@/components/shared/section-header"
 import { useRecentlyAdded } from "@/hooks/products/use-recently-added"
 import { ROUTES } from "@/constants/routes"
 import { HOMEPAGE_LIMITS } from "@/constants/rankings"
-import { sectionWrapper, discoveryCard } from "@/utils/styles"
+import { sectionGridWrapper, discoveryCard } from "@/utils/styles"
 
 type RecentItem = {
   id: string
@@ -49,14 +49,19 @@ export const RecentlyAddedSection = () => {
     : []
 
   return (
-    <section className={sectionWrapper}>
+    <section className="flex w-full flex-col">
       <SectionHeader
         title="Recently Added"
         subtitle="Latest products and tools added by the community"
         viewAllText="View all"
         viewAllHref={ROUTES.DISCOVER_RECENTLY_ADDED}
       />
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-1 2xl:grid-cols-2">
+      <div
+        className={cn(
+          sectionGridWrapper,
+          "sm:grid-cols-2 xl:grid-cols-1 2xl:grid-cols-2"
+        )}
+      >
         {isLoading ? (
           Array.from({ length: HOMEPAGE_LIMITS.RECENTLY_ADDED }).map((_, i) => (
             <Card

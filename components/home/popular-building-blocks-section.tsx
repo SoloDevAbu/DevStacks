@@ -8,7 +8,8 @@ import { ProductLogo } from "@/components/shared/product-logo"
 import { ROUTES } from "@/constants/routes"
 import { HOMEPAGE_LIMITS } from "@/constants/rankings"
 import { usePopularBuildingBlocks } from "@/hooks/products/use-popular-building-blocks"
-import { sectionWrapper, discoveryCard } from "@/utils/styles"
+import { sectionGridWrapper, discoveryCard } from "@/utils/styles"
+import { cn } from "@/lib/utils"
 import type { DbProduct } from "@/components/home/product-list"
 import type { Tier } from "@/constants/tiers"
 
@@ -19,14 +20,19 @@ export const PopularBuildingBlocksSection = () => {
   const products = (data ?? []) as DbProduct[]
 
   return (
-    <section className={sectionWrapper}>
+    <section className="flex w-full flex-col">
       <SectionHeader
         title="Popular Building Blocks"
         subtitle="The tools developers are building with"
         viewAllText="View all tools"
         viewAllHref={ROUTES.DISCOVER_POPULAR_BUILDING_BLOCKS}
       />
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-2 2xl:grid-cols-3">
+      <div
+        className={cn(
+          sectionGridWrapper,
+          "sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-2 2xl:grid-cols-3"
+        )}
+      >
         {isLoading ? (
           Array.from({ length: HOMEPAGE_LIMITS.POPULAR_BUILDING_BLOCKS }).map(
             (_, i) => (
