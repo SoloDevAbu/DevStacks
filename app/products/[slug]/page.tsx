@@ -53,7 +53,12 @@ export const generateMetadata = async ({
   const canonicalUrl = `${SITE_CONFIG.url}/products/${product.slug}`
   const keywords = product.keywords
     ? product.keywords.split(",").map((k) => k.trim())
-    : [product.name, ...(product.tags ?? []), "developer tool", SITE_CONFIG.name]
+    : [
+        product.name,
+        ...(product.tags ?? []),
+        "developer tool",
+        SITE_CONFIG.name,
+      ]
 
   return {
     title,
@@ -165,7 +170,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
             Home
           </Link>
           <ChevronRight className="size-3 text-slate-400" />
-          <Link href={ROUTES.DISCOVER} className="hover:text-slate-900">
+          <Link href={ROUTES.PRODUCTS} className="hover:text-slate-900">
             Discover
           </Link>
           <ChevronRight className="size-3 text-slate-400" />
@@ -228,7 +233,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
           {/* Ask AI About This Tool (AEO / LLMO Integration) */}
           <div className="flex flex-col gap-2 rounded-xl border border-slate-200 bg-slate-50/70 p-4">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
+              <span className="text-xs font-bold tracking-wider text-slate-500 uppercase">
                 Ask AI Assistant about {product.name}
               </span>
             </div>
@@ -263,21 +268,29 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
           <main className="flex flex-col gap-8">
             {/* Overview / Description */}
             <section className="flex flex-col gap-3">
-              <h2 className="text-lg font-bold text-slate-900">About {product.name}</h2>
+              <h2 className="text-lg font-bold text-slate-900">
+                About {product.name}
+              </h2>
               <p className="text-sm leading-relaxed text-slate-600">
                 {product.description}
               </p>
             </section>
 
             {/* Deep Dive: Problem, Solution, Unique Value */}
-            {(product.problemStatement || product.solution || product.uniqueValue) && (
+            {(product.problemStatement ||
+              product.solution ||
+              product.uniqueValue) && (
               <section className="flex flex-col gap-6">
-                <h2 className="text-lg font-bold text-slate-900">Product Deep Dive</h2>
+                <h2 className="text-lg font-bold text-slate-900">
+                  Product Deep Dive
+                </h2>
                 <div className="grid grid-cols-1 gap-4">
                   {product.problemStatement && (
                     <Card className="rounded-none border-dashed bg-white">
                       <CardContent className="flex flex-col gap-2 p-5">
-                        <h3 className="text-sm font-bold text-slate-900">The Problem It Solves</h3>
+                        <h3 className="text-sm font-bold text-slate-900">
+                          The Problem It Solves
+                        </h3>
                         <p className="text-xs leading-relaxed text-slate-600">
                           {product.problemStatement}
                         </p>
@@ -288,7 +301,9 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
                   {product.solution && (
                     <Card className="rounded-none border-dashed bg-white">
                       <CardContent className="flex flex-col gap-2 p-5">
-                        <h3 className="text-sm font-bold text-slate-900">The Solution</h3>
+                        <h3 className="text-sm font-bold text-slate-900">
+                          The Solution
+                        </h3>
                         <p className="text-xs leading-relaxed text-slate-600">
                           {product.solution}
                         </p>
@@ -299,7 +314,9 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
                   {product.uniqueValue && (
                     <Card className="rounded-none border-dashed bg-white">
                       <CardContent className="flex flex-col gap-2 p-5">
-                        <h3 className="text-sm font-bold text-slate-900">What Makes It Unique</h3>
+                        <h3 className="text-sm font-bold text-slate-900">
+                          What Makes It Unique
+                        </h3>
                         <p className="text-xs leading-relaxed text-slate-600">
                           {product.uniqueValue}
                         </p>
@@ -313,7 +330,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
             {/* AI Summary / Citation Block (GEO / AEO) */}
             {product.aiContext && (
               <section className="flex flex-col gap-3 rounded-lg border border-indigo-100 bg-indigo-50/40 p-5">
-                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-indigo-700">
+                <div className="flex items-center gap-2 text-xs font-bold tracking-wider text-indigo-700 uppercase">
                   <Cpu className="size-4" /> AI Overview & Direct Answers
                 </div>
                 <p className="text-xs leading-relaxed text-slate-700">
@@ -324,12 +341,21 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
 
             {/* Q&A Section */}
             <section className="flex flex-col gap-4">
-              <h2 className="text-lg font-bold text-slate-900">Frequently Asked Questions</h2>
+              <h2 className="text-lg font-bold text-slate-900">
+                Frequently Asked Questions
+              </h2>
               <div className="flex flex-col gap-3">
                 {productFaqs.map((faq) => (
-                  <div key={faq.question} className="rounded-md border border-slate-200 bg-white p-4">
-                    <h3 className="text-sm font-semibold text-slate-900">{faq.question}</h3>
-                    <p className="mt-1 text-xs leading-relaxed text-slate-600">{faq.answer}</p>
+                  <div
+                    key={faq.question}
+                    className="rounded-md border border-slate-200 bg-white p-4"
+                  >
+                    <h3 className="text-sm font-semibold text-slate-900">
+                      {faq.question}
+                    </h3>
+                    <p className="mt-1 text-xs leading-relaxed text-slate-600">
+                      {faq.answer}
+                    </p>
                   </div>
                 ))}
               </div>
@@ -347,33 +373,45 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
                 <div className="flex flex-col gap-3 text-xs">
                   <div className="flex justify-between border-b border-slate-100 pb-2">
                     <span className="text-slate-500">Pricing Model</span>
-                    <span className="font-semibold text-slate-900">{product.pricing}</span>
+                    <span className="font-semibold text-slate-900">
+                      {product.pricing}
+                    </span>
                   </div>
 
                   <div className="flex justify-between border-b border-slate-100 pb-2">
                     <span className="text-slate-500">Tier Status</span>
-                    <span className="font-semibold text-slate-900 capitalize">{product.tier}</span>
+                    <span className="font-semibold text-slate-900 capitalize">
+                      {product.tier}
+                    </span>
                   </div>
 
                   <div className="flex justify-between border-b border-slate-100 pb-2">
                     <span className="text-slate-500">Category</span>
-                    <span className="font-semibold text-slate-900">{product.category ?? "Developer Tools"}</span>
+                    <span className="font-semibold text-slate-900">
+                      {product.category ?? "Developer Tools"}
+                    </span>
                   </div>
 
                   <div className="flex justify-between border-b border-slate-100 pb-2">
                     <span className="text-slate-500">Community Builds</span>
-                    <span className="font-semibold text-blue-600">{product.buildsCount} builds</span>
+                    <span className="font-semibold text-blue-600">
+                      {product.buildsCount} builds
+                    </span>
                   </div>
 
                   <div className="flex justify-between border-b border-slate-100 pb-2">
                     <span className="text-slate-500">Total Upvotes</span>
-                    <span className="font-semibold text-slate-900">{product.upvotesCount.toLocaleString()}</span>
+                    <span className="font-semibold text-slate-900">
+                      {product.upvotesCount.toLocaleString()}
+                    </span>
                   </div>
                 </div>
 
                 {product.platforms.length > 0 && (
                   <div className="mt-2 flex flex-col gap-2">
-                    <span className="text-xs font-bold text-slate-700">Supported Platforms</span>
+                    <span className="text-xs font-bold text-slate-700">
+                      Supported Platforms
+                    </span>
                     <div className="flex flex-wrap gap-1.5">
                       {product.platforms.map((plat) => (
                         <Badge
@@ -399,11 +437,12 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
                   Built with {product.name}?
                 </h3>
                 <p className="text-xs text-slate-500">
-                  Showcase what you created using {product.name} and get featured in the DevStacks directory.
+                  Showcase what you created using {product.name} and get
+                  featured in the DevStacks directory.
                 </p>
                 <Link
                   href={ROUTES.SHOWCASE}
-                  className="mt-1 inline-flex items-center justify-center rounded-md bg-white px-4 py-2 text-xs font-semibold text-slate-700 border border-slate-200 hover:bg-slate-50"
+                  className="mt-1 inline-flex items-center justify-center rounded-md border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50"
                 >
                   Showcase Your Build
                 </Link>

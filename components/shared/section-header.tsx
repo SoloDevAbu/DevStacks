@@ -5,7 +5,7 @@ export const SectionHeader = ({
   title,
   subtitle,
   viewAllText,
-  viewAllHref = ROUTES.DISCOVER,
+  viewAllHref = ROUTES.PRODUCTS,
 }: {
   title: string
   subtitle: string

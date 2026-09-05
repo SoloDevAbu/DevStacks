@@ -25,7 +25,7 @@ export const SIDEBAR_NAV: NavSection[] = [
     label: "Explore",
     items: [
       { name: "Home", icon: Home, href: ROUTES.HOME },
-      { name: "Products", icon: Package, href: ROUTES.DISCOVER },
+      { name: "Products", icon: Package, href: ROUTES.PRODUCTS },
       { name: "Trending", icon: TrendingUp, href: ROUTES.TRENDING },
       { name: "Categories", icon: Grid, href: ROUTES.CATEGORIES },
     ],
