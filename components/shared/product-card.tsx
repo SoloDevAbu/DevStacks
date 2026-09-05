@@ -1,0 +1,316 @@
+"use client"
+
+import { useState } from "react"
+import { useRouter } from "next/navigation"
+import { ArrowBigUp, Bookmark, Eye, ExternalLink, ArrowUp } from "lucide-react"
+import { Card, CardContent } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
+import { HoverOutline } from "@/components/shared/hover-outline"
+import { VerifiedBadge } from "@/components/shared/verified-badge"
+import { ProductLogo } from "@/components/shared/product-logo"
+import { TIER, type Tier, type Pricing } from "@/constants/tiers"
+import { ROUTES } from "@/constants/routes"
+import {
+  tierCardBg,
+  tierContentBg,
+  tierShimmerGradient,
+  pricingBadgeColor,
+  upvoteButtonActive,
+  upvoteButtonInactive,
+  bookmarkButtonActive,
+  bookmarkButtonInactive,
+} from "@/utils/styles"
+import { getOutboundUrl, getLinkRel } from "@/utils/products/urls"
+import { useUpvote } from "@/hooks/products/use-upvote"
+import { useBookmark } from "@/hooks/products/use-bookmark"
+import { useUserInteractions } from "@/hooks/products/use-user-interactions"
+import { useSession } from "@/lib/auth/client"
+import { useAuthModal } from "@/hooks/auth/use-auth-modal"
+import type { DbProduct } from "@/components/home/product-list"
+
+interface ProductCardProps {
+  product: DbProduct
+  index?: number
+  showMedals?: boolean
+  showTrendingBadge?: boolean
+  tagPrefix?: string
+}
+
+export const ProductCard = ({
+  product,
+  index = 0,
+  showMedals = false,
+  showTrendingBadge = false,
+  tagPrefix,
+}: ProductCardProps) => {
+  const router = useRouter()
+  const { data: session } = useSession()
+  const { requireAuth } = useAuthModal()
+  const upvoteMutation = useUpvote()
+  const bookmarkMutation = useBookmark()
+  const { isUpvoted: checkUpvoted, isBookmarked: checkBookmarked } =
+    useUserInteractions()
+
+  const [localUpvotes, setLocalUpvotes] = useState<number | null>(null)
+
+  const tier: Tier = (product.tier ?? "free") as Tier
+  const pricing: Pricing = (product.pricing ?? "Free") as Pricing
+  const isTrending = index < 2
+  const views = (((product.viewsCount ?? 0) / 1000).toFixed(1)) + "K"
+  const upvoteCount = localUpvotes ?? product.upvotesCount
+
+  const isUpvoted = checkUpvoted(product.id, product.slug)
+  const isBookmarked = checkBookmarked(product.id, product.slug)
+
+  const isUpvoting =
+    upvoteMutation.isPending && upvoteMutation.variables?.slug === product.slug
+  const isBookmarking =
+    bookmarkMutation.isPending &&
+    bookmarkMutation.variables?.slug === product.slug
+
+  const outboundUrl = getOutboundUrl(product.websiteUrl, "devstack")
+  const linkRel = getLinkRel(product.tier)
+
+  const handleCardClick = (e: React.MouseEvent) => {
+    if (
+      (e.target as HTMLElement).closest(
+        "button, a, input, [data-stop-card-click]"
+      )
+    ) {
+      return
+    }
+    if (e.metaKey || e.ctrlKey) {
+      window.open(ROUTES.PRODUCT(product.slug), "_blank")
+    } else {
+      router.push(ROUTES.PRODUCT(product.slug))
+    }
+  }
+
+  const handleUpvote = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    requireAuth(
+      () => {
+        if (!session?.user?.id) return
+        upvoteMutation.mutate(
+          { slug: product.slug, userId: session.user.id },
+          {
+            onSuccess: (data) => {
+              setLocalUpvotes(data.upvotesCount)
+            },
+          }
+        )
+      },
+      {
+        title: "Sign in to upvote",
+        description:
+          "Sign in with your Google account to upvote and support developer tools.",
+      }
+    )
+  }
+
+  const handleBookmark = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    requireAuth(
+      () => {
+        if (!session?.user?.id) return
+        bookmarkMutation.mutate({ slug: product.slug, userId: session.user.id })
+      },
+      {
+        title: "Sign in to bookmark",
+        description:
+          "Sign in with your Google account to bookmark tools to your library.",
+      }
+    )
+  }
+
+  return (
+    <Card
+      onClick={handleCardClick}
+      className={cn(
+        "group relative z-0 cursor-pointer rounded-none p-0 transition-colors",
+        tierCardBg(tier),
+        index > 0 && "-mt-px"
+      )}
+    >
+      <CardContent
+        className={cn(
+          "relative flex items-center gap-4 overflow-hidden px-6 py-5 backdrop-blur-sm md:gap-6",
+          tierContentBg(tier)
+        )}
+      >
+        {tier !== TIER.FREE && (
+          <div className="pointer-events-none absolute inset-0 z-[-1] overflow-hidden">
+            <div
+              className={cn(
+                "absolute inset-0 -translate-x-full animate-[shimmer_3s_infinite]",
+                tierShimmerGradient(tier)
+              )}
+            />
+          </div>
+        )}
+
+        {/* Index or Medal indicator */}
+        <div className="hidden w-6 shrink-0 sm:flex sm:items-center sm:justify-center">
+          {showMedals ? (
+            <div
+              className={cn(
+                "flex items-center justify-center text-sm font-bold",
+                index + 1 === 1
+                  ? "size-6 rounded-full bg-amber-400 text-white"
+                  : index + 1 === 2
+                    ? "size-6 rounded-full bg-slate-300 text-white"
+                    : index + 1 === 3
+                      ? "size-6 rounded-full bg-orange-400 text-white"
+                      : "w-4 text-slate-400"
+              )}
+            >
+              {index + 1}
+            </div>
+          ) : (
+            <div className="w-4 text-center text-sm font-bold text-slate-400">
+              {index + 1}
+            </div>
+          )}
+        </div>
+
+        {/* Logo (Outbound Link with ref=devstack) */}
+        <a
+          href={outboundUrl}
+          target="_blank"
+          rel={linkRel}
+          onClick={(e) => e.stopPropagation()}
+          className="shrink-0 transition-opacity hover:opacity-80"
+          title={`Visit ${product.name}`}
+        >
+          <ProductLogo
+            text={product.name.slice(0, 2).toUpperCase()}
+            bgColor="bg-slate-900"
+            textColor="text-white"
+            className="size-14 overflow-hidden rounded-xl border border-slate-200 text-xl"
+          />
+        </a>
+
+        {/* Product Details */}
+        <div className="flex min-w-0 flex-1 flex-col gap-1">
+          <div className="flex items-center gap-2">
+            <h3 className="truncate text-base font-bold text-slate-900">
+              <a
+                href={outboundUrl}
+                target="_blank"
+                rel={linkRel}
+                onClick={(e) => e.stopPropagation()}
+                className="inline-flex items-center gap-1 transition-colors hover:text-indigo-600"
+                title={`Visit ${product.name}`}
+              >
+                {product.name}
+                <ExternalLink className="size-3 text-slate-400 opacity-0 transition-opacity group-hover:opacity-100" />
+              </a>
+            </h3>
+            <VerifiedBadge tier={tier} />
+            {showTrendingBadge && isTrending && (
+              <Badge
+                variant="outline"
+                className="flex items-center gap-0.5 rounded-none border-transparent bg-green-100/50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-green-700 hover:bg-green-100/50"
+              >
+                <ArrowUp className="size-3" /> TRENDING
+              </Badge>
+            )}
+          </div>
+
+          <p className="line-clamp-1 text-sm font-medium text-slate-500">
+            {product.tagline}
+          </p>
+
+          <div className="mt-2 flex flex-wrap items-center gap-3">
+            {tagPrefix && (
+              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                {tagPrefix}
+              </span>
+            )}
+            {(product.tags ?? []).slice(0, 3).map((tag) => (
+              <Badge
+                key={tag}
+                variant="secondary"
+                className="rounded-none bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-600"
+              >
+                {tag}
+              </Badge>
+            ))}
+            <div className="ml-2 flex items-center gap-1.5 text-sm font-semibold text-slate-400">
+              <Eye className="size-4" />
+              {views}
+            </div>
+            <div className="flex items-center text-sm font-semibold text-blue-600">
+              {product.buildsCount} builds
+            </div>
+          </div>
+        </div>
+
+        {/* Action Buttons & Pricing */}
+        <div className="ml-4 flex shrink-0 flex-col items-end gap-2.5">
+          <Badge
+            variant="outline"
+            className={cn(
+              "rounded-none border-transparent px-2.5 py-1 text-[11px]",
+              pricingBadgeColor(pricing)
+            )}
+          >
+            {pricing}
+          </Badge>
+
+          <div className="flex items-center gap-2">
+            {/* Upvote Button */}
+            <div
+              className="group/btn relative inline-flex"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <Button
+                variant="outline"
+                onClick={handleUpvote}
+                disabled={isUpvoting}
+                className={cn(
+                  isUpvoted ? upvoteButtonActive : upvoteButtonInactive
+                )}
+              >
+                <ArrowBigUp
+                  className={cn(
+                    "size-4",
+                    isUpvoted ? "fill-amber-500 text-amber-500" : "text-slate-400"
+                  )}
+                  fill={isUpvoted ? "currentColor" : "none"}
+                />
+                {upvoteCount.toLocaleString()}
+              </Button>
+              <HoverOutline />
+            </div>
+
+            {/* Bookmark Button */}
+            <div
+              className="group/btn relative inline-flex"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <Button
+                variant="outline"
+                onClick={handleBookmark}
+                disabled={isBookmarking}
+                className={cn(
+                  isBookmarked
+                    ? bookmarkButtonActive
+                    : bookmarkButtonInactive
+                )}
+              >
+                <Bookmark
+                  className="size-4"
+                  fill={isBookmarked ? "currentColor" : "none"}
+                />
+              </Button>
+              <HoverOutline />
+            </div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  )
+}

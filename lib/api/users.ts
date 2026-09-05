@@ -11,3 +11,20 @@ export const syncUser = async (payload: SyncUserPayload) => {
   const { data } = await apiClient.post("/users/sync", payload)
   return data.data
 }
+
+export type UserInteractionsData = {
+  upvotedProductIds: string[]
+  upvotedSlugs: string[]
+  bookmarkedProductIds: string[]
+  bookmarkedSlugs: string[]
+}
+
+export const fetchUserInteractions = async (
+  userId?: string
+): Promise<UserInteractionsData> => {
+  const { data } = await apiClient.get("/users/interactions", {
+    params: userId ? { userId } : {},
+  })
+  return data.data
+}
+

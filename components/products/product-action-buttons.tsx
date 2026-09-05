@@ -1,16 +1,20 @@
 "use client"
 
 import { useState } from "react"
-import { ArrowUp, Bookmark, ExternalLink, Code2 } from "lucide-react"
+import { ArrowBigUp, Bookmark, ExternalLink, Code2 } from "lucide-react"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { useUpvote } from "@/hooks/products/use-upvote"
 import { useBookmark } from "@/hooks/products/use-bookmark"
+import { useUserInteractions } from "@/hooks/products/use-user-interactions"
 import { useSession } from "@/lib/auth/client"
 import { useAuthModal } from "@/hooks/auth/use-auth-modal"
+import { getOutboundUrl, getLinkRel } from "@/utils/products/urls"
 import { cn } from "@/lib/utils"
 
 interface ProductActionButtonsProps {
   slug: string
+  productId?: string
+  tier?: string | null
   initialUpvotes: number
   websiteUrl: string
   githubUrl?: string | null
@@ -18,6 +22,8 @@ interface ProductActionButtonsProps {
 
 export const ProductActionButtons = ({
   slug,
+  productId,
+  tier,
   initialUpvotes,
   websiteUrl,
   githubUrl,
@@ -26,8 +32,18 @@ export const ProductActionButtons = ({
   const { requireAuth } = useAuthModal()
   const upvoteMutation = useUpvote()
   const bookmarkMutation = useBookmark()
+  const { isUpvoted: checkUpvoted, isBookmarked: checkBookmarked } =
+    useUserInteractions()
+
   const [upvotes, setUpvotes] = useState(initialUpvotes)
-  const [isBookmarked, setIsBookmarked] = useState(false)
+
+  const isUpvoted = checkUpvoted(productId, slug)
+  const isBookmarked = checkBookmarked(productId, slug)
+
+  const isUpvoting =
+    upvoteMutation.isPending && upvoteMutation.variables?.slug === slug
+  const isBookmarking =
+    bookmarkMutation.isPending && bookmarkMutation.variables?.slug === slug
 
   const handleUpvote = () => {
     requireAuth(
@@ -44,7 +60,8 @@ export const ProductActionButtons = ({
       },
       {
         title: "Sign in to upvote",
-        description: "Sign in with your Google account to upvote and support developer tools.",
+        description:
+          "Sign in with your Google account to upvote and support developer tools.",
       }
     )
   }
@@ -53,40 +70,49 @@ export const ProductActionButtons = ({
     requireAuth(
       () => {
         if (!session?.user?.id) return
-        bookmarkMutation.mutate(
-          { slug, userId: session.user.id },
-          {
-            onSuccess: (data) => {
-              setIsBookmarked(data.action === "added")
-            },
-          }
-        )
+        bookmarkMutation.mutate({ slug, userId: session.user.id })
       },
       {
         title: "Sign in to bookmark",
-        description: "Sign in with your Google account to bookmark tools to your library.",
+        description:
+          "Sign in with your Google account to bookmark tools to your library.",
       }
     )
   }
 
+  const outboundUrl = getOutboundUrl(websiteUrl, "devstack")
+  const linkRel = getLinkRel(tier)
+
   return (
     <div className="flex flex-wrap items-center gap-3">
+      {/* Upvote Button with active fill color */}
       <Button
         onClick={handleUpvote}
-        disabled={upvoteMutation.isPending}
-        className="gap-2 rounded-lg bg-slate-900 px-3 text-white hover:bg-slate-800"
+        disabled={isUpvoting}
+        className={cn(
+          "gap-2 rounded-lg px-3 transition-colors",
+          isUpvoted
+            ? "bg-amber-600 text-white hover:bg-amber-700 shadow-xs"
+            : "bg-slate-900 text-white hover:bg-slate-800"
+        )}
       >
-        <ArrowUp className="size-4" />
-        Upvote ({upvotes.toLocaleString()})
+        <ArrowBigUp
+          className={cn("size-4", isUpvoted ? "fill-white text-white" : "text-slate-300")}
+          fill={isUpvoted ? "currentColor" : "none"}
+        />
+        {isUpvoted ? "Upvoted" : "Upvote"} ({upvotes.toLocaleString()})
       </Button>
 
+      {/* Bookmark Button with active fill color */}
       <Button
         variant="outline"
         onClick={handleBookmark}
-        disabled={bookmarkMutation.isPending}
+        disabled={isBookmarking}
         className={cn(
-          "gap-2 rounded-lg border-slate-200 bg-white hover:bg-slate-50",
-          isBookmarked ? "border-indigo-200 bg-indigo-50/50 text-indigo-600" : "text-slate-600"
+          "gap-2 rounded-lg transition-colors",
+          isBookmarked
+            ? "border-indigo-300 bg-indigo-50 text-indigo-600 hover:bg-indigo-100/80"
+            : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
         )}
       >
         <Bookmark
@@ -96,11 +122,12 @@ export const ProductActionButtons = ({
         {isBookmarked ? "Bookmarked" : "Bookmark"}
       </Button>
 
+      {/* Website Link with source=devstack and configured dofollow/nofollow */}
       {websiteUrl && (
         <a
-          href={websiteUrl}
+          href={outboundUrl}
           target="_blank"
-          rel="noopener noreferrer nofollow"
+          rel={linkRel}
           className={cn(
             buttonVariants({ variant: "outline" }),
             "h-8 gap-2 rounded-lg border-slate-200 bg-white px-3 text-slate-700 hover:bg-slate-50"

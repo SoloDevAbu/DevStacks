@@ -217,6 +217,8 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
 
             <ProductActionButtons
               slug={product.slug}
+              productId={product.id}
+              tier={product.tier}
               initialUpvotes={product.upvotesCount}
               websiteUrl={product.websiteUrl}
               githubUrl={product.githubUrl}
