@@ -1,0 +1,73 @@
+import type { Metadata } from "next"
+import { Sparkles, Clock } from "lucide-react"
+import { PageHeader } from "@/components/shared/page-header"
+import { breadcrumbSchema } from "@/lib/seo/schema"
+import { SITE_CONFIG } from "@/constants/site"
+import { AI_PROMPTS } from "@/lib/prompts"
+import { NewAndRisingContent } from "./new-rising-content"
+
+export const metadata: Metadata = {
+  title: "New & Rising Developer Tools & Products",
+  description: `Discover fresh developer tools and products gaining momentum during their 7-day discovery window on ${SITE_CONFIG.name}.`,
+  keywords: [
+    "new developer tools",
+    "rising software products",
+    "recent developer launches",
+    "fresh APIs",
+    "new software discovery",
+  ],
+  alternates: {
+    canonical: `${SITE_CONFIG.url}/discover/new-rising`,
+  },
+  openGraph: {
+    title: `New & Rising Developer Tools | ${SITE_CONFIG.name}`,
+    description:
+      "Fresh developer tools and products gaining attention during their discovery window.",
+    type: "website",
+    url: `${SITE_CONFIG.url}/discover/new-rising`,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `New & Rising Developer Tools | ${SITE_CONFIG.name}`,
+    description:
+      "Fresh developer tools and products gaining attention during their discovery window.",
+  },
+}
+
+export default function NewAndRisingPage() {
+  const breadcrumbs = breadcrumbSchema([
+    { name: "Home", url: SITE_CONFIG.url },
+    { name: "Discover", url: `${SITE_CONFIG.url}/discover` },
+    { name: "New & Rising", url: `${SITE_CONFIG.url}/discover/new-rising` },
+  ])
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }}
+      />
+      <div className="relative flex min-h-full flex-col bg-slate-50/50">
+        <PageHeader
+          heading="✨ New & Rising"
+          description="Recently submitted tools and products gaining attention. Every submission gets a 7-day discovery window with a freshness boost."
+          aiPrompt={AI_PROMPTS.newRising}
+        />
+
+        {/* Discovery window informational banner */}
+        <div className="border-b border-dashed border-border bg-amber-50/40 px-6 py-3 md:px-8">
+          <div className="flex items-center gap-2 text-xs font-semibold text-amber-800">
+            <Clock className="size-4 shrink-0 text-amber-600" />
+            <span>
+              <strong>Discovery Window:</strong> Fresh content receives a
+              temporary 7-day freshness boost before graduating into the
+              permanent ecosystem.
+            </span>
+          </div>
+        </div>
+
+        <NewAndRisingContent />
+      </div>
+    </>
+  )
+}

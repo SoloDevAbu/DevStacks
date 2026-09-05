@@ -34,3 +34,18 @@ export const bookmarkButtonActive =
 export const bookmarkButtonInactive =
   "relative z-10 size-8 rounded-lg border-slate-200 bg-white p-0 text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition-colors"
 
+export const discoveryCard =
+  "group flex flex-col rounded-none bg-white transition-colors hover:border-slate-300"
+
+export const freshBadge =
+  "inline-flex items-center gap-1 rounded bg-amber-50 px-1.5 py-0.5 text-[10px] font-bold tracking-wide text-amber-700 border border-amber-200/60 uppercase"
+
+export const momentumBadge =
+  "inline-flex items-center gap-1 rounded bg-emerald-50 px-1.5 py-0.5 text-[10px] font-bold tracking-wide text-emerald-700 border border-emerald-200/60 uppercase"
+
+export const filterPillActive =
+  "bg-indigo-50 font-semibold text-indigo-600 hover:text-indigo-700"
+
+export const filterPillInactive =
+  "font-medium text-slate-600 hover:text-slate-900"
+

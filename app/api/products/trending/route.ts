@@ -1,18 +1,24 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { getTrendingProducts } from "@/db/queries/products/trending"
+import type { TimeframeOption } from "@/lib/rankings/types"
 import { z } from "zod"
 
 const querySchema = z.object({
   limit: z.coerce.number().int().min(1).max(50).default(10),
+  timeframe: z
+    .enum(["today", "this-week", "this-month", "all-time"])
+    .default("today"),
 })
 
 export const GET = async (req: NextRequest) => {
   const params = Object.fromEntries(req.nextUrl.searchParams)
   const parsed = querySchema.safeParse(params)
-  const limit = parsed.success ? parsed.data.limit : 10
+  const { limit, timeframe } = parsed.success
+    ? parsed.data
+    : { limit: 10, timeframe: "today" as TimeframeOption }
 
   try {
-    const trending = await getTrendingProducts(limit)
+    const trending = await getTrendingProducts(limit, timeframe as TimeframeOption)
     return NextResponse.json(
       { data: trending ?? [] },
       {

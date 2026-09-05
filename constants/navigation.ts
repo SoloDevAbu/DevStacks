@@ -25,16 +25,14 @@ export const SIDEBAR_NAV: NavSection[] = [
     label: "Explore",
     items: [
       { name: "Home", icon: Home, href: ROUTES.HOME },
-      { name: "Discover", icon: Package, href: ROUTES.DISCOVER },
+      { name: "Products", icon: Package, href: ROUTES.DISCOVER },
       { name: "Trending", icon: TrendingUp, href: ROUTES.TRENDING },
       { name: "Categories", icon: Grid, href: ROUTES.CATEGORIES },
     ],
   },
   {
     label: "Ecosystem",
-    items: [
-      { name: "Built With", icon: Blocks, href: ROUTES.BUILT_WITH },
-    ],
+    items: [{ name: "Built With", icon: Blocks, href: ROUTES.BUILT_WITH }],
   },
   {
     label: "Community",

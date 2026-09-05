@@ -2,40 +2,44 @@ import { ChevronDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { HoverOutline } from "@/components/shared/hover-outline"
+import { filterPillActive, filterPillInactive } from "@/utils/styles"
+import type { TimeframeOption } from "@/lib/rankings/types"
 
-const FilterTab = ({
-  children,
-  active,
+const TIMEFRAME_TABS: { label: string; value: TimeframeOption }[] = [
+  { label: "Today", value: "today" },
+  { label: "This Week", value: "this-week" },
+  { label: "This Month", value: "this-month" },
+  { label: "All Time", value: "all-time" },
+]
+
+export const FilterBar = ({
+  timeframe = "today",
+  onTimeframeChange,
 }: {
-  children: React.ReactNode
-  active?: boolean
+  timeframe?: TimeframeOption
+  onTimeframeChange?: (value: TimeframeOption) => void
 }) => {
-  return (
-    <div className="group/btn relative inline-flex">
-      <Button
-        variant="ghost"
-        className={cn(
-          "relative z-10 h-auto rounded-md px-4 py-1.5 text-sm transition-colors hover:bg-transparent",
-          active
-            ? "bg-indigo-50 font-semibold text-indigo-600 hover:text-indigo-700"
-            : "font-medium text-slate-600 hover:text-slate-900"
-        )}
-      >
-        {children}
-      </Button>
-      <HoverOutline />
-    </div>
-  )
-}
-
-export const FilterBar = () => {
   return (
     <div className="flex flex-col gap-4 border-b border-dashed border-border bg-white px-6 py-4 sm:flex-row sm:items-center sm:justify-between md:px-8">
       <div className="flex items-center gap-1 rounded-lg border border-slate-200 bg-white p-1 shadow-sm">
-        <FilterTab active>Today</FilterTab>
-        <FilterTab>This Week</FilterTab>
-        <FilterTab>This Month</FilterTab>
-        <FilterTab>All Time</FilterTab>
+        {TIMEFRAME_TABS.map((tab) => {
+          const isActive = timeframe === tab.value
+          return (
+            <div key={tab.value} className="group/btn relative inline-flex">
+              <Button
+                variant="ghost"
+                onClick={() => onTimeframeChange?.(tab.value)}
+                className={cn(
+                  "relative z-10 h-auto rounded-md px-4 py-1.5 text-sm transition-colors hover:bg-transparent",
+                  isActive ? filterPillActive : filterPillInactive
+                )}
+              >
+                {tab.label}
+              </Button>
+              <HoverOutline />
+            </div>
+          )
+        })}
       </div>
 
       <div className="group/btn relative inline-flex">

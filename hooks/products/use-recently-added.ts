@@ -1,16 +1,14 @@
 import { useQuery } from "@tanstack/react-query"
-import { fetchRecentlyAdded } from "@/lib/api/products"
+import { fetchRecentlyAdded, type RankingQueryParams } from "@/lib/api/products"
 
-export const RECENTLY_ADDED_QUERY_KEY = (limit: number) => [
-  "products",
-  "recently-added",
-  limit,
-]
+export const RECENTLY_ADDED_QUERY_KEY = (
+  params: RankingQueryParams | number
+) => ["products", "recently-added", params]
 
-export const useRecentlyAdded = (limit = 6) => {
+export const useRecentlyAdded = (params: RankingQueryParams | number = 6) => {
   return useQuery({
-    queryKey: RECENTLY_ADDED_QUERY_KEY(limit),
-    queryFn: () => fetchRecentlyAdded(limit),
+    queryKey: RECENTLY_ADDED_QUERY_KEY(params),
+    queryFn: () => fetchRecentlyAdded(params),
     staleTime: 60_000,
   })
 }

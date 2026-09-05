@@ -7,6 +7,8 @@ import { VerifiedBadge } from "@/components/shared/verified-badge"
 import { SectionHeader } from "@/components/shared/section-header"
 import { useRecentlyAdded } from "@/hooks/products/use-recently-added"
 import { ROUTES } from "@/constants/routes"
+import { HOMEPAGE_LIMITS } from "@/constants/rankings"
+import { sectionWrapper, discoveryCard } from "@/utils/styles"
 
 type RecentItem = {
   id: string
@@ -19,8 +21,10 @@ type RecentItem = {
   tier: "free" | "premium" | "premium+"
 }
 
-export const RecentlyAdded = () => {
-  const { data, isLoading } = useRecentlyAdded(6)
+export const RecentlyAddedSection = () => {
+  const { data, isLoading } = useRecentlyAdded({
+    limit: HOMEPAGE_LIMITS.RECENTLY_ADDED,
+  })
 
   const items: RecentItem[] = data
     ? data.map(
@@ -45,17 +49,20 @@ export const RecentlyAdded = () => {
     : []
 
   return (
-    <section>
+    <section className={sectionWrapper}>
       <SectionHeader
-        title="Recently added"
-        subtitle="Fresh tools and products added by the community"
+        title="Recently Added"
+        subtitle="Latest products and tools added by the community"
         viewAllText="View all"
         viewAllHref={ROUTES.DISCOVER_RECENTLY_ADDED}
       />
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-1 2xl:grid-cols-2">
         {isLoading ? (
-          Array.from({ length: 6 }).map((_, i) => (
-            <Card key={i} className="h-20 rounded-none border border-slate-200 animate-pulse bg-slate-50/50" />
+          Array.from({ length: HOMEPAGE_LIMITS.RECENTLY_ADDED }).map((_, i) => (
+            <Card
+              key={i}
+              className="h-20 animate-pulse rounded-none border border-slate-200 bg-slate-50/50"
+            />
           ))
         ) : items.length === 0 ? (
           <div className="col-span-full py-8 text-center text-sm text-slate-400">
@@ -63,8 +70,12 @@ export const RecentlyAdded = () => {
           </div>
         ) : (
           items.map((item) => (
-            <Link key={item.id} href={`/products/${item.slug}`} className="block">
-              <Card className="group cursor-pointer rounded-none bg-white transition-colors hover:border-slate-300">
+            <Link
+              key={item.id}
+              href={`/products/${item.slug}`}
+              className="block"
+            >
+              <Card className={discoveryCard}>
                 <CardContent className="flex items-center gap-3 p-4">
                   <div
                     className={cn(
@@ -76,7 +87,7 @@ export const RecentlyAdded = () => {
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-1.5">
-                      <h3 className="truncate text-sm font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">
+                      <h3 className="truncate text-sm font-bold text-slate-900 transition-colors group-hover:text-indigo-600">
                         {item.name}
                       </h3>
                       <VerifiedBadge tier={item.tier} />
