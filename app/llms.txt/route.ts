@@ -1,21 +1,21 @@
 import { NextResponse } from "next/server"
 import { SITE_CONFIG } from "@/constants/site"
-import { getProducts } from "@/db/queries/products/list"
+import { getTools } from "@/db/queries/tools/list"
 import { getTrendingProducts } from "@/db/queries/products/trending"
 
 export const revalidate = 86400
 
 export const GET = async () => {
-  let buildingBlocks: Awaited<ReturnType<typeof getProducts>> = []
+  let buildingBlocks: Awaited<ReturnType<typeof getTools>> = []
   let featuredTools: Awaited<ReturnType<typeof getTrendingProducts>> = []
 
   try {
-    const [blocks, tools] = await Promise.all([
-      getProducts({ sortBy: "builds", limit: 6 }),
+    const [blocks, trending] = await Promise.all([
+      getTools({ sortBy: "builds", limit: 6 }),
       getTrendingProducts(10),
     ])
     buildingBlocks = blocks ?? []
-    featuredTools = tools ?? []
+    featuredTools = trending ?? []
   } catch {
     buildingBlocks = []
     featuredTools = []
@@ -32,12 +32,11 @@ ${SITE_CONFIG.name} (${SITE_CONFIG.domain}) is a curated discovery directory and
 - [Home](${SITE_CONFIG.url}): Discover trending and newly launched developer tools.
 - [Trending Products](${SITE_CONFIG.url}/trending): Community-ranked developer tools by upvotes, views, and builds.
 - [Discover Directory](${SITE_CONFIG.url}/discover): Search developer products by categories (AI, Analytics, Databases, DevTools, Auth, Hosting).
-- [Built With Ecosystem](${SITE_CONFIG.url}/built-with): Products and building blocks ranked by how many developer projects use them.
 - [Showcase Builds](${SITE_CONFIG.url}/showcase): Real-world software projects and their complete developer tech stacks.
 - [Submit a Product](${SITE_CONFIG.url}/submit): Submission portal for developers and founders to list developer tools.
 
 ## Popular Developer Building Blocks
-${buildingBlocks.map((b) => `- [${b.name}](${SITE_CONFIG.url}/products/${b.slug}): ${b.category ?? "Tool"} (${b.buildsCount} builds)`).join("\n")}
+${buildingBlocks.map((b) => `- [${b.name}](${SITE_CONFIG.url}/tools/${b.slug}): ${b.category ?? "Tool"} (${b.buildsCount} builds)`).join("\n")}
 
 ## Featured Developer Tools
 ${featuredTools.map((p) => `- [${p.name}](${SITE_CONFIG.url}/products/${p.slug}): ${p.tagline} (Tags: ${(p.tags ?? []).join(", ")})`).join("\n")}

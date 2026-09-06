@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { toggleUpvote } from "@/db/queries/upvotes/toggle"
+import { toggleProductLike } from "@/db/queries/products/toggle-like"
 import { getProductBySlug } from "@/db/queries/products/get"
 import { z } from "zod"
 
@@ -7,6 +7,8 @@ const upvoteSchema = z.object({
   userId: z.string().min(1, "User ID required"),
 })
 
+// Products use likes rather than upvotes.
+// This route is retained for backwards compatibility and aliases to toggleProductLike.
 export const POST = async (
   req: NextRequest,
   { params }: { params: Promise<{ slug: string }> }
@@ -28,11 +30,11 @@ export const POST = async (
       return NextResponse.json({ error: "Product not found" }, { status: 404 })
     }
 
-    const result = await toggleUpvote(product.id, parsed.data.userId)
+    const result = await toggleProductLike(product.id, parsed.data.userId)
     return NextResponse.json({ data: result }, { status: 200 })
   } catch {
     return NextResponse.json(
-      { error: "Failed to toggle upvote" },
+      { error: "Failed to toggle like on product" },
       { status: 500 }
     )
   }

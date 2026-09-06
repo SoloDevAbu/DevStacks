@@ -5,7 +5,7 @@ import { SITE_CONFIG } from "@/constants/site"
 
 export const FaqSection = () => {
   return (
-    <section className="flex flex-col gap-6 border-t border-dashed border-border px-6 py-12 md:px-8">
+    <section className="-mt-px flex flex-col gap-6 border-t border-dashed border-border px-6 py-12 md:px-8">
       <div className="flex flex-col gap-2">
         <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-muted-foreground">
           <HelpCircle className="size-4 text-indigo-500" />

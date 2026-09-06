@@ -1,6 +1,6 @@
 import { db } from "@/db"
-import { products, upvotes, bookmarks } from "@/db/schema"
-import { and, desc, eq, ilike, inArray, or, sql } from "drizzle-orm"
+import { products } from "@/db/schema"
+import { and, desc, eq, ilike, or } from "drizzle-orm"
 
 export type ProductListFilters = {
   q?: string
@@ -10,7 +10,7 @@ export type ProductListFilters = {
   tier?: string
   page?: number
   limit?: number
-  sortBy?: "upvotes" | "builds" | "recent" | "views"
+  sortBy?: "likes" | "recent" | "views"
 }
 
 export const getProducts = async ({
@@ -21,7 +21,7 @@ export const getProducts = async ({
   tier,
   page = 1,
   limit = 20,
-  sortBy = "upvotes",
+  sortBy = "likes",
 }: ProductListFilters = {}) => {
   const safePage = Math.max(1, page)
   const safeLimit = Math.min(50, Math.max(1, limit))
@@ -40,17 +40,12 @@ export const getProducts = async ({
   }
   if (category) conditions.push(ilike(products.category, category))
   if (pricing)
-    conditions.push(
-      eq(products.pricing, pricing as "Free" | "Freemium" | "Paid" | "Open Source")
-    )
+    conditions.push(eq(products.pricing, pricing as "Free" | "Freemium" | "Paid" | "Open Source"))
   if (tier)
-    conditions.push(
-      eq(products.tier, tier as "free" | "premium" | "premium+")
-    )
+    conditions.push(eq(products.tier, tier as "free" | "premium" | "premium+"))
 
   const orderMap = {
-    upvotes: desc(products.upvotesCount),
-    builds: desc(products.buildsCount),
+    likes: desc(products.likesCount),
     recent: desc(products.createdAt),
     views: desc(products.viewsCount),
   }
@@ -59,14 +54,10 @@ export const getProducts = async ({
     .select()
     .from(products)
     .where(and(...conditions))
-    .orderBy(orderMap[sortBy])
+    .orderBy(orderMap[sortBy] ?? desc(products.likesCount))
     .limit(safeLimit)
     .offset(offset)
 
-  // If tag filter, apply in-memory (tags is an array column)
-  const filtered = tag
-    ? rows.filter((p) => p.tags.includes(tag))
-    : rows
-
+  const filtered = tag ? rows.filter((p) => p.tags.includes(tag)) : rows
   return filtered
 }

@@ -1,10 +1,10 @@
 "use client"
 
 import { useState } from "react"
-import { ArrowBigUp, Bookmark, ExternalLink, Code2 } from "lucide-react"
+import { Heart, Bookmark, ExternalLink, Code2 } from "lucide-react"
 import { Button, buttonVariants } from "@/components/ui/button"
-import { useUpvote } from "@/hooks/products/use-upvote"
-import { useBookmark } from "@/hooks/products/use-bookmark"
+import { useLikeProduct } from "@/hooks/products/use-like-product"
+import { useBookmarkProduct } from "@/hooks/products/use-bookmark-product"
 import { useUserInteractions } from "@/hooks/products/use-user-interactions"
 import { useSession } from "@/lib/auth/client"
 import { useAuthModal } from "@/hooks/auth/use-auth-modal"
@@ -15,7 +15,7 @@ interface ProductActionButtonsProps {
   slug: string
   productId?: string
   tier?: string | null
-  initialUpvotes: number
+  initialLikes: number
   websiteUrl: string
   githubUrl?: string | null
 }
@@ -24,44 +24,41 @@ export const ProductActionButtons = ({
   slug,
   productId,
   tier,
-  initialUpvotes,
+  initialLikes,
   websiteUrl,
   githubUrl,
 }: ProductActionButtonsProps) => {
   const { data: session } = useSession()
   const { requireAuth } = useAuthModal()
-  const upvoteMutation = useUpvote()
-  const bookmarkMutation = useBookmark()
-  const { isUpvoted: checkUpvoted, isBookmarked: checkBookmarked } =
-    useUserInteractions()
+  const likeMutation = useLikeProduct()
+  const bookmarkMutation = useBookmarkProduct()
+  const { isProductLiked, isProductBookmarked } = useUserInteractions()
 
-  const [upvotes, setUpvotes] = useState(initialUpvotes)
+  const [likes, setLikes] = useState(initialLikes)
 
-  const isUpvoted = checkUpvoted(productId, slug)
-  const isBookmarked = checkBookmarked(productId, slug)
+  const isLiked = isProductLiked(productId, slug)
+  const isBookmarked = isProductBookmarked(productId, slug)
 
-  const isUpvoting =
-    upvoteMutation.isPending && upvoteMutation.variables?.slug === slug
-  const isBookmarking =
-    bookmarkMutation.isPending && bookmarkMutation.variables?.slug === slug
+  const isLiking = likeMutation.isPending && likeMutation.variables?.slug === slug
+  const isBookmarking = bookmarkMutation.isPending && bookmarkMutation.variables?.slug === slug
 
-  const handleUpvote = () => {
+  const handleLike = () => {
     requireAuth(
       () => {
         if (!session?.user?.id) return
-        upvoteMutation.mutate(
+        likeMutation.mutate(
           { slug, userId: session.user.id },
           {
             onSuccess: (data) => {
-              setUpvotes(data.upvotesCount)
+              setLikes(data.likesCount)
             },
           }
         )
       },
       {
-        title: "Sign in to upvote",
+        title: "Sign in to like",
         description:
-          "Sign in with your Google account to upvote and support developer tools.",
+          "Sign in with your Google account to like and support developer products.",
       }
     )
   }
@@ -75,7 +72,7 @@ export const ProductActionButtons = ({
       {
         title: "Sign in to bookmark",
         description:
-          "Sign in with your Google account to bookmark tools to your library.",
+          "Sign in with your Google account to save products to your library.",
       }
     )
   }
@@ -85,25 +82,23 @@ export const ProductActionButtons = ({
 
   return (
     <div className="flex flex-wrap items-center gap-3">
-      {/* Upvote Button with active fill color */}
       <Button
-        onClick={handleUpvote}
-        disabled={isUpvoting}
+        onClick={handleLike}
+        disabled={isLiking}
         className={cn(
           "gap-2 rounded-lg px-3 transition-colors",
-          isUpvoted
-            ? "bg-amber-600 text-white hover:bg-amber-700 shadow-xs"
+          isLiked
+            ? "bg-pink-600 text-white hover:bg-pink-700 shadow-xs"
             : "bg-slate-900 text-white hover:bg-slate-800"
         )}
       >
-        <ArrowBigUp
-          className={cn("size-4", isUpvoted ? "fill-white text-white" : "text-slate-300")}
-          fill={isUpvoted ? "currentColor" : "none"}
+        <Heart
+          className={cn("size-4", isLiked ? "fill-white text-white" : "text-slate-300")}
+          fill={isLiked ? "currentColor" : "none"}
         />
-        {isUpvoted ? "Upvoted" : "Upvote"} ({upvotes.toLocaleString()})
+        {isLiked ? "Liked" : "Like"} ({likes.toLocaleString()})
       </Button>
 
-      {/* Bookmark Button with active fill color */}
       <Button
         variant="outline"
         onClick={handleBookmark}
@@ -115,14 +110,10 @@ export const ProductActionButtons = ({
             : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
         )}
       >
-        <Bookmark
-          className="size-4"
-          fill={isBookmarked ? "currentColor" : "none"}
-        />
+        <Bookmark className="size-4" fill={isBookmarked ? "currentColor" : "none"} />
         {isBookmarked ? "Bookmarked" : "Bookmark"}
       </Button>
 
-      {/* Website Link with source=devstack and configured dofollow/nofollow */}
       {websiteUrl && (
         <a
           href={outboundUrl}

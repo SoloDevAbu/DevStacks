@@ -6,6 +6,7 @@ export type BuildListParams = {
   authorId?: string
   page?: number
   limit?: number
+  sortBy?: "recent" | "likes" | "views"
 }
 
 export const fetchBuilds = async (params: BuildListParams = {}) => {
@@ -21,4 +22,9 @@ export const fetchBuild = async (id: string) => {
 export const submitBuild = async (payload: SubmitBuildInput) => {
   const { data } = await apiClient.post("/builds", payload)
   return data.data
+}
+
+export const likeBuild = async (id: string) => {
+  const { data } = await apiClient.post(`/builds/${id}/like`)
+  return data.data as { likesCount: number }
 }

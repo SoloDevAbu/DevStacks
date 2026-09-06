@@ -2,7 +2,15 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { ArrowBigUp, Bookmark, Eye, ExternalLink, ArrowUp } from "lucide-react"
+import {
+  Heart,
+  Bookmark,
+  Eye,
+  ExternalLink,
+  ArrowUp,
+  Sparkles,
+} from "lucide-react"
+import Link from "next/link"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -17,25 +25,41 @@ import {
   tierContentBg,
   tierShimmerGradient,
   pricingBadgeColor,
-  upvoteButtonActive,
-  upvoteButtonInactive,
   bookmarkButtonActive,
   bookmarkButtonInactive,
 } from "@/utils/styles"
 import { getOutboundUrl, getLinkRel } from "@/utils/products/urls"
-import { useUpvote } from "@/hooks/products/use-upvote"
-import { useBookmark } from "@/hooks/products/use-bookmark"
+import { useLikeProduct } from "@/hooks/products/use-like-product"
+import { useBookmarkProduct } from "@/hooks/products/use-bookmark-product"
 import { useUserInteractions } from "@/hooks/products/use-user-interactions"
 import { useSession } from "@/lib/auth/client"
 import { useAuthModal } from "@/hooks/auth/use-auth-modal"
-import type { DbProduct } from "@/components/home/product-list"
+import type { BuiltWithTool } from "@/db/schema"
+
+export type DbProduct = {
+  id: string
+  slug: string
+  name: string
+  tagline: string
+  tags: string[]
+  likesCount: number
+  commentsCount: number
+  viewsCount: number
+  pricing: "Free" | "Freemium" | "Paid" | "Open Source"
+  tier: "free" | "premium" | "premium+"
+  logoUrl?: string | null
+  category?: string | null
+  websiteUrl?: string | null
+  builtWithTools?: BuiltWithTool[]
+  freshnessDaysLeft?: number
+}
 
 interface ProductCardProps {
   product: DbProduct
   index?: number
   showMedals?: boolean
   showTrendingBadge?: boolean
-  tagPrefix?: string
+  showFreshnessBadge?: boolean
 }
 
 export const ProductCard = ({
@@ -43,34 +67,34 @@ export const ProductCard = ({
   index = 0,
   showMedals = false,
   showTrendingBadge = false,
-  tagPrefix,
+  showFreshnessBadge = false,
 }: ProductCardProps) => {
   const router = useRouter()
   const { data: session } = useSession()
   const { requireAuth } = useAuthModal()
-  const upvoteMutation = useUpvote()
-  const bookmarkMutation = useBookmark()
-  const { isUpvoted: checkUpvoted, isBookmarked: checkBookmarked } =
-    useUserInteractions()
+  const likeMutation = useLikeProduct()
+  const bookmarkMutation = useBookmarkProduct()
+  const { isProductLiked, isProductBookmarked } = useUserInteractions()
 
-  const [localUpvotes, setLocalUpvotes] = useState<number | null>(null)
+  const [localLikes, setLocalLikes] = useState<number | null>(null)
 
   const tier: Tier = (product.tier ?? "free") as Tier
   const pricing: Pricing = (product.pricing ?? "Free") as Pricing
   const isTrending = index < 2
-  const views = (((product.viewsCount ?? 0) / 1000).toFixed(1)) + "K"
-  const upvoteCount = localUpvotes ?? product.upvotesCount
+  const views = ((product.viewsCount ?? 0) / 1000).toFixed(1) + "K"
+  const likeCount = localLikes ?? product.likesCount ?? 0
+  const builtWithTools = product.builtWithTools ?? []
 
-  const isUpvoted = checkUpvoted(product.id, product.slug)
-  const isBookmarked = checkBookmarked(product.id, product.slug)
+  const isLiked = isProductLiked(product.id, product.slug)
+  const isBookmarked = isProductBookmarked(product.id, product.slug)
 
-  const isUpvoting =
-    upvoteMutation.isPending && upvoteMutation.variables?.slug === product.slug
+  const isLiking =
+    likeMutation.isPending && likeMutation.variables?.slug === product.slug
   const isBookmarking =
     bookmarkMutation.isPending &&
     bookmarkMutation.variables?.slug === product.slug
 
-  const outboundUrl = getOutboundUrl(product.websiteUrl, "devstack")
+  const outboundUrl = getOutboundUrl(product.websiteUrl ?? "", "devstack")
   const linkRel = getLinkRel(product.tier)
 
   const handleCardClick = (e: React.MouseEvent) => {
@@ -88,24 +112,24 @@ export const ProductCard = ({
     }
   }
 
-  const handleUpvote = (e: React.MouseEvent) => {
+  const handleLike = (e: React.MouseEvent) => {
     e.stopPropagation()
     requireAuth(
       () => {
         if (!session?.user?.id) return
-        upvoteMutation.mutate(
+        likeMutation.mutate(
           { slug: product.slug, userId: session.user.id },
           {
             onSuccess: (data) => {
-              setLocalUpvotes(data.upvotesCount)
+              setLocalLikes(data.likesCount)
             },
           }
         )
       },
       {
-        title: "Sign in to upvote",
+        title: "Sign in to like",
         description:
-          "Sign in with your Google account to upvote and support developer tools.",
+          "Sign in with your Google account to like and support developer products.",
       }
     )
   }
@@ -120,7 +144,7 @@ export const ProductCard = ({
       {
         title: "Sign in to bookmark",
         description:
-          "Sign in with your Google account to bookmark tools to your library.",
+          "Sign in with your Google account to save products to your library.",
       }
     )
   }
@@ -151,7 +175,7 @@ export const ProductCard = ({
           </div>
         )}
 
-        {/* Index or Medal indicator */}
+        {/* Index or Medal */}
         <div className="hidden w-6 shrink-0 sm:flex sm:items-center sm:justify-center">
           {showMedals ? (
             <div
@@ -175,7 +199,7 @@ export const ProductCard = ({
           )}
         </div>
 
-        {/* Logo (Outbound Link with ref=devstack) */}
+        {/* Logo */}
         <a
           href={outboundUrl}
           target="_blank"
@@ -186,7 +210,7 @@ export const ProductCard = ({
         >
           <ProductLogo
             text={product.name.slice(0, 2).toUpperCase()}
-            bgColor="bg-slate-900"
+            bgColor="bg-indigo-900"
             textColor="text-white"
             className="size-14 overflow-hidden rounded-xl border border-slate-200 text-xl"
           />
@@ -212,23 +236,29 @@ export const ProductCard = ({
             {showTrendingBadge && isTrending && (
               <Badge
                 variant="outline"
-                className="flex items-center gap-0.5 rounded-none border-transparent bg-green-100/50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-green-700 hover:bg-green-100/50"
+                className="flex items-center gap-0.5 rounded-none border-transparent bg-green-100/50 px-2 py-0.5 text-[10px] font-bold tracking-wider text-green-700 uppercase hover:bg-green-100/50"
               >
                 <ArrowUp className="size-3" /> TRENDING
               </Badge>
             )}
+            {showFreshnessBadge &&
+              typeof product.freshnessDaysLeft === "number" && (
+                <Badge
+                  variant="outline"
+                  className="flex items-center gap-1 rounded-none border-amber-300 bg-amber-50 px-2 py-0.5 text-[10px] font-bold tracking-wider text-amber-700 uppercase hover:bg-amber-50"
+                >
+                  <Sparkles className="size-3 text-amber-500" />
+                  {product.freshnessDaysLeft}d boost
+                </Badge>
+              )}
           </div>
 
           <p className="line-clamp-1 text-sm font-medium text-slate-500">
             {product.tagline}
           </p>
 
+          {/* Row 1: Tags + views */}
           <div className="mt-2 flex flex-wrap items-center gap-3">
-            {tagPrefix && (
-              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                {tagPrefix}
-              </span>
-            )}
             {(product.tags ?? []).slice(0, 3).map((tag) => (
               <Badge
                 key={tag}
@@ -242,10 +272,35 @@ export const ProductCard = ({
               <Eye className="size-4" />
               {views}
             </div>
-            <div className="flex items-center text-sm font-semibold text-blue-600">
-              {product.buildsCount} builds
-            </div>
           </div>
+
+          {/* Row 2: Built with (only shown when builtWithTools is non-empty) */}
+          {builtWithTools.length > 0 && (
+            <div className="mt-1 flex flex-wrap items-center gap-2">
+              <span className="text-[10px] font-bold tracking-wider text-slate-400 uppercase">
+                Built with
+              </span>
+              {builtWithTools.slice(0, 4).map((tool) =>
+                tool.toolSlug ? (
+                  <Link
+                    key={tool.name}
+                    href={ROUTES.TOOL(tool.toolSlug)}
+                    onClick={(e) => e.stopPropagation()}
+                    className="rounded-none bg-indigo-50 px-2 py-0.5 text-xs font-semibold text-indigo-700 transition-colors hover:bg-indigo-100"
+                  >
+                    {tool.name}
+                  </Link>
+                ) : (
+                  <span
+                    key={tool.name}
+                    className="rounded-none bg-slate-100 px-2 py-0.5 text-xs font-semibold text-slate-600"
+                  >
+                    {tool.name}
+                  </span>
+                )
+              )}
+            </div>
+          )}
         </div>
 
         {/* Action Buttons & Pricing */}
@@ -261,27 +316,30 @@ export const ProductCard = ({
           </Badge>
 
           <div className="flex items-center gap-2">
-            {/* Upvote Button */}
+            {/* Like Button */}
             <div
               className="group/btn relative inline-flex"
               onClick={(e) => e.stopPropagation()}
             >
               <Button
                 variant="outline"
-                onClick={handleUpvote}
-                disabled={isUpvoting}
+                onClick={handleLike}
+                disabled={isLiking}
                 className={cn(
-                  isUpvoted ? upvoteButtonActive : upvoteButtonInactive
+                  "gap-1.5 rounded-none border-slate-200 px-3 py-2 text-sm font-semibold transition-all",
+                  isLiked
+                    ? "border-pink-200 bg-pink-50 text-pink-600 hover:bg-pink-50"
+                    : "text-slate-500 hover:border-pink-200 hover:bg-pink-50 hover:text-pink-600"
                 )}
               >
-                <ArrowBigUp
+                <Heart
                   className={cn(
                     "size-4",
-                    isUpvoted ? "fill-amber-500 text-amber-500" : "text-slate-400"
+                    isLiked ? "fill-pink-500 text-pink-500" : "text-slate-400"
                   )}
-                  fill={isUpvoted ? "currentColor" : "none"}
+                  fill={isLiked ? "currentColor" : "none"}
                 />
-                {upvoteCount.toLocaleString()}
+                {likeCount?.toLocaleString() ?? "0"}
               </Button>
               <HoverOutline />
             </div>
@@ -296,9 +354,7 @@ export const ProductCard = ({
                 onClick={handleBookmark}
                 disabled={isBookmarking}
                 className={cn(
-                  isBookmarked
-                    ? bookmarkButtonActive
-                    : bookmarkButtonInactive
+                  isBookmarked ? bookmarkButtonActive : bookmarkButtonInactive
                 )}
               >
                 <Bookmark

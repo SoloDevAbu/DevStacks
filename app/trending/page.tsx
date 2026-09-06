@@ -3,6 +3,7 @@ import { TrendingContent } from "@/components/trending/trending-content"
 import { breadcrumbSchema, itemListSchema } from "@/lib/seo/schema"
 import { getTrendingProducts } from "@/db/queries/products/trending"
 import { SITE_CONFIG } from "@/constants/site"
+import { ROUTES } from "@/constants/routes"
 
 export const metadata: Metadata = {
   title: "Trending Developer Products & Tools",
@@ -33,7 +34,12 @@ export const metadata: Metadata = {
   },
 }
 
-export default async function TrendingPage() {
+export default async function TrendingPage(props: {
+  searchParams?: Promise<{ category?: string }>
+}) {
+  const searchParams = props.searchParams ? await props.searchParams : undefined
+  const category = searchParams?.category
+
   const siteUrl = SITE_CONFIG.url
   const breadcrumbs = breadcrumbSchema([
     { name: "Home", url: siteUrl },
@@ -42,7 +48,7 @@ export default async function TrendingPage() {
 
   let products: Awaited<ReturnType<typeof getTrendingProducts>> = []
   try {
-    products = await getTrendingProducts(15)
+    products = await getTrendingProducts(15, "today", category)
   } catch {
     products = []
   }
@@ -50,7 +56,7 @@ export default async function TrendingPage() {
   const jsonLd = itemListSchema(
     (products ?? []).map((p) => ({
       name: p.name,
-      url: `${siteUrl}/products/${p.slug}`,
+      url: `${siteUrl}${p.itemKind === "tool" ? ROUTES.TOOL(p.slug) : ROUTES.PRODUCT(p.slug)}`,
       description: p.tagline,
     }))
   )
@@ -65,7 +71,7 @@ export default async function TrendingPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <TrendingContent />
+      <TrendingContent initialCategory={category} />
     </>
   )
 }

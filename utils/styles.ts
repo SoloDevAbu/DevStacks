@@ -20,6 +20,12 @@ export const tierShimmerGradient = (tier: Tier) =>
 
 export const pricingBadgeColor = (pricing: Pricing) => PRICING_COLORS[pricing]
 
+export const sectionHeaderWrapper =
+  "flex items-center justify-between border-b border-dashed border-border bg-white px-6 py-4 md:px-8"
+
+export const sectionGridWrapper =
+  "grid grid-cols-1 gap-4 border-b border-dashed border-border px-6 py-6 md:px-8"
+
 export const sectionWrapper = "border-b border-dashed border-border px-6 py-8 md:px-8"
 
 export const upvoteButtonActive =
@@ -33,4 +39,19 @@ export const bookmarkButtonActive =
 
 export const bookmarkButtonInactive =
   "relative z-10 size-8 rounded-lg border-slate-200 bg-white p-0 text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition-colors"
+
+export const discoveryCard =
+  "group flex flex-col rounded-none bg-white transition-colors hover:border-slate-300"
+
+export const freshBadge =
+  "inline-flex items-center gap-1 rounded bg-amber-50 px-1.5 py-0.5 text-[10px] font-bold tracking-wide text-amber-700 border border-amber-200/60 uppercase"
+
+export const momentumBadge =
+  "inline-flex items-center gap-1 rounded bg-emerald-50 px-1.5 py-0.5 text-[10px] font-bold tracking-wide text-emerald-700 border border-emerald-200/60 uppercase"
+
+export const filterPillActive =
+  "bg-indigo-50 font-semibold text-indigo-600 hover:text-indigo-700"
+
+export const filterPillInactive =
+  "font-medium text-slate-600 hover:text-slate-900"
 

@@ -1,35 +1,69 @@
 import { db } from "@/db"
-import { builds, buildProducts, products } from "@/db/schema"
+import { products, tools } from "@/db/schema"
 import { inArray, sql } from "drizzle-orm"
-import type { NewBuild } from "@/db/schema"
+
+const slugify = (text: string) =>
+  text
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, "")
+    .replace(/[\s_-]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+
+const nanoid = (len = 6) =>
+  Math.random()
+    .toString(36)
+    .slice(2, 2 + len)
 
 export const createBuild = async (
-  data: Omit<NewBuild, "id" | "viewsCount" | "likesCount" | "createdAt" | "updatedAt">,
-  productIds: string[]
+  data: {
+    authorId: string
+    name: string
+    description: string
+    logoText?: string
+    logoBg?: string
+    websiteUrl?: string
+  },
+  toolIds: string[] = []
 ) => {
-  const [build] = await db.insert(builds).values(data).returning()
+  let builtWithTools: { name: string; toolSlug?: string }[] = []
 
-  if (productIds.length > 0) {
-    // Validate product IDs exist
-    const existingProducts = await db
-      .select({ id: products.id })
-      .from(products)
-      .where(inArray(products.id, productIds))
+  if (toolIds.length > 0) {
+    const matchedTools = await db
+      .select({ id: tools.id, name: tools.name, slug: tools.slug })
+      .from(tools)
+      .where(inArray(tools.id, toolIds))
 
-    const validIds = existingProducts.map((p) => p.id)
+    builtWithTools = matchedTools.map((t) => ({
+      name: t.name,
+      toolSlug: t.slug,
+    }))
 
-    if (validIds.length > 0) {
-      await db.insert(buildProducts).values(
-        validIds.map((productId) => ({ buildId: build.id, productId }))
-      )
-
-      // Increment buildsCount for each linked product
-      await db
-        .update(products)
-        .set({ buildsCount: sql`${products.buildsCount} + 1` })
-        .where(inArray(products.id, validIds))
-    }
+    // Increment buildsCount for each linked tool
+    await db
+      .update(tools)
+      .set({ buildsCount: sql`${tools.buildsCount} + 1` })
+      .where(inArray(tools.id, toolIds))
   }
 
-  return build
+  const baseSlug = slugify(data.name)
+  const slug = `${baseSlug}-${nanoid()}`
+
+  const [product] = await db
+    .insert(products)
+    .values({
+      name: data.name,
+      slug,
+      submitterId: data.authorId,
+      tagline: data.description.slice(0, 150),
+      description: data.description,
+      websiteUrl: data.websiteUrl || "https://example.com",
+      status: "approved",
+      builtWithTools,
+      tags: [],
+      platforms: [],
+    })
+    .returning()
+
+  return product
 }

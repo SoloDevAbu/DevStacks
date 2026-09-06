@@ -3,7 +3,7 @@ import type { Metadata } from "next"
 import { HeaderLogo } from "@/components/layout/header-logo"
 import { HeaderNav } from "@/components/layout/header-nav"
 import { HeaderActions } from "@/components/layout/header-actions"
-import { LeftSidebar } from "@/components/home/left-sidebar"
+import { LeftSidebar } from "@/components/shared/left-sidebar"
 import { RightSidebar } from "@/components/home/right-sidebar"
 import { Providers } from "@/app/providers"
 
