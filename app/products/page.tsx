@@ -45,7 +45,7 @@ export default async function ProductsPage(props: {
           aiPrompt={AI_PROMPTS.products}
         />
 
-        <CategoriesSearch />
+        <CategoriesSearch selectedCategory={category} />
 
         <ProductsDirectoryContent initialCategory={category} initialQuery={q} />
       </div>

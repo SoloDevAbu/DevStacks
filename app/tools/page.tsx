@@ -46,7 +46,7 @@ export default async function ToolsPage(props: {
           aiPrompt={AI_PROMPTS.tools}
         />
 
-        <CategoriesSearch baseRoute={ROUTES.TOOLS} />
+        <CategoriesSearch baseRoute={ROUTES.TOOLS} selectedCategory={category} />
 
         <ToolsDirectoryContent initialCategory={category} initialQuery={q} />
       </div>

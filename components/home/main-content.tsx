@@ -1,5 +1,4 @@
 import { PageHeader } from "@/components/shared/page-header"
-import { CategoriesSearch } from "@/components/shared/categories-search"
 import { NewAndRisingSection } from "@/components/home/new-and-rising-section"
 import { RisingToolsSection } from "@/components/home/rising-tools-section"
 import { DeveloperBuildsSection } from "@/components/home/developer-builds-section"
@@ -16,8 +15,6 @@ export const MainContent = () => {
         description="Discover developer tools, APIs, and infrastructure, and the products people are already building with them"
         aiPrompt={AI_PROMPTS.home}
       />
-
-      <CategoriesSearch />
 
       <div className="flex w-full flex-1 flex-col">
         {/* 1. ✨ New & Rising */}
