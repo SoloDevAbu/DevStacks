@@ -3,7 +3,6 @@ import {
   Wrench,
   Package,
   TrendingUp,
-  Grid,
   Blocks,
   PlusCircle,
   type LucideIcon,
@@ -29,7 +28,6 @@ export const SIDEBAR_NAV: NavSection[] = [
       { name: "Tools", icon: Wrench, href: ROUTES.TOOLS },
       { name: "Products", icon: Package, href: ROUTES.PRODUCTS },
       { name: "Trending", icon: TrendingUp, href: ROUTES.TRENDING },
-      { name: "Categories", icon: Grid, href: ROUTES.CATEGORIES },
     ],
   },
   {

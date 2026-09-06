@@ -8,7 +8,6 @@ import {
   Cloud,
   Mail,
   Webhook,
-  MoreHorizontal,
   Search,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -27,7 +26,6 @@ const CATEGORIES: Category[] = [
   { name: "Infra", icon: Cloud, color: "text-cyan-500" },
   { name: "Email", icon: Mail, color: "text-slate-500" },
   { name: "APIs", icon: Webhook, color: "text-indigo-500" },
-  { name: "More", icon: MoreHorizontal, color: "text-slate-600" },
 ]
 
 export const CategoriesSearch = ({
@@ -41,10 +39,7 @@ export const CategoriesSearch = ({
     <div className="border-b border-dashed border-border bg-white px-6 py-2 md:px-8">
       <div className="scrollbar-hide flex min-w-0 items-center gap-3 overflow-x-auto py-2">
         {CATEGORIES.map((cat) => {
-          const href =
-            cat.name === "More"
-              ? ROUTES.CATEGORIES
-              : `${baseRoute}?category=${encodeURIComponent(cat.name)}`
+          const href = `${baseRoute}?category=${encodeURIComponent(cat.name)}`
           return (
             <div
               key={cat.name}

@@ -9,7 +9,6 @@ export const ROUTES = {
   TRENDING: "/trending",
   PRICING: "/pricing",
   SUBMIT: "/submit",
-  CATEGORIES: "/categories",
   BUILT_WITH: "/built-with",
   SHOWCASE: "/showcase",
   PRODUCTS: "/products",
