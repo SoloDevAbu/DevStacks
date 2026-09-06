@@ -1,4 +1,3 @@
-import { ChevronDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { HoverOutline } from "@/components/shared/hover-outline"
@@ -20,7 +19,7 @@ export const FilterBar = ({
   onTimeframeChange?: (value: TimeframeOption) => void
 }) => {
   return (
-    <div className="flex flex-col gap-4 border-b border-dashed border-border bg-white px-6 py-4 sm:flex-row sm:items-center sm:justify-between md:px-8">
+    <div className="flex items-center border-b border-dashed border-border bg-white px-6 py-4 md:px-8">
       <div className="flex items-center gap-1 rounded-lg border border-slate-200 bg-white p-1 shadow-sm">
         {TIMEFRAME_TABS.map((tab) => {
           const isActive = timeframe === tab.value
@@ -40,17 +39,6 @@ export const FilterBar = ({
             </div>
           )
         })}
-      </div>
-
-      <div className="group/btn relative inline-flex">
-        <Button
-          variant="outline"
-          className="relative z-10 h-auto gap-2 rounded-lg border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm transition-colors hover:bg-slate-50"
-        >
-          All categories
-          <ChevronDown className="size-4 text-slate-400" />
-        </Button>
-        <HoverOutline />
       </div>
     </div>
   )

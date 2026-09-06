@@ -3,6 +3,7 @@ import { TrendingContent } from "@/components/trending/trending-content"
 import { breadcrumbSchema, itemListSchema } from "@/lib/seo/schema"
 import { getTrendingProducts } from "@/db/queries/products/trending"
 import { SITE_CONFIG } from "@/constants/site"
+import { ROUTES } from "@/constants/routes"
 
 export const metadata: Metadata = {
   title: "Trending Developer Products & Tools",
@@ -50,7 +51,7 @@ export default async function TrendingPage() {
   const jsonLd = itemListSchema(
     (products ?? []).map((p) => ({
       name: p.name,
-      url: `${siteUrl}/products/${p.slug}`,
+      url: `${siteUrl}${p.itemKind === "tool" ? ROUTES.TOOL(p.slug) : ROUTES.PRODUCT(p.slug)}`,
       description: p.tagline,
     }))
   )
