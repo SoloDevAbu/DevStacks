@@ -32,7 +32,6 @@ ${SITE_CONFIG.name} (${SITE_CONFIG.domain}) is a curated discovery directory and
 - [Home](${SITE_CONFIG.url}): Discover trending and newly launched developer tools.
 - [Trending Products](${SITE_CONFIG.url}/trending): Community-ranked developer tools by upvotes, views, and builds.
 - [Discover Directory](${SITE_CONFIG.url}/discover): Search developer products by categories (AI, Analytics, Databases, DevTools, Auth, Hosting).
-- [Built With Ecosystem](${SITE_CONFIG.url}/built-with): Products and building blocks ranked by how many developer projects use them.
 - [Showcase Builds](${SITE_CONFIG.url}/showcase): Real-world software projects and their complete developer tech stacks.
 - [Submit a Product](${SITE_CONFIG.url}/submit): Submission portal for developers and founders to list developer tools.
 

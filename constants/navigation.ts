@@ -3,7 +3,6 @@ import {
   Wrench,
   Package,
   TrendingUp,
-  Blocks,
   PlusCircle,
   type LucideIcon,
 } from "lucide-react"
@@ -29,10 +28,6 @@ export const SIDEBAR_NAV: NavSection[] = [
       { name: "Products", icon: Package, href: ROUTES.PRODUCTS },
       { name: "Trending", icon: TrendingUp, href: ROUTES.TRENDING },
     ],
-  },
-  {
-    label: "Ecosystem",
-    items: [{ name: "Built With", icon: Blocks, href: ROUTES.BUILT_WITH }],
   },
   {
     label: "Community",

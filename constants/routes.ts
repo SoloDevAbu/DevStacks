@@ -9,7 +9,6 @@ export const ROUTES = {
   TRENDING: "/trending",
   PRICING: "/pricing",
   SUBMIT: "/submit",
-  BUILT_WITH: "/built-with",
   SHOWCASE: "/showcase",
   PRODUCTS: "/products",
   PRODUCT: (slug: string) => `/products/${slug}`,
