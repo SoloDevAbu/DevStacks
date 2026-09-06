@@ -1,23 +1,30 @@
 import { db } from "@/db"
 import { products } from "@/db/schema"
 import { eq } from "drizzle-orm"
+import { getBuilds } from "@/db/queries/builds/list"
 import { POPULAR_BUILDING_BLOCKS_WEIGHTS } from "@/constants/rankings"
-import type { RankedProduct, RankingOptions } from "./types"
+import type { RankingOptions } from "./types"
 
 export const getPopularBuildingBlocks = async ({
   limit = 10,
   page = 1,
-}: RankingOptions = {}): Promise<RankedProduct[]> => {
+}: RankingOptions = {}) => {
   const safeLimit = Math.min(50, Math.max(1, limit))
   const safePage = Math.max(1, page)
   const offset = (safePage - 1) * safeLimit
 
-  const allApproved = await db
-    .select()
-    .from(products)
-    .where(eq(products.status, "approved"))
+  const [allApproved, allBuilds] = await Promise.all([
+    db
+      .select()
+      .from(products)
+      .where(eq(products.status, "approved")),
+    getBuilds({
+      limit: 50,
+      sortBy: "likes",
+    }),
+  ])
 
-  const scored: RankedProduct[] = allApproved.map((p) => {
+  const scoredProducts = allApproved.map((p) => {
     const score =
       p.buildsCount * POPULAR_BUILDING_BLOCKS_WEIGHTS.buildsWeight +
       p.upvotesCount * POPULAR_BUILDING_BLOCKS_WEIGHTS.upvotesWeight +
@@ -25,12 +32,25 @@ export const getPopularBuildingBlocks = async ({
 
     return {
       ...p,
+      itemType: "product" as const,
       score: Math.round(score * 10) / 10,
     }
   })
 
-  // Sort primarily by computed ecosystem score (heavily weighted on buildsCount)
-  scored.sort((a, b) => (b.score ?? 0) - (a.score ?? 0))
+  const scoredBuilds = allBuilds.map((b) => {
+    const score =
+      b.likesCount * POPULAR_BUILDING_BLOCKS_WEIGHTS.upvotesWeight * 2 +
+      b.viewsCount * POPULAR_BUILDING_BLOCKS_WEIGHTS.viewsWeight
 
-  return scored.slice(offset, offset + safeLimit)
+    return {
+      ...b,
+      itemType: "build" as const,
+      score: Math.round(score * 10) / 10,
+    }
+  })
+
+  const combined = [...scoredProducts, ...scoredBuilds]
+  combined.sort((a, b) => (b.score ?? 0) - (a.score ?? 0))
+
+  return combined.slice(offset, offset + safeLimit)
 }
