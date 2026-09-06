@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 import { SectionHeader } from "@/components/shared/section-header"
 import { FeedCard, type FeedItem } from "@/components/shared/feed-card"
-import { useRecentlyAdded } from "@/hooks/products/use-recently-added"
+import { useRecentlyAdded } from "@/hooks/home/use-recently-added"
 import { ROUTES } from "@/constants/routes"
 import { HOMEPAGE_LIMITS } from "@/constants/rankings"
 
@@ -36,7 +36,7 @@ export const RecentlyAddedSection = () => {
           ))
         ) : items.length === 0 ? (
           <div className="border-b border-dashed border-border bg-white py-8 text-center text-sm text-slate-400">
-            No recently added products or builds yet.
+            No recently added tools or products yet.
           </div>
         ) : (
           items.map((item, index) => (

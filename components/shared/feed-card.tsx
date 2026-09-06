@@ -1,28 +1,18 @@
 "use client"
 
-import { ProductCard } from "@/components/shared/product-card"
-import { BuildCard, type DbBuildItem } from "@/components/shared/build-card"
-import type { DbProduct } from "@/components/home/product-list"
+import { ToolCard, type DbTool } from "@/components/shared/tool-card"
+import { ProductCard, type DbProduct } from "@/components/shared/product-card"
 
 export type FeedItem =
-  | (DbProduct & { itemType?: "product"; builtWith?: never })
-  | (DbBuildItem & { itemType?: "build"; upvotesCount?: never })
-  | Record<string, any>
-
-export const isBuildItem = (item: FeedItem): item is DbBuildItem => {
-  return (
-    item.itemType === "build" ||
-    ("builtWith" in item && !("slug" in item)) ||
-    ("likesCount" in item && !("upvotesCount" in item))
-  )
-}
+  | (DbTool & { itemKind: "tool" })
+  | (DbProduct & { itemKind: "product" })
 
 interface FeedCardProps {
   item: FeedItem
   index?: number
   showMedals?: boolean
   showTrendingBadge?: boolean
-  tagPrefix?: string
+  showFreshnessBadge?: boolean
 }
 
 export const FeedCard = ({
@@ -30,25 +20,31 @@ export const FeedCard = ({
   index = 0,
   showMedals = false,
   showTrendingBadge = false,
-  tagPrefix,
+  showFreshnessBadge = false,
 }: FeedCardProps) => {
-  if (isBuildItem(item)) {
+  const isProduct =
+    ("itemKind" in item && item.itemKind === "product") ||
+    ("likesCount" in item && !("upvotesCount" in item))
+
+  if (isProduct) {
     return (
-      <BuildCard
-        build={item as DbBuildItem}
+      <ProductCard
+        product={item as DbProduct}
         index={index}
         showMedals={showMedals}
+        showTrendingBadge={showTrendingBadge}
+        showFreshnessBadge={showFreshnessBadge}
       />
     )
   }
 
   return (
-    <ProductCard
-      product={item as DbProduct}
+    <ToolCard
+      tool={item as DbTool}
       index={index}
       showMedals={showMedals}
       showTrendingBadge={showTrendingBadge}
-      tagPrefix={tagPrefix}
+      showFreshnessBadge={showFreshnessBadge}
     />
   )
 }

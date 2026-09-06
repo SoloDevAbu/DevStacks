@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 import { SectionHeader } from "@/components/shared/section-header"
 import { FeedCard, type FeedItem } from "@/components/shared/feed-card"
-import { usePopularBuildingBlocks } from "@/hooks/products/use-popular-building-blocks"
+import { usePopularBuildingBlocks } from "@/hooks/home/use-popular-building-blocks"
 import { ROUTES } from "@/constants/routes"
 import { HOMEPAGE_LIMITS } from "@/constants/rankings"
 

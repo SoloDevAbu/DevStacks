@@ -1,7 +1,7 @@
 import { PageHeader } from "@/components/shared/page-header"
-import { CategoriesSearch } from "@/components/discover/categories-search"
+import { CategoriesSearch } from "@/components/shared/categories-search"
 import { NewAndRisingSection } from "@/components/home/new-and-rising-section"
-import { RisingProductsSection } from "@/components/home/rising-products-section"
+import { RisingToolsSection } from "@/components/home/rising-tools-section"
 import { DeveloperBuildsSection } from "@/components/home/developer-builds-section"
 import { RecentlyAddedSection } from "@/components/home/recently-added-section"
 import { PopularBuildingBlocksSection } from "@/components/home/popular-building-blocks-section"
@@ -23,8 +23,8 @@ export const MainContent = () => {
         {/* 1. ✨ New & Rising */}
         <NewAndRisingSection />
 
-        {/* 2. 🚀 Rising Products */}
-        <RisingProductsSection />
+        {/* 2. 🚀 Rising Tools */}
+        <RisingToolsSection />
 
         {/* 3. 🔗 See What Developers Are Building */}
         <DeveloperBuildsSection />

@@ -2,6 +2,7 @@ export const ROUTES = {
   HOME: "/",
   DISCOVER: "/discover",
   DISCOVER_NEW_RISING: "/discover/new-rising",
+  DISCOVER_RISING_TOOLS: "/discover/rising-tools",
   DISCOVER_RISING_PRODUCTS: "/discover/rising-products",
   DISCOVER_RECENTLY_ADDED: "/discover/recently-added",
   DISCOVER_POPULAR_BUILDING_BLOCKS: "/discover/popular-building-blocks",

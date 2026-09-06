@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
 import { PageHeader } from "@/components/shared/page-header"
-import { CategoriesSearch } from "@/components/discover/categories-search"
+import { CategoriesSearch } from "@/components/shared/categories-search"
 import { breadcrumbSchema } from "@/lib/seo/schema"
 import { SITE_CONFIG } from "@/constants/site"
 import { AI_PROMPTS } from "@/lib/prompts"

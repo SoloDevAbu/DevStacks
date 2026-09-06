@@ -1,21 +1,21 @@
 import { NextResponse } from "next/server"
 import { SITE_CONFIG } from "@/constants/site"
-import { getProducts } from "@/db/queries/products/list"
+import { getTools } from "@/db/queries/tools/list"
 import { getTrendingProducts } from "@/db/queries/products/trending"
 
 export const revalidate = 86400
 
 export const GET = async () => {
-  let buildingBlocks: Awaited<ReturnType<typeof getProducts>> = []
+  let buildingBlocks: Awaited<ReturnType<typeof getTools>> = []
   let featuredTools: Awaited<ReturnType<typeof getTrendingProducts>> = []
 
   try {
-    const [blocks, tools] = await Promise.all([
-      getProducts({ sortBy: "builds", limit: 6 }),
+    const [blocks, trending] = await Promise.all([
+      getTools({ sortBy: "builds", limit: 6 }),
       getTrendingProducts(10),
     ])
     buildingBlocks = blocks ?? []
-    featuredTools = tools ?? []
+    featuredTools = trending ?? []
   } catch {
     buildingBlocks = []
     featuredTools = []

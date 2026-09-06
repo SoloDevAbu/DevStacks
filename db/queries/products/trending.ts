@@ -1,45 +1,55 @@
 import { db } from "@/db"
-import { products } from "@/db/schema"
+import { tools, products } from "@/db/schema"
 import { desc, eq } from "drizzle-orm"
 import type { TimeframeOption } from "@/lib/rankings/types"
+import type { RankedItem } from "@/lib/rankings/types"
 
 export const getTrendingProducts = async (
   limit = 10,
   timeframe: TimeframeOption = "today"
-) => {
+): Promise<RankedItem[]> => {
   const safeLimit = Math.min(50, Math.max(1, limit))
 
-  const allApproved = await db
-    .select()
-    .from(products)
-    .where(eq(products.status, "approved"))
+  const [allTools, allProducts] = await Promise.all([
+    db.select().from(tools).where(eq(tools.status, "approved")),
+    db.select().from(products).where(eq(products.status, "approved")),
+  ])
 
   const now = new Date()
 
-  // Score products based on the selected timeframe
-  const scored = allApproved.map((p) => {
-    const ageMs = Math.max(0, now.getTime() - p.createdAt.getTime())
+  const scoreItem = (
+    createdAt: Date,
+    activityCount: number, // upvotesCount for tools, likesCount for products
+    viewsCount: number
+  ) => {
+    const ageMs = Math.max(0, now.getTime() - createdAt.getTime())
     const ageHours = Math.max(1, ageMs / (1000 * 60 * 60))
 
-    let timeScore = p.upvotesCount
     if (timeframe === "today") {
-      timeScore = (p.upvotesCount * 4 + p.viewsCount * 0.1) / Math.pow(ageHours + 1, 0.7)
+      return (activityCount * 4 + viewsCount * 0.1) / Math.pow(ageHours + 1, 0.7)
     } else if (timeframe === "this-week") {
-      timeScore = (p.upvotesCount * 3 + p.viewsCount * 0.05) / Math.pow(ageHours + 1, 0.4)
+      return (activityCount * 3 + viewsCount * 0.05) / Math.pow(ageHours + 1, 0.4)
     } else if (timeframe === "this-month") {
-      timeScore = (p.upvotesCount * 2 + p.viewsCount * 0.02) / Math.pow(ageHours + 1, 0.2)
-    } else {
-      // All time
-      timeScore = p.upvotesCount * 1.0 + p.viewsCount * 0.01
+      return (activityCount * 2 + viewsCount * 0.02) / Math.pow(ageHours + 1, 0.2)
     }
+    // All time
+    return activityCount * 1.0 + viewsCount * 0.01
+  }
 
-    return {
+  const scored: RankedItem[] = [
+    ...allTools.map((t) => ({
+      ...t,
+      itemKind: "tool" as const,
+      score: Math.round(scoreItem(t.createdAt, t.upvotesCount, t.viewsCount) * 10) / 10,
+    })),
+    ...allProducts.map((p) => ({
       ...p,
-      score: Math.round(timeScore * 10) / 10,
-    }
-  })
+      itemKind: "product" as const,
+      score: Math.round(scoreItem(p.createdAt, p.likesCount, p.viewsCount) * 10) / 10,
+    })),
+  ]
 
-  scored.sort((a, b) => b.score - a.score)
+  scored.sort((a, b) => (b.score ?? 0) - (a.score ?? 0))
 
   return scored.slice(0, safeLimit)
 }

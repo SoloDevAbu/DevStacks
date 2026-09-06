@@ -1,39 +1,14 @@
 import "dotenv/config"
 import { db } from "./index"
-import { products, builds, buildProducts, users } from "./schema"
+import { tools, products, users } from "./schema"
+import type { BuiltWithTool } from "./schema"
 import { eq } from "drizzle-orm"
 
-const SEED_PRODUCTS = [
-  {
-    name: "MeetWave",
-    slug: "meetwave",
-    tagline: "Privacy-first AI meeting recorder for Windows",
-    description:
-      "MeetWave is an intelligent, privacy-first meeting assistant that runs locally on Windows. It records, transcribes, and summarizes meetings in real time without sending audio to third-party servers.",
-    problemStatement:
-      "Remote teams waste hours taking notes, and enterprise privacy policies often prohibit cloud-based meeting transcription bots from joining sensitive calls.",
-    solution:
-      "Local-first AI transcription and intelligent summarization using on-device inference and encrypted storage.",
-    uniqueValue:
-      "100% on-device AI transcription with zero audio retention in the cloud, compliant with strict enterprise compliance standards.",
-    websiteUrl: "https://meetwave.dev",
-    logoUrl: null,
-    githubUrl: "https://github.com/meetwave/meetwave",
-    category: "AI",
-    tags: ["AI", "Productivity", "Desktop"],
-    platforms: ["Windows", "Desktop"],
-    pricing: "Freemium" as const,
-    tier: "premium+" as const,
-    status: "approved" as const,
-    upvotesCount: 1245,
-    buildsCount: 142,
-    commentsCount: 24,
-    viewsCount: 14442,
-    keywords: "ai, transcription, meeting notes, privacy, windows, desktop",
-    targetAudience: "Engineering leads, product managers, and privacy-conscious remote teams",
-    asoCategory: "Productivity",
-    aiContext: "MeetWave is a privacy-focused AI meeting recorder and transcription tool for Windows.",
-  },
+// ---------------------------------------------------------------------------
+// Seed Tools — infrastructure / developer tools
+// ---------------------------------------------------------------------------
+
+const SEED_TOOLS = [
   {
     name: "Supabase",
     slug: "supabase",
@@ -123,36 +98,6 @@ const SEED_PRODUCTS = [
     targetAudience: "Web developers, Next.js engineers, and frontend teams",
     asoCategory: "Developer Tools",
     aiContext: "Vercel is the frontend cloud platform for deploying and hosting modern web applications.",
-  },
-  {
-    name: "Dreamstate",
-    slug: "dreamstate",
-    tagline: "AI Head of Growth Agents Across Every Channel",
-    description:
-      "Dreamstate deploys autonomous AI agents that analyze user funnels, generate high-converting copy, run multivariate tests, and automate outreach pipelines across social and email.",
-    problemStatement:
-      "Early-stage founders and small growth teams lack the bandwidth to run continuous marketing experiments across multiple acquisition channels.",
-    solution:
-      "Autonomous agents that identify drop-offs, compose personalized campaigns, and continuously optimize conversions.",
-    uniqueValue:
-      "Deep integration with modern analytics and CRM APIs, executing autonomous growth loops without manual intervention.",
-    websiteUrl: "https://dreamstate.ai",
-    logoUrl: null,
-    githubUrl: null,
-    category: "Marketing",
-    tags: ["Marketing", "AI", "Productivity"],
-    platforms: ["Web", "API"],
-    pricing: "Paid" as const,
-    tier: "premium" as const,
-    status: "approved" as const,
-    upvotesCount: 982,
-    buildsCount: 98,
-    commentsCount: 18,
-    viewsCount: 11390,
-    keywords: "ai marketing, growth hacking, automated outreach, conversion optimization",
-    targetAudience: "Founders, growth leads, and marketing agencies",
-    asoCategory: "Marketing",
-    aiContext: "Dreamstate is an autonomous AI growth platform that runs marketing campaigns across channels.",
   },
   {
     name: "PostHog",
@@ -305,36 +250,6 @@ const SEED_PRODUCTS = [
     aiContext: "Resend is a modern developer email platform powered by React Email.",
   },
   {
-    name: "Distro",
-    slug: "distro",
-    tagline: "AI distribution operator for content and pipeline",
-    description:
-      "Distro automates multi-channel distribution for developer tools and SaaS products, turning technical blog posts and releases into engaging social content, newsletters, and community discussions.",
-    problemStatement:
-      "Developers build great products but struggle with consistent distribution and marketing across Hacker News, X, LinkedIn, and Reddit.",
-    solution:
-      "Automated cross-platform content syndication that adapts voice and formatting for each developer community.",
-    uniqueValue:
-      "Understands developer terminology and tech stacks to generate authentic technical content without sounding like generic marketing.",
-    websiteUrl: "https://distro.dev",
-    logoUrl: null,
-    githubUrl: null,
-    category: "Marketing",
-    tags: ["Marketing", "SaaS", "SEO Tools"],
-    platforms: ["Web", "API"],
-    pricing: "Freemium" as const,
-    tier: "free" as const,
-    status: "approved" as const,
-    upvotesCount: 412,
-    buildsCount: 54,
-    commentsCount: 12,
-    viewsCount: 5200,
-    keywords: "distro, developer marketing, content distribution, devrel, seo",
-    targetAudience: "Developer-focused founders, DevRel teams, and technical marketers",
-    asoCategory: "Marketing",
-    aiContext: "Distro is an AI distribution platform designed for developer marketing and pipeline growth.",
-  },
-  {
     name: "Supernova",
     slug: "supernova",
     tagline: "Design system manager for scaling UI components",
@@ -366,53 +281,286 @@ const SEED_PRODUCTS = [
   },
 ]
 
-const SEED_BUILDS = [
+// ---------------------------------------------------------------------------
+// Seed Products — developer-built apps (merged from old products + old builds)
+// ---------------------------------------------------------------------------
+
+const SEED_PRODUCTS: {
+  name: string
+  slug: string
+  tagline: string
+  description: string
+  problemStatement?: string
+  solution?: string
+  uniqueValue?: string
+  websiteUrl: string
+  logoUrl: null
+  githubUrl: string | null
+  category: string
+  tags: string[]
+  platforms: string[]
+  pricing: "Free" | "Freemium" | "Paid" | "Open Source"
+  tier: "free" | "premium" | "premium+"
+  status: "approved" | "pending" | "rejected"
+  builtWithTools: BuiltWithTool[]
+  likesCount: number
+  commentsCount: number
+  viewsCount: number
+  keywords?: string
+  targetAudience?: string
+  asoCategory?: string
+  aiContext?: string
+}[] = [
+  // --- From old products table (developer-built apps) ---
+  {
+    name: "MeetWave",
+    slug: "meetwave",
+    tagline: "Privacy-first AI meeting recorder for Windows",
+    description:
+      "MeetWave is an intelligent, privacy-first meeting assistant that runs locally on Windows. It records, transcribes, and summarizes meetings in real time without sending audio to third-party servers.",
+    problemStatement:
+      "Remote teams waste hours taking notes, and enterprise privacy policies often prohibit cloud-based meeting transcription bots from joining sensitive calls.",
+    solution:
+      "Local-first AI transcription and intelligent summarization using on-device inference and encrypted storage.",
+    uniqueValue:
+      "100% on-device AI transcription with zero audio retention in the cloud, compliant with strict enterprise compliance standards.",
+    websiteUrl: "https://meetwave.dev",
+    logoUrl: null,
+    githubUrl: "https://github.com/meetwave/meetwave",
+    category: "AI",
+    tags: ["AI", "Productivity", "Desktop"],
+    platforms: ["Windows", "Desktop"],
+    pricing: "Freemium" as const,
+    tier: "premium+" as const,
+    status: "approved" as const,
+    builtWithTools: [
+      { name: "Vercel", toolSlug: "vercel" },
+      { name: "Supabase", toolSlug: "supabase" },
+    ],
+    likesCount: 245,
+    commentsCount: 24,
+    viewsCount: 14442,
+    keywords: "ai, transcription, meeting notes, privacy, windows, desktop",
+    targetAudience: "Engineering leads, product managers, and privacy-conscious remote teams",
+    asoCategory: "Productivity",
+    aiContext: "MeetWave is a privacy-focused AI meeting recorder and transcription tool for Windows.",
+  },
+  {
+    name: "Dreamstate",
+    slug: "dreamstate",
+    tagline: "AI Head of Growth Agents Across Every Channel",
+    description:
+      "Dreamstate deploys autonomous AI agents that analyze user funnels, generate high-converting copy, run multivariate tests, and automate outreach pipelines across social and email.",
+    problemStatement:
+      "Early-stage founders and small growth teams lack the bandwidth to run continuous marketing experiments across multiple acquisition channels.",
+    solution:
+      "Autonomous agents that identify drop-offs, compose personalized campaigns, and continuously optimize conversions.",
+    uniqueValue:
+      "Deep integration with modern analytics and CRM APIs, executing autonomous growth loops without manual intervention.",
+    websiteUrl: "https://dreamstate.ai",
+    logoUrl: null,
+    githubUrl: null,
+    category: "Marketing",
+    tags: ["Marketing", "AI", "Productivity"],
+    platforms: ["Web", "API"],
+    pricing: "Paid" as const,
+    tier: "premium" as const,
+    status: "approved" as const,
+    builtWithTools: [
+      { name: "PostHog", toolSlug: "posthog" },
+      { name: "Resend", toolSlug: "resend" },
+      { name: "Vercel", toolSlug: "vercel" },
+    ],
+    likesCount: 182,
+    commentsCount: 18,
+    viewsCount: 11390,
+    keywords: "ai marketing, growth hacking, automated outreach, conversion optimization",
+    targetAudience: "Founders, growth leads, and marketing agencies",
+    asoCategory: "Marketing",
+    aiContext: "Dreamstate is an autonomous AI growth platform that runs marketing campaigns across channels.",
+  },
+  {
+    name: "Distro",
+    slug: "distro",
+    tagline: "AI distribution operator for content and pipeline",
+    description:
+      "Distro automates multi-channel distribution for developer tools and SaaS products, turning technical blog posts and releases into engaging social content, newsletters, and community discussions.",
+    problemStatement:
+      "Developers build great products but struggle with consistent distribution and marketing across Hacker News, X, LinkedIn, and Reddit.",
+    solution:
+      "Automated cross-platform content syndication that adapts voice and formatting for each developer community.",
+    uniqueValue:
+      "Understands developer terminology and tech stacks to generate authentic technical content without sounding like generic marketing.",
+    websiteUrl: "https://distro.dev",
+    logoUrl: null,
+    githubUrl: null,
+    category: "Marketing",
+    tags: ["Marketing", "SaaS", "SEO Tools"],
+    platforms: ["Web", "API"],
+    pricing: "Freemium" as const,
+    tier: "free" as const,
+    status: "approved" as const,
+    builtWithTools: [
+      { name: "Supabase", toolSlug: "supabase" },
+      { name: "PostHog", toolSlug: "posthog" },
+      { name: "Vercel", toolSlug: "vercel" },
+    ],
+    likesCount: 112,
+    commentsCount: 12,
+    viewsCount: 5200,
+    keywords: "distro, developer marketing, content distribution, devrel, seo",
+    targetAudience: "Developer-focused founders, DevRel teams, and technical marketers",
+    asoCategory: "Marketing",
+    aiContext: "Distro is an AI distribution platform designed for developer marketing and pipeline growth.",
+  },
+
+  // --- From old builds table (promoted to full product entries) ---
   {
     name: "Nexus Workspace",
-    description: "An AI-augmented research and documentation workspace designed for fast-moving engineering teams.",
-    logoText: "NX",
-    logoBg: "bg-slate-900 text-cyan-400",
+    slug: "nexus-workspace",
+    tagline: "AI-augmented research and documentation workspace",
+    description:
+      "An AI-augmented research and documentation workspace designed for fast-moving engineering teams. Combines smart note-taking, codebase search, and real-time collaboration.",
+    problemStatement:
+      "Engineering teams spend excessive time searching for context across scattered wikis, docs, and chat threads.",
+    solution:
+      "A unified workspace that indexes your codebase, docs, and chat history and surfaces the right context using AI.",
+    uniqueValue:
+      "Tight integration with GitHub and Slack, plus AI-powered context retrieval that works across your entire tech stack.",
+    websiteUrl: "https://nexusworkspace.dev",
+    logoUrl: null,
+    githubUrl: null,
+    category: "Productivity",
+    tags: ["AI", "Productivity", "Collaboration"],
+    platforms: ["Web", "Desktop"],
+    pricing: "Freemium" as const,
     tier: "premium+" as const,
-    viewsCount: 1240,
+    status: "approved" as const,
+    builtWithTools: [
+      { name: "Supabase", toolSlug: "supabase" },
+      { name: "Vercel", toolSlug: "vercel" },
+      { name: "Dodo Payments", toolSlug: "dodo-payments" },
+    ],
     likesCount: 36,
-    productSlugs: ["supabase", "vercel", "dodo-payments"],
+    commentsCount: 8,
+    viewsCount: 1240,
+    keywords: "ai workspace, documentation, research tool, engineering productivity",
+    targetAudience: "Engineering teams, technical writers, and developer-focused startups",
+    asoCategory: "Productivity",
+    aiContext: "Nexus Workspace is an AI-powered research and documentation platform for engineering teams.",
   },
   {
     name: "InvoiceAI",
-    description: "Automated invoicing and payment collection platform built for freelance developers and contractors.",
-    logoText: "IA",
-    logoBg: "bg-indigo-100 text-indigo-500",
+    slug: "invoice-ai",
+    tagline: "Automated invoicing and payment collection for developers",
+    description:
+      "Automated invoicing and payment collection platform built for freelance developers and contractors. Generates smart invoices, follows up on late payments, and reconciles accounts automatically.",
+    problemStatement:
+      "Freelance developers spend hours each month manually creating invoices, chasing late payments, and reconciling bank transactions.",
+    solution:
+      "AI that drafts invoices from project notes, schedules payment reminders, and automatically marks invoices as paid.",
+    uniqueValue:
+      "Understands developer project types and rates, with native integrations for GitHub commits and time-tracking tools.",
+    websiteUrl: "https://invoiceai.dev",
+    logoUrl: null,
+    githubUrl: null,
+    category: "Finance",
+    tags: ["Payments", "AI", "SaaS"],
+    platforms: ["Web", "API"],
+    pricing: "Freemium" as const,
     tier: "premium" as const,
-    viewsCount: 980,
+    status: "approved" as const,
+    builtWithTools: [
+      { name: "Stripe", toolSlug: "stripe" },
+      { name: "PostHog", toolSlug: "posthog" },
+      { name: "Resend", toolSlug: "resend" },
+    ],
     likesCount: 28,
-    productSlugs: ["stripe", "posthog", "resend"],
+    commentsCount: 6,
+    viewsCount: 980,
+    keywords: "invoicing, payment collection, freelance developer, ai finance",
+    targetAudience: "Freelance developers, contractors, and small dev agencies",
+    asoCategory: "Finance",
+    aiContext: "InvoiceAI automates invoicing and payment collection for freelance developers.",
   },
   {
     name: "ShipFast Boilerplate",
-    description: "Production Next.js SaaS starter kit preconfigured with auth, payments, database, and SEO optimization.",
-    logoText: "SF",
-    logoBg: "bg-teal-500 text-white",
+    slug: "shipfast-boilerplate",
+    tagline: "Production Next.js SaaS starter kit",
+    description:
+      "Production-ready Next.js SaaS starter kit preconfigured with auth, payments, database, email, and SEO optimization. Launch your SaaS in days, not months.",
+    problemStatement:
+      "Building a SaaS from scratch requires weeks of boilerplate setup before writing a single line of business logic.",
+    solution:
+      "A fully configured production starter with auth, billing, DB, email, and analytics wired up and ready to go.",
+    uniqueValue:
+      "Opinionated stack selection (Supabase + Stripe + BetterAuth + Vercel) with real production patterns, not toy examples.",
+    websiteUrl: "https://shipfa.st",
+    logoUrl: null,
+    githubUrl: null,
+    category: "Developer Tools",
+    tags: ["Next.js", "SaaS", "Boilerplate"],
+    platforms: ["Web", "CLI"],
+    pricing: "Paid" as const,
     tier: "premium+" as const,
-    viewsCount: 2150,
+    status: "approved" as const,
+    builtWithTools: [
+      { name: "Supabase", toolSlug: "supabase" },
+      { name: "BetterAuth", toolSlug: "better-auth" },
+      { name: "Stripe", toolSlug: "stripe" },
+      { name: "Vercel", toolSlug: "vercel" },
+    ],
     likesCount: 84,
-    productSlugs: ["supabase", "better-auth", "stripe", "vercel"],
+    commentsCount: 14,
+    viewsCount: 2150,
+    keywords: "nextjs boilerplate, saas starter, shipfast, production nextjs, saas template",
+    targetAudience: "Indie hackers, SaaS founders, and Next.js developers",
+    asoCategory: "Developer Tools",
+    aiContext: "ShipFast is a production-ready Next.js SaaS boilerplate with auth, payments, and database pre-configured.",
   },
   {
     name: "NoteFlow App",
-    description: "Local-first note-taking and knowledge base with end-to-end encryption and fast markdown search.",
-    logoText: "NF",
-    logoBg: "bg-rose-100 text-rose-500",
+    slug: "noteflow-app",
+    tagline: "Local-first note-taking with end-to-end encryption",
+    description:
+      "Local-first note-taking and knowledge base with end-to-end encryption and fast markdown search. Your notes never leave your device unless you choose to sync.",
+    problemStatement:
+      "Cloud-based note apps can read your notes, suffer from outages, and require subscriptions for basic offline access.",
+    solution:
+      "A fully local-first app with optional encrypted sync, zero-knowledge architecture, and blazing-fast search.",
+    uniqueValue:
+      "Notes are stored locally in SQLite via TinyBase, with optional P2P sync that the server cannot decrypt.",
+    websiteUrl: "https://noteflow.app",
+    logoUrl: null,
+    githubUrl: null,
+    category: "Productivity",
+    tags: ["Productivity", "Local-First", "Open Source"],
+    platforms: ["Web", "Desktop", "Mobile"],
+    pricing: "Open Source" as const,
     tier: "free" as const,
-    viewsCount: 620,
+    status: "approved" as const,
+    builtWithTools: [
+      { name: "TinyBase", toolSlug: "tinybase" },
+      { name: "Vercel", toolSlug: "vercel" },
+    ],
     likesCount: 19,
-    productSlugs: ["tinybase", "vercel"],
+    commentsCount: 5,
+    viewsCount: 620,
+    keywords: "local first notes, encrypted notes, markdown, offline notes, noteflow",
+    targetAudience: "Privacy-conscious users, developers, and writers who prefer local-first tools",
+    asoCategory: "Productivity",
+    aiContext: "NoteFlow is a local-first, end-to-end encrypted note-taking app built on TinyBase.",
   },
 ]
+
+// ---------------------------------------------------------------------------
+// Seed runner
+// ---------------------------------------------------------------------------
 
 export const seedDatabase = async () => {
   console.log("🌱 Starting database seeding...")
 
-  // 1. Find or pick an existing user for submitter/author
+  // 1. Find or create a system user
   const existingUsers = await db.select().from(users).limit(1)
   let authorUserId = existingUsers[0]?.id
 
@@ -430,91 +578,45 @@ export const seedDatabase = async () => {
     authorUserId = newUser.id
   }
 
-  console.log(`Using user ${authorUserId} for submitted products and builds.`)
+  console.log(`Using user ${authorUserId} for all seed entries.`)
 
-  // 2. Insert Products
-  const createdProductsMap: Record<string, string> = {}
+  // 2. Seed Tools
+  for (const toolData of SEED_TOOLS) {
+    const existing = await db
+      .select({ id: tools.id })
+      .from(tools)
+      .where(eq(tools.slug, toolData.slug))
+      .limit(1)
 
+    if (existing.length > 0) {
+      console.log(`Tool "${toolData.name}" already exists — updating...`)
+      await db
+        .update(tools)
+        .set({ ...toolData, submitterId: authorUserId, updatedAt: new Date() })
+        .where(eq(tools.id, existing[0].id))
+    } else {
+      console.log(`Inserting tool "${toolData.name}"...`)
+      await db.insert(tools).values({ ...toolData, submitterId: authorUserId })
+    }
+  }
+
+  // 3. Seed Products
   for (const productData of SEED_PRODUCTS) {
     const existing = await db
-      .select({ id: products.id, slug: products.slug })
+      .select({ id: products.id })
       .from(products)
       .where(eq(products.slug, productData.slug))
       .limit(1)
 
     if (existing.length > 0) {
-      console.log(`Product "${productData.name}" already exists (${existing[0].id}). Updating...`)
+      console.log(`Product "${productData.name}" already exists — updating...`)
       await db
         .update(products)
-        .set({
-          ...productData,
-          submitterId: authorUserId,
-          updatedAt: new Date(),
-        })
+        .set({ ...productData, submitterId: authorUserId, updatedAt: new Date() })
         .where(eq(products.id, existing[0].id))
-      createdProductsMap[productData.slug] = existing[0].id
     } else {
       console.log(`Inserting product "${productData.name}"...`)
-      const [newProduct] = await db
-        .insert(products)
-        .values({
-          ...productData,
-          submitterId: authorUserId,
-        })
-        .returning()
-      createdProductsMap[productData.slug] = newProduct.id
-    }
-  }
-
-  // 3. Insert Builds and link to products
-  for (const buildData of SEED_BUILDS) {
-    const { productSlugs, ...buildFields } = buildData
-
-    // Check if build with this name already exists
-    const existingBuild = await db
-      .select({ id: builds.id })
-      .from(builds)
-      .where(eq(builds.name, buildFields.name))
-      .limit(1)
-
-    let buildId: string
-
-    if (existingBuild.length > 0) {
-      buildId = existingBuild[0].id
-      console.log(`Build "${buildFields.name}" already exists (${buildId}). Updating...`)
-      await db
-        .update(builds)
-        .set({
-          ...buildFields,
-          authorId: authorUserId,
-          updatedAt: new Date(),
-        })
-        .where(eq(builds.id, buildId))
-    } else {
-      console.log(`Inserting build "${buildFields.name}"...`)
-      const [newBuild] = await db
-        .insert(builds)
-        .values({
-          ...buildFields,
-          authorId: authorUserId,
-        })
-        .returning()
-      buildId = newBuild.id
-    }
-
-    // Link products
-    for (const slug of productSlugs) {
-      const prodId = createdProductsMap[slug]
-      if (prodId) {
-        await db
-          .insert(buildProducts)
-          .values({
-            buildId,
-            productId: prodId,
-          })
-          .onConflictDoNothing()
-          .catch(() => {})
-      }
+      await db.insert(products).values({ ...productData, submitterId: authorUserId })
     }
   }
 

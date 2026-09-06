@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import { BuiltWithContent } from "@/components/built-with/built-with-content"
 import { breadcrumbSchema, itemListSchema } from "@/lib/seo/schema"
 import { SITE_CONFIG } from "@/constants/site"
-import { getBuilds } from "@/db/queries/builds/list"
+import { getProducts } from "@/db/queries/products/list"
 
 export const metadata: Metadata = {
   title: "Built With — Real Projects Built With Modern Tools & APIs",
@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     `Explore real-world software products and developer showcases on ${SITE_CONFIG.name}. See what tools, databases, and APIs developers use to build.`,
   keywords: [
     "built with",
-    "developer builds",
+    "developer products",
     "software tech stacks",
     "what developers are building",
     "developer showcase",
@@ -39,18 +39,22 @@ export default async function BuiltWithPage() {
     { name: "Built With", url: `${SITE_CONFIG.url}/built-with` },
   ])
 
-  let buildsList: Awaited<ReturnType<typeof getBuilds>> = []
+  let productsList: Awaited<ReturnType<typeof getProducts>> = []
   try {
-    buildsList = await getBuilds({ limit: 20 })
+    productsList = await getProducts({ limit: 20, sortBy: "recent" })
   } catch {
-    buildsList = []
+    productsList = []
   }
 
   const items = itemListSchema(
-    (buildsList ?? []).map((b) => ({
-      name: b.name,
-      url: `${SITE_CONFIG.url}/showcase`,
-      description: `${b.description} — Built with ${(b.builtWith ?? []).map((t) => t.name).join(", ")}`,
+    (productsList ?? []).map((p) => ({
+      name: p.name,
+      url: `${SITE_CONFIG.url}/products/${p.slug}`,
+      description: `${p.description}${
+        p.builtWithTools && p.builtWithTools.length > 0
+          ? ` — Built with ${p.builtWithTools.map((t) => t.name).join(", ")}`
+          : ""
+      }`,
     }))
   )
 

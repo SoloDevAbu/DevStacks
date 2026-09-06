@@ -1,6 +1,6 @@
 "use client"
 
-import { ProductList, type DbProduct } from "@/components/home/product-list"
+import { ProductList, type DbProduct } from "@/components/shared/product-list"
 import { useProducts } from "@/hooks/products/use-products"
 import { Loader2 } from "lucide-react"
 

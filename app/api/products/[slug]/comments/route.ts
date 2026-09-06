@@ -1,6 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { getProductComments } from "@/db/queries/comments/list"
-import { createComment } from "@/db/queries/comments/create"
+import { createProductComment } from "@/db/queries/comments/create"
 import { getProductBySlug } from "@/db/queries/products/get"
 import { createCommentSchema } from "@/lib/validation/comment"
 
@@ -47,7 +47,7 @@ export const POST = async (
       return NextResponse.json({ error: "Product not found" }, { status: 404 })
     }
 
-    const comment = await createComment(
+    const comment = await createProductComment(
       product.id,
       parsed.data.userId,
       parsed.data.body

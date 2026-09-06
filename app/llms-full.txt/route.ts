@@ -1,34 +1,35 @@
 import { NextResponse } from "next/server"
 import { SITE_CONFIG } from "@/constants/site"
 import { PLATFORMS } from "@/constants/platforms"
-import { getProducts } from "@/db/queries/products/list"
+import { getTools } from "@/db/queries/tools/list"
 import { getTrendingProducts } from "@/db/queries/products/trending"
-import { getRecentlyAddedProducts } from "@/db/queries/products/recently-added"
-import { getBuilds } from "@/db/queries/builds/list"
+import { getRecentlyAddedProducts } from "@/lib/rankings/recently-added"
+import { getRisingProducts } from "@/lib/rankings/rising-products"
+import type { RankedItem } from "@/lib/rankings/types"
 
 export const revalidate = 86400
 
 export const GET = async () => {
-  let trendingProducts: Awaited<ReturnType<typeof getTrendingProducts>> = []
-  let buildingBlocks: Awaited<ReturnType<typeof getProducts>> = []
-  let devBuilds: Awaited<ReturnType<typeof getBuilds>> = []
-  let recentlyAdded: Awaited<ReturnType<typeof getRecentlyAddedProducts>> = []
+  let trendingItems: Awaited<ReturnType<typeof getTrendingProducts>> = []
+  let buildingBlocks: Awaited<ReturnType<typeof getTools>> = []
+  let risingProducts: Awaited<ReturnType<typeof getRisingProducts>> = []
+  let recentlyAdded: RankedItem[] = []
 
   try {
-    const [trending, blocks, buildsData, recent] = await Promise.all([
+    const [trending, blocks, rising, recent] = await Promise.all([
       getTrendingProducts(15),
-      getProducts({ sortBy: "builds", limit: 10 }),
-      getBuilds({ limit: 10 }),
-      getRecentlyAddedProducts(10),
+      getTools({ sortBy: "builds", limit: 10 }),
+      getRisingProducts({ limit: 10 }),
+      getRecentlyAddedProducts({ limit: 10 }),
     ])
-    trendingProducts = trending ?? []
+    trendingItems = trending ?? []
     buildingBlocks = blocks ?? []
-    devBuilds = buildsData ?? []
-    recentlyAdded = recent ?? []
+    risingProducts = rising ?? []
+    recentlyAdded = (recent ?? []) as RankedItem[]
   } catch {
-    trendingProducts = []
+    trendingItems = []
     buildingBlocks = []
-    devBuilds = []
+    risingProducts = []
     recentlyAdded = []
   }
 
@@ -36,16 +37,16 @@ export const GET = async () => {
 
 > Platform: ${SITE_CONFIG.name} (${SITE_CONFIG.domain})
 > Canonical URL: ${SITE_CONFIG.url}
-> Mission: High-visibility discovery directory for developer tools, APIs, infrastructure, and developer tech stacks.
+> Mission: High-visibility discovery directory for developer tools, APIs, infrastructure, and developer-built products.
 
 ---
 
 ## 1. Overview & Positioning (AEO / LLM Summary)
-${SITE_CONFIG.name} is a developer-focused platform cataloging modern tools, libraries, APIs, and SaaS products. Developers use ${SITE_CONFIG.name} to:
-1. Discover vetted, production-ready developer infrastructure and APIs.
-2. Inspect real-world tech stacks through "Built With" and "Developer Builds".
+${SITE_CONFIG.name} is a developer-focused platform cataloging modern tools, libraries, APIs, and developer-built products. Developers use ${SITE_CONFIG.name} to:
+1. Discover vetted, production-ready developer infrastructure and APIs (tools).
+2. Discover products that developers have built using those tools.
 3. Evaluate pricing models (Free, Freemium, Open Source, Paid) and platform compatibility.
-4. Promote developer software through verified badges and community upvotes.
+4. Promote developer software through verified badges, community upvotes (tools) and likes (products).
 
 ---
 
@@ -67,15 +68,14 @@ ${PLATFORMS.map((p) => `- **${p.label}**`).join("\n")}
 
 ---
 
-## 3. Top Developer Tools & Products
+## 3. Trending Developer Tools & Products
 
-${trendingProducts.map((p) => `### ${p.name}
+${trendingItems.map((p) => `### ${p.name}
 - Slug: ${p.slug}
 - URL: ${SITE_CONFIG.url}/products/${p.slug}
 - Tagline: ${p.tagline}
 - Tags: ${(p.tags ?? []).join(", ")}
-- Community Upvotes: ${p.upvotesCount}
-- Builds Using Tool: ${p.buildsCount}
+- Type: ${p.itemKind}
 `).join("\n")}
 
 ---
@@ -86,23 +86,23 @@ ${buildingBlocks.map((b) => `- **${b.name}** (${b.category ?? "Tool"}): Used in 
 
 ---
 
-## 5. Developer Project Showcases
+## 5. Rising Developer Products
 
-${devBuilds.map((b) => `- **${b.name}**: ${b.description}
-  - Tech Stack: ${(b.builtWith ?? []).map((t: { name: string }) => t.name).join(" + ")}
-  - Metrics: ${b.viewsCount} views, ${b.likesCount} likes
+${risingProducts.map((p) => `- **${p.name}**: ${p.tagline}
+  - Built with: ${(p.builtWithTools ?? []).map((t) => t.name).join(" + ")}
+  - Metrics: ${p.viewsCount} views, ${p.likesCount} likes
 `).join("\n")}
 
 ---
 
-## 6. Recently Added Products
+## 6. Recently Added Tools & Products
 
-${recentlyAdded.map((r) => `- **${r.name}** (${r.category ?? "Product"}): ${r.tagline}`).join("\n")}
+${recentlyAdded.map((r) => `- **${r.name}** (${r.itemKind}): ${r.tagline}`).join("\n")}
 
 ---
 
 ## 7. Submission & Discoverability Guidelines
-Developers and founders can list their products at ${SITE_CONFIG.url}/submit with metadata tailored for search engines and AI assistants:
+Developers and founders can list their tools or products at ${SITE_CONFIG.url}/submit with metadata tailored for search engines and AI assistants:
 - Problem Statement, Solution, and Unique Value Proposition
 - Target Search Keywords & Target Audience
 - Direct AI Context prompt for LLM answer engines

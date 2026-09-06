@@ -17,10 +17,14 @@ export const GET = async (req: NextRequest) => {
       return NextResponse.json(
         {
           data: {
-            upvotedProductIds: [],
-            upvotedSlugs: [],
+            upvotedToolIds: [],
+            upvotedToolSlugs: [],
+            bookmarkedToolIds: [],
+            bookmarkedToolSlugs: [],
+            likedProductIds: [],
+            likedProductSlugs: [],
             bookmarkedProductIds: [],
-            bookmarkedSlugs: [],
+            bookmarkedProductSlugs: [],
           },
         },
         { status: 200 }

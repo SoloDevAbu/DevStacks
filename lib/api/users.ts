@@ -13,10 +13,14 @@ export const syncUser = async (payload: SyncUserPayload) => {
 }
 
 export type UserInteractionsData = {
-  upvotedProductIds: string[]
-  upvotedSlugs: string[]
+  upvotedToolIds: string[]
+  upvotedToolSlugs: string[]
+  bookmarkedToolIds: string[]
+  bookmarkedToolSlugs: string[]
+  likedProductIds: string[]
+  likedProductSlugs: string[]
   bookmarkedProductIds: string[]
-  bookmarkedSlugs: string[]
+  bookmarkedProductSlugs: string[]
 }
 
 export const fetchUserInteractions = async (
@@ -27,4 +31,3 @@ export const fetchUserInteractions = async (
   })
   return data.data
 }
-

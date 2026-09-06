@@ -1,7 +1,7 @@
 "use client"
 
-import { ProductList, type DbProduct } from "@/components/home/product-list"
-import { useRisingProducts } from "@/hooks/products/use-rising-products"
+import { ProductList, type DbProduct } from "@/components/shared/product-list"
+import { useRisingProducts } from "@/hooks/home/use-rising-products"
 import { Loader2 } from "lucide-react"
 
 export const RisingProductsContent = () => {

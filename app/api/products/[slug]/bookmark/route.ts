@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { toggleBookmark } from "@/db/queries/bookmarks/toggle"
+import { toggleProductBookmark } from "@/db/queries/products/toggle-bookmark"
 import { getProductBySlug } from "@/db/queries/products/get"
 import { z } from "zod"
 
@@ -28,12 +28,9 @@ export const POST = async (
       return NextResponse.json({ error: "Product not found" }, { status: 404 })
     }
 
-    const result = await toggleBookmark(product.id, parsed.data.userId)
+    const result = await toggleProductBookmark(product.id, parsed.data.userId)
     return NextResponse.json({ data: result }, { status: 200 })
   } catch {
-    return NextResponse.json(
-      { error: "Failed to toggle bookmark" },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: "Failed to toggle bookmark" }, { status: 500 })
   }
 }

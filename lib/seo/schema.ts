@@ -12,6 +12,7 @@ export type ProductSchemaInput = {
   asoCategory?: string | null
   platforms?: string[]
   upvotesCount?: number
+  likesCount?: number
   createdAt?: Date | null
 }
 
@@ -54,10 +55,11 @@ export const organizationSchema = () => ({
 })
 
 export const productSchema = (product: ProductSchemaInput) => {
-  const ratingValue = product.upvotesCount && product.upvotesCount > 0
-    ? Math.min(5, Math.max(4.2, 4 + product.upvotesCount / 1000)).toFixed(1)
+  const count = product.likesCount ?? product.upvotesCount ?? 0
+  const ratingValue = count > 0
+    ? Math.min(5, Math.max(4.2, 4 + count / 1000)).toFixed(1)
     : "4.8"
-  const ratingCount = Math.max(1, product.upvotesCount ?? 12)
+  const ratingCount = Math.max(1, count > 0 ? count : 12)
 
   return {
     "@context": "https://schema.org",

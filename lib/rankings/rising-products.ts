@@ -6,8 +6,7 @@ import type { RankedProduct, RankingOptions } from "./types"
 
 export const calculateRisingScore = (
   createdAt: Date,
-  upvotesCount: number,
-  buildsCount: number,
+  likesCount: number,
   commentsCount: number,
   viewsCount: number,
   now = new Date()
@@ -16,8 +15,7 @@ export const calculateRisingScore = (
   const ageHours = Math.max(1, ageMs / (1000 * 60 * 60))
 
   const rawActivity =
-    upvotesCount * RISING_PRODUCTS_WEIGHTS.upvotesWeight +
-    buildsCount * RISING_PRODUCTS_WEIGHTS.buildsWeight +
+    likesCount * RISING_PRODUCTS_WEIGHTS.upvotesWeight +
     commentsCount * RISING_PRODUCTS_WEIGHTS.commentsWeight +
     viewsCount * RISING_PRODUCTS_WEIGHTS.viewsWeight
 
@@ -45,22 +43,16 @@ export const getRisingProducts = async ({
   const scored: RankedProduct[] = allApproved.map((p) => {
     const momentumScore = calculateRisingScore(
       p.createdAt,
-      p.upvotesCount,
-      p.buildsCount,
+      p.likesCount,
       p.commentsCount,
       p.viewsCount,
       now
     )
 
-    const builtWith = (p.tags ?? []).slice(0, 4).map((tag) => ({
-      name: tag,
-      slug: tag.toLowerCase().replace(/\s+/g, "-"),
-    }))
-
     return {
       ...p,
+      itemKind: "product" as const,
       score: momentumScore,
-      builtWith,
     }
   })
 

@@ -16,14 +16,14 @@ const nanoid = (len = 6) =>
     .slice(2, 2 + len)
 
 export const createProduct = async (
-  data: Omit<NewProduct, "id" | "slug" | "status" | "upvotesCount" | "buildsCount" | "commentsCount" | "viewsCount" | "createdAt" | "updatedAt">
+  data: Omit<NewProduct, "id" | "slug" | "status" | "likesCount" | "commentsCount" | "viewsCount" | "createdAt" | "updatedAt">
 ) => {
   const baseSlug = slugify(data.name)
   const slug = `${baseSlug}-${nanoid()}`
 
   const [product] = await db
     .insert(products)
-    .values({ ...data, slug, status: "approved" })
+    .values({ ...data, slug, status: "pending" })
     .returning()
 
   return product

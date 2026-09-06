@@ -3,17 +3,16 @@
 import { cn } from "@/lib/utils"
 import { Card } from "@/components/ui/card"
 import { SectionHeader } from "@/components/shared/section-header"
-import { ProductCard } from "@/components/shared/product-card"
+import { FeedCard, type FeedItem } from "@/components/shared/feed-card"
 import { ROUTES } from "@/constants/routes"
 import { HOMEPAGE_LIMITS } from "@/constants/rankings"
-import { useNewAndRising } from "@/hooks/products/use-new-and-rising"
-import type { DbProduct } from "@/components/home/product-list"
+import { useNewAndRising } from "@/hooks/home/use-new-and-rising"
 
 export const NewAndRisingSection = () => {
   const { data, isLoading } = useNewAndRising({
     limit: HOMEPAGE_LIMITS.NEW_AND_RISING,
   })
-  const products = (data ?? []) as DbProduct[]
+  const items = (data ?? []) as FeedItem[]
 
   return (
     <section className="flex w-full flex-col">
@@ -34,19 +33,20 @@ export const NewAndRisingSection = () => {
               )}
             />
           ))
-        ) : products.length === 0 ? (
+        ) : items.length === 0 ? (
           <div className="border-b border-dashed border-border bg-white py-8 text-center text-sm text-slate-400">
             No newly submitted products in the discovery window yet. Be the
             first to launch!
           </div>
         ) : (
-          products.map((product, index) => (
-            <ProductCard
-              key={product.id}
-              product={product}
+          items.map((item, index) => (
+            <FeedCard
+              key={item.id}
+              item={item}
               index={index}
               showMedals={true}
               showTrendingBadge={false}
+              showFreshnessBadge={true}
             />
           ))
         )}

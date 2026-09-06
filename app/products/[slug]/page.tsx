@@ -104,7 +104,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
     tier: product.tier,
     asoCategory: product.asoCategory,
     platforms: product.platforms,
-    upvotesCount: product.upvotesCount,
+    likesCount: product.likesCount,
     createdAt: product.createdAt,
   })
 
@@ -214,7 +214,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
                     </Badge>
                   ))}
                   <span className="text-xs font-medium text-slate-400">
-                    {product.buildsCount} builds created
+                    {product.viewsCount.toLocaleString()} views
                   </span>
                 </div>
               </div>
@@ -224,7 +224,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
               slug={product.slug}
               productId={product.id}
               tier={product.tier}
-              initialUpvotes={product.upvotesCount}
+              initialLikes={product.likesCount}
               websiteUrl={product.websiteUrl}
               githubUrl={product.githubUrl}
             />
@@ -393,16 +393,9 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
                   </div>
 
                   <div className="flex justify-between border-b border-slate-100 pb-2">
-                    <span className="text-slate-500">Community Builds</span>
-                    <span className="font-semibold text-blue-600">
-                      {product.buildsCount} builds
-                    </span>
-                  </div>
-
-                  <div className="flex justify-between border-b border-slate-100 pb-2">
-                    <span className="text-slate-500">Total Upvotes</span>
-                    <span className="font-semibold text-slate-900">
-                      {product.upvotesCount.toLocaleString()}
+                    <span className="text-slate-500">Total Likes</span>
+                    <span className="font-semibold text-pink-600">
+                      {product.likesCount.toLocaleString()}
                     </span>
                   </div>
                 </div>

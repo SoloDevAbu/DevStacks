@@ -9,6 +9,13 @@ export const NEW_AND_RISING_WEIGHTS = {
   decayExponent: 1.0,
 } as const
 
+export const RISING_TOOLS_WEIGHTS = {
+  upvotesWeight: 3.0,
+  viewsWeight: 0.05,
+  buildsWeight: 8.0,
+  commentsWeight: 2.0,
+} as const
+
 export const RISING_PRODUCTS_WEIGHTS = {
   upvotesWeight: 3.0,
   viewsWeight: 0.05,
@@ -24,6 +31,7 @@ export const POPULAR_BUILDING_BLOCKS_WEIGHTS = {
 
 export const HOMEPAGE_LIMITS = {
   NEW_AND_RISING: 4,
+  RISING_TOOLS: 4,
   RISING_PRODUCTS: 4,
   DEVELOPER_BUILDS: 4,
   RECENTLY_ADDED: 6,

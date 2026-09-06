@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { ProductList, type DbProduct } from "@/components/home/product-list"
+import { ProductList, type DbProduct } from "@/components/shared/product-list"
 import { PageHeader } from "@/components/shared/page-header"
 import { FilterBar } from "@/components/trending/filter-bar"
 import { AI_PROMPTS } from "@/lib/prompts"
