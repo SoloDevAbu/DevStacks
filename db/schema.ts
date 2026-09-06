@@ -3,6 +3,7 @@ import {
   boolean,
   index,
   integer,
+  jsonb,
   pgEnum,
   pgTable,
   primaryKey,
@@ -25,7 +26,7 @@ export const pricingEnum = pgEnum("pricing", [
 
 export const tierEnum = pgEnum("tier", ["free", "premium", "premium+"])
 
-export const productStatusEnum = pgEnum("product_status", [
+export const statusEnum = pgEnum("status", [
   "pending",
   "approved",
   "rejected",
@@ -42,17 +43,78 @@ export const users = pgTable("users", {
   emailVerified: boolean("email_verified").notNull().default(false),
   image: text("image"),
   avatarUrl: text("avatar_url"),
-  createdAt: timestamp("created_at")
-    .notNull()
-    .defaultNow(),
-  updatedAt: timestamp("updated_at")
-    .notNull()
-    .defaultNow(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
 })
 
 // ---------------------------------------------------------------------------
-// products
+// tools  — infrastructure / developer tools (Supabase, Stripe, Vercel, etc.)
 // ---------------------------------------------------------------------------
+
+export const tools = pgTable("tools", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  slug: text("slug").notNull().unique(),
+  submitterId: text("submitter_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+
+  // General Information
+  name: text("name").notNull(),
+  tagline: text("tagline").notNull(),
+  description: text("description").notNull(),
+
+  // Deep Dive
+  problemStatement: text("problem_statement"),
+  solution: text("solution"),
+  uniqueValue: text("unique_value"),
+
+  // Links & Media
+  websiteUrl: text("website_url").notNull(),
+  logoUrl: text("logo_url"),
+  githubUrl: text("github_url"),
+  twitterUrl: text("twitter_url"),
+  linkedinUrl: text("linkedin_url"),
+  discordUrl: text("discord_url"),
+
+  // Discoverability & SEO/AEO/GEO/ASO
+  keywords: text("keywords"),
+  targetAudience: text("target_audience"),
+  metaTitle: text("meta_title"),
+  metaDescription: text("meta_description"),
+  aiContext: text("ai_context"),
+  geoTarget: text("geo_target"),
+  asoCategory: text("aso_category"),
+
+  // Classification
+  category: text("category"),
+  tags: text("tags").array().notNull().default([]),
+  platforms: text("platforms").array().notNull().default([]),
+
+  // Pricing & tier
+  pricing: pricingEnum("pricing").notNull().default("Free"),
+  tier: tierEnum("tier").notNull().default("free"),
+
+  // Moderation
+  status: statusEnum("status").notNull().default("pending"),
+
+  // Denormalised counters
+  upvotesCount: integer("upvotes_count").notNull().default(0),
+  buildsCount: integer("builds_count").notNull().default(0), // how many products are built with this tool
+  commentsCount: integer("comments_count").notNull().default(0),
+  viewsCount: integer("views_count").notNull().default(0),
+
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+})
+
+// ---------------------------------------------------------------------------
+// products  — developer-built apps / projects (MeetWave, InvoiceAI, etc.)
+// ---------------------------------------------------------------------------
+
+export type BuiltWithTool = {
+  name: string
+  toolSlug?: string
+}
 
 export const products = pgTable("products", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -80,7 +142,7 @@ export const products = pgTable("products", {
   discordUrl: text("discord_url"),
 
   // Discoverability & SEO/AEO/GEO/ASO
-  keywords: text("keywords"), // comma-separated
+  keywords: text("keywords"),
   targetAudience: text("target_audience"),
   metaTitle: text("meta_title"),
   metaDescription: text("meta_description"),
@@ -88,7 +150,7 @@ export const products = pgTable("products", {
   geoTarget: text("geo_target"),
   asoCategory: text("aso_category"),
 
-  // Internal classification
+  // Classification
   category: text("category"),
   tags: text("tags").array().notNull().default([]),
   platforms: text("platforms").array().notNull().default([]),
@@ -98,69 +160,132 @@ export const products = pgTable("products", {
   tier: tierEnum("tier").notNull().default("free"),
 
   // Moderation
-  status: productStatusEnum("status").notNull().default("pending"),
+  status: statusEnum("status").notNull().default("pending"),
 
-  // Denormalised counters (updated via server actions)
-  upvotesCount: integer("upvotes_count").notNull().default(0),
-  buildsCount: integer("builds_count").notNull().default(0),
+  // Tools this product was built with
+  // [{ name: "Supabase", toolSlug: "supabase" }, { name: "SomeLib" }]
+  // toolSlug is optional — set when the tool exists in the tools table
+  builtWithTools: jsonb("built_with_tools")
+    .$type<BuiltWithTool[]>()
+    .notNull()
+    .default([]),
+
+  // Denormalised counters (NO upvotesCount, NO buildsCount)
+  likesCount: integer("likes_count").notNull().default(0),
   commentsCount: integer("comments_count").notNull().default(0),
   viewsCount: integer("views_count").notNull().default(0),
 
-  createdAt: timestamp("created_at", { withTimezone: true })
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+})
+
+// ---------------------------------------------------------------------------
+// tool_upvotes  — toggle upvote on a tool
+// ---------------------------------------------------------------------------
+
+export const toolUpvotes = pgTable(
+  "tool_upvotes",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    toolId: uuid("tool_id")
+      .notNull()
+      .references(() => tools.id, { onDelete: "cascade" }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (t) => [uniqueIndex("tool_upvotes_tool_user_idx").on(t.toolId, t.userId)]
+)
+
+// ---------------------------------------------------------------------------
+// product_likes  — toggle like on a product
+// ---------------------------------------------------------------------------
+
+export const productLikes = pgTable(
+  "product_likes",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    productId: uuid("product_id")
+      .notNull()
+      .references(() => products.id, { onDelete: "cascade" }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (t) => [uniqueIndex("product_likes_product_user_idx").on(t.productId, t.userId)]
+)
+
+// ---------------------------------------------------------------------------
+// tool_bookmarks
+// ---------------------------------------------------------------------------
+
+export const toolBookmarks = pgTable(
+  "tool_bookmarks",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    toolId: uuid("tool_id")
+      .notNull()
+      .references(() => tools.id, { onDelete: "cascade" }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (t) => [uniqueIndex("tool_bookmarks_tool_user_idx").on(t.toolId, t.userId)]
+)
+
+// ---------------------------------------------------------------------------
+// product_bookmarks
+// ---------------------------------------------------------------------------
+
+export const productBookmarks = pgTable(
+  "product_bookmarks",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    productId: uuid("product_id")
+      .notNull()
+      .references(() => products.id, { onDelete: "cascade" }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (t) => [uniqueIndex("product_bookmarks_product_user_idx").on(t.productId, t.userId)]
+)
+
+// ---------------------------------------------------------------------------
+// tool_comments
+// ---------------------------------------------------------------------------
+
+export const toolComments = pgTable("tool_comments", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  toolId: uuid("tool_id")
     .notNull()
-    .defaultNow(),
-  updatedAt: timestamp("updated_at", { withTimezone: true })
+    .references(() => tools.id, { onDelete: "cascade" }),
+  userId: text("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  body: text("body").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()
     .defaultNow(),
 })
 
 // ---------------------------------------------------------------------------
-// upvotes
+// product_comments
 // ---------------------------------------------------------------------------
 
-export const upvotes = pgTable(
-  "upvotes",
-  {
-    id: uuid("id").primaryKey().defaultRandom(),
-    productId: uuid("product_id")
-      .notNull()
-      .references(() => products.id, { onDelete: "cascade" }),
-    userId: text("user_id")
-      .notNull()
-      .references(() => users.id, { onDelete: "cascade" }),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .notNull()
-      .defaultNow(),
-  },
-  (t) => [uniqueIndex("upvotes_product_user_idx").on(t.productId, t.userId)]
-)
-
-// ---------------------------------------------------------------------------
-// bookmarks
-// ---------------------------------------------------------------------------
-
-export const bookmarks = pgTable(
-  "bookmarks",
-  {
-    id: uuid("id").primaryKey().defaultRandom(),
-    productId: uuid("product_id")
-      .notNull()
-      .references(() => products.id, { onDelete: "cascade" }),
-    userId: text("user_id")
-      .notNull()
-      .references(() => users.id, { onDelete: "cascade" }),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .notNull()
-      .defaultNow(),
-  },
-  (t) => [uniqueIndex("bookmarks_product_user_idx").on(t.productId, t.userId)]
-)
-
-// ---------------------------------------------------------------------------
-// comments
-// ---------------------------------------------------------------------------
-
-export const comments = pgTable("comments", {
+export const productComments = pgTable("product_comments", {
   id: uuid("id").primaryKey().defaultRandom(),
   productId: uuid("product_id")
     .notNull()
@@ -173,52 +298,6 @@ export const comments = pgTable("comments", {
     .notNull()
     .defaultNow(),
 })
-
-// ---------------------------------------------------------------------------
-// builds  (developer showcases — "I built X using this product")
-// ---------------------------------------------------------------------------
-
-export const builds = pgTable("builds", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  name: text("name").notNull(),
-  description: text("description").notNull(),
-
-  // Logo display (mirrors DeveloperBuild frontend type)
-  logoText: text("logo_text").notNull(),
-  logoBg: text("logo_bg").notNull(),
-
-  authorId: text("author_id")
-    .notNull()
-    .references(() => users.id, { onDelete: "cascade" }),
-
-  tier: tierEnum("tier").notNull().default("free"),
-  viewsCount: integer("views_count").notNull().default(0),
-  likesCount: integer("likes_count").notNull().default(0),
-
-  createdAt: timestamp("created_at", { withTimezone: true })
-    .notNull()
-    .defaultNow(),
-  updatedAt: timestamp("updated_at", { withTimezone: true })
-    .notNull()
-    .defaultNow(),
-})
-
-// ---------------------------------------------------------------------------
-// build_products  (M2M: which products/tools were used in a build)
-// ---------------------------------------------------------------------------
-
-export const buildProducts = pgTable(
-  "build_products",
-  {
-    buildId: uuid("build_id")
-      .notNull()
-      .references(() => builds.id, { onDelete: "cascade" }),
-    productId: uuid("product_id")
-      .notNull()
-      .references(() => products.id, { onDelete: "cascade" }),
-  },
-  (t) => [primaryKey({ columns: [t.buildId, t.productId] })]
-)
 
 // ---------------------------------------------------------------------------
 // sessions (Better Auth session table)
@@ -235,12 +314,8 @@ export const sessions = pgTable(
     expiresAt: timestamp("expires_at").notNull(),
     ipAddress: text("ip_address"),
     userAgent: text("user_agent"),
-    createdAt: timestamp("created_at")
-      .notNull()
-      .defaultNow(),
-    updatedAt: timestamp("updated_at")
-      .notNull()
-      .defaultNow(),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+    updatedAt: timestamp("updated_at").notNull().defaultNow(),
   },
   (table) => [index("sessions_userId_idx").on(table.userId)]
 )
@@ -266,12 +341,8 @@ export const accounts = pgTable(
     refreshTokenExpiresAt: timestamp("refresh_token_expires_at"),
     scope: text("scope"),
     password: text("password"),
-    createdAt: timestamp("created_at")
-      .notNull()
-      .defaultNow(),
-    updatedAt: timestamp("updated_at")
-      .notNull()
-      .defaultNow(),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+    updatedAt: timestamp("updated_at").notNull().defaultNow(),
   },
   (table) => [
     uniqueIndex("accounts_issuer_accountId_uidx").on(
@@ -293,12 +364,8 @@ export const verifications = pgTable(
     identifier: text("identifier").notNull(),
     value: text("value").notNull(),
     expiresAt: timestamp("expires_at").notNull(),
-    createdAt: timestamp("created_at")
-      .notNull()
-      .defaultNow(),
-    updatedAt: timestamp("updated_at")
-      .notNull()
-      .defaultNow(),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+    updatedAt: timestamp("updated_at").notNull().defaultNow(),
   },
   (table) => [index("verifications_identifier_idx").on(table.identifier)]
 )
@@ -310,93 +377,71 @@ export const verifications = pgTable(
 export const relations = defineRelations(
   {
     users,
+    tools,
     products,
-    upvotes,
-    bookmarks,
-    comments,
-    builds,
-    buildProducts,
+    toolUpvotes,
+    productLikes,
+    toolBookmarks,
+    productBookmarks,
+    toolComments,
+    productComments,
     sessions,
     accounts,
   },
   (r) => ({
     users: {
+      tools: r.many.tools(),
       products: r.many.products(),
-      upvotes: r.many.upvotes(),
-      bookmarks: r.many.bookmarks(),
-      comments: r.many.comments(),
-      builds: r.many.builds(),
+      toolUpvotes: r.many.toolUpvotes(),
+      productLikes: r.many.productLikes(),
+      toolBookmarks: r.many.toolBookmarks(),
+      productBookmarks: r.many.productBookmarks(),
+      toolComments: r.many.toolComments(),
+      productComments: r.many.productComments(),
       sessions: r.many.sessions(),
       accounts: r.many.accounts(),
     },
     sessions: {
-      user: r.one.users({
-        from: r.sessions.userId,
-        to: r.users.id,
-      }),
+      user: r.one.users({ from: r.sessions.userId, to: r.users.id }),
     },
     accounts: {
-      user: r.one.users({
-        from: r.accounts.userId,
-        to: r.users.id,
-      }),
+      user: r.one.users({ from: r.accounts.userId, to: r.users.id }),
+    },
+    tools: {
+      submitter: r.one.users({ from: r.tools.submitterId, to: r.users.id }),
+      upvotes: r.many.toolUpvotes(),
+      bookmarks: r.many.toolBookmarks(),
+      comments: r.many.toolComments(),
     },
     products: {
-      submitter: r.one.users({
-        from: r.products.submitterId,
-        to: r.users.id,
-      }),
-      upvotes: r.many.upvotes(),
-      bookmarks: r.many.bookmarks(),
-      comments: r.many.comments(),
-      buildProducts: r.many.buildProducts(),
+      submitter: r.one.users({ from: r.products.submitterId, to: r.users.id }),
+      likes: r.many.productLikes(),
+      bookmarks: r.many.productBookmarks(),
+      comments: r.many.productComments(),
     },
-    upvotes: {
-      product: r.one.products({
-        from: r.upvotes.productId,
-        to: r.products.id,
-      }),
-      user: r.one.users({
-        from: r.upvotes.userId,
-        to: r.users.id,
-      }),
+    toolUpvotes: {
+      tool: r.one.tools({ from: r.toolUpvotes.toolId, to: r.tools.id }),
+      user: r.one.users({ from: r.toolUpvotes.userId, to: r.users.id }),
     },
-    bookmarks: {
-      product: r.one.products({
-        from: r.bookmarks.productId,
-        to: r.products.id,
-      }),
-      user: r.one.users({
-        from: r.bookmarks.userId,
-        to: r.users.id,
-      }),
+    productLikes: {
+      product: r.one.products({ from: r.productLikes.productId, to: r.products.id }),
+      user: r.one.users({ from: r.productLikes.userId, to: r.users.id }),
     },
-    comments: {
-      product: r.one.products({
-        from: r.comments.productId,
-        to: r.products.id,
-      }),
-      user: r.one.users({
-        from: r.comments.userId,
-        to: r.users.id,
-      }),
+    toolBookmarks: {
+      tool: r.one.tools({ from: r.toolBookmarks.toolId, to: r.tools.id }),
+      user: r.one.users({ from: r.toolBookmarks.userId, to: r.users.id }),
     },
-    builds: {
-      author: r.one.users({
-        from: r.builds.authorId,
-        to: r.users.id,
-      }),
-      buildProducts: r.many.buildProducts(),
+    productBookmarks: {
+      product: r.one.products({ from: r.productBookmarks.productId, to: r.products.id }),
+      user: r.one.users({ from: r.productBookmarks.userId, to: r.users.id }),
     },
-    buildProducts: {
-      build: r.one.builds({
-        from: r.buildProducts.buildId,
-        to: r.builds.id,
-      }),
-      product: r.one.products({
-        from: r.buildProducts.productId,
-        to: r.products.id,
-      }),
+    toolComments: {
+      tool: r.one.tools({ from: r.toolComments.toolId, to: r.tools.id }),
+      user: r.one.users({ from: r.toolComments.userId, to: r.users.id }),
+    },
+    productComments: {
+      product: r.one.products({ from: r.productComments.productId, to: r.products.id }),
+      user: r.one.users({ from: r.productComments.userId, to: r.users.id }),
     },
   })
 )
@@ -417,21 +462,26 @@ export type NewAccount = typeof accounts.$inferInsert
 export type Verification = typeof verifications.$inferSelect
 export type NewVerification = typeof verifications.$inferInsert
 
+export type Tool = typeof tools.$inferSelect
+export type NewTool = typeof tools.$inferInsert
+
 export type Product = typeof products.$inferSelect
 export type NewProduct = typeof products.$inferInsert
 
-export type Upvote = typeof upvotes.$inferSelect
-export type NewUpvote = typeof upvotes.$inferInsert
+export type ToolUpvote = typeof toolUpvotes.$inferSelect
+export type NewToolUpvote = typeof toolUpvotes.$inferInsert
 
-export type Bookmark = typeof bookmarks.$inferSelect
-export type NewBookmark = typeof bookmarks.$inferInsert
+export type ProductLike = typeof productLikes.$inferSelect
+export type NewProductLike = typeof productLikes.$inferInsert
 
-export type Comment = typeof comments.$inferSelect
-export type NewComment = typeof comments.$inferInsert
+export type ToolBookmark = typeof toolBookmarks.$inferSelect
+export type NewToolBookmark = typeof toolBookmarks.$inferInsert
 
-export type Build = typeof builds.$inferSelect
-export type NewBuild = typeof builds.$inferInsert
+export type ProductBookmark = typeof productBookmarks.$inferSelect
+export type NewProductBookmark = typeof productBookmarks.$inferInsert
 
-export type BuildProduct = typeof buildProducts.$inferSelect
-export type NewBuildProduct = typeof buildProducts.$inferInsert
+export type ToolComment = typeof toolComments.$inferSelect
+export type NewToolComment = typeof toolComments.$inferInsert
 
+export type ProductComment = typeof productComments.$inferSelect
+export type NewProductComment = typeof productComments.$inferInsert
