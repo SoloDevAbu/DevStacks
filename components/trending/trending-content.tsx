@@ -9,22 +9,44 @@ import { AI_PROMPTS } from "@/lib/prompts"
 import { useTrending } from "@/hooks/products/use-trending"
 import type { TimeframeOption } from "@/lib/rankings/types"
 
-export const TrendingContent = () => {
+export const TrendingContent = ({
+  initialCategory,
+}: {
+  initialCategory?: string
+} = {}) => {
   const [timeframe, setTimeframe] = useState<TimeframeOption>("today")
-  const { data, isLoading } = useTrending(14, timeframe)
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(
+    initialCategory ?? null
+  )
+
+  const { data, isLoading } = useTrending(
+    14,
+    timeframe,
+    selectedCategory ?? undefined
+  )
 
   const items = (data ?? []) as FeedItem[]
 
   return (
     <div className="relative flex min-h-full flex-col bg-slate-50/50">
       <PageHeader
-        heading="Trending Tools & Products"
-        description="Discover the most popular products and developer tools gaining traction right now"
+        heading={
+          selectedCategory
+            ? `Trending ${selectedCategory} Tools & Products`
+            : "Trending Tools & Products"
+        }
+        description={
+          selectedCategory
+            ? `Discover the most popular ${selectedCategory} developer tools and products gaining traction right now`
+            : "Discover the most popular products and developer tools gaining traction right now"
+        }
         aiPrompt={AI_PROMPTS.trending}
       />
       <FilterBar
         timeframe={timeframe}
         onTimeframeChange={(val) => setTimeframe(val)}
+        selectedCategory={selectedCategory}
+        onCategoryChange={(cat) => setSelectedCategory(cat)}
       />
 
       <div className="flex w-full flex-1 flex-col pt-4">
@@ -34,8 +56,16 @@ export const TrendingContent = () => {
           loadingCount={10}
           showMedals={true}
           showTrendingBadge={false}
-          emptyTitle="No trending tools or products"
-          emptyDescription="No tools or products found for this timeframe. Be the first to launch or upvote!"
+          emptyTitle={
+            selectedCategory
+              ? `No trending ${selectedCategory} tools or products`
+              : "No trending tools or products"
+          }
+          emptyDescription={
+            selectedCategory
+              ? `No items found in the "${selectedCategory}" category for this timeframe. Try another timeframe or category!`
+              : "No tools or products found for this timeframe. Be the first to launch or upvote!"
+          }
         />
       </div>
     </div>

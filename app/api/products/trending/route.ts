@@ -8,17 +8,22 @@ const querySchema = z.object({
   timeframe: z
     .enum(["today", "this-week", "this-month", "all-time"])
     .default("today"),
+  category: z.string().optional(),
 })
 
 export const GET = async (req: NextRequest) => {
   const params = Object.fromEntries(req.nextUrl.searchParams)
   const parsed = querySchema.safeParse(params)
-  const { limit, timeframe } = parsed.success
+  const { limit, timeframe, category } = parsed.success
     ? parsed.data
-    : { limit: 10, timeframe: "today" as TimeframeOption }
+    : { limit: 10, timeframe: "today" as TimeframeOption, category: undefined }
 
   try {
-    const trending = await getTrendingProducts(limit, timeframe as TimeframeOption)
+    const trending = await getTrendingProducts(
+      limit,
+      timeframe as TimeframeOption,
+      category
+    )
     return NextResponse.json(
       { data: trending ?? [] },
       {

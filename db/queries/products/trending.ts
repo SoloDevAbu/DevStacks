@@ -1,18 +1,33 @@
 import { db } from "@/db"
 import { tools, products } from "@/db/schema"
-import { desc, eq } from "drizzle-orm"
+import { and, desc, eq, ilike } from "drizzle-orm"
 import type { TimeframeOption } from "@/lib/rankings/types"
 import type { RankedItem } from "@/lib/rankings/types"
 
 export const getTrendingProducts = async (
   limit = 10,
-  timeframe: TimeframeOption = "today"
+  timeframe: TimeframeOption = "today",
+  category?: string
 ): Promise<RankedItem[]> => {
   const safeLimit = Math.min(50, Math.max(1, limit))
 
+  const toolConditions = [eq(tools.status, "approved")]
+  const productConditions = [eq(products.status, "approved")]
+
+  if (category && category.trim() && category.toLowerCase() !== "all") {
+    toolConditions.push(ilike(tools.category, category.trim()))
+    productConditions.push(ilike(products.category, category.trim()))
+  }
+
   const [allTools, allProducts] = await Promise.all([
-    db.select().from(tools).where(eq(tools.status, "approved")),
-    db.select().from(products).where(eq(products.status, "approved")),
+    db
+      .select()
+      .from(tools)
+      .where(and(...toolConditions)),
+    db
+      .select()
+      .from(products)
+      .where(and(...productConditions)),
   ])
 
   const now = new Date()

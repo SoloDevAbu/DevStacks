@@ -129,10 +129,15 @@ export const fetchPopularBuildingBlocks = async (params: RankingQueryParams = {}
 
 export const fetchTrending = async (
   limit = 10,
-  timeframe: TimeframeOption = "today"
+  timeframe: TimeframeOption = "today",
+  category?: string
 ) => {
   const { data } = await apiClient.get("/products/trending", {
-    params: { limit, timeframe },
+    params: {
+      limit,
+      timeframe,
+      category: category && category !== "all" ? category : undefined,
+    },
   })
   return data.data
 }
