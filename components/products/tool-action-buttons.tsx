@@ -16,7 +16,7 @@ interface ToolActionButtonsProps {
   toolId?: string
   tier?: string | null
   initialUpvotes: number
-  websiteUrl: string
+  websiteUrl?: string | null
   githubUrl?: string | null
 }
 
