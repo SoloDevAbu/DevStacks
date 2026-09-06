@@ -97,9 +97,9 @@ export const ToolCard = ({
       return
     }
     if (e.metaKey || e.ctrlKey) {
-      window.open(ROUTES.PRODUCT(tool.slug), "_blank")
+      window.open(ROUTES.TOOL(tool.slug), "_blank")
     } else {
-      router.push(ROUTES.PRODUCT(tool.slug))
+      router.push(ROUTES.TOOL(tool.slug))
     }
   }
 

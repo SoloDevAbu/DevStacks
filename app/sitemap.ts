@@ -19,6 +19,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.9,
     },
     {
+      url: `${siteUrl}/tools`,
+      lastModified: new Date(),
+      changeFrequency: "daily",
+      priority: 0.9,
+    },
+    {
+      url: `${siteUrl}/products`,
+      lastModified: new Date(),
+      changeFrequency: "daily",
+      priority: 0.9,
+    },
+    {
       url: `${siteUrl}/trending`,
       lastModified: new Date(),
       changeFrequency: "hourly",
@@ -45,16 +57,36 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ]
 
   try {
-    const dbProducts = await getTrendingProducts(50)
+    const [dbProducts, dbTools] = await Promise.all([
+      getTrendingProducts(50),
+      import("@/db/queries/tools/list").then((m) => m.getTools({ limit: 50 })),
+    ])
+
+    const dynamicRoutes: MetadataRoute.Sitemap = []
+
     if (dbProducts && dbProducts.length > 0) {
-      const productRoutes: MetadataRoute.Sitemap = dbProducts.map((product) => ({
-        url: `${siteUrl}/products/${product.slug}`,
-        lastModified: product.updatedAt ?? new Date(),
-        changeFrequency: "weekly" as const,
-        priority: 0.8,
-      }))
-      return [...staticRoutes, ...productRoutes]
+      dynamicRoutes.push(
+        ...dbProducts.map((product) => ({
+          url: `${siteUrl}/products/${product.slug}`,
+          lastModified: product.updatedAt ?? new Date(),
+          changeFrequency: "weekly" as const,
+          priority: 0.8,
+        }))
+      )
     }
+
+    if (dbTools && dbTools.length > 0) {
+      dynamicRoutes.push(
+        ...dbTools.map((tool) => ({
+          url: `${siteUrl}/tools/${tool.slug}`,
+          lastModified: tool.updatedAt ?? new Date(),
+          changeFrequency: "weekly" as const,
+          priority: 0.8,
+        }))
+      )
+    }
+
+    return [...staticRoutes, ...dynamicRoutes]
   } catch {
     // Return static routes if DB is temporarily unreachable
   }

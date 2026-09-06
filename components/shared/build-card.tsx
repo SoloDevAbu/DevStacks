@@ -202,7 +202,7 @@ export const BuildCard = ({
               return (
                 <Link
                   key={tool.name}
-                  href={`/products/${toolSlug}`}
+                  href={ROUTES.TOOL(toolSlug)}
                   className="rounded-none bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-600 transition-colors hover:bg-slate-200 hover:text-slate-900"
                 >
                   {tool.name}

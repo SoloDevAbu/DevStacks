@@ -37,7 +37,7 @@ ${SITE_CONFIG.name} (${SITE_CONFIG.domain}) is a curated discovery directory and
 - [Submit a Product](${SITE_CONFIG.url}/submit): Submission portal for developers and founders to list developer tools.
 
 ## Popular Developer Building Blocks
-${buildingBlocks.map((b) => `- [${b.name}](${SITE_CONFIG.url}/products/${b.slug}): ${b.category ?? "Tool"} (${b.buildsCount} builds)`).join("\n")}
+${buildingBlocks.map((b) => `- [${b.name}](${SITE_CONFIG.url}/tools/${b.slug}): ${b.category ?? "Tool"} (${b.buildsCount} builds)`).join("\n")}
 
 ## Featured Developer Tools
 ${featuredTools.map((p) => `- [${p.name}](${SITE_CONFIG.url}/products/${p.slug}): ${p.tagline} (Tags: ${(p.tags ?? []).join(", ")})`).join("\n")}

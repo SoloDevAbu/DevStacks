@@ -10,8 +10,11 @@ export const AI_PROMPTS = {
   recentlyAdded: `What are the latest developer tools and products added to ${SITE_CONFIG.name}?`,
   popularBuildingBlocks: `What are the most popular building blocks and tools developers use on ${SITE_CONFIG.name}?`,
   categories: `What developer tool categories are available on ${SITE_CONFIG.name}, and what are the best tools in each?`,
+  tools: `What developer tools, APIs, and infrastructure are listed in the directory on ${SITE_CONFIG.name}?`,
   products: `What developer tools and software products are listed in the directory on ${SITE_CONFIG.name}?`,
   builtWith: `What are the most widely used developer tools and building blocks in real-world software stacks featured on ${SITE_CONFIG.name}?`,
   product: (productName: string, tagline?: string) =>
     `Tell me about ${productName}${tagline ? ` (${tagline})` : ""} featured on ${SITE_CONFIG.name}. What problem does it solve, what are its key features, tech stack compatibility, and alternatives?`,
+  tool: (toolName: string, tagline?: string) =>
+    `Tell me about ${toolName}${tagline ? ` (${tagline})` : ""} featured on ${SITE_CONFIG.name}. What problem does it solve, what are its key features, pricing, and what products are built with it?`,
 }

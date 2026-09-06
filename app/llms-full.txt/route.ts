@@ -82,7 +82,7 @@ ${trendingItems.map((p) => `### ${p.name}
 
 ## 4. Popular Building Blocks ("Built With" Ecosystem)
 
-${buildingBlocks.map((b) => `- **${b.name}** (${b.category ?? "Tool"}): Used in ${b.buildsCount} verified developer projects. Page: ${SITE_CONFIG.url}/products/${b.slug}`).join("\n")}
+${buildingBlocks.map((b) => `- **${b.name}** (${b.category ?? "Tool"}): Used in ${b.buildsCount} verified developer projects. Page: ${SITE_CONFIG.url}/tools/${b.slug}`).join("\n")}
 
 ---
 

@@ -22,7 +22,14 @@ export const LeftSidebar = () => {
           </h3>
           <nav className="mt-2 flex flex-col gap-2 text-sm font-medium text-muted-foreground">
             {section.items.map((item) => {
-              const isActive = pathname === item.href
+              const isActive =
+                pathname === item.href ||
+                (item.href !== ROUTES.HOME && pathname.startsWith(item.href)) ||
+                (item.href === ROUTES.TOOLS &&
+                  (pathname === "/tool" || pathname.startsWith("/tool/"))) ||
+                (item.href === ROUTES.PRODUCTS &&
+                  (pathname === "/product" || pathname.startsWith("/product/")))
+
               const requiresAuth = item.href === ROUTES.SHOWCASE
 
               if (requiresAuth && !session?.user) {

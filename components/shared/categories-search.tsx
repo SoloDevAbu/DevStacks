@@ -32,8 +32,10 @@ const CATEGORIES: Category[] = [
 
 export const CategoriesSearch = ({
   placeholder = "Search tools, APIs, infrastructure...",
+  baseRoute = ROUTES.PRODUCTS,
 }: {
   placeholder?: string
+  baseRoute?: string
 }) => {
   return (
     <div className="border-b border-dashed border-border bg-white px-6 py-2 md:px-8">
@@ -42,7 +44,7 @@ export const CategoriesSearch = ({
           const href =
             cat.name === "More"
               ? ROUTES.CATEGORIES
-              : `${ROUTES.PRODUCTS}?category=${encodeURIComponent(cat.name)}`
+              : `${baseRoute}?category=${encodeURIComponent(cat.name)}`
           return (
             <div
               key={cat.name}

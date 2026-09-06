@@ -284,7 +284,7 @@ export const ProductCard = ({
                 tool.toolSlug ? (
                   <Link
                     key={tool.name}
-                    href={ROUTES.PRODUCT(tool.toolSlug)}
+                    href={ROUTES.TOOL(tool.toolSlug)}
                     onClick={(e) => e.stopPropagation()}
                     className="rounded-none bg-indigo-50 px-2 py-0.5 text-xs font-semibold text-indigo-700 transition-colors hover:bg-indigo-100"
                   >
