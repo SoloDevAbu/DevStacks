@@ -6,8 +6,25 @@ import { RecentlyAddedSection } from "@/components/home/recently-added-section"
 import { PopularBuildingBlocksSection } from "@/components/home/popular-building-blocks-section"
 import { FaqSection } from "@/components/home/faq-section"
 import { AI_PROMPTS } from "@/lib/prompts"
+import type { FeedItem } from "@/components/shared/feed-card"
+import type { DbTool } from "@/components/shared/tool-card"
+import type { DbProduct } from "@/components/shared/product-card"
 
-export const MainContent = () => {
+interface MainContentProps {
+  newAndRising: FeedItem[]
+  risingTools: DbTool[]
+  risingProducts: DbProduct[]
+  recentlyAdded: FeedItem[]
+  popularBuildingBlocks: FeedItem[]
+}
+
+export const MainContent = ({
+  newAndRising,
+  risingTools,
+  risingProducts,
+  recentlyAdded,
+  popularBuildingBlocks,
+}: MainContentProps) => {
   return (
     <div className="relative flex min-h-full flex-col bg-slate-50/50">
       <PageHeader
@@ -17,20 +34,11 @@ export const MainContent = () => {
       />
 
       <div className="flex w-full flex-1 flex-col">
-        {/* 1. ✨ New & Rising */}
-        <NewAndRisingSection />
-
-        {/* 2. 🚀 Rising Tools */}
-        <RisingToolsSection />
-
-        {/* 3. 🔗 See What Developers Are Building */}
-        <DeveloperBuildsSection />
-
-        {/* 4. 🆕 Recently Added */}
-        <RecentlyAddedSection />
-
-        {/* 5. 🔥 Popular Building Blocks */}
-        <PopularBuildingBlocksSection />
+        <NewAndRisingSection items={newAndRising} />
+        <RisingToolsSection tools={risingTools} />
+        <DeveloperBuildsSection products={risingProducts} />
+        <RecentlyAddedSection items={recentlyAdded} />
+        <PopularBuildingBlocksSection items={popularBuildingBlocks} />
       </div>
 
       <FaqSection />
