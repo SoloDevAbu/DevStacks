@@ -4,7 +4,11 @@ import { CategoriesSearch } from "@/components/shared/categories-search"
 import { breadcrumbSchema } from "@/lib/seo/schema"
 import { SITE_CONFIG } from "@/constants/site"
 import { AI_PROMPTS } from "@/lib/prompts"
+import { getProducts } from "@/db/queries/products/list"
+import type { DbProduct } from "@/components/shared/product-card"
 import { ProductsDirectoryContent } from "./products-content"
+
+export const revalidate = 60
 
 export const metadata: Metadata = {
   title: "Complete Product Directory — Developer Tools & Software",
@@ -14,9 +18,9 @@ export const metadata: Metadata = {
   },
 }
 
-export default async function ProductsPage(props: {
+const ProductsPage = async (props: {
   searchParams: Promise<{ category?: string; q?: string }>
-}) {
+}) => {
   const searchParams = await props.searchParams
   const category = searchParams?.category
   const q = searchParams?.q
@@ -25,6 +29,13 @@ export default async function ProductsPage(props: {
     { name: "Home", url: SITE_CONFIG.url },
     { name: "Products", url: `${SITE_CONFIG.url}/products` },
   ])
+
+  const initialProducts = await getProducts({
+    category,
+    q,
+    limit: 20,
+    page: 1,
+  }).catch(() => [])
 
   return (
     <>
@@ -47,8 +58,16 @@ export default async function ProductsPage(props: {
 
         <CategoriesSearch selectedCategory={category} />
 
-        <ProductsDirectoryContent initialCategory={category} initialQuery={q} />
+        <ProductsDirectoryContent
+          key={`${category ?? "all"}-${q ?? ""}`}
+          initialCategory={category}
+          initialQuery={q}
+          initialProducts={initialProducts as DbProduct[]}
+        />
       </div>
     </>
   )
 }
+
+export default ProductsPage
+
