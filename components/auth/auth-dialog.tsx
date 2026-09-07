@@ -10,7 +10,8 @@ import {
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { signIn } from "@/lib/auth/client"
-import { AlertCircle, Loader2, Layers, ShieldCheck } from "lucide-react"
+import { AlertCircle, Layers, ShieldCheck } from "lucide-react"
+import { Spinner } from "@/components/ui/spinner"
 
 interface AuthDialogProps {
   open: boolean
@@ -116,7 +117,7 @@ export const AuthDialog = ({
           >
             {isLoading ? (
               <>
-                <Loader2 className="size-4 animate-spin text-slate-600" />
+                <Spinner className="size-4 text-slate-600" />
                 Connecting to Google...
               </>
             ) : (

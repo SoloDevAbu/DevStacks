@@ -1,7 +1,7 @@
 "use client"
 
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { toggleToolBookmark } from "@/lib/api/products"
+import { toggleToolBookmark } from "@/lib/api/tools"
 import type { UserInteractionsData } from "@/lib/api/users"
 
 export const useBookmarkTool = () => {

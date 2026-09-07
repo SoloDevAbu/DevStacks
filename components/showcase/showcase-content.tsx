@@ -8,7 +8,8 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
-import { CheckCircle2, AlertCircle, Loader2 } from "lucide-react"
+import { CheckCircle2, AlertCircle } from "lucide-react"
+import { Spinner } from "@/components/ui/spinner"
 import { useSubmitBuild } from "@/hooks/builds/use-submit-build"
 import { submitBuildSchema } from "@/lib/validation/build"
 import { useSession } from "@/lib/auth/client"
@@ -41,7 +42,7 @@ export const ShowcaseContent = () => {
   if (isPending || !session?.user) {
     return (
       <div className="relative flex min-h-[60vh] flex-col items-center justify-center gap-4 bg-slate-50/50 p-12 text-center">
-        <Loader2 className="size-8 animate-spin text-slate-400" />
+        <Spinner className="size-8 text-slate-400" />
         <p className="text-sm text-slate-500">Checking authentication...</p>
       </div>
     )
@@ -187,7 +188,7 @@ export const ShowcaseContent = () => {
               </Button>
               <Button type="submit" disabled={isSubmitting}>
                 {isSubmitting ? (
-                  <><Loader2 className="size-4 animate-spin" /> Submitting...</>
+                  <><Spinner className="size-4" /> Submitting...</>
                 ) : (
                   "Submit Showcase"
                 )}

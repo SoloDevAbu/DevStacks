@@ -1,4 +1,4 @@
-import { Loader2 } from "lucide-react"
+import { Spinner } from "@/components/ui/spinner"
 import { infiniteScrollLoader, infiniteScrollEndMessage } from "@/utils/styles"
 
 interface InfiniteScrollSentinelProps {
@@ -21,7 +21,7 @@ export const InfiniteScrollSentinel = ({
       <div ref={sentinelRef} className="h-4 w-full" />
       {isFetchingNextPage && (
         <div className={infiniteScrollLoader}>
-          <Loader2 className="size-4 animate-spin text-slate-400" />
+          <Spinner className="size-4 text-slate-400" />
           <span>Loading more items...</span>
         </div>
       )}

@@ -4,7 +4,7 @@ import { HeaderLogo } from "@/components/layout/header-logo"
 import { HeaderNav } from "@/components/layout/header-nav"
 import { HeaderActions } from "@/components/layout/header-actions"
 import { LeftSidebar } from "@/components/shared/left-sidebar"
-import { RightSidebar } from "@/components/home/right-sidebar"
+import { RightSidebar } from "@/components/layout/right-sidebar"
 import { Providers } from "@/app/providers"
 
 import { SITE_CONFIG } from "@/constants/site"
@@ -65,11 +65,11 @@ const fontSans = Geist({
 
 const geistMono = Geist_Mono({ subsets: ["latin"], variable: "--font-mono" })
 
-export default function RootLayout({
+const RootLayout = ({
   children,
 }: Readonly<{
   children: React.ReactNode
-}>) {
+}>) => {
   const orgSchema = organizationSchema()
   const webSchema = websiteSchema()
 
@@ -145,3 +145,5 @@ export default function RootLayout({
     </html>
   )
 }
+
+export default RootLayout

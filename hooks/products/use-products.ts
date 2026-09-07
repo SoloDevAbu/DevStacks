@@ -1,6 +1,6 @@
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query"
 import { fetchProducts, type ProductListParams } from "@/lib/api/products"
-import type { DbProduct } from "@/components/shared/product-card"
+import type { DbProduct } from "@/types/entities"
 
 export const PRODUCTS_QUERY_KEY = (params: ProductListParams) => [
   "products",

@@ -11,10 +11,10 @@ import {
   Webhook,
   Layers,
   ChevronDown,
-  Loader2,
   X,
   type LucideIcon,
 } from "lucide-react"
+import { Spinner } from "@/components/ui/spinner"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Kbd, KbdGroup } from "@/components/ui/kbd"
@@ -222,7 +222,7 @@ export const CategoriesSearch = ({
           <CommandList className="max-h-64 overflow-y-auto p-1">
             {isLoading ? (
               <div className="flex items-center justify-center p-6 text-xs text-muted-foreground">
-                <Loader2 className="mr-2 size-4 animate-spin text-slate-400" />
+                <Spinner className="mr-2 size-4 text-slate-400" />
                 Searching categories...
               </div>
             ) : (

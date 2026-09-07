@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import { TrendingContent } from "@/components/trending/trending-content"
 import { breadcrumbSchema, itemListSchema } from "@/lib/seo/schema"
-import { getTrendingProducts } from "@/db/queries/products/trending"
+import { getTrending } from "@/lib/rankings/trending"
 import { SITE_CONFIG } from "@/constants/site"
 import { ROUTES } from "@/constants/routes"
 
@@ -46,9 +46,9 @@ export default async function TrendingPage(props: {
     { name: "Trending", url: `${siteUrl}/trending` },
   ])
 
-  let products: Awaited<ReturnType<typeof getTrendingProducts>> = []
+  let products: Awaited<ReturnType<typeof getTrending>> = []
   try {
-    products = await getTrendingProducts(15, "today", category)
+    products = await getTrending(15, "today", category)
   } catch {
     products = []
   }

@@ -1,24 +1,6 @@
 import { db } from "@/db"
-import { toolComments, productComments, tools, products } from "@/db/schema"
+import { productComments, products } from "@/db/schema"
 import { eq, sql } from "drizzle-orm"
-
-export const createToolComment = async (
-  toolId: string,
-  userId: string,
-  body: string
-) => {
-  const [comment] = await db
-    .insert(toolComments)
-    .values({ toolId, userId, body: body.trim() })
-    .returning()
-
-  await db
-    .update(tools)
-    .set({ commentsCount: sql`${tools.commentsCount} + 1` })
-    .where(eq(tools.id, toolId))
-
-  return comment
-}
 
 export const createProductComment = async (
   productId: string,

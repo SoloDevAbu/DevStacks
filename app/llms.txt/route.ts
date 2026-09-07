@@ -1,18 +1,18 @@
 import { NextResponse } from "next/server"
 import { SITE_CONFIG } from "@/constants/site"
 import { getTools } from "@/db/queries/tools/list"
-import { getTrendingProducts } from "@/db/queries/products/trending"
+import { getTrending } from "@/lib/rankings/trending"
 
 export const revalidate = 86400
 
 export const GET = async () => {
   let buildingBlocks: Awaited<ReturnType<typeof getTools>> = []
-  let featuredTools: Awaited<ReturnType<typeof getTrendingProducts>> = []
+  let featuredTools: Awaited<ReturnType<typeof getTrending>> = []
 
   try {
     const [blocks, trending] = await Promise.all([
       getTools({ sortBy: "builds", limit: 6 }),
-      getTrendingProducts(10),
+      getTrending(10),
     ])
     buildingBlocks = blocks ?? []
     featuredTools = trending ?? []
@@ -42,9 +42,11 @@ ${buildingBlocks.map((b) => `- [${b.name}](${SITE_CONFIG.url}/tools/${b.slug}): 
 ${featuredTools.map((p) => `- [${p.name}](${SITE_CONFIG.url}/products/${p.slug}): ${p.tagline} (Tags: ${(p.tags ?? []).join(", ")})`).join("\n")}
 
 ## API Access
-- GET ${SITE_CONFIG.url}/api/products: JSON list of approved developer tools.
-- GET ${SITE_CONFIG.url}/api/products/trending: List of top trending products.
-- GET ${SITE_CONFIG.url}/api/products/[slug]: In-depth specifications, schema, problem statements, and solutions for a specific tool.
+- GET ${SITE_CONFIG.url}/api/products: JSON list of approved developer products.
+- GET ${SITE_CONFIG.url}/api/products/[slug]: In-depth specifications for a specific product.
+- GET ${SITE_CONFIG.url}/api/tools: JSON list of developer infrastructure tools.
+- GET ${SITE_CONFIG.url}/api/tools/[slug]: In-depth specifications for a specific tool.
+- GET ${SITE_CONFIG.url}/api/trending: List of top trending products and tools.
 
 ## Full Context
 For comprehensive technical details, category indexes, and full directory listings, see [llms-full.txt](${SITE_CONFIG.url}/llms-full.txt).

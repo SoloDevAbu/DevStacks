@@ -1,8 +1,9 @@
 "use client"
 
 import { useCallback } from "react"
-import { ToolList, type DbTool } from "@/components/shared/product-list"
-import { useInfiniteRisingTools } from "@/hooks/home/use-rising-tools"
+import { ToolList } from "@/components/shared/tool-list"
+import type { DbTool } from "@/types/entities"
+import { useInfiniteRisingTools } from "@/hooks/discover/use-rising-tools"
 import { useIntersectionObserver } from "@/hooks/shared/use-intersection-observer"
 import { InfiniteScrollSentinel } from "@/components/shared/infinite-scroll-sentinel"
 import { DISCOVER_PAGE_LIMIT } from "@/constants/rankings"

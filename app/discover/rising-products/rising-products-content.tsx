@@ -1,8 +1,9 @@
 "use client"
 
 import { useCallback } from "react"
-import { ProductList, type DbProduct } from "@/components/shared/product-list"
-import { useInfiniteRisingProducts } from "@/hooks/home/use-rising-products"
+import { ProductList } from "@/components/shared/product-list"
+import type { DbProduct } from "@/types/entities"
+import { useInfiniteRisingProducts } from "@/hooks/discover/use-rising-products"
 import { useIntersectionObserver } from "@/hooks/shared/use-intersection-observer"
 import { InfiniteScrollSentinel } from "@/components/shared/infinite-scroll-sentinel"
 import { DISCOVER_PAGE_LIMIT } from "@/constants/rankings"

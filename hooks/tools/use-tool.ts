@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query"
-import { fetchTool } from "@/lib/api/products"
+import { fetchTool } from "@/lib/api/tools"
 
 export const TOOL_QUERY_KEY = (slug: string) => ["tool", slug]
 

@@ -1,24 +1,6 @@
 import { db } from "@/db"
-import { toolComments, productComments, users } from "@/db/schema"
+import { productComments, users } from "@/db/schema"
 import { desc, eq } from "drizzle-orm"
-
-export const getToolComments = async (toolId: string) => {
-  return db
-    .select({
-      id: toolComments.id,
-      body: toolComments.body,
-      createdAt: toolComments.createdAt,
-      user: {
-        id: users.id,
-        name: users.name,
-        avatarUrl: users.avatarUrl,
-      },
-    })
-    .from(toolComments)
-    .innerJoin(users, eq(toolComments.userId, users.id))
-    .where(eq(toolComments.toolId, toolId))
-    .orderBy(desc(toolComments.createdAt))
-}
 
 export const getProductComments = async (productId: string) => {
   return db

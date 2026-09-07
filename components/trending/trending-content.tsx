@@ -6,7 +6,7 @@ import type { FeedItem } from "@/components/shared/feed-card"
 import { PageHeader } from "@/components/shared/page-header"
 import { FilterBar } from "@/components/trending/filter-bar"
 import { AI_PROMPTS } from "@/lib/prompts"
-import { useTrending } from "@/hooks/products/use-trending"
+import { useTrending } from "@/hooks/trending/use-trending"
 import type { TimeframeOption } from "@/lib/rankings/types"
 
 export const TrendingContent = ({
