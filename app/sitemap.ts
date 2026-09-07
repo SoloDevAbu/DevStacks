@@ -2,8 +2,9 @@ import type { MetadataRoute } from "next"
 import { getProducts } from "@/db/queries/products/list"
 import { getTools } from "@/db/queries/tools/list"
 import { SITE_CONFIG } from "@/constants/site"
+import { ROUTES } from "@/constants/routes"
 
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
   const siteUrl = SITE_CONFIG.url
 
   const staticRoutes: MetadataRoute.Sitemap = [
@@ -14,31 +15,73 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 1.0,
     },
     {
-      url: `${siteUrl}/tools`,
+      url: `${siteUrl}${ROUTES.TOOLS}`,
       lastModified: new Date(),
       changeFrequency: "daily",
       priority: 0.9,
     },
     {
-      url: `${siteUrl}/products`,
+      url: `${siteUrl}${ROUTES.PRODUCTS}`,
       lastModified: new Date(),
       changeFrequency: "daily",
       priority: 0.9,
     },
     {
-      url: `${siteUrl}/trending`,
+      url: `${siteUrl}${ROUTES.TRENDING}`,
       lastModified: new Date(),
       changeFrequency: "hourly",
       priority: 0.9,
     },
     {
-      url: `${siteUrl}/showcase`,
+      url: `${siteUrl}${ROUTES.DISCOVER}`,
+      lastModified: new Date(),
+      changeFrequency: "daily",
+      priority: 0.85,
+    },
+    {
+      url: `${siteUrl}${ROUTES.DISCOVER_NEW_RISING}`,
+      lastModified: new Date(),
+      changeFrequency: "daily",
+      priority: 0.85,
+    },
+    {
+      url: `${siteUrl}${ROUTES.DISCOVER_RISING_TOOLS}`,
+      lastModified: new Date(),
+      changeFrequency: "daily",
+      priority: 0.85,
+    },
+    {
+      url: `${siteUrl}${ROUTES.DISCOVER_RISING_PRODUCTS}`,
+      lastModified: new Date(),
+      changeFrequency: "daily",
+      priority: 0.85,
+    },
+    {
+      url: `${siteUrl}${ROUTES.DISCOVER_POPULAR_BUILDING_BLOCKS}`,
+      lastModified: new Date(),
+      changeFrequency: "daily",
+      priority: 0.85,
+    },
+    {
+      url: `${siteUrl}${ROUTES.DISCOVER_RECENTLY_ADDED}`,
+      lastModified: new Date(),
+      changeFrequency: "daily",
+      priority: 0.85,
+    },
+    {
+      url: `${siteUrl}${ROUTES.PRICING}`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.8,
+    },
+    {
+      url: `${siteUrl}${ROUTES.SHOWCASE}`,
       lastModified: new Date(),
       changeFrequency: "daily",
       priority: 0.7,
     },
     {
-      url: `${siteUrl}/submit`,
+      url: `${siteUrl}${ROUTES.SUBMIT}`,
       lastModified: new Date(),
       changeFrequency: "monthly",
       priority: 0.8,
@@ -82,3 +125,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   return staticRoutes
 }
+
+export default sitemap

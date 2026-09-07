@@ -4,6 +4,7 @@ export const AI_PROMPTS = {
   home: `What can you tell me about ${SITE_CONFIG.name} (${SITE_CONFIG.domain}), the platform to discover developer tools, APIs, infrastructure, and what developers are building with them?`,
   trending: `What are the most popular trending developer tools, APIs, and software products right now on ${SITE_CONFIG.name}?`,
   discover: `Help me discover new and interesting developer tools, database solutions, authentication APIs, and developer infrastructure on ${SITE_CONFIG.name}.`,
+  pricing: `What are the listing, verification, and sponsorship plans available on ${SITE_CONFIG.name} to promote developer tools and products?`,
   newRising: `What are the newest and rising developer tools and products launched in the last 7 days on ${SITE_CONFIG.name}?`,
   risingTools: `What developer tools and APIs are gaining the most momentum right now on ${SITE_CONFIG.name}?`,
   risingProducts: `What products and developer tools are gaining the most momentum right now on ${SITE_CONFIG.name}?`,

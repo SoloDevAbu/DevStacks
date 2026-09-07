@@ -2,8 +2,7 @@ import { db } from "@/db"
 import { products } from "@/db/schema"
 import { eq } from "drizzle-orm"
 import { getToolBySlug } from "@/db/queries/tools/get"
-import type { DbTool } from "@/components/shared/tool-card"
-import type { DbProduct } from "@/components/shared/product-card"
+import type { DbTool, DbProduct } from "@/types/entities"
 
 export interface FullTool extends DbTool {
   description: string

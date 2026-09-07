@@ -65,11 +65,11 @@ const fontSans = Geist({
 
 const geistMono = Geist_Mono({ subsets: ["latin"], variable: "--font-mono" })
 
-export default function RootLayout({
+const RootLayout = ({
   children,
 }: Readonly<{
   children: React.ReactNode
-}>) {
+}>) => {
   const orgSchema = organizationSchema()
   const webSchema = websiteSchema()
 
@@ -145,3 +145,5 @@ export default function RootLayout({
     </html>
   )
 }
+
+export default RootLayout

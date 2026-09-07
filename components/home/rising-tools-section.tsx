@@ -1,5 +1,6 @@
 import { SectionHeader } from "@/components/shared/section-header"
-import { ToolCard, type DbTool } from "@/components/shared/tool-card"
+import { ToolCard } from "@/components/shared/tool-card"
+import type { DbTool } from "@/types/entities"
 import { ROUTES } from "@/constants/routes"
 
 interface RisingToolsSectionProps {

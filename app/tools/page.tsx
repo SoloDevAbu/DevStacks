@@ -6,7 +6,7 @@ import { SITE_CONFIG } from "@/constants/site"
 import { ROUTES } from "@/constants/routes"
 import { AI_PROMPTS } from "@/lib/prompts"
 import { getTools } from "@/db/queries/tools/list"
-import type { DbTool } from "@/components/shared/tool-card"
+import type { DbTool } from "@/types/entities"
 import { ToolsDirectoryContent } from "./tools-content"
 
 export const revalidate = 60

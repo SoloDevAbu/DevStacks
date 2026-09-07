@@ -6,7 +6,7 @@ import { SITE_CONFIG } from "@/constants/site"
 import { AI_PROMPTS } from "@/lib/prompts"
 import { DISCOVER_PAGE_LIMIT } from "@/constants/rankings"
 import { getRisingTools } from "@/lib/rankings/rising-tools"
-import type { DbTool } from "@/components/shared/tool-card"
+import type { DbTool } from "@/types/entities"
 import { RisingToolsContent } from "./rising-tools-content"
 
 export const revalidate = 60

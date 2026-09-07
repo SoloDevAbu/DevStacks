@@ -1,5 +1,5 @@
 import type { BuiltWithTool } from "@/db/schema"
-import type { Tier, Pricing } from "@/constants/tiers"
+import type { Tier, Pricing } from "@/constants/plans"
 
 export type DbTool = {
   id: string

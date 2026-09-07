@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils"
-import { TIER, PRICING_COLORS, type Tier, type Pricing } from "@/constants/tiers"
+import { TIER, PRICING_COLORS, type Tier, type Pricing } from "@/constants/plans"
 
 export const tierCardBg = (tier: Tier) =>
   cn(
@@ -19,6 +19,30 @@ export const tierShimmerGradient = (tier: Tier) =>
     : "bg-[linear-gradient(110deg,transparent_35%,rgba(254,243,199,0.6)_50%,transparent_65%)]"
 
 export const pricingBadgeColor = (pricing: Pricing) => PRICING_COLORS[pricing]
+
+export const medalBadge = (rank: number) =>
+  cn(
+    "flex items-center justify-center text-sm font-bold",
+    rank === 1
+      ? "size-6 rounded-full bg-amber-400 text-white"
+      : rank === 2
+        ? "size-6 rounded-full bg-slate-300 text-white"
+        : rank === 3
+          ? "size-6 rounded-full bg-orange-400 text-white"
+          : "w-4 text-slate-400"
+  )
+
+export const directoryCard =
+  "group relative z-0 cursor-pointer rounded-none p-0 transition-colors"
+
+export const directoryCardContent =
+  "relative flex items-center gap-4 overflow-hidden px-6 py-5 backdrop-blur-sm md:gap-6"
+
+export const tagBadge =
+  "inline-flex items-center rounded-md border border-slate-200/60 bg-slate-100/50 px-2 py-0.5 text-xs text-slate-600 hover:bg-slate-100 transition-colors"
+
+export const externalVisitButton =
+  "relative z-10 h-8 gap-1 rounded-lg border-slate-200 bg-white px-2.5 text-xs text-slate-700 hover:bg-slate-50 transition-colors"
 
 export const sectionHeaderWrapper =
   "flex items-center justify-between border-b border-dashed border-border bg-white px-6 py-4 md:px-8"
@@ -60,4 +84,3 @@ export const infiniteScrollLoader =
 
 export const infiniteScrollEndMessage =
   "py-8 text-center text-xs font-medium text-slate-400 border-t border-dashed border-border"
-

@@ -7,8 +7,7 @@ import { PopularBuildingBlocksSection } from "@/components/home/popular-building
 import { FaqSection } from "@/components/home/faq-section"
 import { AI_PROMPTS } from "@/lib/prompts"
 import type { FeedItem } from "@/components/shared/feed-card"
-import type { DbTool } from "@/components/shared/tool-card"
-import type { DbProduct } from "@/components/shared/product-card"
+import type { DbTool, DbProduct } from "@/types/entities"
 
 interface MainContentProps {
   newAndRising: FeedItem[]

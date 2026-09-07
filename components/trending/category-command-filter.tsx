@@ -1,7 +1,8 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Layers, Loader2, ChevronDown, X } from "lucide-react"
+import { Layers, ChevronDown, X } from "lucide-react"
+import { Spinner } from "@/components/ui/spinner"
 import { Button } from "@/components/ui/button"
 import { Kbd, KbdGroup } from "@/components/ui/kbd"
 import {
@@ -136,7 +137,7 @@ export const CategoryCommandFilter = ({
           <CommandList className="max-h-64 overflow-y-auto p-1">
             {isLoading ? (
               <div className="flex items-center justify-center p-6 text-xs text-muted-foreground">
-                <Loader2 className="mr-2 size-4 animate-spin text-slate-400" />
+                <Spinner className="mr-2 size-4 text-slate-400" />
                 Searching categories...
               </div>
             ) : (

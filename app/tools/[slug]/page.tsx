@@ -27,7 +27,7 @@ import { Button } from "@/components/ui/button"
 import { ToolActionButtons } from "@/components/tools/tool-action-buttons"
 import { HoverOutline } from "@/components/shared/hover-outline"
 import { pricingBadgeColor } from "@/utils/styles"
-import type { Tier, Pricing } from "@/constants/tiers"
+import type { Tier, Pricing } from "@/constants/plans"
 
 interface ToolPageProps {
   params: Promise<{ slug: string }>
@@ -94,7 +94,7 @@ export const generateMetadata = async ({
   }
 }
 
-export default async function ToolDetailPage({ params }: ToolPageProps) {
+const ToolDetailPage = async ({ params }: ToolPageProps) => {
   const { slug } = await params
   const tool = await resolveTool(slug)
 
@@ -553,3 +553,5 @@ export default async function ToolDetailPage({ params }: ToolPageProps) {
     </>
   )
 }
+
+export default ToolDetailPage

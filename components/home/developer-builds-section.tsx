@@ -1,5 +1,6 @@
 import { SectionHeader } from "@/components/shared/section-header"
-import { ProductCard, type DbProduct } from "@/components/shared/product-card"
+import { ProductCard } from "@/components/shared/product-card"
+import type { DbProduct } from "@/types/entities"
 import { ROUTES } from "@/constants/routes"
 
 interface DeveloperBuildsSectionProps {

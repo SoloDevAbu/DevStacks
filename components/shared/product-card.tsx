@@ -18,7 +18,7 @@ import { cn } from "@/lib/utils"
 import { HoverOutline } from "@/components/shared/hover-outline"
 import { VerifiedBadge } from "@/components/shared/verified-badge"
 import { ProductLogo } from "@/components/shared/product-logo"
-import { TIER, type Tier, type Pricing } from "@/constants/tiers"
+import { TIER, type Tier, type Pricing } from "@/constants/plans"
 import { ROUTES } from "@/constants/routes"
 import {
   tierCardBg,
@@ -27,6 +27,9 @@ import {
   pricingBadgeColor,
   bookmarkButtonActive,
   bookmarkButtonInactive,
+  directoryCard,
+  directoryCardContent,
+  medalBadge,
 } from "@/utils/styles"
 import { getOutboundUrl, getLinkRel } from "@/utils/urls"
 import { useLikeProduct } from "@/hooks/products/use-like-product"
@@ -137,14 +140,14 @@ export const ProductCard = ({
     <Card
       onClick={handleCardClick}
       className={cn(
-        "group relative z-0 cursor-pointer rounded-none p-0 transition-colors",
+        directoryCard,
         tierCardBg(tier),
         index > 0 && "-mt-px"
       )}
     >
       <CardContent
         className={cn(
-          "relative flex items-center gap-4 overflow-hidden px-6 py-5 backdrop-blur-sm md:gap-6",
+          directoryCardContent,
           tierContentBg(tier)
         )}
       >
@@ -162,18 +165,7 @@ export const ProductCard = ({
         {/* Index or Medal */}
         <div className="hidden w-6 shrink-0 sm:flex sm:items-center sm:justify-center">
           {showMedals ? (
-            <div
-              className={cn(
-                "flex items-center justify-center text-sm font-bold",
-                index + 1 === 1
-                  ? "size-6 rounded-full bg-amber-400 text-white"
-                  : index + 1 === 2
-                    ? "size-6 rounded-full bg-slate-300 text-white"
-                    : index + 1 === 3
-                      ? "size-6 rounded-full bg-orange-400 text-white"
-                      : "w-4 text-slate-400"
-              )}
-            >
+            <div className={medalBadge(index + 1)}>
               {index + 1}
             </div>
           ) : (

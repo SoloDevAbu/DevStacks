@@ -1,4 +1,4 @@
-import { TIER, type Tier } from "@/constants/tiers"
+import { TIER, type Tier } from "@/constants/plans"
 
 export const getOutboundUrl = (
   rawUrl?: string | null,

@@ -1,5 +1,5 @@
 import { getProductBySlug } from "@/db/queries/products/get"
-import type { DbProduct } from "@/components/shared/product-card"
+import type { DbProduct } from "@/types/entities"
 
 export interface FullProduct extends DbProduct {
   description: string

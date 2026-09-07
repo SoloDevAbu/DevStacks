@@ -5,10 +5,14 @@ import { AI_PROVIDERS } from "@/constants/ai-providers"
 interface PageHeaderProps {
   heading: string
   description: string
-  aiPrompt: string
+  aiPrompt?: string
 }
 
-export const PageHeader = ({ heading, description, aiPrompt }: PageHeaderProps) => {
+export const PageHeader = ({
+  heading,
+  description,
+  aiPrompt = "",
+}: PageHeaderProps) => {
   return (
     <div className="flex flex-col justify-between gap-6 border-b border-dashed border-border bg-white px-6 pt-8 pb-6 md:px-8 lg:flex-row lg:items-start">
       <div className="flex max-w-2xl flex-col">

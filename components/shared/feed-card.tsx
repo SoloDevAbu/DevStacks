@@ -1,7 +1,8 @@
 "use client"
 
-import { ToolCard, type DbTool } from "@/components/shared/tool-card"
-import { ProductCard, type DbProduct } from "@/components/shared/product-card"
+import { ToolCard } from "@/components/shared/tool-card"
+import { ProductCard } from "@/components/shared/product-card"
+import type { DbTool, DbProduct } from "@/types/entities"
 
 export type FeedItem =
   | (DbTool & { itemKind: "tool" })

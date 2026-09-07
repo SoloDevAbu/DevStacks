@@ -18,7 +18,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { ProductActionButtons } from "@/components/products/product-action-buttons"
 import { HoverOutline } from "@/components/shared/hover-outline"
 import { pricingBadgeColor } from "@/utils/styles"
-import type { Tier, Pricing } from "@/constants/tiers"
+import type { Tier, Pricing } from "@/constants/plans"
 
 interface ProductPageProps {
   params: Promise<{ slug: string }>
@@ -42,7 +42,7 @@ export const generateMetadata = async ({
   if (!product) {
     return {
       title: "Product Not Found",
-      description: "The requested developer tool could not be found.",
+      description: "The requested developer product could not be found.",
     }
   }
 
@@ -50,14 +50,15 @@ export const generateMetadata = async ({
   const description =
     product.metaDescription ??
     product.description ??
-    `Learn about ${product.name} on ${SITE_CONFIG.name}. Features, pricing, community upvotes, and developer builds.`
+    `Learn about ${product.name} on ${SITE_CONFIG.name}. Features, pricing, community likes, and developer insights.`
   const canonicalUrl = `${SITE_CONFIG.url}/products/${product.slug}`
   const keywords = product.keywords
     ? product.keywords.split(",").map((k) => k.trim())
     : [
         product.name,
         ...(product.tags ?? []),
-        "developer tool",
+        "developer product",
+        "software",
         SITE_CONFIG.name,
       ]
 
@@ -83,7 +84,7 @@ export const generateMetadata = async ({
   }
 }
 
-export default async function ProductDetailPage({ params }: ProductPageProps) {
+const ProductDetailPage = async ({ params }: ProductPageProps) => {
   const { slug } = await params
   const product = await resolveProduct(slug)
 
@@ -452,3 +453,5 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
     </>
   )
 }
+
+export default ProductDetailPage

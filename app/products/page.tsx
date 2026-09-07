@@ -5,7 +5,7 @@ import { breadcrumbSchema } from "@/lib/seo/schema"
 import { SITE_CONFIG } from "@/constants/site"
 import { AI_PROMPTS } from "@/lib/prompts"
 import { getProducts } from "@/db/queries/products/list"
-import type { DbProduct } from "@/components/shared/product-card"
+import type { DbProduct } from "@/types/entities"
 import { ProductsDirectoryContent } from "./products-content"
 
 export const revalidate = 60

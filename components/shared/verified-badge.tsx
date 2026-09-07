@@ -1,6 +1,6 @@
 import { BadgeCheck } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { TIER, type Tier } from "@/constants/tiers"
+import { TIER, type Tier } from "@/constants/plans"
 
 export const VerifiedBadge = ({ tier }: { tier: Tier }) => {
   if (tier === TIER.FREE) return null

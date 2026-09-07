@@ -10,8 +10,7 @@ import { getRisingProducts } from "@/lib/rankings/rising-products"
 import { getRecentlyAddedProducts } from "@/lib/rankings/recently-added"
 import { getPopularBuildingBlocks } from "@/lib/rankings/popular"
 import type { FeedItem } from "@/components/shared/feed-card"
-import type { DbTool } from "@/components/shared/tool-card"
-import type { DbProduct } from "@/components/shared/product-card"
+import type { DbTool, DbProduct } from "@/types/entities"
 
 export const revalidate = 60
 

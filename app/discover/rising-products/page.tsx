@@ -6,7 +6,7 @@ import { SITE_CONFIG } from "@/constants/site"
 import { AI_PROMPTS } from "@/lib/prompts"
 import { DISCOVER_PAGE_LIMIT } from "@/constants/rankings"
 import { getRisingProducts } from "@/lib/rankings/rising-products"
-import type { DbProduct } from "@/components/shared/product-card"
+import type { DbProduct } from "@/types/entities"
 import { RisingProductsContent } from "./rising-products-content"
 
 export const revalidate = 60
