@@ -55,3 +55,9 @@ export const filterPillActive =
 export const filterPillInactive =
   "font-medium text-slate-600 hover:text-slate-900"
 
+export const infiniteScrollLoader =
+  "flex items-center justify-center gap-2 py-8 text-center text-xs font-medium text-slate-500"
+
+export const infiniteScrollEndMessage =
+  "py-8 text-center text-xs font-medium text-slate-400 border-t border-dashed border-border"
+

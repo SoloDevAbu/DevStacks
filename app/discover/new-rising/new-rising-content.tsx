@@ -1,24 +1,38 @@
 "use client"
 
+import { useCallback } from "react"
 import { FeedList } from "@/components/shared/feed-list"
 import type { FeedItem } from "@/components/shared/feed-card"
-import { useNewAndRising } from "@/hooks/home/use-new-and-rising"
-import { Loader2 } from "lucide-react"
+import { useInfiniteNewAndRising } from "@/hooks/home/use-new-and-rising"
+import { useIntersectionObserver } from "@/hooks/shared/use-intersection-observer"
+import { InfiniteScrollSentinel } from "@/components/shared/infinite-scroll-sentinel"
+import { DISCOVER_PAGE_LIMIT } from "@/constants/rankings"
 
-export const NewAndRisingContent = () => {
-  const { data, isLoading } = useNewAndRising({ limit: 20 })
-  const items = (data ?? []) as FeedItem[]
+interface NewAndRisingContentProps {
+  initialItems?: FeedItem[]
+}
 
-  if (isLoading) {
-    return (
-      <div className="flex flex-col items-center justify-center p-16 text-center">
-        <Loader2 className="mb-2 size-8 animate-spin text-slate-400" />
-        <p className="text-xs font-medium text-slate-500">
-          Loading new & rising tools and products...
-        </p>
-      </div>
-    )
-  }
+export const NewAndRisingContent = ({
+  initialItems = [],
+}: NewAndRisingContentProps) => {
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useInfiniteNewAndRising({
+      limit: DISCOVER_PAGE_LIMIT,
+      initialData: initialItems,
+    })
+
+  const handleIntersect = useCallback(() => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage()
+    }
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage])
+
+  const sentinelRef = useIntersectionObserver({
+    onIntersect: handleIntersect,
+    enabled: hasNextPage && !isFetchingNextPage,
+  })
+
+  const items = data?.pages.flatMap((page) => page) ?? initialItems
 
   return (
     <div className="flex w-full flex-1 flex-col pt-2 pb-8">
@@ -30,6 +44,13 @@ export const NewAndRisingContent = () => {
         emptyTitle="No new submissions in the discovery window"
         emptyDescription="No developer tools or products are currently in their 7-day discovery window. Be the first to launch yours!"
       />
+      <InfiniteScrollSentinel
+        sentinelRef={sentinelRef}
+        isFetchingNextPage={isFetchingNextPage}
+        hasNextPage={Boolean(hasNextPage)}
+        hasItems={items.length > 0}
+      />
     </div>
   )
 }
+

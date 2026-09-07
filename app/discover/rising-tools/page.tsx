@@ -4,7 +4,12 @@ import { PageHeader } from "@/components/shared/page-header"
 import { breadcrumbSchema } from "@/lib/seo/schema"
 import { SITE_CONFIG } from "@/constants/site"
 import { AI_PROMPTS } from "@/lib/prompts"
+import { DISCOVER_PAGE_LIMIT } from "@/constants/rankings"
+import { getRisingTools } from "@/lib/rankings/rising-tools"
+import type { DbTool } from "@/components/shared/tool-card"
 import { RisingToolsContent } from "./rising-tools-content"
+
+export const revalidate = 60
 
 export const metadata: Metadata = {
   title: "Rising Developer Tools & APIs",
@@ -32,7 +37,7 @@ export const metadata: Metadata = {
   },
 }
 
-export default function RisingToolsPage() {
+const RisingToolsPage = async () => {
   const breadcrumbs = breadcrumbSchema([
     { name: "Home", url: SITE_CONFIG.url },
     { name: "Discover", url: `${SITE_CONFIG.url}/discover` },
@@ -41,6 +46,11 @@ export default function RisingToolsPage() {
       url: `${SITE_CONFIG.url}/discover/rising-tools`,
     },
   ])
+
+  const initialTools = await getRisingTools({
+    limit: DISCOVER_PAGE_LIMIT,
+    page: 1,
+  }).catch(() => [])
 
   return (
     <>
@@ -65,8 +75,11 @@ export default function RisingToolsPage() {
           </div>
         </div>
 
-        <RisingToolsContent />
+        <RisingToolsContent initialTools={initialTools as DbTool[]} />
       </div>
     </>
   )
 }
+
+export default RisingToolsPage
+

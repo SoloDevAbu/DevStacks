@@ -4,7 +4,12 @@ import { PageHeader } from "@/components/shared/page-header"
 import { breadcrumbSchema } from "@/lib/seo/schema"
 import { SITE_CONFIG } from "@/constants/site"
 import { AI_PROMPTS } from "@/lib/prompts"
+import { DISCOVER_PAGE_LIMIT } from "@/constants/rankings"
+import { getRisingProducts } from "@/lib/rankings/rising-products"
+import type { DbProduct } from "@/components/shared/product-card"
 import { RisingProductsContent } from "./rising-products-content"
+
+export const revalidate = 60
 
 export const metadata: Metadata = {
   title: "Rising Developer Products & Tools",
@@ -31,7 +36,7 @@ export const metadata: Metadata = {
   },
 }
 
-export default function RisingProductsPage() {
+const RisingProductsPage = async () => {
   const breadcrumbs = breadcrumbSchema([
     { name: "Home", url: SITE_CONFIG.url },
     { name: "Discover", url: `${SITE_CONFIG.url}/discover` },
@@ -40,6 +45,11 @@ export default function RisingProductsPage() {
       url: `${SITE_CONFIG.url}/discover/rising-products`,
     },
   ])
+
+  const initialProducts = await getRisingProducts({
+    limit: DISCOVER_PAGE_LIMIT,
+    page: 1,
+  }).catch(() => [])
 
   return (
     <>
@@ -64,8 +74,11 @@ export default function RisingProductsPage() {
           </div>
         </div>
 
-        <RisingProductsContent />
+        <RisingProductsContent initialProducts={initialProducts as DbProduct[]} />
       </div>
     </>
   )
 }
+
+export default RisingProductsPage
+

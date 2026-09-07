@@ -1,23 +1,37 @@
 "use client"
 
+import { useCallback } from "react"
 import { ToolList, type DbTool } from "@/components/shared/product-list"
-import { useRisingTools } from "@/hooks/home/use-rising-tools"
-import { Loader2 } from "lucide-react"
+import { useInfiniteRisingTools } from "@/hooks/home/use-rising-tools"
+import { useIntersectionObserver } from "@/hooks/shared/use-intersection-observer"
+import { InfiniteScrollSentinel } from "@/components/shared/infinite-scroll-sentinel"
+import { DISCOVER_PAGE_LIMIT } from "@/constants/rankings"
 
-export const RisingToolsContent = () => {
-  const { data, isLoading } = useRisingTools({ limit: 20 })
-  const tools = (data ?? []) as DbTool[]
+interface RisingToolsContentProps {
+  initialTools?: DbTool[]
+}
 
-  if (isLoading) {
-    return (
-      <div className="flex flex-col items-center justify-center p-16 text-center">
-        <Loader2 className="mb-2 size-8 animate-spin text-slate-400" />
-        <p className="text-xs font-medium text-slate-500">
-          Loading rising tools...
-        </p>
-      </div>
-    )
-  }
+export const RisingToolsContent = ({
+  initialTools = [],
+}: RisingToolsContentProps) => {
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useInfiniteRisingTools({
+      limit: DISCOVER_PAGE_LIMIT,
+      initialData: initialTools,
+    })
+
+  const handleIntersect = useCallback(() => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage()
+    }
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage])
+
+  const sentinelRef = useIntersectionObserver({
+    onIntersect: handleIntersect,
+    enabled: hasNextPage && !isFetchingNextPage,
+  })
+
+  const tools = data?.pages.flatMap((page) => page) ?? initialTools
 
   return (
     <div className="flex w-full flex-1 flex-col pt-2 pb-8">
@@ -26,6 +40,13 @@ export const RisingToolsContent = () => {
         showMedals={false}
         showTrendingBadge={true}
       />
+      <InfiniteScrollSentinel
+        sentinelRef={sentinelRef}
+        isFetchingNextPage={isFetchingNextPage}
+        hasNextPage={Boolean(hasNextPage)}
+        hasItems={tools.length > 0}
+      />
     </div>
   )
 }
+

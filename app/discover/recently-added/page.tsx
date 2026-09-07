@@ -3,7 +3,12 @@ import { PageHeader } from "@/components/shared/page-header"
 import { breadcrumbSchema } from "@/lib/seo/schema"
 import { SITE_CONFIG } from "@/constants/site"
 import { AI_PROMPTS } from "@/lib/prompts"
+import { DISCOVER_PAGE_LIMIT } from "@/constants/rankings"
+import { getRecentlyAddedProducts } from "@/lib/rankings/recently-added"
+import type { FeedItem } from "@/components/shared/feed-card"
 import { RecentlyAddedContent } from "./recently-added-content"
+
+export const revalidate = 60
 
 export const metadata: Metadata = {
   title: "Recently Added Developer Products & Tools",
@@ -32,7 +37,7 @@ export const metadata: Metadata = {
   },
 }
 
-export default function RecentlyAddedPage() {
+const RecentlyAddedPage = async () => {
   const breadcrumbs = breadcrumbSchema([
     { name: "Home", url: SITE_CONFIG.url },
     { name: "Discover", url: `${SITE_CONFIG.url}/discover` },
@@ -41,6 +46,11 @@ export default function RecentlyAddedPage() {
       url: `${SITE_CONFIG.url}/discover/recently-added`,
     },
   ])
+
+  const initialItems = await getRecentlyAddedProducts({
+    limit: DISCOVER_PAGE_LIMIT,
+    page: 1,
+  }).catch(() => [])
 
   return (
     <>
@@ -55,8 +65,11 @@ export default function RecentlyAddedPage() {
           aiPrompt={AI_PROMPTS.recentlyAdded}
         />
 
-        <RecentlyAddedContent />
+        <RecentlyAddedContent initialItems={initialItems as FeedItem[]} />
       </div>
     </>
   )
 }
+
+export default RecentlyAddedPage
+

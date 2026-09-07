@@ -1,10 +1,15 @@
 import type { Metadata } from "next"
-import { Sparkles, Clock } from "lucide-react"
+import { Clock } from "lucide-react"
 import { PageHeader } from "@/components/shared/page-header"
 import { breadcrumbSchema } from "@/lib/seo/schema"
 import { SITE_CONFIG } from "@/constants/site"
 import { AI_PROMPTS } from "@/lib/prompts"
+import { DISCOVER_PAGE_LIMIT } from "@/constants/rankings"
+import { getNewAndRisingProducts } from "@/lib/rankings/new-and-rising"
+import type { FeedItem } from "@/components/shared/feed-card"
 import { NewAndRisingContent } from "./new-rising-content"
+
+export const revalidate = 60
 
 export const metadata: Metadata = {
   title: "New & Rising Developer Tools & Products",
@@ -34,12 +39,17 @@ export const metadata: Metadata = {
   },
 }
 
-export default function NewAndRisingPage() {
+const NewAndRisingPage = async () => {
   const breadcrumbs = breadcrumbSchema([
     { name: "Home", url: SITE_CONFIG.url },
     { name: "Discover", url: `${SITE_CONFIG.url}/discover` },
     { name: "New & Rising", url: `${SITE_CONFIG.url}/discover/new-rising` },
   ])
+
+  const initialItems = await getNewAndRisingProducts({
+    limit: DISCOVER_PAGE_LIMIT,
+    page: 1,
+  }).catch(() => [])
 
   return (
     <>
@@ -66,8 +76,11 @@ export default function NewAndRisingPage() {
           </div>
         </div>
 
-        <NewAndRisingContent />
+        <NewAndRisingContent initialItems={initialItems as FeedItem[]} />
       </div>
     </>
   )
 }
+
+export default NewAndRisingPage
+
