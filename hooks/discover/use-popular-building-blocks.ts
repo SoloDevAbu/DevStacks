@@ -2,15 +2,15 @@ import { useInfiniteQuery, useQuery } from "@tanstack/react-query"
 import {
   fetchPopularBuildingBlocks,
   type RankingQueryParams,
-} from "@/lib/api/products"
+} from "@/lib/api/discover"
 import type { FeedItem } from "@/components/shared/feed-card"
 
 export const POPULAR_BUILDING_BLOCKS_QUERY_KEY = (
   params: RankingQueryParams
-) => ["products", "popular-building-blocks", params]
+) => ["discover", "popular-building-blocks", params]
 
 export const POPULAR_BUILDING_BLOCKS_INFINITE_QUERY_KEY = (limit: number) => [
-  "products",
+  "discover",
   "popular-building-blocks",
   "infinite",
   limit,
@@ -51,4 +51,3 @@ export const useInfinitePopularBuildingBlocks = ({
     staleTime: 60_000,
   })
 }
-

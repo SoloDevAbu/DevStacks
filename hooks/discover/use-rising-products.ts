@@ -1,16 +1,16 @@
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query"
-import { fetchRisingProducts, type RankingQueryParams } from "@/lib/api/products"
-import type { DbProduct } from "@/components/shared/product-card"
+import { fetchRisingProducts, type RankingQueryParams } from "@/lib/api/discover"
+import type { DbProduct } from "@/types/entities"
 
 export const RISING_PRODUCTS_QUERY_KEY = (params: RankingQueryParams) => [
-  "products",
-  "rising",
+  "discover",
+  "rising-products",
   params,
 ]
 
 export const RISING_PRODUCTS_INFINITE_QUERY_KEY = (limit: number) => [
-  "products",
-  "rising",
+  "discover",
+  "rising-products",
   "infinite",
   limit,
 ]
@@ -50,4 +50,3 @@ export const useInfiniteRisingProducts = ({
     staleTime: 60_000,
   })
 }
-

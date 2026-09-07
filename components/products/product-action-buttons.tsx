@@ -5,10 +5,10 @@ import { Heart, Bookmark, ExternalLink, Code2 } from "lucide-react"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { useLikeProduct } from "@/hooks/products/use-like-product"
 import { useBookmarkProduct } from "@/hooks/products/use-bookmark-product"
-import { useUserInteractions } from "@/hooks/products/use-user-interactions"
+import { useUserInteractions } from "@/hooks/users/use-user-interactions"
 import { useSession } from "@/lib/auth/client"
 import { useAuthModal } from "@/hooks/auth/use-auth-modal"
-import { getOutboundUrl, getLinkRel } from "@/utils/products/urls"
+import { getOutboundUrl, getLinkRel } from "@/utils/urls"
 import { cn } from "@/lib/utils"
 
 interface ProductActionButtonsProps {

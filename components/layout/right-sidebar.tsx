@@ -58,6 +58,7 @@ export const RightSidebar = () => {
           </CardContent>
         </Card>
       </div>
+
     </div>
   )
 }

@@ -1,16 +1,16 @@
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query"
-import { fetchRisingTools, type RankingQueryParams } from "@/lib/api/products"
-import type { DbTool } from "@/components/shared/tool-card"
+import { fetchRisingTools, type RankingQueryParams } from "@/lib/api/discover"
+import type { DbTool } from "@/types/entities"
 
 export const RISING_TOOLS_QUERY_KEY = (params: RankingQueryParams) => [
-  "tools",
-  "rising",
+  "discover",
+  "rising-tools",
   params,
 ]
 
 export const RISING_TOOLS_INFINITE_QUERY_KEY = (limit: number) => [
-  "tools",
-  "rising",
+  "discover",
+  "rising-tools",
   "infinite",
   limit,
 ]
@@ -50,4 +50,3 @@ export const useInfiniteRisingTools = ({
     staleTime: 60_000,
   })
 }
-

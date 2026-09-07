@@ -2,7 +2,7 @@ import { NextResponse } from "next/server"
 import { SITE_CONFIG } from "@/constants/site"
 import { PLATFORMS } from "@/constants/platforms"
 import { getTools } from "@/db/queries/tools/list"
-import { getTrendingProducts } from "@/db/queries/products/trending"
+import { getTrending } from "@/lib/rankings/trending"
 import { getRecentlyAddedProducts } from "@/lib/rankings/recently-added"
 import { getRisingProducts } from "@/lib/rankings/rising-products"
 import type { RankedItem } from "@/lib/rankings/types"
@@ -10,14 +10,14 @@ import type { RankedItem } from "@/lib/rankings/types"
 export const revalidate = 86400
 
 export const GET = async () => {
-  let trendingItems: Awaited<ReturnType<typeof getTrendingProducts>> = []
+  let trendingItems: Awaited<ReturnType<typeof getTrending>> = []
   let buildingBlocks: Awaited<ReturnType<typeof getTools>> = []
   let risingProducts: Awaited<ReturnType<typeof getRisingProducts>> = []
   let recentlyAdded: RankedItem[] = []
 
   try {
     const [trending, blocks, rising, recent] = await Promise.all([
-      getTrendingProducts(15),
+      getTrending(15),
       getTools({ sortBy: "builds", limit: 10 }),
       getRisingProducts({ limit: 10 }),
       getRecentlyAddedProducts({ limit: 10 }),

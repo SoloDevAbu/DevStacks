@@ -3,7 +3,7 @@
 import { useCallback } from "react"
 import { FeedList } from "@/components/shared/feed-list"
 import type { FeedItem } from "@/components/shared/feed-card"
-import { useInfiniteNewAndRising } from "@/hooks/home/use-new-and-rising"
+import { useInfiniteNewAndRising } from "@/hooks/discover/use-new-and-rising"
 import { useIntersectionObserver } from "@/hooks/shared/use-intersection-observer"
 import { InfiniteScrollSentinel } from "@/components/shared/infinite-scroll-sentinel"
 import { DISCOVER_PAGE_LIMIT } from "@/constants/rankings"

@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next"
-import { getTrendingProducts } from "@/db/queries/products/trending"
+import { getProducts } from "@/db/queries/products/list"
+import { getTools } from "@/db/queries/tools/list"
 import { SITE_CONFIG } from "@/constants/site"
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -11,12 +12,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: new Date(),
       changeFrequency: "daily",
       priority: 1.0,
-    },
-    {
-      url: `${siteUrl}/discover`,
-      lastModified: new Date(),
-      changeFrequency: "hourly",
-      priority: 0.9,
     },
     {
       url: `${siteUrl}/tools`,
@@ -52,8 +47,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   try {
     const [dbProducts, dbTools] = await Promise.all([
-      getTrendingProducts(50),
-      import("@/db/queries/tools/list").then((m) => m.getTools({ limit: 50 })),
+      getProducts({ limit: 50 }),
+      getTools({ limit: 50 }),
     ])
 
     const dynamicRoutes: MetadataRoute.Sitemap = []

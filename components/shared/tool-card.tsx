@@ -22,30 +22,15 @@ import {
   bookmarkButtonActive,
   bookmarkButtonInactive,
 } from "@/utils/styles"
-import { getOutboundUrl, getLinkRel } from "@/utils/products/urls"
+import { getOutboundUrl, getLinkRel } from "@/utils/urls"
 import { useUpvoteTool } from "@/hooks/tools/use-upvote-tool"
 import { useBookmarkTool } from "@/hooks/tools/use-bookmark-tool"
-import { useUserInteractions } from "@/hooks/products/use-user-interactions"
+import { useUserInteractions } from "@/hooks/users/use-user-interactions"
 import { useSession } from "@/lib/auth/client"
 import { useAuthModal } from "@/hooks/auth/use-auth-modal"
+import type { DbTool } from "@/types/entities"
 
-export type DbTool = {
-  id: string
-  slug: string
-  name: string
-  tagline: string
-  tags: string[]
-  upvotesCount: number
-  buildsCount: number
-  commentsCount: number
-  viewsCount: number
-  pricing: "Free" | "Freemium" | "Paid" | "Open Source"
-  tier: "free" | "premium" | "premium+"
-  logoUrl?: string | null
-  category?: string | null
-  websiteUrl?: string | null
-  freshnessDaysLeft?: number
-}
+export type { DbTool }
 
 interface ToolCardProps {
   tool: DbTool

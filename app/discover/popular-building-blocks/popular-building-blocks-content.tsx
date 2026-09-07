@@ -1,7 +1,7 @@
 "use client"
 
 import { useCallback } from "react"
-import { useInfinitePopularBuildingBlocks } from "@/hooks/home/use-popular-building-blocks"
+import { useInfinitePopularBuildingBlocks } from "@/hooks/discover/use-popular-building-blocks"
 import { FeedList } from "@/components/shared/feed-list"
 import type { FeedItem } from "@/components/shared/feed-card"
 import { useIntersectionObserver } from "@/hooks/shared/use-intersection-observer"

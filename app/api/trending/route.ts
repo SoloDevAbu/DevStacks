@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { getTrendingProducts } from "@/db/queries/products/trending"
+import { getTrending } from "@/lib/rankings/trending"
 import type { TimeframeOption } from "@/lib/rankings/types"
 import { z } from "zod"
 
@@ -19,7 +19,7 @@ export const GET = async (req: NextRequest) => {
     : { limit: 10, timeframe: "today" as TimeframeOption, category: undefined }
 
   try {
-    const trending = await getTrendingProducts(
+    const trending = await getTrending(
       limit,
       timeframe as TimeframeOption,
       category

@@ -1,12 +1,12 @@
 import { useQuery } from "@tanstack/react-query"
-import { fetchTrending } from "@/lib/api/products"
+import { fetchTrending } from "@/lib/api/discover"
 import type { TimeframeOption } from "@/lib/rankings/types"
 
 export const TRENDING_QUERY_KEY = (
   limit: number,
   timeframe: TimeframeOption = "today",
   category?: string
-) => ["products", "trending", limit, timeframe, category ?? "all"]
+) => ["trending", limit, timeframe, category ?? "all"]
 
 export const useTrending = (
   limit = 10,

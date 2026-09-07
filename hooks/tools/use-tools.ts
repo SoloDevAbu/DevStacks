@@ -1,6 +1,6 @@
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query"
-import { fetchTools, type ToolListParams } from "@/lib/api/products"
-import type { DbTool } from "@/components/shared/tool-card"
+import { fetchTools, type ToolListParams } from "@/lib/api/tools"
+import type { DbTool } from "@/types/entities"
 
 export const TOOLS_QUERY_KEY = (params: ToolListParams) => [
   "tools",

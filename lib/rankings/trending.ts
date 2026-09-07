@@ -1,10 +1,9 @@
 import { db } from "@/db"
 import { tools, products } from "@/db/schema"
-import { and, desc, eq, ilike } from "drizzle-orm"
-import type { TimeframeOption } from "@/lib/rankings/types"
-import type { RankedItem } from "@/lib/rankings/types"
+import { and, eq, ilike } from "drizzle-orm"
+import type { TimeframeOption, RankedItem } from "@/lib/rankings/types"
 
-export const getTrendingProducts = async (
+export const getTrending = async (
   limit = 10,
   timeframe: TimeframeOption = "today",
   category?: string
@@ -68,3 +67,5 @@ export const getTrendingProducts = async (
 
   return scored.slice(0, safeLimit)
 }
+
+export const getTrendingProducts = getTrending

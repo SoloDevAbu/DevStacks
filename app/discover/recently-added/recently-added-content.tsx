@@ -1,7 +1,7 @@
 "use client"
 
 import { useCallback } from "react"
-import { useInfiniteRecentlyAdded } from "@/hooks/home/use-recently-added"
+import { useInfiniteRecentlyAdded } from "@/hooks/discover/use-recently-added"
 import { FeedList } from "@/components/shared/feed-list"
 import type { FeedItem } from "@/components/shared/feed-card"
 import { useIntersectionObserver } from "@/hooks/shared/use-intersection-observer"

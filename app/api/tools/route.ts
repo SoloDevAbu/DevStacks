@@ -2,6 +2,7 @@ import { type NextRequest, NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { getTools } from "@/db/queries/tools/list"
 import { createTool } from "@/db/queries/tools/create"
+import { submitToolSchema } from "@/lib/validation/tool"
 import { z } from "zod"
 
 const listQuerySchema = z.object({
@@ -15,18 +16,6 @@ const listQuerySchema = z.object({
   sortBy: z.enum(["upvotes", "builds", "recent", "views"]).default("upvotes"),
 })
 
-const submitToolSchema = z.object({
-  name: z.string().min(2).max(100),
-  tagline: z.string().min(10).max(200),
-  description: z.string().min(20),
-  websiteUrl: z.string().url(),
-  logoUrl: z.string().optional(),
-  githubUrl: z.string().url().optional(),
-  category: z.string().optional(),
-  tags: z.array(z.string()).default([]),
-  platforms: z.array(z.string()).default([]),
-  pricing: z.enum(["Free", "Freemium", "Paid", "Open Source"]).default("Free"),
-})
 
 export const GET = async (req: NextRequest) => {
   try {

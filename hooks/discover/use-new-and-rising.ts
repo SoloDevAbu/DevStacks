@@ -1,27 +1,29 @@
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query"
-import { fetchRecentlyAdded, type RankingQueryParams } from "@/lib/api/products"
+import { fetchNewAndRising, type RankingQueryParams } from "@/lib/api/discover"
 import type { FeedItem } from "@/components/shared/feed-card"
 
-export const RECENTLY_ADDED_QUERY_KEY = (
-  params: RankingQueryParams | number
-) => ["products", "recently-added", params]
+export const NEW_AND_RISING_QUERY_KEY = (params: RankingQueryParams) => [
+  "discover",
+  "new-and-rising",
+  params,
+]
 
-export const RECENTLY_ADDED_INFINITE_QUERY_KEY = (limit: number) => [
-  "products",
-  "recently-added",
+export const NEW_AND_RISING_INFINITE_QUERY_KEY = (limit: number) => [
+  "discover",
+  "new-and-rising",
   "infinite",
   limit,
 ]
 
-export const useRecentlyAdded = (params: RankingQueryParams | number = 6) => {
+export const useNewAndRising = (params: RankingQueryParams = {}) => {
   return useQuery({
-    queryKey: RECENTLY_ADDED_QUERY_KEY(params),
-    queryFn: () => fetchRecentlyAdded(params),
+    queryKey: NEW_AND_RISING_QUERY_KEY(params),
+    queryFn: () => fetchNewAndRising(params),
     staleTime: 60_000,
   })
 }
 
-export const useInfiniteRecentlyAdded = ({
+export const useInfiniteNewAndRising = ({
   limit = 20,
   initialData,
 }: {
@@ -29,9 +31,9 @@ export const useInfiniteRecentlyAdded = ({
   initialData?: FeedItem[]
 } = {}) => {
   return useInfiniteQuery({
-    queryKey: RECENTLY_ADDED_INFINITE_QUERY_KEY(limit),
+    queryKey: NEW_AND_RISING_INFINITE_QUERY_KEY(limit),
     queryFn: async ({ pageParam = 1 }) => {
-      const data = await fetchRecentlyAdded({ page: pageParam, limit })
+      const data = await fetchNewAndRising({ page: pageParam, limit })
       return (data ?? []) as FeedItem[]
     },
     initialPageParam: 1,
@@ -48,4 +50,3 @@ export const useInfiniteRecentlyAdded = ({
     staleTime: 60_000,
   })
 }
-

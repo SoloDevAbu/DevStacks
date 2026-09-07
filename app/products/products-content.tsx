@@ -1,7 +1,8 @@
 "use client"
 
 import { useCallback } from "react"
-import { ProductList, type DbProduct } from "@/components/shared/product-list"
+import { ProductList } from "@/components/shared/product-list"
+import type { DbProduct } from "@/types/entities"
 import { useInfiniteProducts } from "@/hooks/products/use-products"
 import { useIntersectionObserver } from "@/hooks/shared/use-intersection-observer"
 import { InfiniteScrollSentinel } from "@/components/shared/infinite-scroll-sentinel"

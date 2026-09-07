@@ -5,10 +5,10 @@ import { ArrowBigUp, Bookmark, ExternalLink, Code2 } from "lucide-react"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { useUpvoteTool } from "@/hooks/tools/use-upvote-tool"
 import { useBookmarkTool } from "@/hooks/tools/use-bookmark-tool"
-import { useUserInteractions } from "@/hooks/products/use-user-interactions"
+import { useUserInteractions } from "@/hooks/users/use-user-interactions"
 import { useSession } from "@/lib/auth/client"
 import { useAuthModal } from "@/hooks/auth/use-auth-modal"
-import { getOutboundUrl, getLinkRel } from "@/utils/products/urls"
+import { getOutboundUrl, getLinkRel } from "@/utils/urls"
 import { cn } from "@/lib/utils"
 
 interface ToolActionButtonsProps {
