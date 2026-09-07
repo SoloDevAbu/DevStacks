@@ -78,11 +78,6 @@ export const fetchTool = async (slug: string) => {
   return data.data
 }
 
-export const submitTool = async (payload: Record<string, unknown>) => {
-  const { data } = await apiClient.post("/tools", payload)
-  return data.data
-}
-
 export const toggleToolUpvote = async (slug: string, userId: string) => {
   const { data } = await apiClient.post(`/tools/${slug}/upvote`, { userId })
   return data.data as { action: "added" | "removed"; upvotesCount: number }
@@ -91,19 +86,6 @@ export const toggleToolUpvote = async (slug: string, userId: string) => {
 export const toggleToolBookmark = async (slug: string, userId: string) => {
   const { data } = await apiClient.post(`/tools/${slug}/bookmark`, { userId })
   return data.data as { action: "added" | "removed" }
-}
-
-export const fetchToolComments = async (slug: string) => {
-  const { data } = await apiClient.get(`/tools/${slug}/comments`)
-  return data.data
-}
-
-export const submitToolComment = async (
-  slug: string,
-  payload: { userId: string; body: string }
-) => {
-  const { data } = await apiClient.post(`/tools/${slug}/comments`, payload)
-  return data.data
 }
 
 // Ranking feeds (unchanged URL signatures)

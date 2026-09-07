@@ -24,11 +24,7 @@ export const LeftSidebar = () => {
             {section.items.map((item) => {
               const isActive =
                 pathname === item.href ||
-                (item.href !== ROUTES.HOME && pathname.startsWith(item.href)) ||
-                (item.href === ROUTES.TOOLS &&
-                  (pathname === "/tool" || pathname.startsWith("/tool/"))) ||
-                (item.href === ROUTES.PRODUCTS &&
-                  (pathname === "/product" || pathname.startsWith("/product/")))
+                (item.href !== ROUTES.HOME && pathname.startsWith(item.href))
 
               const requiresAuth = item.href === ROUTES.SHOWCASE
 
