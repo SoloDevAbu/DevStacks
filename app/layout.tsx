@@ -5,6 +5,7 @@ import { HeaderNav } from "@/components/layout/header-nav"
 import { HeaderActions } from "@/components/layout/header-actions"
 import { LeftSidebar } from "@/components/shared/left-sidebar"
 import { RightSidebar } from "@/components/layout/right-sidebar"
+import { AgentFooter } from "@/components/layout/agent-footer"
 import { Providers } from "@/app/providers"
 
 import { SITE_CONFIG } from "@/constants/site"
@@ -148,8 +149,9 @@ const RootLayout = ({
               </aside>
 
               {/* Bottom Center (Main) */}
-              <main className="relative min-h-[calc(100vh-64px)] min-w-0 bg-white">
-                {children}
+              <main className="relative flex min-h-[calc(100vh-64px)] min-w-0 flex-col justify-between bg-white">
+                <div className="flex-1">{children}</div>
+                <AgentFooter />
               </main>
 
               {/* Bottom Right (Sidebar) */}

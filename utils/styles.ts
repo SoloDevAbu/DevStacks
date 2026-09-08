@@ -90,3 +90,15 @@ export const infiniteScrollLoader =
 
 export const infiniteScrollEndMessage =
   "py-8 text-center text-xs font-medium text-slate-400 border-t border-dashed border-border"
+
+export const agentFooterWrapper =
+  "border-t border-dashed border-border bg-amber-50/20 px-6 py-4 text-xs md:px-8"
+
+export const agentFooterLabel =
+  "font-mono text-xs font-bold tracking-widest text-[#a06138] uppercase"
+
+export const agentFooterLink =
+  "font-mono text-xs text-slate-600 hover:text-slate-900 transition-colors underline-offset-2 hover:underline"
+
+export const agentFooterDot = "text-slate-300 select-none"
+

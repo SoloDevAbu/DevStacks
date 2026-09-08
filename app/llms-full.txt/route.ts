@@ -131,6 +131,18 @@ ${DEVSTACKS_FAQS.map((faq) => `### ${faq.question}\n${faq.answer}\n`).join("\n")
 - GET ${SITE_CONFIG.url}/api/tools: Filter tools by category, pricing, or search query.
 - GET ${SITE_CONFIG.url}/api/tools/[slug]: Complete tool JSON data including buildsCount and upvotesCount.
 - GET ${SITE_CONFIG.url}/api/trending: Real-time ranked list of developer tools and products.
+
+---
+
+## 10. AI Agent Discovery & Protocols
+- OpenAPI 3.1 Contract: ${SITE_CONFIG.url}/openapi.json
+- Public REST API: ${SITE_CONFIG.url}/v1 (tools, products, search, leaderboard)
+- Model Context Protocol: ${SITE_CONFIG.url}/api/mcp (Streamable HTTP, JSON-RPC 2.0)
+- MCP Docs & Guides: ${SITE_CONFIG.url}/mcp and ${SITE_CONFIG.url}/mcp.md
+- CLI Documentation: ${SITE_CONFIG.url}/cli and ${SITE_CONFIG.url}/cli.md
+- AI Behaviour Guidance: ${SITE_CONFIG.url}/ai.txt
+- Agent Auth Guide: ${SITE_CONFIG.url}/auth.md
+- Markdown Twins: Every entity is available as text/markdown via .md suffix or Accept: text/markdown.
 `
 
   return new NextResponse(content, {
@@ -141,3 +153,4 @@ ${DEVSTACKS_FAQS.map((faq) => `### ${faq.question}\n${faq.answer}\n`).join("\n")
     },
   })
 }
+
