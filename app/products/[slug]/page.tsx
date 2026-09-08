@@ -75,11 +75,20 @@ export const generateMetadata = async ({
       url: canonicalUrl,
       siteName: SITE_CONFIG.name,
       type: "website",
+      images: [
+        {
+          url: product.logoUrl ?? `${SITE_CONFIG.url}/opengraph-image`,
+          width: 1200,
+          height: 630,
+          alt: `${product.name} on ${SITE_CONFIG.name}`,
+        },
+      ],
     },
     twitter: {
       card: "summary_large_image",
       title: `${title} | ${SITE_CONFIG.name}`,
       description,
+      images: [product.logoUrl ?? `${SITE_CONFIG.url}/twitter-image`],
     },
   }
 }
@@ -109,9 +118,20 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
     pricing: product.pricing,
     tier: product.tier,
     asoCategory: product.asoCategory,
+    category: product.category,
     platforms: product.platforms,
     likesCount: product.likesCount,
     createdAt: product.createdAt,
+    problemStatement: product.problemStatement,
+    solution: product.solution,
+    uniqueValue: product.uniqueValue,
+    githubUrl: product.githubUrl,
+    twitterUrl: product.twitterUrl,
+    websiteUrl: product.websiteUrl,
+    isRelatedTo: (product.builtWithTools ?? []).map((t) => ({
+      name: t.name,
+      url: `${siteUrl}${ROUTES.TOOL(t.toolSlug ?? t.name.toLowerCase().replace(/[^a-z0-9]+/g, "-"))}`,
+    })),
   })
 
   const breadcrumbJsonLd = breadcrumbSchema([

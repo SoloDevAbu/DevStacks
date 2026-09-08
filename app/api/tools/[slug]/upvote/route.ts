@@ -31,6 +31,9 @@ export const POST = async (
     const result = await toggleToolUpvote(tool.id, parsed.data.userId)
     return NextResponse.json({ data: result }, { status: 200 })
   } catch {
-    return NextResponse.json({ error: "Failed to toggle upvote" }, { status: 500 })
+    return NextResponse.json(
+      { error: "Failed to toggle upvote" },
+      { status: 500 }
+    )
   }
 }

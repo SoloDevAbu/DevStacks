@@ -55,4 +55,3 @@ export const ProductsDirectoryContent = ({
     </div>
   )
 }
-

@@ -2,7 +2,14 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { ArrowBigUp, Bookmark, Eye, ExternalLink, ArrowUp, Sparkles } from "lucide-react"
+import {
+  ArrowBigUp,
+  Bookmark,
+  Eye,
+  ExternalLink,
+  ArrowUp,
+  Sparkles,
+} from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -131,18 +138,9 @@ export const ToolCard = ({
   return (
     <Card
       onClick={handleCardClick}
-      className={cn(
-        directoryCard,
-        tierCardBg(tier),
-        index > 0 && "-mt-px"
-      )}
+      className={cn(directoryCard, tierCardBg(tier), index > 0 && "-mt-px")}
     >
-      <CardContent
-        className={cn(
-          directoryCardContent,
-          tierContentBg(tier)
-        )}
-      >
+      <CardContent className={cn(directoryCardContent, tierContentBg(tier))}>
         {tier !== TIER.FREE && (
           <div className="pointer-events-none absolute inset-0 z-[-1] overflow-hidden">
             <div
@@ -157,9 +155,7 @@ export const ToolCard = ({
         {/* Index or Medal indicator */}
         <div className="hidden w-6 shrink-0 sm:flex sm:items-center sm:justify-center">
           {showMedals ? (
-            <div className={medalBadge(index + 1)}>
-              {index + 1}
-            </div>
+            <div className={medalBadge(index + 1)}>{index + 1}</div>
           ) : (
             <div className="w-4 text-center text-sm font-bold text-slate-400">
               {index + 1}
@@ -209,15 +205,16 @@ export const ToolCard = ({
                 <ArrowUp className="size-3" /> TRENDING
               </Badge>
             )}
-            {showFreshnessBadge && typeof tool.freshnessDaysLeft === "number" && (
-              <Badge
-                variant="outline"
-                className="flex items-center gap-1 rounded-none border-amber-300 bg-amber-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-amber-700 hover:bg-amber-50"
-              >
-                <Sparkles className="size-3 text-amber-500" />
-                {tool.freshnessDaysLeft}d boost
-              </Badge>
-            )}
+            {showFreshnessBadge &&
+              typeof tool.freshnessDaysLeft === "number" && (
+                <Badge
+                  variant="outline"
+                  className="flex items-center gap-1 rounded-none border-amber-300 bg-amber-50 px-2 py-0.5 text-[10px] font-bold tracking-wider text-amber-700 uppercase hover:bg-amber-50"
+                >
+                  <Sparkles className="size-3 text-amber-500" />
+                  {tool.freshnessDaysLeft}d boost
+                </Badge>
+              )}
           </div>
 
           <p className="line-clamp-1 text-sm font-medium text-slate-500">

@@ -68,7 +68,10 @@ export const FeedList = ({
         </p>
         {emptyActionHref && (
           <div className="mt-4">
-            <Button nativeButton={false} render={<Link href={emptyActionHref} />}>
+            <Button
+              nativeButton={false}
+              render={<Link href={emptyActionHref} />}
+            >
               <PlusCircle className="mr-1.5 size-4" />
               {emptyActionLabel}
             </Button>

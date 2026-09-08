@@ -21,7 +21,7 @@ export const HeaderNav = () => {
   return (
     <nav className="flex w-full items-center justify-around gap-6 text-sm font-medium text-muted-foreground">
       <form onSubmit={handleSearchSubmit} className="relative w-full max-w-sm">
-        <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground pointer-events-none" />
+        <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
         <Input
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
@@ -31,7 +31,7 @@ export const HeaderNav = () => {
       </form>
       <Link
         href={ROUTES.PRICING}
-        className="shrink-0 font-semibold text-slate-900 hover:text-foreground transition-colors"
+        className="shrink-0 font-semibold text-slate-900 transition-colors hover:text-foreground"
       >
         Pricing
       </Link>

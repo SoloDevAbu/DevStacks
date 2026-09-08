@@ -53,4 +53,3 @@ export const NewAndRisingContent = ({
     </div>
   )
 }
-

@@ -39,7 +39,6 @@ export const GET = async (req: NextRequest) => {
 }
 
 export const POST = async (req: NextRequest) => {
-
   try {
     const session = await auth.api.getSession({
       headers: req.headers,
@@ -74,7 +73,6 @@ export const POST = async (req: NextRequest) => {
     })
 
     return NextResponse.json({ data: product }, { status: 201 })
-
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : "Unknown error"
     if (message.includes("unique")) {

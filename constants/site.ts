@@ -3,6 +3,11 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://devstacks.io"
 export const SITE_CONFIG = {
   name: "DevStacks",
   shortName: "DevStacks",
+  alternateNames: [
+    "DevStacks Directory",
+    "DevStacks Ecosystem",
+    "DevStacks IO",
+  ],
   tagline: "Discover Developer Tools, APIs & Products",
   description:
     "Discover developer tools, APIs, and infrastructure products. Explore what developers are building, community upvotes, and battle-tested tech stacks.",
@@ -21,6 +26,14 @@ export const SITE_CONFIG = {
     "tech stack showcase",
     "built with developer tools",
     "trending dev tools",
+    "what is DevStacks",
+    "tech stack database",
+    "developer ecosystem",
+    "indie hacker tools",
+    "best dev tools",
+    "developer APIs and SDKs",
+    "developer software directory",
+    "product tech stacks",
   ],
   socials: {
     twitter: "https://x.com/devstacks",

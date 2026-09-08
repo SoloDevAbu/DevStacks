@@ -139,18 +139,9 @@ export const ProductCard = ({
   return (
     <Card
       onClick={handleCardClick}
-      className={cn(
-        directoryCard,
-        tierCardBg(tier),
-        index > 0 && "-mt-px"
-      )}
+      className={cn(directoryCard, tierCardBg(tier), index > 0 && "-mt-px")}
     >
-      <CardContent
-        className={cn(
-          directoryCardContent,
-          tierContentBg(tier)
-        )}
-      >
+      <CardContent className={cn(directoryCardContent, tierContentBg(tier))}>
         {tier !== TIER.FREE && (
           <div className="pointer-events-none absolute inset-0 z-[-1] overflow-hidden">
             <div
@@ -165,9 +156,7 @@ export const ProductCard = ({
         {/* Index or Medal */}
         <div className="hidden w-6 shrink-0 sm:flex sm:items-center sm:justify-center">
           {showMedals ? (
-            <div className={medalBadge(index + 1)}>
-              {index + 1}
-            </div>
+            <div className={medalBadge(index + 1)}>{index + 1}</div>
           ) : (
             <div className="w-4 text-center text-sm font-bold text-slate-400">
               {index + 1}

@@ -13,13 +13,17 @@ export const toggleToolBookmark = async (
   const [existing] = await db
     .select()
     .from(toolBookmarks)
-    .where(and(eq(toolBookmarks.toolId, toolId), eq(toolBookmarks.userId, userId)))
+    .where(
+      and(eq(toolBookmarks.toolId, toolId), eq(toolBookmarks.userId, userId))
+    )
     .limit(1)
 
   if (existing) {
     await db
       .delete(toolBookmarks)
-      .where(and(eq(toolBookmarks.toolId, toolId), eq(toolBookmarks.userId, userId)))
+      .where(
+        and(eq(toolBookmarks.toolId, toolId), eq(toolBookmarks.userId, userId))
+      )
     return { action: "removed" }
   }
 

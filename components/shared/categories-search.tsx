@@ -191,8 +191,8 @@ export const CategoriesSearch = ({
             >
               <Layers className="size-3.5 text-slate-500" />
               <span>All Categories</span>
-              <div className="hidden items-center gap-1 sm:flex ml-1">
-                <Kbd className="h-4.5 px-1.5 text-[10px] font-semibold text-slate-500 border border-slate-200 bg-slate-50">
+              <div className="ml-1 hidden items-center gap-1 sm:flex">
+                <Kbd className="h-4.5 border border-slate-200 bg-slate-50 px-1.5 text-[10px] font-semibold text-slate-500">
                   {isMac ? "⌘F" : "Ctrl+F"}
                 </Kbd>
               </div>
@@ -252,7 +252,7 @@ export const CategoriesSearch = ({
                         className="cursor-pointer"
                       >
                         <span className="font-medium">{cat.name}</span>
-                        <span className="ml-auto mr-3 text-[10px] text-muted-foreground">
+                        <span className="mr-3 ml-auto text-[10px] text-muted-foreground">
                           {cat.count} {cat.count === 1 ? "item" : "items"}
                         </span>
                       </CommandItem>

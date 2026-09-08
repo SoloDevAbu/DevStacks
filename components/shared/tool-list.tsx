@@ -24,7 +24,9 @@ export const ToolList = ({
         <div className="mb-3 rounded-full bg-slate-100 p-4 text-slate-400">
           <PackageSearch className="size-8" />
         </div>
-        <h3 className="text-base font-semibold text-slate-800">No tools found</h3>
+        <h3 className="text-base font-semibold text-slate-800">
+          No tools found
+        </h3>
         <p className="mt-1 max-w-sm text-sm text-slate-500">
           No developer tools found in this directory. List yours to be
           discovered by thousands of builders!

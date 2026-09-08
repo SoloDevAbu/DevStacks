@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
 import { PageHeader } from "@/components/shared/page-header"
-import { breadcrumbSchema } from "@/lib/seo/schema"
+import { breadcrumbSchema, collectionPageSchema } from "@/lib/seo/schema"
 import { SITE_CONFIG } from "@/constants/site"
 import { AI_PROMPTS } from "@/lib/prompts"
 import { DISCOVER_PAGE_LIMIT } from "@/constants/rankings"
@@ -28,11 +28,20 @@ export const metadata: Metadata = {
     description: "The tools developers are building with.",
     type: "website",
     url: `${SITE_CONFIG.url}/discover/popular-building-blocks`,
+    images: [
+      {
+        url: `${SITE_CONFIG.url}/opengraph-image`,
+        width: 1200,
+        height: 630,
+        alt: `Popular Building Blocks | ${SITE_CONFIG.name}`,
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: `Popular Building Blocks | ${SITE_CONFIG.name}`,
     description: "The tools developers are building with.",
+    images: [`${SITE_CONFIG.url}/twitter-image`],
   },
 }
 
@@ -51,11 +60,27 @@ const PopularBuildingBlocksPage = async () => {
     page: 1,
   }).catch(() => [])
 
+  const collectionJsonLd = collectionPageSchema({
+    name: "Popular Developer Building Blocks",
+    description:
+      "The foundational infrastructure and services developers choose most when launching products.",
+    url: `${SITE_CONFIG.url}/discover/popular-building-blocks`,
+    items: (initialItems as FeedItem[]).map((item) => ({
+      name: item.name,
+      url: `${SITE_CONFIG.url}${item.itemKind === "tool" ? `/tools/${item.slug}` : `/products/${item.slug}`}`,
+      description: item.tagline,
+    })),
+  })
+
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionJsonLd) }}
       />
       <div className="relative flex min-h-full flex-col bg-slate-50/50">
         <PageHeader
@@ -64,11 +89,12 @@ const PopularBuildingBlocksPage = async () => {
           aiPrompt={AI_PROMPTS.popularBuildingBlocks}
         />
 
-        <PopularBuildingBlocksContent initialItems={initialItems as FeedItem[]} />
+        <PopularBuildingBlocksContent
+          initialItems={initialItems as FeedItem[]}
+        />
       </div>
     </>
   )
 }
 
 export default PopularBuildingBlocksPage
-

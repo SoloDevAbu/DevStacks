@@ -86,12 +86,47 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
       changeFrequency: "monthly",
       priority: 0.8,
     },
+    {
+      url: `${siteUrl}/llms.txt`,
+      lastModified: new Date(),
+      changeFrequency: "daily",
+      priority: 0.85,
+    },
+    {
+      url: `${siteUrl}/llms-full.txt`,
+      lastModified: new Date(),
+      changeFrequency: "daily",
+      priority: 0.85,
+    },
+  ]
+
+  const featuredCategories = [
+    "AI",
+    "Database",
+    "Auth",
+    "Payments",
+    "Infra",
+    "APIs",
+  ]
+  const categoryRoutes: MetadataRoute.Sitemap = [
+    ...featuredCategories.map((cat) => ({
+      url: `${siteUrl}${ROUTES.PRODUCTS}?category=${encodeURIComponent(cat)}`,
+      lastModified: new Date(),
+      changeFrequency: "daily" as const,
+      priority: 0.8,
+    })),
+    ...featuredCategories.map((cat) => ({
+      url: `${siteUrl}${ROUTES.TOOLS}?category=${encodeURIComponent(cat)}`,
+      lastModified: new Date(),
+      changeFrequency: "daily" as const,
+      priority: 0.8,
+    })),
   ]
 
   try {
     const [dbProducts, dbTools] = await Promise.all([
-      getProducts({ limit: 50 }),
-      getTools({ limit: 50 }),
+      getProducts({ limit: 5000 }),
+      getTools({ limit: 5000 }),
     ])
 
     const dynamicRoutes: MetadataRoute.Sitemap = []
@@ -118,12 +153,12 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
       )
     }
 
-    return [...staticRoutes, ...dynamicRoutes]
+    return [...staticRoutes, ...categoryRoutes, ...dynamicRoutes]
   } catch {
     // Return static routes if DB is temporarily unreachable
   }
 
-  return staticRoutes
+  return [...staticRoutes, ...categoryRoutes]
 }
 
 export default sitemap

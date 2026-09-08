@@ -1,6 +1,14 @@
 "use client"
 
-import { createContext, useContext, useState, useCallback, ReactNode, Suspense, useEffect } from "react"
+import {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  ReactNode,
+  Suspense,
+  useEffect,
+} from "react"
 import { AuthDialog } from "@/components/auth/auth-dialog"
 import { useSession } from "@/lib/auth/client"
 import { useRouter, useSearchParams, usePathname } from "next/navigation"

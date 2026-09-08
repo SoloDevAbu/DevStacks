@@ -15,4 +15,3 @@ export const ROUTES = {
   TOOLS: "/tools",
   TOOL: (slug: string) => `/tools/${slug}`,
 } as const
-

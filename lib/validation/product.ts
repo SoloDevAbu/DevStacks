@@ -7,7 +7,10 @@ export const submitProductSchema = z.object({
 
   // General
   name: z.string().min(2, "Name must be at least 2 characters").max(100),
-  tagline: z.string().min(10, "Tagline too short").max(60, "Tagline max 60 characters"),
+  tagline: z
+    .string()
+    .min(10, "Tagline too short")
+    .max(60, "Tagline max 60 characters"),
   description: z.string().min(20, "Description too short").max(2000),
 
   // Deep Dive (optional)

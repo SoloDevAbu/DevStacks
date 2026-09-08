@@ -50,10 +50,12 @@ export const ShowcaseContent = () => {
 
   const user = session.user
 
-  const set = (key: keyof typeof emptyForm) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setForm((prev) => ({ ...prev, [key]: e.target.value }))
-    setErrors((prev) => ({ ...prev, [key]: [] }))
-  }
+  const set =
+    (key: keyof typeof emptyForm) =>
+    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      setForm((prev) => ({ ...prev, [key]: e.target.value }))
+      setErrors((prev) => ({ ...prev, [key]: [] }))
+    }
 
   const executeSubmit = (userId: string) => {
     const parsed = submitBuildSchema.safeParse({
@@ -99,8 +101,12 @@ export const ShowcaseContent = () => {
       <div className="relative flex min-h-full flex-col items-center justify-center gap-6 bg-slate-50/50 p-12 text-center">
         <CheckCircle2 className="size-16 text-emerald-500" />
         <div>
-          <h2 className="text-2xl font-bold text-slate-900">Build Showcased!</h2>
-          <p className="mt-2 text-slate-500">Your build is now live in the community showcase.</p>
+          <h2 className="text-2xl font-bold text-slate-900">
+            Build Showcased!
+          </h2>
+          <p className="mt-2 text-slate-500">
+            Your build is now live in the community showcase.
+          </p>
         </div>
         <Button onClick={() => setSubmitted(false)}>Showcase Another</Button>
       </div>
@@ -119,40 +125,71 @@ export const ShowcaseContent = () => {
       <div className="border-b border-dashed border-border bg-white px-6 py-4 md:px-8">
         <div className="flex items-center gap-3 text-xs text-slate-600">
           <Avatar className="size-6 border border-border">
-            {user.image && <AvatarImage src={user.image} alt={user.name || "User"} />}
-            <AvatarFallback className="bg-slate-900 text-white text-[10px]">
+            {user.image && (
+              <AvatarImage src={user.image} alt={user.name || "User"} />
+            )}
+            <AvatarFallback className="bg-slate-900 text-[10px] text-white">
               {user.name?.slice(0, 2).toUpperCase() || "ME"}
             </AvatarFallback>
           </Avatar>
           <span>
-            Showcasing as <span className="font-semibold text-slate-900">{user.name || user.email}</span>
+            Showcasing as{" "}
+            <span className="font-semibold text-slate-900">
+              {user.name || user.email}
+            </span>
           </span>
         </div>
       </div>
-
 
       <div className="flex w-full flex-1 flex-col bg-white">
         <form onSubmit={handleSubmit} className="flex flex-col">
           {/* Project Information */}
           <div className="flex flex-col gap-6 border-b border-dashed border-border px-6 py-8 md:px-8">
             <div>
-              <h2 className="text-lg font-bold text-slate-900">Project Information</h2>
-              <p className="text-sm text-slate-500">The basic details about your project.</p>
+              <h2 className="text-lg font-bold text-slate-900">
+                Project Information
+              </h2>
+              <p className="text-sm text-slate-500">
+                The basic details about your project.
+              </p>
             </div>
             <div className="flex flex-col gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="name">Project Name *</Label>
-                <Input id="name" value={form.name} onChange={set("name")} placeholder="e.g. Acme Dashboard" />
-                {errors.name && <p className="text-xs text-red-500">{errors.name[0]}</p>}
+                <Input
+                  id="name"
+                  value={form.name}
+                  onChange={set("name")}
+                  placeholder="e.g. Acme Dashboard"
+                />
+                {errors.name && (
+                  <p className="text-xs text-red-500">{errors.name[0]}</p>
+                )}
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="logoText">Logo Text (1–4 chars)</Label>
-                <Input id="logoText" value={form.logoText} onChange={set("logoText")} placeholder="e.g. AC" maxLength={4} />
+                <Input
+                  id="logoText"
+                  value={form.logoText}
+                  onChange={set("logoText")}
+                  placeholder="e.g. AC"
+                  maxLength={4}
+                />
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="description">Short Description *</Label>
-                <Textarea id="description" value={form.description} onChange={set("description")} placeholder="What does your project do?" rows={3} />
-                {errors.description && <p className="text-xs text-red-500">{errors.description[0]}</p>}
+                <Textarea
+                  id="description"
+                  value={form.description}
+                  onChange={set("description")}
+                  placeholder="What does your project do?"
+                  rows={3}
+                />
+                {errors.description && (
+                  <p className="text-xs text-red-500">
+                    {errors.description[0]}
+                  </p>
+                )}
               </div>
             </div>
           </div>
@@ -161,12 +198,19 @@ export const ShowcaseContent = () => {
           <div className="flex flex-col gap-6 border-b border-dashed border-border px-6 py-8 md:px-8">
             <div>
               <h2 className="text-lg font-bold text-slate-900">Tech Stack</h2>
-              <p className="text-sm text-slate-500">What developer tools and APIs did you use to build this?</p>
+              <p className="text-sm text-slate-500">
+                What developer tools and APIs did you use to build this?
+              </p>
             </div>
             <div className="flex flex-col gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="tools">Built With</Label>
-                <Input id="tools" value={form.tools} onChange={set("tools")} placeholder="e.g. Next.js, Supabase, Tailwind CSS, Vercel (comma separated)" />
+                <Input
+                  id="tools"
+                  value={form.tools}
+                  onChange={set("tools")}
+                  placeholder="e.g. Next.js, Supabase, Tailwind CSS, Vercel (comma separated)"
+                />
                 <p className="text-xs text-slate-400">
                   Note: Product linking from the directory coming soon.
                 </p>
@@ -183,12 +227,21 @@ export const ShowcaseContent = () => {
               </div>
             )}
             <div className="flex items-center justify-end gap-3">
-              <Button variant="outline" type="button" onClick={() => { setForm(emptyForm); setErrors({}) }}>
+              <Button
+                variant="outline"
+                type="button"
+                onClick={() => {
+                  setForm(emptyForm)
+                  setErrors({})
+                }}
+              >
                 Cancel
               </Button>
               <Button type="submit" disabled={isSubmitting}>
                 {isSubmitting ? (
-                  <><Spinner className="size-4" /> Submitting...</>
+                  <>
+                    <Spinner className="size-4" /> Submitting...
+                  </>
                 ) : (
                   "Submit Showcase"
                 )}

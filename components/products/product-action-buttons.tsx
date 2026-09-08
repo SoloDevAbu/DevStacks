@@ -39,8 +39,10 @@ export const ProductActionButtons = ({
   const isLiked = isProductLiked(productId, slug)
   const isBookmarked = isProductBookmarked(productId, slug)
 
-  const isLiking = likeMutation.isPending && likeMutation.variables?.slug === slug
-  const isBookmarking = bookmarkMutation.isPending && bookmarkMutation.variables?.slug === slug
+  const isLiking =
+    likeMutation.isPending && likeMutation.variables?.slug === slug
+  const isBookmarking =
+    bookmarkMutation.isPending && bookmarkMutation.variables?.slug === slug
 
   const handleLike = () => {
     requireAuth(
@@ -88,12 +90,15 @@ export const ProductActionButtons = ({
         className={cn(
           "gap-2 rounded-lg px-3 transition-colors",
           isLiked
-            ? "bg-pink-600 text-white hover:bg-pink-700 shadow-xs"
+            ? "bg-pink-600 text-white shadow-xs hover:bg-pink-700"
             : "bg-slate-900 text-white hover:bg-slate-800"
         )}
       >
         <Heart
-          className={cn("size-4", isLiked ? "fill-white text-white" : "text-slate-300")}
+          className={cn(
+            "size-4",
+            isLiked ? "fill-white text-white" : "text-slate-300"
+          )}
           fill={isLiked ? "currentColor" : "none"}
         />
         {isLiked ? "Liked" : "Like"} ({likes.toLocaleString()})
@@ -110,7 +115,10 @@ export const ProductActionButtons = ({
             : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
         )}
       >
-        <Bookmark className="size-4" fill={isBookmarked ? "currentColor" : "none"} />
+        <Bookmark
+          className="size-4"
+          fill={isBookmarked ? "currentColor" : "none"}
+        />
         {isBookmarked ? "Bookmarked" : "Bookmark"}
       </Button>
 

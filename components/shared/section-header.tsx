@@ -21,8 +21,12 @@ export const SectionHeader = ({
   return (
     <div className={cn(sectionHeaderWrapper, className)}>
       <div>
-        <h2 className="text-base font-bold text-slate-900 md:text-lg">{title}</h2>
-        <p className="text-xs font-medium text-slate-500 md:text-sm">{subtitle}</p>
+        <h2 className="text-base font-bold text-slate-900 md:text-lg">
+          {title}
+        </h2>
+        <p className="text-xs font-medium text-slate-500 md:text-sm">
+          {subtitle}
+        </p>
       </div>
       <Link
         href={viewAllHref}
@@ -33,4 +37,3 @@ export const SectionHeader = ({
     </div>
   )
 }
-

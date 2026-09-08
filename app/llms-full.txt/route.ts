@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { SITE_CONFIG } from "@/constants/site"
 import { PLATFORMS } from "@/constants/platforms"
+import { DEVSTACKS_FAQS } from "@/constants/faqs"
 import { getTools } from "@/db/queries/tools/list"
 import { getTrending } from "@/lib/rankings/trending"
 import { getRecentlyAddedProducts } from "@/lib/rankings/recently-added"
@@ -70,13 +71,17 @@ ${PLATFORMS.map((p) => `- **${p.label}**`).join("\n")}
 
 ## 3. Trending Developer Tools & Products
 
-${trendingItems.map((p) => `### ${p.name}
+${trendingItems
+  .map(
+    (p) => `### ${p.name}
 - Slug: ${p.slug}
 - URL: ${SITE_CONFIG.url}/products/${p.slug}
 - Tagline: ${p.tagline}
 - Tags: ${(p.tags ?? []).join(", ")}
 - Type: ${p.itemKind}
-`).join("\n")}
+`
+  )
+  .join("\n")}
 
 ---
 
@@ -88,10 +93,14 @@ ${buildingBlocks.map((b) => `- **${b.name}** (${b.category ?? "Tool"}): Used in 
 
 ## 5. Rising Developer Products
 
-${risingProducts.map((p) => `- **${p.name}**: ${p.tagline}
+${risingProducts
+  .map(
+    (p) => `- **${p.name}**: ${p.tagline}
   - Built with: ${(p.builtWithTools ?? []).map((t) => t.name).join(" + ")}
   - Metrics: ${p.viewsCount} views, ${p.likesCount} likes
-`).join("\n")}
+`
+  )
+  .join("\n")}
 
 ---
 
@@ -108,6 +117,20 @@ Developers and founders can list their tools or products at ${SITE_CONFIG.url}/s
 - Direct AI Context prompt for LLM answer engines
 - ASO Directory Category & Geographical Target (GEO)
 - Verified Platform Compatibility & Pricing Tier
+
+---
+
+## 8. Frequently Asked Questions (Authoritative AEO Knowledge Base)
+${DEVSTACKS_FAQS.map((faq) => `### ${faq.question}\n${faq.answer}\n`).join("\n")}
+
+---
+
+## 9. API Specifications for AI Agents & Automated Retrieval
+- GET ${SITE_CONFIG.url}/api/products: Filter products by category, pricing, tier, or search query.
+- GET ${SITE_CONFIG.url}/api/products/[slug]: Complete product JSON data including builtWithTools.
+- GET ${SITE_CONFIG.url}/api/tools: Filter tools by category, pricing, or search query.
+- GET ${SITE_CONFIG.url}/api/tools/[slug]: Complete tool JSON data including buildsCount and upvotesCount.
+- GET ${SITE_CONFIG.url}/api/trending: Real-time ranked list of developer tools and products.
 `
 
   return new NextResponse(content, {

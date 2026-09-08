@@ -14,13 +14,23 @@ export const toggleProductLike = async (
   const [existing] = await db
     .select()
     .from(productLikes)
-    .where(and(eq(productLikes.productId, productId), eq(productLikes.userId, userId)))
+    .where(
+      and(
+        eq(productLikes.productId, productId),
+        eq(productLikes.userId, userId)
+      )
+    )
     .limit(1)
 
   if (existing) {
     await db
       .delete(productLikes)
-      .where(and(eq(productLikes.productId, productId), eq(productLikes.userId, userId)))
+      .where(
+        and(
+          eq(productLikes.productId, productId),
+          eq(productLikes.userId, userId)
+        )
+      )
 
     const [updated] = await db
       .update(products)

@@ -5,8 +5,7 @@ import { ProductCard } from "@/components/shared/product-card"
 import type { DbTool, DbProduct } from "@/types/entities"
 
 export type FeedItem =
-  | (DbTool & { itemKind: "tool" })
-  | (DbProduct & { itemKind: "product" })
+  (DbTool & { itemKind: "tool" }) | (DbProduct & { itemKind: "product" })
 
 interface FeedCardProps {
   item: FeedItem

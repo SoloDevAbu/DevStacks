@@ -26,11 +26,7 @@ export const pricingEnum = pgEnum("pricing", [
 
 export const tierEnum = pgEnum("tier", ["free", "premium", "premium+"])
 
-export const statusEnum = pgEnum("status", [
-  "pending",
-  "approved",
-  "rejected",
-])
+export const statusEnum = pgEnum("status", ["pending", "approved", "rejected"])
 
 // ---------------------------------------------------------------------------
 // users (Better Auth user table)
@@ -103,8 +99,12 @@ export const tools = pgTable("tools", {
   commentsCount: integer("comments_count").notNull().default(0),
   viewsCount: integer("views_count").notNull().default(0),
 
-  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
-  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
 })
 
 // ---------------------------------------------------------------------------
@@ -175,8 +175,12 @@ export const products = pgTable("products", {
   commentsCount: integer("comments_count").notNull().default(0),
   viewsCount: integer("views_count").notNull().default(0),
 
-  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
-  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
 })
 
 // ---------------------------------------------------------------------------
@@ -218,7 +222,9 @@ export const productLikes = pgTable(
       .notNull()
       .defaultNow(),
   },
-  (t) => [uniqueIndex("product_likes_product_user_idx").on(t.productId, t.userId)]
+  (t) => [
+    uniqueIndex("product_likes_product_user_idx").on(t.productId, t.userId),
+  ]
 )
 
 // ---------------------------------------------------------------------------
@@ -260,7 +266,9 @@ export const productBookmarks = pgTable(
       .notNull()
       .defaultNow(),
   },
-  (t) => [uniqueIndex("product_bookmarks_product_user_idx").on(t.productId, t.userId)]
+  (t) => [
+    uniqueIndex("product_bookmarks_product_user_idx").on(t.productId, t.userId),
+  ]
 )
 
 // ---------------------------------------------------------------------------
@@ -424,7 +432,10 @@ export const relations = defineRelations(
       user: r.one.users({ from: r.toolUpvotes.userId, to: r.users.id }),
     },
     productLikes: {
-      product: r.one.products({ from: r.productLikes.productId, to: r.products.id }),
+      product: r.one.products({
+        from: r.productLikes.productId,
+        to: r.products.id,
+      }),
       user: r.one.users({ from: r.productLikes.userId, to: r.users.id }),
     },
     toolBookmarks: {
@@ -432,7 +443,10 @@ export const relations = defineRelations(
       user: r.one.users({ from: r.toolBookmarks.userId, to: r.users.id }),
     },
     productBookmarks: {
-      product: r.one.products({ from: r.productBookmarks.productId, to: r.products.id }),
+      product: r.one.products({
+        from: r.productBookmarks.productId,
+        to: r.products.id,
+      }),
       user: r.one.users({ from: r.productBookmarks.userId, to: r.users.id }),
     },
     toolComments: {
@@ -440,7 +454,10 @@ export const relations = defineRelations(
       user: r.one.users({ from: r.toolComments.userId, to: r.users.id }),
     },
     productComments: {
-      product: r.one.products({ from: r.productComments.productId, to: r.products.id }),
+      product: r.one.products({
+        from: r.productComments.productId,
+        to: r.products.id,
+      }),
       user: r.one.users({ from: r.productComments.userId, to: r.users.id }),
     },
   })

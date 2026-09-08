@@ -30,7 +30,9 @@ export const getRecentlyAddedProducts = async ({
   const combined: RankedItem[] = [
     ...recentTools.map((t) => ({ ...t, itemKind: "tool" as const })),
     ...recentProducts.map((p) => ({ ...p, itemKind: "product" as const })),
-  ].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+  ].sort(
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+  )
 
   return combined.slice(offset, offset + safeLimit)
 }

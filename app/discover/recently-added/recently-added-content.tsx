@@ -50,4 +50,3 @@ export const RecentlyAddedContent = ({
     </div>
   )
 }
-

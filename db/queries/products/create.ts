@@ -16,7 +16,17 @@ const nanoid = (len = 6) =>
     .slice(2, 2 + len)
 
 export const createProduct = async (
-  data: Omit<NewProduct, "id" | "slug" | "status" | "likesCount" | "commentsCount" | "viewsCount" | "createdAt" | "updatedAt">
+  data: Omit<
+    NewProduct,
+    | "id"
+    | "slug"
+    | "status"
+    | "likesCount"
+    | "commentsCount"
+    | "viewsCount"
+    | "createdAt"
+    | "updatedAt"
+  >
 ) => {
   const baseSlug = slugify(data.name)
   const slug = `${baseSlug}-${nanoid()}`

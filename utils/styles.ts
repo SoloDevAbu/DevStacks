@@ -1,5 +1,10 @@
 import { cn } from "@/lib/utils"
-import { TIER, PRICING_COLORS, type Tier, type Pricing } from "@/constants/plans"
+import {
+  TIER,
+  PRICING_COLORS,
+  type Tier,
+  type Pricing,
+} from "@/constants/plans"
 
 export const tierCardBg = (tier: Tier) =>
   cn(
@@ -50,7 +55,8 @@ export const sectionHeaderWrapper =
 export const sectionGridWrapper =
   "grid grid-cols-1 gap-4 border-b border-dashed border-border px-6 py-6 md:px-8"
 
-export const sectionWrapper = "border-b border-dashed border-border px-6 py-8 md:px-8"
+export const sectionWrapper =
+  "border-b border-dashed border-border px-6 py-8 md:px-8"
 
 export const upvoteButtonActive =
   "relative z-10 h-8 gap-1.5 rounded-lg border-amber-300 bg-amber-50 px-3 text-sm font-bold text-amber-600 hover:bg-amber-100/80 transition-colors"

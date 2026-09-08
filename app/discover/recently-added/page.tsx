@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
 import { PageHeader } from "@/components/shared/page-header"
-import { breadcrumbSchema } from "@/lib/seo/schema"
+import { breadcrumbSchema, collectionPageSchema } from "@/lib/seo/schema"
 import { SITE_CONFIG } from "@/constants/site"
 import { AI_PROMPTS } from "@/lib/prompts"
 import { DISCOVER_PAGE_LIMIT } from "@/constants/rankings"
@@ -28,12 +28,21 @@ export const metadata: Metadata = {
       "The latest developer tools and products added to the directory.",
     type: "website",
     url: `${SITE_CONFIG.url}/discover/recently-added`,
+    images: [
+      {
+        url: `${SITE_CONFIG.url}/opengraph-image`,
+        width: 1200,
+        height: 630,
+        alt: `Recently Added Products | ${SITE_CONFIG.name}`,
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: `Recently Added Products | ${SITE_CONFIG.name}`,
     description:
       "The latest developer tools and products added to the directory.",
+    images: [`${SITE_CONFIG.url}/twitter-image`],
   },
 }
 
@@ -52,11 +61,27 @@ const RecentlyAddedPage = async () => {
     page: 1,
   }).catch(() => [])
 
+  const collectionJsonLd = collectionPageSchema({
+    name: "Recently Added Developer Products & Tools",
+    description:
+      "Every vetted developer tool and product in order of launch and submission.",
+    url: `${SITE_CONFIG.url}/discover/recently-added`,
+    items: (initialItems as FeedItem[]).map((item) => ({
+      name: item.name,
+      url: `${SITE_CONFIG.url}${item.itemKind === "tool" ? `/tools/${item.slug}` : `/products/${item.slug}`}`,
+      description: item.tagline,
+    })),
+  })
+
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionJsonLd) }}
       />
       <div className="relative flex min-h-full flex-col bg-slate-50/50">
         <PageHeader
@@ -72,4 +97,3 @@ const RecentlyAddedPage = async () => {
 }
 
 export default RecentlyAddedPage
-

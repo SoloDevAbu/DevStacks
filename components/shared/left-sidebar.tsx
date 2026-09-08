@@ -43,8 +43,8 @@ export const LeftSidebar = () => {
                       })
                     }
                     className={cn(
-                      "flex w-full items-center gap-3 py-1.5 transition-colors hover:text-foreground text-left cursor-pointer",
-                      isActive && "text-foreground font-semibold"
+                      "flex w-full cursor-pointer items-center gap-3 py-1.5 text-left transition-colors hover:text-foreground",
+                      isActive && "font-semibold text-foreground"
                     )}
                   >
                     <item.icon className="size-4" />
@@ -59,7 +59,7 @@ export const LeftSidebar = () => {
                   href={item.href}
                   className={cn(
                     "flex items-center gap-3 py-1.5 transition-colors hover:text-foreground",
-                    isActive && "text-foreground font-semibold"
+                    isActive && "font-semibold text-foreground"
                   )}
                 >
                   <item.icon className="size-4" />

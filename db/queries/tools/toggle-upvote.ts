@@ -20,7 +20,9 @@ export const toggleToolUpvote = async (
   if (existing) {
     await db
       .delete(toolUpvotes)
-      .where(and(eq(toolUpvotes.toolId, toolId), eq(toolUpvotes.userId, userId)))
+      .where(
+        and(eq(toolUpvotes.toolId, toolId), eq(toolUpvotes.userId, userId))
+      )
 
     const [updated] = await db
       .update(tools)

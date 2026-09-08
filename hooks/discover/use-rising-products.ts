@@ -1,5 +1,8 @@
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query"
-import { fetchRisingProducts, type RankingQueryParams } from "@/lib/api/discover"
+import {
+  fetchRisingProducts,
+  type RankingQueryParams,
+} from "@/lib/api/discover"
 import type { DbProduct } from "@/types/entities"
 
 export const RISING_PRODUCTS_QUERY_KEY = (params: RankingQueryParams) => [

@@ -31,6 +31,9 @@ export const POST = async (
     const result = await toggleToolBookmark(tool.id, parsed.data.userId)
     return NextResponse.json({ data: result }, { status: 200 })
   } catch {
-    return NextResponse.json({ error: "Failed to toggle bookmark" }, { status: 500 })
+    return NextResponse.json(
+      { error: "Failed to toggle bookmark" },
+      { status: 500 }
+    )
   }
 }

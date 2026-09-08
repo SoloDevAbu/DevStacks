@@ -31,7 +31,10 @@ export const calculateNewAndRisingScore = (
   const velocity = rawActivity / Math.pow(ageHours + 1, 0.5)
   const score = Math.round((freshnessScore + velocity) * 10) / 10
 
-  const freshnessDaysLeft = Math.max(0, Math.ceil(DISCOVERY_WINDOW_DAYS - ageDays))
+  const freshnessDaysLeft = Math.max(
+    0,
+    Math.ceil(DISCOVERY_WINDOW_DAYS - ageDays)
+  )
 
   return { score, freshnessDaysLeft }
 }
@@ -54,18 +57,33 @@ export const getNewAndRisingProducts = async ({
     db
       .select()
       .from(tools)
-      .where(and(eq(tools.status, "approved"), gte(tools.createdAt, windowStartDate))),
+      .where(
+        and(eq(tools.status, "approved"), gte(tools.createdAt, windowStartDate))
+      ),
     db
       .select()
       .from(products)
-      .where(and(eq(products.status, "approved"), gte(products.createdAt, windowStartDate))),
+      .where(
+        and(
+          eq(products.status, "approved"),
+          gte(products.createdAt, windowStartDate)
+        )
+      ),
   ])
 
   // Fallback: if nothing is within the window, use all approved items
   if (candidateTools.length === 0 && candidateProducts.length === 0) {
     ;[candidateTools, candidateProducts] = await Promise.all([
-      db.select().from(tools).where(eq(tools.status, "approved")).limit(safeLimit * safePage),
-      db.select().from(products).where(eq(products.status, "approved")).limit(safeLimit * safePage),
+      db
+        .select()
+        .from(tools)
+        .where(eq(tools.status, "approved"))
+        .limit(safeLimit * safePage),
+      db
+        .select()
+        .from(products)
+        .where(eq(products.status, "approved"))
+        .limit(safeLimit * safePage),
     ])
   }
 

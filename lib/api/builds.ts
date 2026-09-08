@@ -5,4 +5,3 @@ export const submitBuild = async (payload: SubmitBuildInput) => {
   const { data } = await apiClient.post("/builds", payload)
   return data.data
 }
-

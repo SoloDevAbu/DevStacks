@@ -24,7 +24,7 @@ export const getTools = async ({
   sortBy = "upvotes",
 }: ToolListFilters = {}) => {
   const safePage = Math.max(1, page)
-  const safeLimit = Math.min(50, Math.max(1, limit))
+  const safeLimit = Math.min(5000, Math.max(1, limit))
   const offset = (safePage - 1) * safeLimit
 
   const conditions = [eq(tools.status, "approved")]
@@ -34,7 +34,12 @@ export const getTools = async ({
       or(
         ilike(tools.name, `%${q}%`),
         ilike(tools.tagline, `%${q}%`),
-        ilike(tools.description, `%${q}%`)
+        ilike(tools.description, `%${q}%`),
+        ilike(tools.keywords, `%${q}%`),
+        ilike(tools.problemStatement, `%${q}%`),
+        ilike(tools.solution, `%${q}%`),
+        ilike(tools.targetAudience, `%${q}%`),
+        ilike(tools.category, `%${q}%`)
       )!
     )
   }

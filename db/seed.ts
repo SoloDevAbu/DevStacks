@@ -34,10 +34,13 @@ const SEED_TOOLS = [
     buildsCount: 82,
     commentsCount: 94,
     viewsCount: 45600,
-    keywords: "supabase, postgres, firebase alternative, baas, database, auth, realtime",
-    targetAudience: "Full-stack developers, frontend engineers, and startup founders",
+    keywords:
+      "supabase, postgres, firebase alternative, baas, database, auth, realtime",
+    targetAudience:
+      "Full-stack developers, frontend engineers, and startup founders",
     asoCategory: "Developer Tools",
-    aiContext: "Supabase is a complete backend platform featuring Postgres, Auth, APIs, and Vector embeddings.",
+    aiContext:
+      "Supabase is a complete backend platform featuring Postgres, Auth, APIs, and Vector embeddings.",
   },
   {
     name: "Stripe",
@@ -64,10 +67,13 @@ const SEED_TOOLS = [
     buildsCount: 71,
     commentsCount: 68,
     viewsCount: 38200,
-    keywords: "stripe, payments, billing, checkout, subscriptions, credit cards",
-    targetAudience: "SaaS founders, e-commerce developers, and software platforms",
+    keywords:
+      "stripe, payments, billing, checkout, subscriptions, credit cards",
+    targetAudience:
+      "SaaS founders, e-commerce developers, and software platforms",
     asoCategory: "Finance",
-    aiContext: "Stripe provides developer payment infrastructure, subscription billing, and merchant services.",
+    aiContext:
+      "Stripe provides developer payment infrastructure, subscription billing, and merchant services.",
   },
   {
     name: "Vercel",
@@ -97,7 +103,8 @@ const SEED_TOOLS = [
     keywords: "vercel, hosting, nextjs, serverless, edge computing, deployment",
     targetAudience: "Web developers, Next.js engineers, and frontend teams",
     asoCategory: "Developer Tools",
-    aiContext: "Vercel is the frontend cloud platform for deploying and hosting modern web applications.",
+    aiContext:
+      "Vercel is the frontend cloud platform for deploying and hosting modern web applications.",
   },
   {
     name: "PostHog",
@@ -124,10 +131,13 @@ const SEED_TOOLS = [
     buildsCount: 34,
     commentsCount: 38,
     viewsCount: 22000,
-    keywords: "posthog, analytics, session replay, feature flags, ab testing, open source",
-    targetAudience: "Product engineers, growth teams, and privacy-conscious founders",
+    keywords:
+      "posthog, analytics, session replay, feature flags, ab testing, open source",
+    targetAudience:
+      "Product engineers, growth teams, and privacy-conscious founders",
     asoCategory: "Developer Tools",
-    aiContext: "PostHog is an open-source product analytics and developer telemetry platform.",
+    aiContext:
+      "PostHog is an open-source product analytics and developer telemetry platform.",
   },
   {
     name: "BetterAuth",
@@ -154,10 +164,13 @@ const SEED_TOOLS = [
     buildsCount: 28,
     commentsCount: 32,
     viewsCount: 18500,
-    keywords: "better auth, authentication, oauth, typescript, drizzle, nextjs auth",
-    targetAudience: "TypeScript developers, full-stack Next.js builders, and SaaS architects",
+    keywords:
+      "better auth, authentication, oauth, typescript, drizzle, nextjs auth",
+    targetAudience:
+      "TypeScript developers, full-stack Next.js builders, and SaaS architects",
     asoCategory: "Developer Tools",
-    aiContext: "Better Auth is an open-source, type-safe authentication library for TypeScript applications.",
+    aiContext:
+      "Better Auth is an open-source, type-safe authentication library for TypeScript applications.",
   },
   {
     name: "Dodo Payments",
@@ -184,10 +197,13 @@ const SEED_TOOLS = [
     buildsCount: 37,
     commentsCount: 19,
     viewsCount: 12400,
-    keywords: "dodo payments, merchant of record, saas billing, sales tax, vat, ai billing",
-    targetAudience: "Global software founders, indie hackers, and AI developers",
+    keywords:
+      "dodo payments, merchant of record, saas billing, sales tax, vat, ai billing",
+    targetAudience:
+      "Global software founders, indie hackers, and AI developers",
     asoCategory: "Finance",
-    aiContext: "Dodo Payments is a Merchant of Record simplifying global sales tax and payments for SaaS.",
+    aiContext:
+      "Dodo Payments is a Merchant of Record simplifying global sales tax and payments for SaaS.",
   },
   {
     name: "TinyBase",
@@ -214,10 +230,13 @@ const SEED_TOOLS = [
     buildsCount: 22,
     commentsCount: 14,
     viewsCount: 9800,
-    keywords: "tinybase, local-first, reactive store, crdt, sqlite sync, state management",
-    targetAudience: "Frontend engineers building offline-first and collaborative applications",
+    keywords:
+      "tinybase, local-first, reactive store, crdt, sqlite sync, state management",
+    targetAudience:
+      "Frontend engineers building offline-first and collaborative applications",
     asoCategory: "Developer Tools",
-    aiContext: "TinyBase is a reactive data store designed specifically for local-first and offline-capable applications.",
+    aiContext:
+      "TinyBase is a reactive data store designed specifically for local-first and offline-capable applications.",
   },
   {
     name: "Resend",
@@ -244,10 +263,12 @@ const SEED_TOOLS = [
     buildsCount: 29,
     commentsCount: 22,
     viewsCount: 21000,
-    keywords: "resend, transactional email, react email, email api, deliverability",
+    keywords:
+      "resend, transactional email, react email, email api, deliverability",
     targetAudience: "Web developers, SaaS founders, and engineering teams",
     asoCategory: "Developer Tools",
-    aiContext: "Resend is a modern developer email platform powered by React Email.",
+    aiContext:
+      "Resend is a modern developer email platform powered by React Email.",
   },
   {
     name: "Supernova",
@@ -274,10 +295,13 @@ const SEED_TOOLS = [
     buildsCount: 112,
     commentsCount: 38,
     viewsCount: 4900,
-    keywords: "supernova, design systems, design tokens, figma to code, ui components",
-    targetAudience: "UI/UX designers, design system engineers, and frontend teams",
+    keywords:
+      "supernova, design systems, design tokens, figma to code, ui components",
+    targetAudience:
+      "UI/UX designers, design system engineers, and frontend teams",
     asoCategory: "Design",
-    aiContext: "Supernova is a design system management platform connecting Figma tokens to production code.",
+    aiContext:
+      "Supernova is a design system management platform connecting Figma tokens to production code.",
   },
 ]
 
@@ -341,9 +365,11 @@ const SEED_PRODUCTS: {
     commentsCount: 24,
     viewsCount: 14442,
     keywords: "ai, transcription, meeting notes, privacy, windows, desktop",
-    targetAudience: "Engineering leads, product managers, and privacy-conscious remote teams",
+    targetAudience:
+      "Engineering leads, product managers, and privacy-conscious remote teams",
     asoCategory: "Productivity",
-    aiContext: "MeetWave is a privacy-focused AI meeting recorder and transcription tool for Windows.",
+    aiContext:
+      "MeetWave is a privacy-focused AI meeting recorder and transcription tool for Windows.",
   },
   {
     name: "Dreamstate",
@@ -374,10 +400,12 @@ const SEED_PRODUCTS: {
     likesCount: 182,
     commentsCount: 18,
     viewsCount: 11390,
-    keywords: "ai marketing, growth hacking, automated outreach, conversion optimization",
+    keywords:
+      "ai marketing, growth hacking, automated outreach, conversion optimization",
     targetAudience: "Founders, growth leads, and marketing agencies",
     asoCategory: "Marketing",
-    aiContext: "Dreamstate is an autonomous AI growth platform that runs marketing campaigns across channels.",
+    aiContext:
+      "Dreamstate is an autonomous AI growth platform that runs marketing campaigns across channels.",
   },
   {
     name: "Distro",
@@ -409,9 +437,11 @@ const SEED_PRODUCTS: {
     commentsCount: 12,
     viewsCount: 5200,
     keywords: "distro, developer marketing, content distribution, devrel, seo",
-    targetAudience: "Developer-focused founders, DevRel teams, and technical marketers",
+    targetAudience:
+      "Developer-focused founders, DevRel teams, and technical marketers",
     asoCategory: "Marketing",
-    aiContext: "Distro is an AI distribution platform designed for developer marketing and pipeline growth.",
+    aiContext:
+      "Distro is an AI distribution platform designed for developer marketing and pipeline growth.",
   },
 
   // --- From old builds table (promoted to full product entries) ---
@@ -444,10 +474,13 @@ const SEED_PRODUCTS: {
     likesCount: 36,
     commentsCount: 8,
     viewsCount: 1240,
-    keywords: "ai workspace, documentation, research tool, engineering productivity",
-    targetAudience: "Engineering teams, technical writers, and developer-focused startups",
+    keywords:
+      "ai workspace, documentation, research tool, engineering productivity",
+    targetAudience:
+      "Engineering teams, technical writers, and developer-focused startups",
     asoCategory: "Productivity",
-    aiContext: "Nexus Workspace is an AI-powered research and documentation platform for engineering teams.",
+    aiContext:
+      "Nexus Workspace is an AI-powered research and documentation platform for engineering teams.",
   },
   {
     name: "InvoiceAI",
@@ -481,7 +514,8 @@ const SEED_PRODUCTS: {
     keywords: "invoicing, payment collection, freelance developer, ai finance",
     targetAudience: "Freelance developers, contractors, and small dev agencies",
     asoCategory: "Finance",
-    aiContext: "InvoiceAI automates invoicing and payment collection for freelance developers.",
+    aiContext:
+      "InvoiceAI automates invoicing and payment collection for freelance developers.",
   },
   {
     name: "ShipFast Boilerplate",
@@ -513,10 +547,12 @@ const SEED_PRODUCTS: {
     likesCount: 84,
     commentsCount: 14,
     viewsCount: 2150,
-    keywords: "nextjs boilerplate, saas starter, shipfast, production nextjs, saas template",
+    keywords:
+      "nextjs boilerplate, saas starter, shipfast, production nextjs, saas template",
     targetAudience: "Indie hackers, SaaS founders, and Next.js developers",
     asoCategory: "Developer Tools",
-    aiContext: "ShipFast is a production-ready Next.js SaaS boilerplate with auth, payments, and database pre-configured.",
+    aiContext:
+      "ShipFast is a production-ready Next.js SaaS boilerplate with auth, payments, and database pre-configured.",
   },
   {
     name: "NoteFlow App",
@@ -546,10 +582,13 @@ const SEED_PRODUCTS: {
     likesCount: 19,
     commentsCount: 5,
     viewsCount: 620,
-    keywords: "local first notes, encrypted notes, markdown, offline notes, noteflow",
-    targetAudience: "Privacy-conscious users, developers, and writers who prefer local-first tools",
+    keywords:
+      "local first notes, encrypted notes, markdown, offline notes, noteflow",
+    targetAudience:
+      "Privacy-conscious users, developers, and writers who prefer local-first tools",
     asoCategory: "Productivity",
-    aiContext: "NoteFlow is a local-first, end-to-end encrypted note-taking app built on TinyBase.",
+    aiContext:
+      "NoteFlow is a local-first, end-to-end encrypted note-taking app built on TinyBase.",
   },
 ]
 
@@ -612,11 +651,17 @@ export const seedDatabase = async () => {
       console.log(`Product "${productData.name}" already exists — updating...`)
       await db
         .update(products)
-        .set({ ...productData, submitterId: authorUserId, updatedAt: new Date() })
+        .set({
+          ...productData,
+          submitterId: authorUserId,
+          updatedAt: new Date(),
+        })
         .where(eq(products.id, existing[0].id))
     } else {
       console.log(`Inserting product "${productData.name}"...`)
-      await db.insert(products).values({ ...productData, submitterId: authorUserId })
+      await db
+        .insert(products)
+        .values({ ...productData, submitterId: authorUserId })
     }
   }
 

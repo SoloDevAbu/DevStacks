@@ -1,6 +1,5 @@
 import { apiClient } from "@/lib/api/axios-instance"
 
-
 export type UserInteractionsData = {
   upvotedToolIds: string[]
   upvotedToolSlugs: string[]

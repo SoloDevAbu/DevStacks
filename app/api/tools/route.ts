@@ -16,7 +16,6 @@ const listQuerySchema = z.object({
   sortBy: z.enum(["upvotes", "builds", "recent", "views"]).default("upvotes"),
 })
 
-
 export const GET = async (req: NextRequest) => {
   try {
     const params = Object.fromEntries(req.nextUrl.searchParams)
@@ -32,7 +31,10 @@ export const GET = async (req: NextRequest) => {
     const tools = await getTools(parsed.data)
     return NextResponse.json({ data: tools ?? [] }, { status: 200 })
   } catch {
-    return NextResponse.json({ error: "Failed to fetch tools" }, { status: 500 })
+    return NextResponse.json(
+      { error: "Failed to fetch tools" },
+      { status: 500 }
+    )
   }
 }
 
@@ -73,6 +75,9 @@ export const POST = async (req: NextRequest) => {
         { status: 409 }
       )
     }
-    return NextResponse.json({ error: "Failed to create tool" }, { status: 500 })
+    return NextResponse.json(
+      { error: "Failed to create tool" },
+      { status: 500 }
+    )
   }
 }

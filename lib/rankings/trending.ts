@@ -40,11 +40,17 @@ export const getTrending = async (
     const ageHours = Math.max(1, ageMs / (1000 * 60 * 60))
 
     if (timeframe === "today") {
-      return (activityCount * 4 + viewsCount * 0.1) / Math.pow(ageHours + 1, 0.7)
+      return (
+        (activityCount * 4 + viewsCount * 0.1) / Math.pow(ageHours + 1, 0.7)
+      )
     } else if (timeframe === "this-week") {
-      return (activityCount * 3 + viewsCount * 0.05) / Math.pow(ageHours + 1, 0.4)
+      return (
+        (activityCount * 3 + viewsCount * 0.05) / Math.pow(ageHours + 1, 0.4)
+      )
     } else if (timeframe === "this-month") {
-      return (activityCount * 2 + viewsCount * 0.02) / Math.pow(ageHours + 1, 0.2)
+      return (
+        (activityCount * 2 + viewsCount * 0.02) / Math.pow(ageHours + 1, 0.2)
+      )
     }
     // All time
     return activityCount * 1.0 + viewsCount * 0.01
@@ -54,12 +60,16 @@ export const getTrending = async (
     ...allTools.map((t) => ({
       ...t,
       itemKind: "tool" as const,
-      score: Math.round(scoreItem(t.createdAt, t.upvotesCount, t.viewsCount) * 10) / 10,
+      score:
+        Math.round(scoreItem(t.createdAt, t.upvotesCount, t.viewsCount) * 10) /
+        10,
     })),
     ...allProducts.map((p) => ({
       ...p,
       itemKind: "product" as const,
-      score: Math.round(scoreItem(p.createdAt, p.likesCount, p.viewsCount) * 10) / 10,
+      score:
+        Math.round(scoreItem(p.createdAt, p.likesCount, p.viewsCount) * 10) /
+        10,
     })),
   ]
 

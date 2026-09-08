@@ -32,7 +32,9 @@ export const toggleProductLike = async (slug: string, userId: string) => {
 }
 
 export const toggleProductBookmark = async (slug: string, userId: string) => {
-  const { data } = await apiClient.post(`/products/${slug}/bookmark`, { userId })
+  const { data } = await apiClient.post(`/products/${slug}/bookmark`, {
+    userId,
+  })
   return data.data as { action: "added" | "removed" }
 }
 

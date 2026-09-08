@@ -8,7 +8,7 @@ import { FeedList } from "@/components/shared/feed-list"
 import { HoverOutline } from "@/components/shared/hover-outline"
 import { SITE_CONFIG } from "@/constants/site"
 import { ROUTES } from "@/constants/routes"
-import { breadcrumbSchema } from "@/lib/seo/schema"
+import { breadcrumbSchema, collectionPageSchema } from "@/lib/seo/schema"
 import { getNewAndRisingProducts } from "@/lib/rankings/new-and-rising"
 import { AI_PROMPTS } from "@/lib/prompts"
 import type { FeedItem } from "@/components/shared/feed-card"
@@ -27,12 +27,21 @@ export const metadata: Metadata = {
       "Explore curated discovery feeds of developer tools, software products, and popular building blocks.",
     type: "website",
     url: `${SITE_CONFIG.url}/discover`,
+    images: [
+      {
+        url: `${SITE_CONFIG.url}/opengraph-image`,
+        width: 1200,
+        height: 630,
+        alt: `Discover Developer Tools & Products | ${SITE_CONFIG.name}`,
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: `Discover Developer Tools & Products | ${SITE_CONFIG.name}`,
     description:
       "Explore curated discovery feeds of developer tools, software products, and popular building blocks.",
+    images: [`${SITE_CONFIG.url}/twitter-image`],
   },
 }
 
@@ -95,11 +104,27 @@ const DiscoverPage = async () => {
     page: 1,
   }).catch(() => [])
 
+  const collectionJsonLd = collectionPageSchema({
+    name: "Discovery Hub",
+    description:
+      "Explore algorithmic feeds, rising developer infrastructure, and community tech stacks.",
+    url: `${SITE_CONFIG.url}/discover`,
+    items: DISCOVERY_CHANNELS.map((ch) => ({
+      name: ch.title,
+      url: `${SITE_CONFIG.url}${ch.href}`,
+      description: ch.description,
+    })),
+  })
+
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionJsonLd) }}
       />
       <div className="relative flex min-h-full flex-col bg-slate-50/50">
         <PageHeader
@@ -109,7 +134,7 @@ const DiscoverPage = async () => {
         />
 
         {/* Discovery Feed Channels Grid */}
-        <div className="grid grid-cols-1 gap-4 border-b border-dashed border-border bg-white p-6 sm:grid-cols-2 lg:grid-cols-3 md:p-8">
+        <div className="grid grid-cols-1 gap-4 border-b border-dashed border-border bg-white p-6 sm:grid-cols-2 md:p-8 lg:grid-cols-3">
           {DISCOVERY_CHANNELS.map((channel) => {
             const Icon = channel.icon
             return (
@@ -133,10 +158,10 @@ const DiscoverPage = async () => {
                     </p>
                   </CardContent>
 
-                  <div className="mt-4 pt-3 border-t border-dashed border-slate-100">
+                  <div className="mt-4 border-t border-dashed border-slate-100 pt-3">
                     <Link
                       href={channel.href}
-                      className="inline-flex items-center gap-1.5 text-xs font-semibold text-indigo-600 hover:text-indigo-800 transition-colors"
+                      className="inline-flex items-center gap-1.5 text-xs font-semibold text-indigo-600 transition-colors hover:text-indigo-800"
                     >
                       Explore feed <ArrowRight className="size-3.5" />
                     </Link>

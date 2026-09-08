@@ -1,42 +1,79 @@
 import type { Metadata } from "next"
 import { TrendingContent } from "@/components/trending/trending-content"
-import { breadcrumbSchema, itemListSchema } from "@/lib/seo/schema"
+import {
+  breadcrumbSchema,
+  itemListSchema,
+  collectionPageSchema,
+} from "@/lib/seo/schema"
 import { getTrending } from "@/lib/rankings/trending"
 import { SITE_CONFIG } from "@/constants/site"
 import { ROUTES } from "@/constants/routes"
 
-export const metadata: Metadata = {
-  title: "Trending Developer Products & Tools",
-  description:
-    `Discover the most popular developer tools and products gaining traction right now on ${SITE_CONFIG.name}. Ranked by community upvotes, views, and active developer builds.`,
-  keywords: [
-    "trending developer tools",
-    "popular APIs",
-    "top software products",
-    "most upvoted tools",
-    "hot developer tools",
-    "trending developer software",
-  ],
-  alternates: {
-    canonical: `${SITE_CONFIG.url}/trending`,
-  },
-  openGraph: {
-    title: `Trending Developer Products | ${SITE_CONFIG.name}`,
-    description:
-      "The most popular developer tools and products gaining traction right now.",
-    type: "website",
-    url: `${SITE_CONFIG.url}/trending`,
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: `Trending Developer Products | ${SITE_CONFIG.name}`,
-    description: "The most popular developer tools and products gaining traction right now.",
-  },
+export const generateMetadata = async (props: {
+  searchParams?: Promise<{ category?: string }>
+}): Promise<Metadata> => {
+  const searchParams = props.searchParams ? await props.searchParams : undefined
+  const category = searchParams?.category
+
+  const title = category
+    ? `Trending ${category} Developer Tools & Products | ${SITE_CONFIG.name}`
+    : `Trending Developer Products & Tools | ${SITE_CONFIG.name}`
+
+  const description = category
+    ? `Discover the most popular ${category} developer tools and software products gaining traction right now on ${SITE_CONFIG.name}. Ranked by community upvotes, views, and active builds.`
+    : `Discover the most popular developer tools and products gaining traction right now on ${SITE_CONFIG.name}. Ranked by community upvotes, views, and active developer builds.`
+
+  const canonicalUrl = category
+    ? `${SITE_CONFIG.url}/trending?category=${encodeURIComponent(category)}`
+    : `${SITE_CONFIG.url}/trending`
+
+  return {
+    title,
+    description,
+    keywords: category
+      ? [
+          `trending ${category} tools`,
+          `popular ${category} APIs`,
+          "trending developer tools",
+          ...SITE_CONFIG.keywords,
+        ]
+      : [
+          "trending developer tools",
+          "popular APIs",
+          "top software products",
+          "most upvoted tools",
+          "hot developer tools",
+          "trending developer software",
+        ],
+    alternates: {
+      canonical: canonicalUrl,
+    },
+    openGraph: {
+      title,
+      description,
+      type: "website",
+      url: canonicalUrl,
+      images: [
+        {
+          url: `${SITE_CONFIG.url}/opengraph-image`,
+          width: 1200,
+          height: 630,
+          alt: title,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [`${SITE_CONFIG.url}/twitter-image`],
+    },
+  }
 }
 
-export default async function TrendingPage(props: {
+const TrendingPage = async (props: {
   searchParams?: Promise<{ category?: string }>
-}) {
+}) => {
   const searchParams = props.searchParams ? await props.searchParams : undefined
   const category = searchParams?.category
 
@@ -53,13 +90,23 @@ export default async function TrendingPage(props: {
     products = []
   }
 
-  const jsonLd = itemListSchema(
-    (products ?? []).map((p) => ({
-      name: p.name,
-      url: `${siteUrl}${p.itemKind === "tool" ? ROUTES.TOOL(p.slug) : ROUTES.PRODUCT(p.slug)}`,
-      description: p.tagline,
-    }))
-  )
+  const items = (products ?? []).map((p) => ({
+    name: p.name,
+    url: `${siteUrl}${p.itemKind === "tool" ? ROUTES.TOOL(p.slug) : ROUTES.PRODUCT(p.slug)}`,
+    description: p.tagline,
+  }))
+
+  const jsonLd = itemListSchema(items)
+  const collectionJsonLd = collectionPageSchema({
+    name: category ? `Trending ${category} Tools` : "Trending Developer Tools",
+    description: category
+      ? `Top trending ${category} developer tools and products`
+      : "Top trending developer tools and software products",
+    url: category
+      ? `${siteUrl}/trending?category=${encodeURIComponent(category)}`
+      : `${siteUrl}/trending`,
+    items,
+  })
 
   return (
     <>
@@ -71,7 +118,13 @@ export default async function TrendingPage(props: {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionJsonLd) }}
+      />
       <TrendingContent initialCategory={category} />
     </>
   )
 }
+
+export default TrendingPage

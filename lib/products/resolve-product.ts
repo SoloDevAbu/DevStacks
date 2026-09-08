@@ -23,7 +23,9 @@ export interface FullProduct extends DbProduct {
   updatedAt?: Date | null
 }
 
-export const resolveProduct = async (slug: string): Promise<FullProduct | null> => {
+export const resolveProduct = async (
+  slug: string
+): Promise<FullProduct | null> => {
   try {
     const dbProduct = await getProductBySlug(slug)
     if (dbProduct) {

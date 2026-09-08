@@ -13,13 +13,23 @@ export const toggleProductBookmark = async (
   const [existing] = await db
     .select()
     .from(productBookmarks)
-    .where(and(eq(productBookmarks.productId, productId), eq(productBookmarks.userId, userId)))
+    .where(
+      and(
+        eq(productBookmarks.productId, productId),
+        eq(productBookmarks.userId, userId)
+      )
+    )
     .limit(1)
 
   if (existing) {
     await db
       .delete(productBookmarks)
-      .where(and(eq(productBookmarks.productId, productId), eq(productBookmarks.userId, userId)))
+      .where(
+        and(
+          eq(productBookmarks.productId, productId),
+          eq(productBookmarks.userId, userId)
+        )
+      )
     return { action: "removed" }
   }
 

@@ -39,8 +39,10 @@ export const ToolActionButtons = ({
   const isUpvoted = isToolUpvoted(toolId, slug)
   const isBookmarked = isToolBookmarked(toolId, slug)
 
-  const isUpvoting = upvoteMutation.isPending && upvoteMutation.variables?.slug === slug
-  const isBookmarking = bookmarkMutation.isPending && bookmarkMutation.variables?.slug === slug
+  const isUpvoting =
+    upvoteMutation.isPending && upvoteMutation.variables?.slug === slug
+  const isBookmarking =
+    bookmarkMutation.isPending && bookmarkMutation.variables?.slug === slug
 
   const handleUpvote = () => {
     requireAuth(
@@ -88,12 +90,15 @@ export const ToolActionButtons = ({
         className={cn(
           "gap-2 rounded-lg px-3 transition-colors",
           isUpvoted
-            ? "bg-amber-600 text-white hover:bg-amber-700 shadow-xs"
+            ? "bg-amber-600 text-white shadow-xs hover:bg-amber-700"
             : "bg-slate-900 text-white hover:bg-slate-800"
         )}
       >
         <ArrowBigUp
-          className={cn("size-4", isUpvoted ? "fill-white text-white" : "text-slate-300")}
+          className={cn(
+            "size-4",
+            isUpvoted ? "fill-white text-white" : "text-slate-300"
+          )}
           fill={isUpvoted ? "currentColor" : "none"}
         />
         {isUpvoted ? "Upvoted" : "Upvote"} ({upvotes.toLocaleString()})
@@ -110,7 +115,10 @@ export const ToolActionButtons = ({
             : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
         )}
       >
-        <Bookmark className="size-4" fill={isBookmarked ? "currentColor" : "none"} />
+        <Bookmark
+          className="size-4"
+          fill={isBookmarked ? "currentColor" : "none"}
+        />
         {isBookmarked ? "Bookmarked" : "Bookmark"}
       </Button>
 

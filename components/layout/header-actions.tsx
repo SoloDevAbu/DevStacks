@@ -27,10 +27,10 @@ export const HeaderActions = () => {
     requireAuth(() => router.push(ROUTES.SUBMIT), {
       redirectTo: ROUTES.SUBMIT,
       title: "Sign in with Google to list a product",
-      description: "Sign in with your Google account to list your developer tool or API.",
+      description:
+        "Sign in with your Google account to list your developer tool or API.",
     })
   }
-
 
   const handleSignOut = async () => {
     await signOut()
@@ -56,8 +56,8 @@ export const HeaderActions = () => {
   if (isPending) {
     return (
       <div className="flex items-center gap-3">
-        <div className="h-8 w-24 bg-slate-100 animate-pulse rounded-none" />
-        <div className="h-8 w-16 bg-slate-100 animate-pulse rounded-md" />
+        <div className="h-8 w-24 animate-pulse rounded-none bg-slate-100" />
+        <div className="h-8 w-16 animate-pulse rounded-md bg-slate-100" />
       </div>
     )
   }
@@ -70,18 +70,20 @@ export const HeaderActions = () => {
           nativeButton={false}
           render={<Link href={ROUTES.SUBMIT} />}
         >
-          <PlusCircle className="size-3.5 mr-1.5" />
+          <PlusCircle className="mr-1.5 size-3.5" />
           List a Product
         </Button>
 
         <DropdownMenu>
           <DropdownMenuTrigger
-            className="flex items-center gap-2 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 cursor-pointer"
+            className="flex cursor-pointer items-center gap-2 rounded-full focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none"
             aria-label="User account menu"
           >
             <Avatar className="size-8 cursor-pointer border border-border">
-              {user.image && <AvatarImage src={user.image} alt={user.name || "User"} />}
-              <AvatarFallback className="bg-slate-900 text-white text-xs font-medium">
+              {user.image && (
+                <AvatarImage src={user.image} alt={user.name || "User"} />
+              )}
+              <AvatarFallback className="bg-slate-900 text-xs font-medium text-white">
                 {getInitials(user.name, user.email)}
               </AvatarFallback>
             </Avatar>
@@ -89,12 +91,12 @@ export const HeaderActions = () => {
 
           <DropdownMenuContent align="end" className="w-56 p-1">
             <DropdownMenuGroup>
-              <DropdownMenuLabel className="font-normal px-2 py-1.5">
+              <DropdownMenuLabel className="px-2 py-1.5 font-normal">
                 <div className="flex flex-col space-y-1">
-                  <p className="text-xs font-semibold leading-none text-foreground truncate">
+                  <p className="truncate text-xs leading-none font-semibold text-foreground">
                     {user.name || "Developer"}
                   </p>
-                  <p className="text-[11px] leading-none text-muted-foreground truncate">
+                  <p className="truncate text-[11px] leading-none text-muted-foreground">
                     {user.email}
                   </p>
                 </div>
@@ -107,14 +109,14 @@ export const HeaderActions = () => {
                 className="cursor-pointer text-xs"
                 render={<Link href={ROUTES.SUBMIT} />}
               >
-                <PlusCircle className="size-3.5 mr-2" />
+                <PlusCircle className="mr-2 size-3.5" />
                 List a Product
               </DropdownMenuItem>
               <DropdownMenuItem
                 className="cursor-pointer text-xs"
                 render={<Link href={ROUTES.SHOWCASE} />}
               >
-                <Sparkles className="size-3.5 mr-2" />
+                <Sparkles className="mr-2 size-3.5" />
                 Showcase a Build
               </DropdownMenuItem>
             </DropdownMenuGroup>
@@ -126,7 +128,7 @@ export const HeaderActions = () => {
               className="cursor-pointer text-xs"
               onClick={handleSignOut}
             >
-              <LogOut className="size-3.5 mr-2" />
+              <LogOut className="mr-2 size-3.5" />
               Sign Out
             </DropdownMenuItem>
           </DropdownMenuContent>
@@ -145,10 +147,10 @@ export const HeaderActions = () => {
       </Button>
       <Button
         variant="outline"
-        className="rounded-md border-dashed border-slate-300 text-xs font-medium cursor-pointer hover:bg-slate-50"
+        className="cursor-pointer rounded-md border-dashed border-slate-300 text-xs font-medium hover:bg-slate-50"
         onClick={() => openAuthModal({ defaultTab: "signin" })}
       >
-        <UserIcon className="size-3.5 mr-1" />
+        <UserIcon className="mr-1 size-3.5" />
         Sign In
       </Button>
     </div>

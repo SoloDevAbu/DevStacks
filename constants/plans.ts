@@ -86,7 +86,8 @@ export const PLANS: Record<Tier, PlanConfig> = {
     name: "Ecosystem Partner",
     price: "$149",
     period: "quarterly sponsorship",
-    tagline: "Dominant category branding, LLM agent indexing, and top banner spots.",
+    tagline:
+      "Dominant category branding, LLM agent indexing, and top banner spots.",
     badgeLabel: "Partner",
     badgeClass: "bg-amber-100 text-amber-700 border-amber-200",
     popular: false,

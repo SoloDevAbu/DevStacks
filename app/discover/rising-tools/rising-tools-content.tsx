@@ -36,11 +36,7 @@ export const RisingToolsContent = ({
 
   return (
     <div className="flex w-full flex-1 flex-col pt-2 pb-8">
-      <ToolList
-        tools={tools}
-        showMedals={false}
-        showTrendingBadge={true}
-      />
+      <ToolList tools={tools} showMedals={false} showTrendingBadge={true} />
       <InfiniteScrollSentinel
         sentinelRef={sentinelRef}
         isFetchingNextPage={isFetchingNextPage}
@@ -50,4 +46,3 @@ export const RisingToolsContent = ({
     </div>
   )
 }
-

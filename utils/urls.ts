@@ -6,7 +6,9 @@ export const getOutboundUrl = (
 ): string => {
   if (!rawUrl) return "#"
   try {
-    const url = new URL(rawUrl.startsWith("http") ? rawUrl : `https://${rawUrl}`)
+    const url = new URL(
+      rawUrl.startsWith("http") ? rawUrl : `https://${rawUrl}`
+    )
     url.searchParams.set("ref", source)
     url.searchParams.set("utm_source", source)
     return url.toString()

@@ -42,7 +42,8 @@ export const useUserInteractions = () => {
     slug?: string | null
   ): boolean => {
     if (!query.data) return false
-    if (productId && query.data.likedProductIds?.includes(productId)) return true
+    if (productId && query.data.likedProductIds?.includes(productId))
+      return true
     if (slug && query.data.likedProductSlugs?.includes(slug)) return true
     return false
   }
@@ -52,7 +53,8 @@ export const useUserInteractions = () => {
     slug?: string | null
   ): boolean => {
     if (!query.data) return false
-    if (productId && query.data.bookmarkedProductIds?.includes(productId)) return true
+    if (productId && query.data.bookmarkedProductIds?.includes(productId))
+      return true
     if (slug && query.data.bookmarkedProductSlugs?.includes(slug)) return true
     return false
   }

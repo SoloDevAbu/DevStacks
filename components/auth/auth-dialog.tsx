@@ -86,15 +86,15 @@ export const AuthDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="sm:max-w-[400px] p-6">
-        <DialogHeader className="flex flex-col items-center text-center gap-1.5 pb-2">
-          <div className="flex size-10 items-center justify-center rounded-md bg-slate-900 text-white shadow-sm mb-1">
+      <DialogContent className="p-6 sm:max-w-[400px]">
+        <DialogHeader className="flex flex-col items-center gap-1.5 pb-2 text-center">
+          <div className="mb-1 flex size-10 items-center justify-center rounded-md bg-slate-900 text-white shadow-sm">
             <Layers className="size-5" />
           </div>
           <DialogTitle className="text-lg font-bold">
             {title || "Sign in with Google"}
           </DialogTitle>
-          <DialogDescription className="text-xs text-muted-foreground text-center">
+          <DialogDescription className="text-center text-xs text-muted-foreground">
             {description ||
               "Continue with your Google account to showcase builds, list products, and connect with developers."}
           </DialogDescription>
@@ -103,7 +103,7 @@ export const AuthDialog = ({
         <div className="flex flex-col gap-4 py-2">
           {error && (
             <div className="flex items-start gap-2 rounded-md border border-destructive/20 bg-destructive/10 p-3 text-xs text-destructive">
-              <AlertCircle className="size-4 shrink-0 mt-0.5" />
+              <AlertCircle className="mt-0.5 size-4 shrink-0" />
               <span>{error}</span>
             </div>
           )}
@@ -111,7 +111,7 @@ export const AuthDialog = ({
           <Button
             type="button"
             variant="outline"
-            className="w-full h-11 text-xs font-semibold gap-2.5 border-slate-300 hover:bg-slate-50 cursor-pointer shadow-xs"
+            className="h-11 w-full cursor-pointer gap-2.5 border-slate-300 text-xs font-semibold shadow-xs hover:bg-slate-50"
             onClick={handleGoogleSignIn}
             disabled={isLoading}
           >
@@ -128,13 +128,14 @@ export const AuthDialog = ({
             )}
           </Button>
 
-          <div className="flex items-center justify-center gap-1.5 text-[11px] text-muted-foreground pt-1">
+          <div className="flex items-center justify-center gap-1.5 pt-1 text-[11px] text-muted-foreground">
             <ShieldCheck className="size-3.5 text-emerald-600" />
             <span>Fast 1-click login • No password required</span>
           </div>
 
-          <p className="text-[11px] text-center text-slate-400 px-4 leading-tight">
-            By signing in, you agree to DevStacks Terms of Service and Privacy Policy.
+          <p className="px-4 text-center text-[11px] leading-tight text-slate-400">
+            By signing in, you agree to DevStacks Terms of Service and Privacy
+            Policy.
           </p>
         </div>
       </DialogContent>

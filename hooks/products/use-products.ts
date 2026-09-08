@@ -56,4 +56,3 @@ export const useInfiniteProducts = ({
     staleTime: 60_000,
   })
 }
-

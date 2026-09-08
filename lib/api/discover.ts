@@ -21,8 +21,12 @@ export const fetchRisingProducts = async (params: RankingQueryParams = {}) => {
   return data.data
 }
 
-export const fetchPopularBuildingBlocks = async (params: RankingQueryParams = {}) => {
-  const { data } = await apiClient.get("/discover/popular-building-blocks", { params })
+export const fetchPopularBuildingBlocks = async (
+  params: RankingQueryParams = {}
+) => {
+  const { data } = await apiClient.get("/discover/popular-building-blocks", {
+    params,
+  })
   return data.data
 }
 

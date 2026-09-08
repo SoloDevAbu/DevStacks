@@ -41,11 +41,7 @@ export const ToolsDirectoryContent = ({
 
   return (
     <div className="flex w-full flex-1 flex-col pt-2 pb-8">
-      <ToolList
-        tools={tools}
-        showMedals={false}
-        showTrendingBadge={false}
-      />
+      <ToolList tools={tools} showMedals={false} showTrendingBadge={false} />
       <InfiniteScrollSentinel
         sentinelRef={sentinelRef}
         isFetchingNextPage={isFetchingNextPage}
@@ -55,4 +51,3 @@ export const ToolsDirectoryContent = ({
     </div>
   )
 }
-

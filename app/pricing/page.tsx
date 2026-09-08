@@ -2,13 +2,20 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { Check, Sparkles, ShieldCheck, Zap, HelpCircle } from "lucide-react"
 import { PageHeader } from "@/components/shared/page-header"
-import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { HoverOutline } from "@/components/shared/hover-outline"
 import { SITE_CONFIG } from "@/constants/site"
 import { PLANS, TIER } from "@/constants/plans"
-import { breadcrumbSchema } from "@/lib/seo/schema"
+import { breadcrumbSchema, faqSchema } from "@/lib/seo/schema"
 import { AI_PROMPTS } from "@/lib/prompts"
 import { cn } from "@/lib/utils"
 
@@ -24,12 +31,21 @@ export const metadata: Metadata = {
       "Promote your developer tool or product to thousands of software engineers, indie hackers, and tech leads.",
     type: "website",
     url: `${SITE_CONFIG.url}/pricing`,
+    images: [
+      {
+        url: `${SITE_CONFIG.url}/opengraph-image`,
+        width: 1200,
+        height: 630,
+        alt: "Pricing & Sponsorship Plans | DevStacks",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: `Pricing & Sponsorship Plans | ${SITE_CONFIG.name}`,
     description:
       "Promote your developer tool or product to thousands of software engineers, indie hackers, and tech leads.",
+    images: [`${SITE_CONFIG.url}/twitter-image`],
   },
 }
 
@@ -62,6 +78,8 @@ const PricingPage = () => {
     { name: "Pricing", url: `${SITE_CONFIG.url}/pricing` },
   ])
 
+  const faqJsonLd = faqSchema(FAQ_ITEMS)
+
   const planList = [
     PLANS[TIER.FREE],
     PLANS[TIER.PREMIUM],
@@ -74,6 +92,10 @@ const PricingPage = () => {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
       <div className="relative flex min-h-full flex-col bg-slate-50/50">
         <PageHeader
           heading="💎 Sponsorship & Listing Plans"
@@ -82,7 +104,7 @@ const PricingPage = () => {
         />
 
         {/* Pricing Cards Grid */}
-        <div className="grid grid-cols-1 gap-6 border-b border-dashed border-border bg-white p-6 lg:grid-cols-3 md:p-10">
+        <div className="grid grid-cols-1 gap-6 border-b border-dashed border-border bg-white p-6 md:p-10 lg:grid-cols-3">
           {planList.map((plan) => (
             <div key={plan.id} className="group relative flex">
               <Card
@@ -123,7 +145,7 @@ const PricingPage = () => {
                 </CardHeader>
 
                 <CardContent className="mt-6 flex-1 p-0">
-                  <div className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+                  <div className="text-xs font-semibold tracking-wider text-slate-400 uppercase">
                     What&apos;s included
                   </div>
                   <ul className="mt-3 space-y-2.5 text-xs text-slate-600">
@@ -141,7 +163,7 @@ const PricingPage = () => {
                     className={cn(
                       "w-full rounded-lg text-xs font-semibold transition-colors",
                       plan.popular
-                        ? "bg-indigo-600 text-white hover:bg-indigo-700 shadow-sm"
+                        ? "bg-indigo-600 text-white shadow-sm hover:bg-indigo-700"
                         : "bg-slate-900 text-white hover:bg-slate-800"
                     )}
                     nativeButton={false}
@@ -163,9 +185,12 @@ const PricingPage = () => {
               <ShieldCheck className="size-5" />
             </div>
             <div>
-              <h4 className="text-sm font-bold text-slate-900">Do-Follow Backlinks</h4>
+              <h4 className="text-sm font-bold text-slate-900">
+                Do-Follow Backlinks
+              </h4>
               <p className="mt-1 text-xs text-slate-500">
-                Premium listings receive permanent, high-authority do-follow links to boost your search domain rating.
+                Premium listings receive permanent, high-authority do-follow
+                links to boost your search domain rating.
               </p>
             </div>
           </div>
@@ -175,9 +200,12 @@ const PricingPage = () => {
               <Zap className="size-5" />
             </div>
             <div>
-              <h4 className="text-sm font-bold text-slate-900">Instant AI & LLM Indexing</h4>
+              <h4 className="text-sm font-bold text-slate-900">
+                Instant AI & LLM Indexing
+              </h4>
               <p className="mt-1 text-xs text-slate-500">
-                Partner listings are prioritized in our llms.txt endpoints consumed by Claude, ChatGPT, and developer agents.
+                Partner listings are prioritized in our llms.txt endpoints
+                consumed by Claude, ChatGPT, and developer agents.
               </p>
             </div>
           </div>
@@ -187,9 +215,12 @@ const PricingPage = () => {
               <Sparkles className="size-5" />
             </div>
             <div>
-              <h4 className="text-sm font-bold text-slate-900">Verified Badges</h4>
+              <h4 className="text-sm font-bold text-slate-900">
+                Verified Badges
+              </h4>
               <p className="mt-1 text-xs text-slate-500">
-                Stand out with verified checkmarks and gold shimmer badges to establish developer trust immediately.
+                Stand out with verified checkmarks and gold shimmer badges to
+                establish developer trust immediately.
               </p>
             </div>
           </div>
@@ -198,14 +229,22 @@ const PricingPage = () => {
         {/* FAQ Section */}
         <div className="flex flex-col bg-white p-6 md:p-10">
           <div className="flex items-center gap-2 text-sm font-bold text-slate-900">
-            <HelpCircle className="size-4 text-indigo-600" /> Frequently Asked Questions
+            <HelpCircle className="size-4 text-indigo-600" /> Frequently Asked
+            Questions
           </div>
 
           <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2">
             {FAQ_ITEMS.map((item) => (
-              <div key={item.question} className="rounded-lg border border-dashed border-slate-200 bg-slate-50/50 p-4">
-                <h4 className="text-xs font-bold text-slate-900">{item.question}</h4>
-                <p className="mt-1 text-xs leading-relaxed text-slate-500">{item.answer}</p>
+              <div
+                key={item.question}
+                className="rounded-lg border border-dashed border-slate-200 bg-slate-50/50 p-4"
+              >
+                <h4 className="text-xs font-bold text-slate-900">
+                  {item.question}
+                </h4>
+                <p className="mt-1 text-xs leading-relaxed text-slate-500">
+                  {item.answer}
+                </p>
               </div>
             ))}
           </div>

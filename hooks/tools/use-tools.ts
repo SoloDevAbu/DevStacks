@@ -2,10 +2,7 @@ import { useInfiniteQuery, useQuery } from "@tanstack/react-query"
 import { fetchTools, type ToolListParams } from "@/lib/api/tools"
 import type { DbTool } from "@/types/entities"
 
-export const TOOLS_QUERY_KEY = (params: ToolListParams) => [
-  "tools",
-  params,
-]
+export const TOOLS_QUERY_KEY = (params: ToolListParams) => ["tools", params]
 
 export const TOOLS_INFINITE_QUERY_KEY = (params: ToolListParams) => [
   "tools",
@@ -56,4 +53,3 @@ export const useInfiniteTools = ({
     staleTime: 60_000,
   })
 }
-

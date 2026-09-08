@@ -17,7 +17,12 @@ import { ROUTES } from "@/constants/routes"
 import { AI_PROVIDERS } from "@/constants/ai-providers"
 import { AI_PROMPTS } from "@/lib/prompts"
 import { getTools } from "@/db/queries/tools/list"
-import { productSchema, breadcrumbSchema, faqSchema } from "@/lib/seo/schema"
+import {
+  productSchema,
+  breadcrumbSchema,
+  faqSchema,
+  itemListSchema,
+} from "@/lib/seo/schema"
 import { ProductLogo } from "@/components/shared/product-logo"
 import { VerifiedBadge } from "@/components/shared/verified-badge"
 import { ProductCard } from "@/components/shared/product-card"
@@ -85,11 +90,20 @@ export const generateMetadata = async ({
       url: canonicalUrl,
       siteName: SITE_CONFIG.name,
       type: "website",
+      images: [
+        {
+          url: tool.logoUrl ?? `${SITE_CONFIG.url}/opengraph-image`,
+          width: 1200,
+          height: 630,
+          alt: `${tool.name} on ${SITE_CONFIG.name}`,
+        },
+      ],
     },
     twitter: {
       card: "summary_large_image",
       title: `${title} | ${SITE_CONFIG.name}`,
       description,
+      images: [tool.logoUrl ?? `${SITE_CONFIG.url}/twitter-image`],
     },
   }
 }
@@ -121,9 +135,20 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
     pricing: tool.pricing,
     tier: tool.tier,
     asoCategory: tool.asoCategory,
+    category: tool.category,
     platforms: tool.platforms,
     likesCount: tool.upvotesCount,
     createdAt: tool.createdAt,
+    problemStatement: tool.problemStatement,
+    solution: tool.solution,
+    uniqueValue: tool.uniqueValue,
+    githubUrl: tool.githubUrl,
+    twitterUrl: tool.twitterUrl,
+    websiteUrl: tool.websiteUrl,
+    isRelatedTo: builtWithProducts.map((p) => ({
+      name: p.name,
+      url: `${siteUrl}${ROUTES.PRODUCT(p.slug)}`,
+    })),
   })
 
   const breadcrumbJsonLd = breadcrumbSchema([
@@ -159,6 +184,17 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
   const faqJsonLd = faqSchema(toolFaqs)
   const aiPrompt = AI_PROMPTS.tool(tool.name, tool.tagline)
 
+  const builtWithJsonLd =
+    builtWithProducts.length > 0
+      ? itemListSchema(
+          builtWithProducts.map((p) => ({
+            name: p.name,
+            url: `${siteUrl}${ROUTES.PRODUCT(p.slug)}`,
+            description: p.tagline,
+          }))
+        )
+      : null
+
   return (
     <>
       <script
@@ -173,6 +209,12 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
+      {builtWithJsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(builtWithJsonLd) }}
+        />
+      )}
 
       <article className="relative flex min-h-full flex-col bg-slate-50/50 pb-20">
         {/* Top Breadcrumbs */}
@@ -298,9 +340,7 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
             </section>
 
             {/* Deep Dive: Problem, Solution, Unique Value */}
-            {(tool.problemStatement ||
-              tool.solution ||
-              tool.uniqueValue) && (
+            {(tool.problemStatement || tool.solution || tool.uniqueValue) && (
               <section className="flex flex-col gap-6">
                 <h2 className="text-lg font-bold text-slate-900">
                   Tool Deep Dive
@@ -368,7 +408,8 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
                     Products Built With {tool.name}
                   </h2>
                   <p className="text-xs text-slate-500">
-                    Discover projects and applications using {tool.name} in production
+                    Discover projects and applications using {tool.name} in
+                    production
                   </p>
                 </div>
                 <Button
@@ -401,7 +442,8 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
                     No products submitted yet
                   </h3>
                   <p className="mt-1 max-w-sm text-xs text-slate-500">
-                    Are you building with {tool.name}? Be the first to showcase your project to the community!
+                    Are you building with {tool.name}? Be the first to showcase
+                    your project to the community!
                   </p>
                   <div className="mt-3">
                     <Button
@@ -517,9 +559,7 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
 
                 <div className="flex items-center gap-2 rounded-lg bg-emerald-50/60 p-3 text-xs text-emerald-800">
                   <ShieldCheck className="size-4 shrink-0 text-emerald-600" />
-                  <span>
-                    Verified submission on {SITE_CONFIG.name}.
-                  </span>
+                  <span>Verified submission on {SITE_CONFIG.name}.</span>
                 </div>
               </CardContent>
             </Card>
@@ -534,7 +574,8 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
                   Built something with {tool.name}?
                 </h3>
                 <p className="text-xs text-slate-300">
-                  Showcase your project on {SITE_CONFIG.name} and get discovered by developers searching for tools in this stack.
+                  Showcase your project on {SITE_CONFIG.name} and get discovered
+                  by developers searching for tools in this stack.
                 </p>
                 <Button
                   variant="secondary"

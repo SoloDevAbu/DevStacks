@@ -24,7 +24,7 @@ export const getProducts = async ({
   sortBy = "likes",
 }: ProductListFilters = {}) => {
   const safePage = Math.max(1, page)
-  const safeLimit = Math.min(50, Math.max(1, limit))
+  const safeLimit = Math.min(5000, Math.max(1, limit))
   const offset = (safePage - 1) * safeLimit
 
   const conditions = [eq(products.status, "approved")]
@@ -34,13 +34,23 @@ export const getProducts = async ({
       or(
         ilike(products.name, `%${q}%`),
         ilike(products.tagline, `%${q}%`),
-        ilike(products.description, `%${q}%`)
+        ilike(products.description, `%${q}%`),
+        ilike(products.keywords, `%${q}%`),
+        ilike(products.problemStatement, `%${q}%`),
+        ilike(products.solution, `%${q}%`),
+        ilike(products.targetAudience, `%${q}%`),
+        ilike(products.category, `%${q}%`)
       )!
     )
   }
   if (category) conditions.push(ilike(products.category, category))
   if (pricing)
-    conditions.push(eq(products.pricing, pricing as "Free" | "Freemium" | "Paid" | "Open Source"))
+    conditions.push(
+      eq(
+        products.pricing,
+        pricing as "Free" | "Freemium" | "Paid" | "Open Source"
+      )
+    )
   if (tier)
     conditions.push(eq(products.tier, tier as "free" | "premium" | "premium+"))
 

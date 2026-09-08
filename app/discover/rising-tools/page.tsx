@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import { Flame } from "lucide-react"
 import { PageHeader } from "@/components/shared/page-header"
-import { breadcrumbSchema } from "@/lib/seo/schema"
+import { breadcrumbSchema, collectionPageSchema } from "@/lib/seo/schema"
 import { SITE_CONFIG } from "@/constants/site"
 import { AI_PROMPTS } from "@/lib/prompts"
 import { DISCOVER_PAGE_LIMIT } from "@/constants/rankings"
@@ -29,11 +29,20 @@ export const metadata: Metadata = {
     description: "Developer tools and APIs gaining momentum right now.",
     type: "website",
     url: `${SITE_CONFIG.url}/discover/rising-tools`,
+    images: [
+      {
+        url: `${SITE_CONFIG.url}/opengraph-image`,
+        width: 1200,
+        height: 630,
+        alt: `Rising Developer Tools | ${SITE_CONFIG.name}`,
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: `Rising Developer Tools | ${SITE_CONFIG.name}`,
     description: "Developer tools and APIs gaining momentum right now.",
+    images: [`${SITE_CONFIG.url}/twitter-image`],
   },
 }
 
@@ -52,11 +61,27 @@ const RisingToolsPage = async () => {
     page: 1,
   }).catch(() => [])
 
+  const collectionJsonLd = collectionPageSchema({
+    name: "Rising Developer Tools & APIs",
+    description:
+      "Developer tools, infrastructure, and APIs gaining momentum across the ecosystem.",
+    url: `${SITE_CONFIG.url}/discover/rising-tools`,
+    items: (initialTools as DbTool[]).map((tool) => ({
+      name: tool.name,
+      url: `${SITE_CONFIG.url}/tools/${tool.slug}`,
+      description: tool.tagline,
+    })),
+  })
+
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionJsonLd) }}
       />
       <div className="relative flex min-h-full flex-col bg-slate-50/50">
         <PageHeader
@@ -82,4 +107,3 @@ const RisingToolsPage = async () => {
 }
 
 export default RisingToolsPage
-
