@@ -9,6 +9,7 @@ import {
   ExternalLink,
   ArrowUp,
   Sparkles,
+  Layers,
 } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -31,8 +32,10 @@ import {
   directoryCard,
   directoryCardContent,
   medalBadge,
+  toolBuildsBadge,
+  toolViewsPill,
 } from "@/utils/styles"
-import { getOutboundUrl, getLinkRel } from "@/utils/urls"
+import { getOutboundUrl, getLinkRel, getFaviconUrl } from "@/utils/urls"
 import { useUpvoteTool } from "@/hooks/tools/use-upvote-tool"
 import { useBookmarkTool } from "@/hooks/tools/use-bookmark-tool"
 import { useUserInteractions } from "@/hooks/users/use-user-interactions"
@@ -135,6 +138,8 @@ export const ToolCard = ({
     )
   }
 
+  const logoUrl = tool.logoUrl ?? getFaviconUrl(tool.websiteUrl)
+
   return (
     <Card
       onClick={handleCardClick}
@@ -157,7 +162,7 @@ export const ToolCard = ({
           {showMedals ? (
             <div className={medalBadge(index + 1)}>{index + 1}</div>
           ) : (
-            <div className="w-4 text-center text-sm font-bold text-slate-400">
+            <div className="w-5 text-center text-xs font-semibold text-slate-400">
               {index + 1}
             </div>
           )}
@@ -176,6 +181,8 @@ export const ToolCard = ({
             text={tool.name.slice(0, 2).toUpperCase()}
             bgColor="bg-slate-900"
             textColor="text-white"
+            imageUrl={logoUrl}
+            alt={tool.name}
             className="size-14 overflow-hidden rounded-xl border border-slate-200 text-xl"
           />
         </a>
@@ -222,23 +229,26 @@ export const ToolCard = ({
           </p>
 
           {/* Tags + stats row */}
-          <div className="mt-2 flex flex-wrap items-center gap-3">
+          <div className="mt-2 flex flex-wrap items-center gap-2.5">
             {(tool.tags ?? []).slice(0, 3).map((tag) => (
               <Badge
                 key={tag}
                 variant="secondary"
-                className="rounded-none bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-600"
+                className="rounded-md border border-slate-200/80 bg-slate-100/70 px-2 py-0.5 text-xs font-medium text-slate-600 transition-colors hover:bg-slate-200/60"
               >
                 {tag}
               </Badge>
             ))}
-            <div className="ml-2 flex items-center gap-1.5 text-sm font-semibold text-slate-400">
-              <Eye className="size-4" />
-              {views}
+            <div className={toolViewsPill}>
+              <Eye className="size-3.5" />
+              <span>{views}</span>
             </div>
-            <div className="flex items-center text-sm font-semibold text-blue-600">
-              {tool.buildsCount} builds
-            </div>
+            {tool.buildsCount > 0 && (
+              <Badge variant="outline" className={toolBuildsBadge}>
+                <Layers className="size-3" />
+                <span>{tool.buildsCount} builds</span>
+              </Badge>
+            )}
           </div>
         </div>
 

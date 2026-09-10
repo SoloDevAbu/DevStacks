@@ -1,11 +1,10 @@
 import type { Metadata } from "next"
-import { PageHeader } from "@/components/shared/page-header"
-import { CategoriesSearch } from "@/components/shared/categories-search"
+import { ToolsHero } from "@/components/tools/tools-hero"
 import { collectionPageSchema, breadcrumbSchema } from "@/lib/seo/schema"
 import { SITE_CONFIG } from "@/constants/site"
 import { ROUTES } from "@/constants/routes"
 import { AI_PROMPTS } from "@/lib/prompts"
-import { getTools } from "@/db/queries/tools/list"
+import { getTools, getToolsStats } from "@/db/queries/tools/list"
 import type { DbTool } from "@/types/entities"
 import { ToolsDirectoryContent } from "./tools-content"
 
@@ -81,12 +80,15 @@ const ToolsPage = async (props: {
     { name: "Tools", url: `${SITE_CONFIG.url}/tools` },
   ])
 
-  const initialTools = await getTools({
-    category,
-    q,
-    limit: 20,
-    page: 1,
-  }).catch(() => [])
+  const [initialTools, stats] = await Promise.all([
+    getTools({
+      category,
+      q,
+      limit: 20,
+      page: 1,
+    }).catch(() => []),
+    getToolsStats().catch(() => ({ totalCount: 0, totalBuilds: 0 })),
+  ])
 
   const collectionJsonLd = collectionPageSchema({
     name: category ? `${category} Tools` : "Developer Tools Directory",
@@ -103,6 +105,8 @@ const ToolsPage = async (props: {
     })),
   })
 
+  const toolsList = (initialTools ?? []) as DbTool[]
+
   return (
     <>
       <script
@@ -114,7 +118,7 @@ const ToolsPage = async (props: {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionJsonLd) }}
       />
       <div className="relative flex min-h-full flex-col bg-slate-50/50">
-        <PageHeader
+        <ToolsHero
           heading={
             category
               ? `${category} Developer Tools`
@@ -123,21 +127,18 @@ const ToolsPage = async (props: {
           description={
             category
               ? `Browse all verified developer tools, APIs, and infrastructure in the ${category} category.`
-              : "Browse the complete directory of developer tools, APIs, and infrastructure."
+              : "Browse the complete directory of developer tools, APIs, and building blocks powering modern applications."
           }
           aiPrompt={AI_PROMPTS.tools}
-        />
-
-        <CategoriesSearch
-          baseRoute={ROUTES.TOOLS}
-          selectedCategory={category}
+          totalCount={stats.totalCount}
+          totalBuilds={stats.totalBuilds}
         />
 
         <ToolsDirectoryContent
           key={`${category ?? "all"}-${q ?? ""}`}
           initialCategory={category}
           initialQuery={q}
-          initialTools={initialTools as DbTool[]}
+          initialTools={toolsList}
         />
       </div>
     </>

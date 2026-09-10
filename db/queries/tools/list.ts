@@ -1,6 +1,6 @@
 import { db } from "@/db"
 import { tools } from "@/db/schema"
-import { and, desc, eq, ilike, or } from "drizzle-orm"
+import { and, desc, eq, ilike, or, sql } from "drizzle-orm"
 
 export type ToolListFilters = {
   q?: string
@@ -61,4 +61,19 @@ export const getTools = async ({
     .orderBy(orderMap[sortBy] ?? desc(tools.upvotesCount))
     .limit(safeLimit)
     .offset(offset)
+}
+
+export const getToolsStats = async () => {
+  const [row] = await db
+    .select({
+      totalCount: sql<number>`count(*)::int`,
+      totalBuilds: sql<number>`coalesce(sum(${tools.buildsCount}), 0)::int`,
+    })
+    .from(tools)
+    .where(eq(tools.status, "approved"))
+
+  return {
+    totalCount: Number(row?.totalCount ?? 0),
+    totalBuilds: Number(row?.totalBuilds ?? 0),
+  }
 }

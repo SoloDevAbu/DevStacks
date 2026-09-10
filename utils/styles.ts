@@ -27,14 +27,14 @@ export const pricingBadgeColor = (pricing: Pricing) => PRICING_COLORS[pricing]
 
 export const medalBadge = (rank: number) =>
   cn(
-    "flex items-center justify-center text-sm font-bold",
+    "flex items-center justify-center font-bold transition-transform group-hover:scale-105",
     rank === 1
-      ? "size-6 rounded-full bg-amber-400 text-white"
+      ? "size-6.5 rounded-full bg-linear-to-b from-amber-300 via-amber-400 to-yellow-500 text-xs text-amber-950 shadow-xs ring-1 ring-amber-400/80"
       : rank === 2
-        ? "size-6 rounded-full bg-slate-300 text-white"
+        ? "size-6.5 rounded-full bg-linear-to-b from-slate-100 via-slate-200 to-slate-400 text-xs text-slate-800 shadow-xs ring-1 ring-slate-300"
         : rank === 3
-          ? "size-6 rounded-full bg-orange-400 text-white"
-          : "w-4 text-slate-400"
+          ? "size-6.5 rounded-full bg-linear-to-b from-amber-600 via-orange-600 to-orange-700 text-xs text-white shadow-xs ring-1 ring-orange-500/80"
+          : "w-5 text-center text-xs font-semibold text-slate-400"
   )
 
 export const directoryCard =
@@ -102,3 +102,17 @@ export const agentFooterLink =
 
 export const agentFooterDot = "text-slate-300 select-none"
 
+export const toolBuildsBadge =
+  "inline-flex items-center gap-1 rounded-md border border-blue-200/80 bg-blue-50/80 px-2 py-0.5 text-xs font-semibold text-blue-700 hover:bg-blue-100/80 transition-colors"
+
+export const toolViewsPill =
+  "inline-flex items-center gap-1 text-xs font-medium text-slate-400"
+
+export const toolHeroBadge =
+  "inline-flex items-center gap-1.5 rounded-full border border-indigo-200/80 bg-indigo-50/80 px-3 py-1 text-[11px] font-semibold text-indigo-700 backdrop-blur-xs"
+
+export const toolHeroStatPill =
+  "inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-white/80 px-2.5 py-1 text-xs font-medium text-slate-700 shadow-2xs backdrop-blur-xs"
+
+export const toolFilterButton =
+  "relative z-10 h-7.5 gap-1.5 rounded-lg px-2.5 text-xs transition-colors"
