@@ -3,6 +3,7 @@ import type { Metadata } from "next"
 import { HeaderLogo } from "@/components/layout/header-logo"
 import { HeaderNav } from "@/components/layout/header-nav"
 import { HeaderActions } from "@/components/layout/header-actions"
+import { MobileNav } from "@/components/layout/mobile-nav"
 import { LeftSidebar } from "@/components/shared/left-sidebar"
 import { RightSidebar } from "@/components/layout/right-sidebar"
 import { AgentFooter } from "@/components/layout/agent-footer"
@@ -124,7 +125,8 @@ const RootLayout = ({
 
               {/* Top Center */}
               <div className="flex w-full items-center justify-between gap-4 px-4 lg:px-6">
-                <div className="shrink-0 lg:hidden">
+                <div className="flex items-center gap-2 lg:hidden">
+                  <MobileNav />
                   <HeaderLogo />
                 </div>
                 <div className="hidden w-full justify-center md:flex">
