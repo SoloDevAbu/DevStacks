@@ -3,10 +3,8 @@ import {
   boolean,
   index,
   integer,
-  jsonb,
   pgEnum,
   pgTable,
-  primaryKey,
   text,
   timestamp,
   uniqueIndex,
@@ -28,6 +26,21 @@ export const tierEnum = pgEnum("tier", ["free", "premium", "premium+"])
 
 export const statusEnum = pgEnum("status", ["pending", "approved", "rejected"])
 
+export const platformEnum = pgEnum("platform", [
+  "Web",
+  "iOS",
+  "Android",
+  "macOS",
+  "Windows",
+  "Linux",
+  "CLI",
+  "API",
+  "Extension",
+  "Plugin",
+  "Cloud",
+  "Self-Hosted",
+])
+
 // ---------------------------------------------------------------------------
 // users (Better Auth user table)
 // ---------------------------------------------------------------------------
@@ -44,144 +57,195 @@ export const users = pgTable("users", {
 })
 
 // ---------------------------------------------------------------------------
-// tools  — infrastructure / developer tools (Supabase, Stripe, Vercel, etc.)
+// categories
 // ---------------------------------------------------------------------------
 
-export const tools = pgTable("tools", {
+export const categories = pgTable("categories", {
   id: uuid("id").primaryKey().defaultRandom(),
+  name: text("name").notNull().unique(),
   slug: text("slug").notNull().unique(),
-  submitterId: text("submitter_id")
-    .notNull()
-    .references(() => users.id, { onDelete: "cascade" }),
-
-  // General Information
-  name: text("name").notNull(),
-  tagline: text("tagline").notNull(),
-  description: text("description").notNull(),
-
-  // Deep Dive
-  problemStatement: text("problem_statement"),
-  solution: text("solution"),
-  uniqueValue: text("unique_value"),
-
-  // Links & Media
-  websiteUrl: text("website_url").notNull(),
-  logoUrl: text("logo_url"),
-  githubUrl: text("github_url"),
-  twitterUrl: text("twitter_url"),
-  linkedinUrl: text("linkedin_url"),
-  discordUrl: text("discord_url"),
-
-  // Discoverability & SEO/AEO/GEO/ASO
-  keywords: text("keywords"),
-  targetAudience: text("target_audience"),
-  metaTitle: text("meta_title"),
-  metaDescription: text("meta_description"),
-  aiContext: text("ai_context"),
-  geoTarget: text("geo_target"),
-  asoCategory: text("aso_category"),
-
-  // Classification
-  category: text("category"),
-  tags: text("tags").array().notNull().default([]),
-  platforms: text("platforms").array().notNull().default([]),
-
-  // Pricing & tier
-  pricing: pricingEnum("pricing").notNull().default("Free"),
-  tier: tierEnum("tier").notNull().default("free"),
-
-  // Moderation
-  status: statusEnum("status").notNull().default("pending"),
-
-  // Denormalised counters
-  upvotesCount: integer("upvotes_count").notNull().default(0),
-  buildsCount: integer("builds_count").notNull().default(0), // how many products are built with this tool
-  commentsCount: integer("comments_count").notNull().default(0),
-  viewsCount: integer("views_count").notNull().default(0),
-
   createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()
     .defaultNow(),
-  updatedAt: timestamp("updated_at", { withTimezone: true })
-    .notNull()
-    .defaultNow(),
 })
+
+// ---------------------------------------------------------------------------
+// tools  — infrastructure / developer tools (Supabase, Stripe, Vercel, etc.)
+// ---------------------------------------------------------------------------
+
+export const tools = pgTable(
+  "tools",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    slug: text("slug").notNull().unique(),
+    submitterId: text("submitter_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+
+    // General Information
+    name: text("name").notNull(),
+    tagline: text("tagline").notNull(),
+    description: text("description").notNull(),
+
+    // Deep Dive
+    problemStatement: text("problem_statement"),
+    solution: text("solution"),
+    uniqueValue: text("unique_value"),
+
+    // Links & Media
+    websiteUrl: text("website_url").notNull(),
+    logoUrl: text("logo_url"),
+    githubUrl: text("github_url"),
+    twitterUrl: text("twitter_url"),
+    linkedinUrl: text("linkedin_url"),
+    discordUrl: text("discord_url"),
+
+    // Discoverability & SEO/AEO/GEO/ASO
+    keywords: text("keywords"),
+    targetAudience: text("target_audience"),
+    metaTitle: text("meta_title"),
+    metaDescription: text("meta_description"),
+    aiContext: text("ai_context"),
+    geoTarget: text("geo_target"),
+    asoCategory: text("aso_category"),
+
+    // Classification
+    categoryId: uuid("category_id").references(() => categories.id),
+    tags: text("tags").array().notNull().default([]),
+    platforms: platformEnum("platforms").array().notNull().default([]),
+
+    // Pricing & tier
+    pricing: pricingEnum("pricing").notNull().default("Free"),
+    tier: tierEnum("tier").notNull().default("free"),
+
+    // Moderation
+    status: statusEnum("status").notNull().default("pending"),
+
+    // Denormalised counters
+    upvotesCount: integer("upvotes_count").notNull().default(0),
+    buildsCount: integer("builds_count").notNull().default(0),
+    commentsCount: integer("comments_count").notNull().default(0),
+    viewsCount: integer("views_count").notNull().default(0),
+
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (t) => [
+    index("tools_status_idx").on(t.status),
+    index("tools_category_id_idx").on(t.categoryId),
+    index("tools_pricing_idx").on(t.pricing),
+    index("tools_submitter_id_idx").on(t.submitterId),
+    index("tools_status_upvotes_idx").on(t.status, t.upvotesCount),
+    index("tools_status_created_at_idx").on(t.status, t.createdAt),
+    index("tools_tags_idx").using("gin", t.tags),
+    index("tools_platforms_idx").using("gin", t.platforms),
+  ]
+)
 
 // ---------------------------------------------------------------------------
 // products  — developer-built apps / projects (MeetWave, InvoiceAI, etc.)
 // ---------------------------------------------------------------------------
 
-export type BuiltWithTool = {
-  name: string
-  toolSlug?: string
-}
+export const products = pgTable(
+  "products",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    slug: text("slug").notNull().unique(),
+    submitterId: text("submitter_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
 
-export const products = pgTable("products", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  slug: text("slug").notNull().unique(),
-  submitterId: text("submitter_id")
-    .notNull()
-    .references(() => users.id, { onDelete: "cascade" }),
+    // General Information
+    name: text("name").notNull(),
+    tagline: text("tagline").notNull(),
+    description: text("description").notNull(),
 
-  // General Information
-  name: text("name").notNull(),
-  tagline: text("tagline").notNull(),
-  description: text("description").notNull(),
+    // Deep Dive
+    problemStatement: text("problem_statement"),
+    solution: text("solution"),
+    uniqueValue: text("unique_value"),
 
-  // Deep Dive
-  problemStatement: text("problem_statement"),
-  solution: text("solution"),
-  uniqueValue: text("unique_value"),
+    // Links & Media
+    websiteUrl: text("website_url").notNull(),
+    logoUrl: text("logo_url"),
+    githubUrl: text("github_url"),
+    twitterUrl: text("twitter_url"),
+    linkedinUrl: text("linkedin_url"),
+    discordUrl: text("discord_url"),
 
-  // Links & Media
-  websiteUrl: text("website_url").notNull(),
-  logoUrl: text("logo_url"),
-  githubUrl: text("github_url"),
-  twitterUrl: text("twitter_url"),
-  linkedinUrl: text("linkedin_url"),
-  discordUrl: text("discord_url"),
+    // Discoverability & SEO/AEO/GEO/ASO
+    keywords: text("keywords"),
+    targetAudience: text("target_audience"),
+    metaTitle: text("meta_title"),
+    metaDescription: text("meta_description"),
+    aiContext: text("ai_context"),
+    geoTarget: text("geo_target"),
+    asoCategory: text("aso_category"),
 
-  // Discoverability & SEO/AEO/GEO/ASO
-  keywords: text("keywords"),
-  targetAudience: text("target_audience"),
-  metaTitle: text("meta_title"),
-  metaDescription: text("meta_description"),
-  aiContext: text("ai_context"),
-  geoTarget: text("geo_target"),
-  asoCategory: text("aso_category"),
+    // Classification
+    categoryId: uuid("category_id").references(() => categories.id),
+    tags: text("tags").array().notNull().default([]),
+    platforms: platformEnum("platforms").array().notNull().default([]),
 
-  // Classification
-  category: text("category"),
-  tags: text("tags").array().notNull().default([]),
-  platforms: text("platforms").array().notNull().default([]),
+    // Pricing & tier
+    pricing: pricingEnum("pricing").notNull().default("Free"),
+    tier: tierEnum("tier").notNull().default("free"),
 
-  // Pricing & tier
-  pricing: pricingEnum("pricing").notNull().default("Free"),
-  tier: tierEnum("tier").notNull().default("free"),
+    // Moderation
+    status: statusEnum("status").notNull().default("pending"),
 
-  // Moderation
-  status: statusEnum("status").notNull().default("pending"),
+    // Denormalised counters (NO upvotesCount, NO buildsCount)
+    likesCount: integer("likes_count").notNull().default(0),
+    commentsCount: integer("comments_count").notNull().default(0),
+    viewsCount: integer("views_count").notNull().default(0),
 
-  // Tools this product was built with
-  // [{ name: "Supabase", toolSlug: "supabase" }, { name: "SomeLib" }]
-  // toolSlug is optional — set when the tool exists in the tools table
-  builtWithTools: jsonb("built_with_tools")
-    .$type<BuiltWithTool[]>()
-    .notNull()
-    .default([]),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (t) => [
+    index("products_status_idx").on(t.status),
+    index("products_category_id_idx").on(t.categoryId),
+    index("products_pricing_idx").on(t.pricing),
+    index("products_submitter_id_idx").on(t.submitterId),
+    index("products_status_likes_idx").on(t.status, t.likesCount),
+    index("products_status_created_at_idx").on(t.status, t.createdAt),
+    index("products_tags_idx").using("gin", t.tags),
+    index("products_platforms_idx").using("gin", t.platforms),
+  ]
+)
 
-  // Denormalised counters (NO upvotesCount, NO buildsCount)
-  likesCount: integer("likes_count").notNull().default(0),
-  commentsCount: integer("comments_count").notNull().default(0),
-  viewsCount: integer("views_count").notNull().default(0),
+// ---------------------------------------------------------------------------
+// product_tools  — links products to the tools they were built with
+// ---------------------------------------------------------------------------
 
-  createdAt: timestamp("created_at", { withTimezone: true })
-    .notNull()
-    .defaultNow(),
-  updatedAt: timestamp("updated_at", { withTimezone: true })
-    .notNull()
-    .defaultNow(),
-})
+export const productTools = pgTable(
+  "product_tools",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    productId: uuid("product_id")
+      .notNull()
+      .references(() => products.id, { onDelete: "cascade" }),
+    toolId: uuid("tool_id").references(() => tools.id, {
+      onDelete: "set null",
+    }),
+    name: text("name").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (t) => [
+    uniqueIndex("product_tools_product_name_idx").on(t.productId, t.name),
+    index("product_tools_tool_id_idx").on(t.toolId),
+  ]
+)
 
 // ---------------------------------------------------------------------------
 // tool_upvotes  — toggle upvote on a tool
@@ -275,37 +339,45 @@ export const productBookmarks = pgTable(
 // tool_comments
 // ---------------------------------------------------------------------------
 
-export const toolComments = pgTable("tool_comments", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  toolId: uuid("tool_id")
-    .notNull()
-    .references(() => tools.id, { onDelete: "cascade" }),
-  userId: text("user_id")
-    .notNull()
-    .references(() => users.id, { onDelete: "cascade" }),
-  body: text("body").notNull(),
-  createdAt: timestamp("created_at", { withTimezone: true })
-    .notNull()
-    .defaultNow(),
-})
+export const toolComments = pgTable(
+  "tool_comments",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    toolId: uuid("tool_id")
+      .notNull()
+      .references(() => tools.id, { onDelete: "cascade" }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    body: text("body").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (t) => [index("tool_comments_tool_id_idx").on(t.toolId)]
+)
 
 // ---------------------------------------------------------------------------
 // product_comments
 // ---------------------------------------------------------------------------
 
-export const productComments = pgTable("product_comments", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  productId: uuid("product_id")
-    .notNull()
-    .references(() => products.id, { onDelete: "cascade" }),
-  userId: text("user_id")
-    .notNull()
-    .references(() => users.id, { onDelete: "cascade" }),
-  body: text("body").notNull(),
-  createdAt: timestamp("created_at", { withTimezone: true })
-    .notNull()
-    .defaultNow(),
-})
+export const productComments = pgTable(
+  "product_comments",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    productId: uuid("product_id")
+      .notNull()
+      .references(() => products.id, { onDelete: "cascade" }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    body: text("body").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (t) => [index("product_comments_product_id_idx").on(t.productId)]
+)
 
 // ---------------------------------------------------------------------------
 // sessions (Better Auth session table)
@@ -385,8 +457,10 @@ export const verifications = pgTable(
 export const relations = defineRelations(
   {
     users,
+    categories,
     tools,
     products,
+    productTools,
     toolUpvotes,
     productLikes,
     toolBookmarks,
@@ -409,6 +483,10 @@ export const relations = defineRelations(
       sessions: r.many.sessions(),
       accounts: r.many.accounts(),
     },
+    categories: {
+      tools: r.many.tools(),
+      products: r.many.products(),
+    },
     sessions: {
       user: r.one.users({ from: r.sessions.userId, to: r.users.id }),
     },
@@ -417,15 +495,32 @@ export const relations = defineRelations(
     },
     tools: {
       submitter: r.one.users({ from: r.tools.submitterId, to: r.users.id }),
+      category: r.one.categories({
+        from: r.tools.categoryId,
+        to: r.categories.id,
+      }),
       upvotes: r.many.toolUpvotes(),
       bookmarks: r.many.toolBookmarks(),
       comments: r.many.toolComments(),
+      productTools: r.many.productTools(),
     },
     products: {
       submitter: r.one.users({ from: r.products.submitterId, to: r.users.id }),
+      category: r.one.categories({
+        from: r.products.categoryId,
+        to: r.categories.id,
+      }),
       likes: r.many.productLikes(),
       bookmarks: r.many.productBookmarks(),
       comments: r.many.productComments(),
+      productTools: r.many.productTools(),
+    },
+    productTools: {
+      product: r.one.products({
+        from: r.productTools.productId,
+        to: r.products.id,
+      }),
+      tool: r.one.tools({ from: r.productTools.toolId, to: r.tools.id }),
     },
     toolUpvotes: {
       tool: r.one.tools({ from: r.toolUpvotes.toolId, to: r.tools.id }),
@@ -479,11 +574,17 @@ export type NewAccount = typeof accounts.$inferInsert
 export type Verification = typeof verifications.$inferSelect
 export type NewVerification = typeof verifications.$inferInsert
 
+export type Category = typeof categories.$inferSelect
+export type NewCategory = typeof categories.$inferInsert
+
 export type Tool = typeof tools.$inferSelect
 export type NewTool = typeof tools.$inferInsert
 
 export type Product = typeof products.$inferSelect
 export type NewProduct = typeof products.$inferInsert
+
+export type ProductTool = typeof productTools.$inferSelect
+export type NewProductTool = typeof productTools.$inferInsert
 
 export type ToolUpvote = typeof toolUpvotes.$inferSelect
 export type NewToolUpvote = typeof toolUpvotes.$inferInsert
