@@ -119,11 +119,7 @@ const ToolsPage = async (props: {
       />
       <div className="relative flex min-h-full flex-col bg-slate-50/50">
         <ToolsHero
-          heading={
-            category
-              ? `${category} Developer Tools`
-              : "Developer Tools Directory"
-          }
+          heading="Tools Directory"
           description={
             category
               ? `Browse all verified developer tools, APIs, and infrastructure in the ${category} category.`

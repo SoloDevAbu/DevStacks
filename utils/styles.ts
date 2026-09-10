@@ -114,5 +114,7 @@ export const toolHeroBadge =
 export const toolHeroStatPill =
   "inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-white/80 px-2.5 py-1 text-xs font-medium text-slate-700 shadow-2xs backdrop-blur-xs"
 
+export const heroStatPill = toolHeroStatPill
+
 export const toolFilterButton =
   "relative z-10 h-7.5 gap-1.5 rounded-lg px-2.5 text-xs transition-colors"

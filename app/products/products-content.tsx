@@ -1,11 +1,15 @@
 "use client"
 
-import { useCallback } from "react"
+import { useState, useMemo, useCallback } from "react"
 import { ProductList } from "@/components/shared/product-list"
 import type { DbProduct } from "@/types/entities"
 import { useInfiniteProducts } from "@/hooks/products/use-products"
 import { useIntersectionObserver } from "@/hooks/shared/use-intersection-observer"
 import { InfiniteScrollSentinel } from "@/components/shared/infinite-scroll-sentinel"
+import {
+  ProductsFilterBar,
+  type ProductSortOption,
+} from "@/components/products/products-filter-bar"
 
 interface ProductsDirectoryContentProps {
   initialCategory?: string
@@ -18,6 +22,9 @@ export const ProductsDirectoryContent = ({
   initialQuery,
   initialProducts = [],
 }: ProductsDirectoryContentProps) => {
+  const [selectedPricing, setSelectedPricing] = useState("all")
+  const [sortBy, setSortBy] = useState<ProductSortOption>("upvotes")
+
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useInfiniteProducts({
       category: initialCategory,
@@ -37,21 +44,54 @@ export const ProductsDirectoryContent = ({
     enabled: hasNextPage && !isFetchingNextPage,
   })
 
-  const products = data?.pages.flatMap((page) => page) ?? initialProducts
+  const rawProducts = data?.pages.flatMap((page) => page) ?? initialProducts
+
+  const displayedProducts = useMemo(() => {
+    let result = rawProducts
+
+    if (selectedPricing !== "all") {
+      result = result.filter(
+        (product) =>
+          product.pricing.toLowerCase() === selectedPricing.toLowerCase()
+      )
+    }
+
+    if (sortBy === "views") {
+      result = [...result].sort(
+        (a, b) => (b.viewsCount ?? 0) - (a.viewsCount ?? 0)
+      )
+    } else if (sortBy === "upvotes") {
+      result = [...result].sort(
+        (a, b) => (b.likesCount ?? 0) - (a.likesCount ?? 0)
+      )
+    }
+
+    return result
+  }, [rawProducts, selectedPricing, sortBy])
 
   return (
-    <div className="flex w-full flex-1 flex-col pt-2 pb-8">
-      <ProductList
-        products={products}
-        showMedals={false}
-        showTrendingBadge={false}
+    <div className="flex w-full flex-1 flex-col">
+      <ProductsFilterBar
+        selectedCategory={initialCategory}
+        selectedPricing={selectedPricing}
+        onSelectPricing={setSelectedPricing}
+        sortBy={sortBy}
+        onSortChange={setSortBy}
       />
-      <InfiniteScrollSentinel
-        sentinelRef={sentinelRef}
-        isFetchingNextPage={isFetchingNextPage}
-        hasNextPage={Boolean(hasNextPage)}
-        hasItems={products.length > 0}
-      />
+
+      <div className="flex w-full flex-1 flex-col pb-8">
+        <ProductList
+          products={displayedProducts}
+          showMedals
+          showTrendingBadge
+        />
+        <InfiniteScrollSentinel
+          sentinelRef={sentinelRef}
+          isFetchingNextPage={isFetchingNextPage}
+          hasNextPage={Boolean(hasNextPage)}
+          hasItems={displayedProducts.length > 0}
+        />
+      </div>
     </div>
   )
 }

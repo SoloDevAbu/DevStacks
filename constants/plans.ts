@@ -17,6 +17,41 @@ export const PRICING = {
 
 export type Pricing = (typeof PRICING)[keyof typeof PRICING]
 
+export interface PricingOption {
+  id: string
+  label: string
+  pricingKey?: Pricing
+  dotColor?: string
+}
+
+export const PRICING_OPTIONS: PricingOption[] = [
+  { id: "all", label: "All Pricing" },
+  {
+    id: PRICING.OPEN_SOURCE,
+    label: "Open Source",
+    pricingKey: PRICING.OPEN_SOURCE,
+    dotColor: "bg-blue-500",
+  },
+  {
+    id: PRICING.FREEMIUM,
+    label: "Freemium",
+    pricingKey: PRICING.FREEMIUM,
+    dotColor: "bg-emerald-500",
+  },
+  {
+    id: PRICING.PAID,
+    label: "Paid",
+    pricingKey: PRICING.PAID,
+    dotColor: "bg-indigo-500",
+  },
+  {
+    id: PRICING.FREE,
+    label: "Free",
+    pricingKey: PRICING.FREE,
+    dotColor: "bg-teal-500",
+  },
+]
+
 export const PRICING_COLORS: Record<Pricing, string> = {
   [PRICING.FREE]: "bg-emerald-100/50 text-emerald-700",
   [PRICING.FREEMIUM]: "bg-green-100/50 text-green-700",

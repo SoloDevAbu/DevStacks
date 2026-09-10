@@ -1,42 +1,42 @@
 "use client"
 
 import { useRouter } from "next/navigation"
-import { ArrowBigUp, Layers } from "lucide-react"
+import { ArrowBigUp, Eye } from "lucide-react"
 import { CategoryCommandFilter } from "@/components/shared/category-command-filter"
 import { PricingDropdown } from "@/components/shared/pricing-dropdown"
 import { ROUTES } from "@/constants/routes"
 import { cn } from "@/lib/utils"
 
-export type SortOption = "upvotes" | "builds"
+export type ProductSortOption = "upvotes" | "views"
 
-interface ToolsFilterBarProps {
+interface ProductsFilterBarProps {
   selectedCategory?: string
   selectedPricing: string
   onSelectPricing: (pricing: string) => void
-  sortBy: SortOption
-  onSortChange: (sort: SortOption) => void
+  sortBy: ProductSortOption
+  onSortChange: (sort: ProductSortOption) => void
 }
 
-export const ToolsFilterBar = ({
+export const ProductsFilterBar = ({
   selectedCategory,
   selectedPricing,
   onSelectPricing,
   sortBy,
   onSortChange,
-}: ToolsFilterBarProps) => {
+}: ProductsFilterBarProps) => {
   const router = useRouter()
 
   const handleCategoryChange = (catName: string | null) => {
     if (!catName || catName.toLowerCase() === "all") {
-      router.push(ROUTES.TOOLS)
+      router.push(ROUTES.PRODUCTS)
     } else {
-      router.push(`${ROUTES.TOOLS}?category=${encodeURIComponent(catName)}`)
+      router.push(`${ROUTES.PRODUCTS}?category=${encodeURIComponent(catName)}`)
     }
   }
 
   return (
     <div className="flex flex-wrap items-center justify-between gap-3 border-b border-dashed border-border bg-white px-6 py-2.5 md:px-8">
-      {/* Left: Category Picker & Pricing Dropdown in one single section */}
+      {/* Left: Category Picker & Pricing Dropdown */}
       <div className="flex flex-wrap items-center gap-2.5">
         <CategoryCommandFilter
           selectedCategory={selectedCategory ?? null}
@@ -68,17 +68,17 @@ export const ToolsFilterBar = ({
 
         <button
           type="button"
-          onClick={() => onSortChange("builds")}
+          onClick={() => onSortChange("views")}
           className={cn(
             "flex items-center gap-1 rounded px-2.5 py-1 text-xs font-semibold transition-colors",
-            sortBy === "builds"
+            sortBy === "views"
               ? "bg-blue-50 text-blue-700 shadow-2xs"
               : "text-slate-500 hover:text-slate-900"
           )}
-          title="Sort by connected builds count"
+          title="Sort by page views"
         >
-          <Layers className="size-3.5" />
-          <span>Most Builds</span>
+          <Eye className="size-3.5" />
+          <span>Most Viewed</span>
         </button>
       </div>
     </div>

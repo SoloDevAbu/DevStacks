@@ -1,11 +1,10 @@
 import type { Metadata } from "next"
-import { PageHeader } from "@/components/shared/page-header"
-import { CategoriesSearch } from "@/components/shared/categories-search"
+import { ProductsHero } from "@/components/products/products-hero"
 import { collectionPageSchema, breadcrumbSchema } from "@/lib/seo/schema"
 import { SITE_CONFIG } from "@/constants/site"
 import { ROUTES } from "@/constants/routes"
 import { AI_PROMPTS } from "@/lib/prompts"
-import { getProducts } from "@/db/queries/products/list"
+import { getProducts, getProductsStats } from "@/db/queries/products/list"
 import type { DbProduct } from "@/types/entities"
 import { ProductsDirectoryContent } from "./products-content"
 
@@ -81,12 +80,15 @@ const ProductsPage = async (props: {
     { name: "Products", url: `${SITE_CONFIG.url}/products` },
   ])
 
-  const initialProducts = await getProducts({
-    category,
-    q,
-    limit: 20,
-    page: 1,
-  }).catch(() => [])
+  const [initialProducts, stats] = await Promise.all([
+    getProducts({
+      category,
+      q,
+      limit: 20,
+      page: 1,
+    }).catch(() => []),
+    getProductsStats().catch(() => ({ totalCount: 0, totalLikes: 0 })),
+  ])
 
   const collectionJsonLd = collectionPageSchema({
     name: category ? `${category} Products` : "Products Directory",
@@ -114,19 +116,17 @@ const ProductsPage = async (props: {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionJsonLd) }}
       />
       <div className="relative flex min-h-full flex-col bg-slate-50/50">
-        <PageHeader
-          heading={
-            category ? `${category} Tools & Products` : "Products Directory"
-          }
+        <ProductsHero
+          heading="Products Directory"
           description={
             category
-              ? `Browse all verified developer tools and products in the ${category} category.`
+              ? `Browse all verified developer products and software tools in the ${category} category.`
               : "Browse the complete directory of developer tools, APIs, and software products."
           }
           aiPrompt={AI_PROMPTS.products}
+          totalCount={stats.totalCount}
+          totalLikes={stats.totalLikes}
         />
-
-        <CategoriesSearch selectedCategory={category} />
 
         <ProductsDirectoryContent
           key={`${category ?? "all"}-${q ?? ""}`}

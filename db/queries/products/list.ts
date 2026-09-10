@@ -1,6 +1,6 @@
 import { db } from "@/db"
 import { products } from "@/db/schema"
-import { and, desc, eq, ilike, or } from "drizzle-orm"
+import { and, desc, eq, ilike, or, sql } from "drizzle-orm"
 
 export type ProductListFilters = {
   q?: string
@@ -70,4 +70,19 @@ export const getProducts = async ({
 
   const filtered = tag ? rows.filter((p) => p.tags.includes(tag)) : rows
   return filtered
+}
+
+export const getProductsStats = async () => {
+  const [row] = await db
+    .select({
+      totalCount: sql<number>`count(*)::int`,
+      totalLikes: sql<number>`coalesce(sum(${products.likesCount}), 0)::int`,
+    })
+    .from(products)
+    .where(eq(products.status, "approved"))
+
+  return {
+    totalCount: Number(row?.totalCount ?? 0),
+    totalLikes: Number(row?.totalLikes ?? 0),
+  }
 }

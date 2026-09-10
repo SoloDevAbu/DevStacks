@@ -31,7 +31,7 @@ import {
   directoryCardContent,
   medalBadge,
 } from "@/utils/styles"
-import { getOutboundUrl, getLinkRel } from "@/utils/urls"
+import { getOutboundUrl, getLinkRel, getFaviconUrl } from "@/utils/urls"
 import { useLikeProduct } from "@/hooks/products/use-like-product"
 import { useBookmarkProduct } from "@/hooks/products/use-bookmark-product"
 import { useUserInteractions } from "@/hooks/users/use-user-interactions"
@@ -136,6 +136,8 @@ export const ProductCard = ({
     )
   }
 
+  const logoUrl = product.logoUrl ?? getFaviconUrl(product.websiteUrl)
+
   return (
     <Card
       onClick={handleCardClick}
@@ -177,6 +179,8 @@ export const ProductCard = ({
             text={product.name.slice(0, 2).toUpperCase()}
             bgColor="bg-indigo-900"
             textColor="text-white"
+            imageUrl={logoUrl}
+            alt={product.name}
             className="size-14 overflow-hidden rounded-xl border border-slate-200 text-xl"
           />
         </a>
