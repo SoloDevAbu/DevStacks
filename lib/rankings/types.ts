@@ -1,17 +1,17 @@
-import type { Tool, Product } from "@/db/schema"
+import type { DbTool, DbProduct } from "@/types/entities"
 
 export type RankingOptions = {
   limit?: number
   page?: number
 }
 
-export type RankedTool = Tool & {
+export type RankedTool = DbTool & {
   score?: number
   freshnessDaysLeft?: number
   itemKind: "tool"
 }
 
-export type RankedProduct = Product & {
+export type RankedProduct = DbProduct & {
   score?: number
   freshnessDaysLeft?: number
   itemKind: "product"

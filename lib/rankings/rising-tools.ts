@@ -1,5 +1,5 @@
 import { db } from "@/db"
-import { tools } from "@/db/schema"
+import { tools, categories } from "@/db/schema"
 import { eq } from "drizzle-orm"
 import { RISING_TOOLS_WEIGHTS } from "@/constants/rankings"
 import type { RankedTool, RankingOptions } from "./types"
@@ -38,8 +38,29 @@ export const getRisingTools = async ({
   const now = new Date()
 
   const allApproved = await db
-    .select()
+    .select({
+      id: tools.id,
+      slug: tools.slug,
+      name: tools.name,
+      tagline: tools.tagline,
+      tags: tools.tags,
+      platforms: tools.platforms,
+      upvotesCount: tools.upvotesCount,
+      buildsCount: tools.buildsCount,
+      commentsCount: tools.commentsCount,
+      viewsCount: tools.viewsCount,
+      pricing: tools.pricing,
+      tier: tools.tier,
+      logoUrl: tools.logoUrl,
+      websiteUrl: tools.websiteUrl,
+      categoryId: tools.categoryId,
+      category: categories.name,
+      categorySlug: categories.slug,
+      createdAt: tools.createdAt,
+      updatedAt: tools.updatedAt,
+    })
     .from(tools)
+    .leftJoin(categories, eq(tools.categoryId, categories.id))
     .where(eq(tools.status, "approved"))
 
   const scored: RankedTool[] = allApproved.map((t) => {

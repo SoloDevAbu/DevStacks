@@ -1,5 +1,5 @@
 import { db } from "@/db"
-import { products, tools } from "@/db/schema"
+import { products, productTools, tools } from "@/db/schema"
 import { inArray, sql } from "drizzle-orm"
 
 const slugify = (text: string) =>
@@ -26,26 +26,6 @@ export const createBuild = async (
   },
   toolIds: string[] = []
 ) => {
-  let builtWithTools: { name: string; toolSlug?: string }[] = []
-
-  if (toolIds.length > 0) {
-    const matchedTools = await db
-      .select({ id: tools.id, name: tools.name, slug: tools.slug })
-      .from(tools)
-      .where(inArray(tools.id, toolIds))
-
-    builtWithTools = matchedTools.map((t) => ({
-      name: t.name,
-      toolSlug: t.slug,
-    }))
-
-    // Increment buildsCount for each linked tool
-    await db
-      .update(tools)
-      .set({ buildsCount: sql`${tools.buildsCount} + 1` })
-      .where(inArray(tools.id, toolIds))
-  }
-
   const baseSlug = slugify(data.name)
   const slug = `${baseSlug}-${nanoid()}`
 
@@ -59,11 +39,36 @@ export const createBuild = async (
       description: data.description,
       websiteUrl: data.websiteUrl || "https://example.com",
       status: "approved",
-      builtWithTools,
       tags: [],
       platforms: [],
     })
     .returning()
+
+  if (toolIds.length > 0) {
+    const matchedTools = await db
+      .select({ id: tools.id, name: tools.name, slug: tools.slug })
+      .from(tools)
+      .where(inArray(tools.id, toolIds))
+
+    if (matchedTools.length > 0) {
+      await db
+        .insert(productTools)
+        .values(
+          matchedTools.map((t) => ({
+            productId: product.id,
+            toolId: t.id,
+            name: t.name,
+          }))
+        )
+        .onConflictDoNothing()
+
+      // Increment buildsCount for each linked tool
+      await db
+        .update(tools)
+        .set({ buildsCount: sql`${tools.buildsCount} + 1` })
+        .where(inArray(tools.id, toolIds))
+    }
+  }
 
   return product
 }

@@ -32,7 +32,7 @@ interface ProductTwinInput {
   platforms?: string[] | null
   pricing?: string | null
   tier?: string | null
-  builtWithTools?: Array<string | { name: string; toolSlug?: string }> | null
+  builtWithTools?: Array<string | { name: string; toolSlug?: string | null }> | null
   likesCount?: number | null
   viewsCount?: number | null
   createdAt?: Date | string | null
