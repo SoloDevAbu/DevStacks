@@ -61,8 +61,9 @@ export const CategoriesSearch = ({
   const [search, setSearch] = useState("")
   const [isMac, setIsMac] = useState(false)
 
+  const categoryType = baseRoute.includes("tools") ? "tools" : "products"
   const debouncedSearch = useDebounce(search, 250)
-  const { data: categories = [], isLoading } = useCategories(debouncedSearch)
+  const { data: categories = [], isLoading } = useCategories(debouncedSearch, categoryType)
 
   useEffect(() => {
     if (typeof window !== "undefined") {

@@ -6,26 +6,32 @@ import {
   collectionPageSchema,
 } from "@/lib/seo/schema"
 import { getTrending } from "@/lib/rankings/trending"
+import type { TimeframeOption } from "@/lib/rankings/types"
 import { SITE_CONFIG } from "@/constants/site"
 import { ROUTES } from "@/constants/routes"
 
 export const generateMetadata = async (props: {
-  searchParams?: Promise<{ category?: string }>
+  searchParams?: Promise<{ category?: string; timeframe?: TimeframeOption }>
 }): Promise<Metadata> => {
   const searchParams = props.searchParams ? await props.searchParams : undefined
   const category = searchParams?.category
+  const timeframe = searchParams?.timeframe
 
   const title = category
     ? `Trending ${category} Developer Tools & Products | ${SITE_CONFIG.name}`
-    : `Trending Developer Products & Tools | ${SITE_CONFIG.name}`
+    : timeframe && timeframe !== "today"
+      ? `Trending Developer Products & Tools (${timeframe}) | ${SITE_CONFIG.name}`
+      : `Trending Developer Products & Tools | ${SITE_CONFIG.name}`
 
   const description = category
     ? `Discover the most popular ${category} developer tools and software products gaining traction right now on ${SITE_CONFIG.name}. Ranked by community upvotes, views, and active builds.`
     : `Discover the most popular developer tools and products gaining traction right now on ${SITE_CONFIG.name}. Ranked by community upvotes, views, and active developer builds.`
 
-  const canonicalUrl = category
-    ? `${SITE_CONFIG.url}/trending?category=${encodeURIComponent(category)}`
-    : `${SITE_CONFIG.url}/trending`
+  const params = new URLSearchParams()
+  if (category) params.set("category", category)
+  if (timeframe && timeframe !== "today") params.set("timeframe", timeframe)
+  const qs = params.toString()
+  const canonicalUrl = qs ? `${SITE_CONFIG.url}/trending?${qs}` : `${SITE_CONFIG.url}/trending`
 
   return {
     title,
@@ -72,10 +78,11 @@ export const generateMetadata = async (props: {
 }
 
 const TrendingPage = async (props: {
-  searchParams?: Promise<{ category?: string }>
+  searchParams?: Promise<{ category?: string; timeframe?: TimeframeOption }>
 }) => {
   const searchParams = props.searchParams ? await props.searchParams : undefined
   const category = searchParams?.category
+  const timeframe = searchParams?.timeframe ?? "today"
 
   const siteUrl = SITE_CONFIG.url
   const breadcrumbs = breadcrumbSchema([
@@ -85,7 +92,7 @@ const TrendingPage = async (props: {
 
   let products: Awaited<ReturnType<typeof getTrending>> = []
   try {
-    products = await getTrending(15, "today", category)
+    products = await getTrending(15, timeframe, category)
   } catch {
     products = []
   }
@@ -122,7 +129,12 @@ const TrendingPage = async (props: {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionJsonLd) }}
       />
-      <TrendingContent initialCategory={category} />
+      <TrendingContent
+        key={`${category ?? "all"}-${timeframe}`}
+        initialCategory={category}
+        initialTimeframe={timeframe}
+        initialItems={products}
+      />
     </>
   )
 }

@@ -7,25 +7,43 @@ import { AI_PROMPTS } from "@/lib/prompts"
 import { getProducts, getProductsStats } from "@/db/queries/products/list"
 import type { DbProduct } from "@/types/entities"
 import { ProductsDirectoryContent } from "./products-content"
+import type { ProductSortOption } from "@/components/products/products-filter-bar"
 
 export const revalidate = 60
 
 export const generateMetadata = async (props: {
-  searchParams: Promise<{ category?: string; q?: string }>
+  searchParams: Promise<{
+    category?: string
+    q?: string
+    pricing?: string
+    sortBy?: ProductSortOption
+  }>
 }): Promise<Metadata> => {
   const searchParams = await props.searchParams
   const category = searchParams?.category
   const q = searchParams?.q
+  const pricing = searchParams?.pricing
+  const sortBy = searchParams?.sortBy
+
+  const filterSuffix = [
+    category ? `Category: ${category}` : null,
+    pricing && pricing.toLowerCase() !== "all" ? `Pricing: ${pricing}` : null,
+    sortBy ? `Sorted by: ${sortBy}` : null,
+  ]
+    .filter(Boolean)
+    .join(" • ")
 
   const title = category
     ? `${category} Developer Products & Software | ${SITE_CONFIG.name}`
     : q
-      ? `Search "${q}" Products | ${SITE_CONFIG.name}`
-      : `Complete Product Directory — Developer Tools & Software | ${SITE_CONFIG.name}`
+      ? `Search "${q}" Developer Products | ${SITE_CONFIG.name}`
+      : filterSuffix.length > 0
+        ? `Developer Products (${filterSuffix}) | ${SITE_CONFIG.name}`
+        : `Developer Products Directory — Verified Software & Tech Stacks | ${SITE_CONFIG.name}`
 
   const description = category
-    ? `Browse verified developer products and software tools built with modern tech stacks in the ${category} category on ${SITE_CONFIG.name}.`
-    : `Browse the complete directory of developer tools, APIs, and software products on ${SITE_CONFIG.name}.`
+    ? `Browse developer-built products and software in the ${category} category on ${SITE_CONFIG.name}. Explore built-with tech stacks, likes, and community reviews.`
+    : `Browse the complete directory of developer products, software, and tools on ${SITE_CONFIG.name}.`
 
   const canonicalUrl = category
     ? `${SITE_CONFIG.url}/products?category=${encodeURIComponent(category)}`
@@ -37,8 +55,8 @@ export const generateMetadata = async (props: {
     keywords: category
       ? [
           category,
-          `${category} tools`,
-          `${category} developer products`,
+          `${category} software`,
+          `${category} products`,
           ...SITE_CONFIG.keywords,
         ]
       : [...SITE_CONFIG.keywords],
@@ -69,11 +87,18 @@ export const generateMetadata = async (props: {
 }
 
 const ProductsPage = async (props: {
-  searchParams: Promise<{ category?: string; q?: string }>
+  searchParams: Promise<{
+    category?: string
+    q?: string
+    pricing?: string
+    sortBy?: ProductSortOption
+  }>
 }) => {
   const searchParams = await props.searchParams
   const category = searchParams?.category
   const q = searchParams?.q
+  const pricing = searchParams?.pricing
+  const sortBy = searchParams?.sortBy ?? "upvotes"
 
   const breadcrumbs = breadcrumbSchema([
     { name: "Home", url: SITE_CONFIG.url },
@@ -84,6 +109,8 @@ const ProductsPage = async (props: {
     getProducts({
       category,
       q,
+      pricing: pricing && pricing.toLowerCase() !== "all" ? pricing : undefined,
+      sortBy: sortBy === "upvotes" ? "likes" : sortBy,
       limit: 20,
       page: 1,
     }).catch(() => []),
@@ -129,9 +156,11 @@ const ProductsPage = async (props: {
         />
 
         <ProductsDirectoryContent
-          key={`${category ?? "all"}-${q ?? ""}`}
+          key={`${category ?? "all"}-${q ?? ""}-${pricing ?? "all"}-${sortBy}`}
           initialCategory={category}
           initialQuery={q}
+          initialPricing={pricing ?? "all"}
+          initialSortBy={sortBy}
           initialProducts={initialProducts as DbProduct[]}
         />
       </div>

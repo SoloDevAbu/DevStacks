@@ -1,16 +1,15 @@
 "use client"
 
-import { useRouter } from "next/navigation"
 import { ArrowBigUp, Layers } from "lucide-react"
 import { CategoryCommandFilter } from "@/components/shared/category-command-filter"
 import { PricingDropdown } from "@/components/shared/pricing-dropdown"
-import { ROUTES } from "@/constants/routes"
 import { cn } from "@/lib/utils"
 
 export type SortOption = "upvotes" | "builds"
 
 interface ToolsFilterBarProps {
   selectedCategory?: string
+  onSelectCategory: (category: string | null) => void
   selectedPricing: string
   onSelectPricing: (pricing: string) => void
   sortBy: SortOption
@@ -19,28 +18,20 @@ interface ToolsFilterBarProps {
 
 export const ToolsFilterBar = ({
   selectedCategory,
+  onSelectCategory,
   selectedPricing,
   onSelectPricing,
   sortBy,
   onSortChange,
 }: ToolsFilterBarProps) => {
-  const router = useRouter()
-
-  const handleCategoryChange = (catName: string | null) => {
-    if (!catName || catName.toLowerCase() === "all") {
-      router.push(ROUTES.TOOLS)
-    } else {
-      router.push(`${ROUTES.TOOLS}?category=${encodeURIComponent(catName)}`)
-    }
-  }
-
   return (
     <div className="flex flex-wrap items-center justify-between gap-3 border-b border-dashed border-border bg-white px-6 py-2.5 md:px-8">
       {/* Left: Category Picker & Pricing Dropdown in one single section */}
       <div className="flex flex-wrap items-center gap-2.5">
         <CategoryCommandFilter
           selectedCategory={selectedCategory ?? null}
-          onSelectCategory={handleCategoryChange}
+          onSelectCategory={onSelectCategory}
+          type="tools"
         />
 
         <PricingDropdown

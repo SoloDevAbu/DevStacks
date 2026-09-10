@@ -444,6 +444,35 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
                     </div>
                   </div>
                 )}
+
+                {product.builtWithTools && product.builtWithTools.length > 0 && (
+                  <div className="mt-2 flex flex-col gap-2 border-t border-slate-100 pt-3">
+                    <span className="text-xs font-bold text-slate-700">
+                      Built With
+                    </span>
+                    <div className="flex flex-wrap gap-1.5">
+                      {product.builtWithTools.map((t) =>
+                        t.toolSlug ? (
+                          <Link
+                            key={t.name}
+                            href={ROUTES.TOOL(t.toolSlug)}
+                            className="rounded bg-indigo-50 px-2 py-0.5 text-[11px] font-semibold text-indigo-700 transition-colors hover:bg-indigo-100"
+                          >
+                            {t.name}
+                          </Link>
+                        ) : (
+                          <Badge
+                            key={t.name}
+                            variant="outline"
+                            className="border-slate-200 bg-slate-50 text-[11px] font-medium text-slate-700"
+                          >
+                            {t.name}
+                          </Badge>
+                        )
+                      )}
+                    </div>
+                  </div>
+                )}
               </CardContent>
             </Card>
 

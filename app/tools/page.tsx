@@ -7,21 +7,39 @@ import { AI_PROMPTS } from "@/lib/prompts"
 import { getTools, getToolsStats } from "@/db/queries/tools/list"
 import type { DbTool } from "@/types/entities"
 import { ToolsDirectoryContent } from "./tools-content"
+import type { SortOption } from "@/components/tools/tools-filter-bar"
 
 export const revalidate = 60
 
 export const generateMetadata = async (props: {
-  searchParams: Promise<{ category?: string; q?: string }>
+  searchParams: Promise<{
+    category?: string
+    q?: string
+    pricing?: string
+    sortBy?: SortOption
+  }>
 }): Promise<Metadata> => {
   const searchParams = await props.searchParams
   const category = searchParams?.category
   const q = searchParams?.q
+  const pricing = searchParams?.pricing
+  const sortBy = searchParams?.sortBy
+
+  const filterSuffix = [
+    category ? `Category: ${category}` : null,
+    pricing && pricing.toLowerCase() !== "all" ? `Pricing: ${pricing}` : null,
+    sortBy ? `Sorted by: ${sortBy}` : null,
+  ]
+    .filter(Boolean)
+    .join(" • ")
 
   const title = category
     ? `${category} Developer Tools, APIs & Infrastructure | ${SITE_CONFIG.name}`
     : q
       ? `Search "${q}" Developer Tools | ${SITE_CONFIG.name}`
-      : `Developer Tools Directory — APIs, Infrastructure & SDKs | ${SITE_CONFIG.name}`
+      : filterSuffix.length > 0
+        ? `Developer Tools (${filterSuffix}) | ${SITE_CONFIG.name}`
+        : `Developer Tools Directory — APIs, Infrastructure & SDKs | ${SITE_CONFIG.name}`
 
   const description = category
     ? `Browse verified developer tools, infrastructure, and APIs in the ${category} category on ${SITE_CONFIG.name}. Explore upvotes and products built with them.`
@@ -69,11 +87,18 @@ export const generateMetadata = async (props: {
 }
 
 const ToolsPage = async (props: {
-  searchParams: Promise<{ category?: string; q?: string }>
+  searchParams: Promise<{
+    category?: string
+    q?: string
+    pricing?: string
+    sortBy?: SortOption
+  }>
 }) => {
   const searchParams = await props.searchParams
   const category = searchParams?.category
   const q = searchParams?.q
+  const pricing = searchParams?.pricing
+  const sortBy = searchParams?.sortBy ?? "upvotes"
 
   const breadcrumbs = breadcrumbSchema([
     { name: "Home", url: SITE_CONFIG.url },
@@ -84,6 +109,8 @@ const ToolsPage = async (props: {
     getTools({
       category,
       q,
+      pricing: pricing && pricing.toLowerCase() !== "all" ? pricing : undefined,
+      sortBy,
       limit: 20,
       page: 1,
     }).catch(() => []),
@@ -131,9 +158,11 @@ const ToolsPage = async (props: {
         />
 
         <ToolsDirectoryContent
-          key={`${category ?? "all"}-${q ?? ""}`}
+          key={`${category ?? "all"}-${q ?? ""}-${pricing ?? "all"}-${sortBy}`}
           initialCategory={category}
           initialQuery={q}
+          initialPricing={pricing ?? "all"}
+          initialSortBy={sortBy}
           initialTools={toolsList}
         />
       </div>

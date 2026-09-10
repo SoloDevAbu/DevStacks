@@ -49,6 +49,7 @@ export const FilterBar = ({
       <CategoryCommandFilter
         selectedCategory={selectedCategory}
         onSelectCategory={(cat) => onCategoryChange?.(cat)}
+        type="all"
       />
     </div>
   )

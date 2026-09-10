@@ -19,9 +19,12 @@ import { useCategories } from "@/hooks/categories/use-categories"
 import { useDebounce } from "@/hooks/shared/use-debounce"
 import { cn } from "@/lib/utils"
 
+import type { CategoryFilterType } from "@/lib/api/categories"
+
 export interface CategoryCommandFilterProps {
   selectedCategory: string | null
   onSelectCategory: (category: string | null) => void
+  type?: CategoryFilterType
   className?: string
   buttonClassName?: string
 }
@@ -29,6 +32,7 @@ export interface CategoryCommandFilterProps {
 export const CategoryCommandFilter = ({
   selectedCategory,
   onSelectCategory,
+  type = "all",
   buttonClassName,
 }: CategoryCommandFilterProps) => {
   const [open, setOpen] = useState(false)
@@ -36,7 +40,7 @@ export const CategoryCommandFilter = ({
   const [isMac, setIsMac] = useState(false)
 
   const debouncedSearch = useDebounce(search, 250)
-  const { data: categories = [], isLoading } = useCategories(debouncedSearch)
+  const { data: categories = [], isLoading } = useCategories(debouncedSearch, type)
 
   useEffect(() => {
     if (typeof window !== "undefined") {

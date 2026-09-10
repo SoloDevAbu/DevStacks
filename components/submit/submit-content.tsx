@@ -291,8 +291,8 @@ export const SubmitContent = () => {
                 >
                   <Checkbox
                     id={`platform-${platform.id}`}
-                    checked={form.platforms.includes(platform.label)}
-                    onCheckedChange={() => togglePlatform(platform.label)}
+                    checked={form.platforms.includes(platform.id)}
+                    onCheckedChange={() => togglePlatform(platform.id)}
                   />
                   <div className="space-y-1 leading-none">
                     <Label
