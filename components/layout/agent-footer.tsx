@@ -23,7 +23,7 @@ const DIRECTORY_LINKS = [
 const BUILDER_LINKS = [
   { label: "List a Product", href: ROUTES.SUBMIT },
   { label: "Sponsor & Pricing", href: ROUTES.PRICING },
-  { label: "Featured Placements", href: ROUTES.PRICING },
+  { label: "Showcase Build", href: ROUTES.SHOWCASE },
   { label: "Developer Guidelines", href: "/llms.txt" },
 ] as const
 
@@ -97,7 +97,7 @@ export const AgentFooter = () => (
           <h4 className={siteFooterColHeading}>Directory</h4>
           <ul className="flex flex-col gap-2">
             {DIRECTORY_LINKS.map((link) => (
-              <li key={link.href}>
+              <li key={link.label}>
                 <Link href={link.href} className={siteFooterLink}>
                   {link.label}
                 </Link>
@@ -111,7 +111,7 @@ export const AgentFooter = () => (
           <h4 className={siteFooterColHeading}>Builders</h4>
           <ul className="flex flex-col gap-2">
             {BUILDER_LINKS.map((link) => (
-              <li key={link.href}>
+              <li key={link.label}>
                 <Link href={link.href} className={siteFooterLink}>
                   {link.label}
                 </Link>
@@ -125,7 +125,7 @@ export const AgentFooter = () => (
           <h4 className={siteFooterColHeading}>Protocols</h4>
           <ul className="flex flex-col gap-2">
             {PROTOCOL_LINKS.map((link) => (
-              <li key={link.href}>
+              <li key={link.label}>
                 <Link href={link.href} className={siteFooterLink} prefetch={false}>
                   {link.label}
                 </Link>
