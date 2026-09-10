@@ -77,7 +77,9 @@ export const LeftSidebar = () => {
                         <item.icon
                           className={cn(
                             "size-4 shrink-0 transition-colors",
-                            isActive ? "text-white" : "text-slate-400 group-hover:text-slate-700"
+                            isActive
+                              ? "text-slate-900"
+                              : "text-slate-400 group-hover:text-slate-700"
                           )}
                         />
                         <span>{item.name}</span>
@@ -100,7 +102,9 @@ export const LeftSidebar = () => {
                       <item.icon
                         className={cn(
                           "size-4 shrink-0 transition-colors",
-                          isActive ? "text-white" : "text-slate-400 group-hover:text-slate-700"
+                          isActive
+                            ? "text-slate-900"
+                            : "text-slate-400 group-hover:text-slate-700"
                         )}
                       />
                       <span>{item.name}</span>
@@ -179,4 +183,3 @@ export const LeftSidebar = () => {
     </div>
   )
 }
-

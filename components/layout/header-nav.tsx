@@ -15,20 +15,6 @@ import {
   navbarNavLinkActive,
 } from "@/utils/styles"
 
-type NavLinkItem = {
-  label: string
-  href: string
-  highlight?: boolean
-}
-
-const NAV_LINKS: NavLinkItem[] = [
-  { label: "Tools", href: ROUTES.TOOLS },
-  { label: "Products", href: ROUTES.PRODUCTS },
-  { label: "Trending", href: ROUTES.TRENDING },
-  { label: "Pricing", href: ROUTES.PRICING, highlight: true },
-]
-
-
 export const HeaderNav = () => {
   const router = useRouter()
   const pathname = usePathname()
@@ -70,8 +56,10 @@ export const HeaderNav = () => {
     router.push(`${ROUTES.PRODUCTS}?q=${encodeURIComponent(trimmed)}`)
   }
 
+  const isPricingActive = pathname === ROUTES.PRICING
+
   return (
-    <nav className="flex w-full items-center justify-between gap-6">
+    <nav className="flex items-center gap-6">
       <form onSubmit={handleSearchSubmit} className={navbarSearchWrapper}>
         <Search className="pointer-events-none absolute top-1/2 left-3 size-3.5 -translate-y-1/2 text-slate-400" />
         <Input
@@ -86,26 +74,15 @@ export const HeaderNav = () => {
         </Kbd>
       </form>
 
-      <div className="flex items-center gap-5">
-        {NAV_LINKS.map((link) => {
-          const isActive = pathname === link.href
-          return (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={cn(
-                navbarNavLink,
-                isActive && navbarNavLinkActive,
-                link.highlight &&
-                  "inline-flex items-center gap-1 text-indigo-600 hover:text-indigo-700"
-              )}
-            >
-              {link.highlight && <Sparkles className="size-3 text-indigo-500" />}
-              {link.label}
-            </Link>
-          )
-        })}
-      </div>
+      <Link
+        href={ROUTES.PRICING}
+        className={cn(
+          navbarNavLink,
+          isPricingActive && navbarNavLinkActive
+        )}
+      >
+        Pricing
+      </Link>
     </nav>
   )
 }

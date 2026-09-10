@@ -107,15 +107,15 @@ export const RightSidebar = () => {
         </div>
       </div>
 
-      {/* 3. Top Devtools */}
+      {/* 3. Promoted Stacks */}
       <div className="flex flex-col gap-3">
         <div className="flex items-center justify-between">
-          <h3 className={sidebarHeading}>Top Devtools</h3>
+          <h3 className={sidebarHeading}>Promoted Stacks</h3>
           <Link
-            href={ROUTES.TOOLS}
-            className="font-mono text-[10px] font-semibold text-slate-400 hover:text-slate-900 transition-colors"
+            href={ROUTES.PRICING}
+            className="font-mono text-[10px] font-semibold text-indigo-600 hover:text-indigo-800 transition-colors"
           >
-            ALL TOOLS →
+            SPONSOR →
           </Link>
         </div>
 
@@ -149,11 +149,16 @@ export const RightSidebar = () => {
         </div>
       </div>
 
-      {/* 4. Community Links */}
+      {/* 4. Community & Ad Info */}
       <div className="mt-auto border-t border-dashed border-border pt-5">
         <div className="flex items-center justify-between">
           <h3 className={sidebarHeading}>Community</h3>
-          <span className="font-mono text-[10px] text-slate-400">Open Network</span>
+          <Link
+            href={ROUTES.PRICING}
+            className="font-mono text-[10px] text-slate-400 hover:text-slate-900 transition-colors"
+          >
+            Advertise with us
+          </Link>
         </div>
         <div className="mt-2.5 grid grid-cols-3 gap-2 text-center font-mono text-[11px]">
           <a

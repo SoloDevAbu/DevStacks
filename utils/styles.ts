@@ -126,7 +126,8 @@ export const sidebarNavItem =
   "group relative flex w-full items-center justify-between rounded-lg px-3 py-2 text-xs font-medium transition-all"
 
 export const sidebarNavItemActive =
-  "bg-slate-900 text-white font-semibold shadow-xs"
+  "bg-slate-100 text-slate-900 font-semibold border border-slate-200/80 shadow-2xs"
+
 
 export const sidebarNavItemInactive =
   "text-slate-600 hover:bg-slate-100/80 hover:text-slate-950"

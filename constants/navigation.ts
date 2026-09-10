@@ -34,11 +34,10 @@ export const SIDEBAR_NAV: NavSection[] = [
         name: "Tools Directory",
         icon: Wrench,
         href: ROUTES.TOOLS,
-        badge: { text: "API", variant: "neutral" },
       },
       { name: "Products", icon: Package, href: ROUTES.PRODUCTS },
       {
-        name: "Trending Stacks",
+        name: "Trending",
         icon: TrendingUp,
         href: ROUTES.TRENDING,
         badge: { text: "HOT", variant: "hot" },
@@ -116,4 +115,3 @@ export const TRENDING_DEVTOOLS = [
     color: "border-amber-200 bg-amber-100 text-amber-800",
   },
 ] as const
-

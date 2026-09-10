@@ -3,6 +3,7 @@ import type { Metadata } from "next"
 import { HeaderLogo } from "@/components/layout/header-logo"
 import { HeaderNav } from "@/components/layout/header-nav"
 import { HeaderActions } from "@/components/layout/header-actions"
+import { HeaderAdvertise } from "@/components/layout/header-advertise"
 import { MobileNav } from "@/components/layout/mobile-nav"
 import { LeftSidebar } from "@/components/shared/left-sidebar"
 import { RightSidebar } from "@/components/layout/right-sidebar"
@@ -129,17 +130,18 @@ const RootLayout = ({
                   <MobileNav />
                   <HeaderLogo />
                 </div>
-                <div className="hidden w-full justify-center md:flex">
+                <div className="hidden w-full items-center justify-between gap-4 md:flex">
                   <HeaderNav />
+                  <HeaderActions />
                 </div>
-                <div className="shrink-0 xl:hidden">
+                <div className="shrink-0 md:hidden">
                   <HeaderActions />
                 </div>
               </div>
 
               {/* Top Right */}
               <div className="hidden items-center justify-end border-l border-dashed border-border px-6 xl:flex">
-                <HeaderActions />
+                <HeaderAdvertise />
               </div>
             </header>
 
