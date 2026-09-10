@@ -5,15 +5,30 @@ import { createProduct } from "@/db/queries/products/create"
 import { submitProductSchema } from "@/lib/validation/product"
 import { z } from "zod"
 
+const PRICING_OPTIONS = ["Free", "Freemium", "Paid", "Open Source"] as const
+
 const listQuerySchema = z.object({
   q: z.string().optional(),
   category: z.string().optional(),
   tag: z.string().optional(),
-  pricing: z.enum(["Free", "Freemium", "Paid", "Open Source"]).optional(),
+  platform: z.string().optional(),
+  pricing: z
+    .string()
+    .optional()
+    .transform((val) => {
+      if (!val || val.toLowerCase() === "all") return undefined
+      const match = PRICING_OPTIONS.find(
+        (p) => p.toLowerCase() === val.toLowerCase()
+      )
+      return match
+    }),
   tier: z.enum(["free", "premium", "premium+"]).optional(),
   page: z.coerce.number().int().min(1).default(1),
   limit: z.coerce.number().int().min(1).max(50).default(20),
-  sortBy: z.enum(["likes", "recent", "views"]).default("likes"),
+  sortBy: z
+    .enum(["likes", "upvotes", "recent", "views"])
+    .default("likes")
+    .transform((val) => (val === "upvotes" ? "likes" : val)),
 })
 
 export const GET = async (req: NextRequest) => {
@@ -64,12 +79,13 @@ export const POST = async (req: NextRequest) => {
       )
     }
 
-    const { tags, ...rest } = parsed.data
+    const { tags, builtWithTools, ...rest } = parsed.data
     const product = await createProduct({
       ...rest,
       submitterId: session.user.id,
       tags: Array.isArray(tags) ? tags : [],
-      platforms: rest.platforms ?? [],
+      platforms: (rest.platforms ?? []) as any,
+      builtWithTools: Array.isArray(builtWithTools) ? builtWithTools : undefined,
     })
 
     return NextResponse.json({ data: product }, { status: 201 })

@@ -1,20 +1,35 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { getDbCategories } from "@/db/queries/categories/list"
+import {
+  getToolCategories,
+  getProductCategories,
+  getAllCategories,
+} from "@/db/queries/categories/list"
 import { z } from "zod"
 
 const querySchema = z.object({
   q: z.string().optional(),
+  type: z.enum(["tools", "products", "all"]).default("all"),
 })
 
 export const GET = async (req: NextRequest) => {
   const params = Object.fromEntries(req.nextUrl.searchParams)
   const parsed = querySchema.safeParse(params)
-  const q = parsed.success ? parsed.data.q : undefined
+  const { q, type } = parsed.success
+    ? parsed.data
+    : { q: undefined, type: "all" as const }
 
   try {
-    const categories = await getDbCategories(q)
+    let categoriesList
+    if (type === "tools") {
+      categoriesList = await getToolCategories(q)
+    } else if (type === "products") {
+      categoriesList = await getProductCategories(q)
+    } else {
+      categoriesList = await getAllCategories(q)
+    }
+
     return NextResponse.json(
-      { data: categories },
+      { data: categoriesList },
       {
         status: 200,
         headers: {

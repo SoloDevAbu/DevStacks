@@ -1,12 +1,16 @@
 import { useQuery } from "@tanstack/react-query"
-import { fetchCategories } from "@/lib/api/categories"
+import { fetchCategories, type CategoryFilterType } from "@/lib/api/categories"
 
-export const CATEGORIES_QUERY_KEY = (q?: string) => ["categories", q ?? ""]
+export const CATEGORIES_QUERY_KEY = (q?: string, type: CategoryFilterType = "all") => [
+  "categories",
+  q ?? "",
+  type,
+]
 
-export const useCategories = (q?: string) => {
+export const useCategories = (q?: string, type: CategoryFilterType = "all") => {
   return useQuery({
-    queryKey: CATEGORIES_QUERY_KEY(q),
-    queryFn: () => fetchCategories(q),
+    queryKey: CATEGORIES_QUERY_KEY(q, type),
+    queryFn: () => fetchCategories(q, type),
     staleTime: 60_000,
   })
 }

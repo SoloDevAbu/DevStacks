@@ -25,13 +25,23 @@ export const useInfiniteProducts = ({
   category,
   q,
   tag,
+  platform,
   pricing,
   tier,
   sortBy,
   limit = 20,
   initialData,
 }: ProductListParams & { initialData?: DbProduct[] } = {}) => {
-  const queryFilterParams = { category, q, tag, pricing, tier, sortBy, limit }
+  const queryFilterParams = {
+    category,
+    q,
+    tag,
+    platform,
+    pricing,
+    tier,
+    sortBy,
+    limit,
+  }
 
   return useInfiniteQuery({
     queryKey: PRODUCTS_INFINITE_QUERY_KEY(queryFilterParams),

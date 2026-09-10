@@ -22,13 +22,23 @@ export const useInfiniteTools = ({
   category,
   q,
   tag,
+  platform,
   pricing,
   tier,
   sortBy,
   limit = 20,
   initialData,
 }: ToolListParams & { initialData?: DbTool[] } = {}) => {
-  const queryFilterParams = { category, q, tag, pricing, tier, sortBy, limit }
+  const queryFilterParams = {
+    category,
+    q,
+    tag,
+    platform,
+    pricing,
+    tier,
+    sortBy,
+    limit,
+  }
 
   return useInfiniteQuery({
     queryKey: TOOLS_INFINITE_QUERY_KEY(queryFilterParams),
