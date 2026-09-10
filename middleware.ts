@@ -1,9 +1,70 @@
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
+import { rateLimit } from "@/lib/rate-limit"
+
+const getClientIp = (request: NextRequest) =>
+  request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+  request.headers.get("x-real-ip") ||
+  "127.0.0.1"
 
 export const middleware = (request: NextRequest) => {
   const { pathname } = request.nextUrl
   const acceptHeader = request.headers.get("accept") ?? ""
+
+  // Rate limiting for API routes
+  if (pathname.startsWith("/api/")) {
+    const isAuthRoute = pathname.startsWith("/api/auth/")
+
+    if (!isAuthRoute) {
+      const ip = getClientIp(request)
+      const method = request.method.toUpperCase()
+
+      let limit = 60
+      if (method === "POST") {
+        if (pathname === "/api/tools" || pathname === "/api/products") {
+          limit = 10
+        } else {
+          limit = 30
+        }
+      } else if (
+        pathname === "/api/tools" ||
+        pathname === "/api/products" ||
+        pathname === "/api/categories" ||
+        pathname === "/api/trending"
+      ) {
+        limit = 60
+      } else {
+        limit = 120
+      }
+
+      const identifier = `${ip}:${method}:${pathname}`
+      const rateCheck = rateLimit(identifier, limit, 60_000)
+
+      if (!rateCheck.success) {
+        return new NextResponse(
+          JSON.stringify({
+            error: "Too many requests. Please try again later.",
+          }),
+          {
+            status: 429,
+            headers: {
+              "Content-Type": "application/json",
+              "Retry-After": String(rateCheck.resetSeconds),
+              "X-RateLimit-Limit": String(rateCheck.limit),
+              "X-RateLimit-Remaining": "0",
+              "X-RateLimit-Reset": String(rateCheck.reset),
+            },
+          }
+        )
+      }
+
+      const response = NextResponse.next()
+      response.headers.set("X-RateLimit-Limit", String(rateCheck.limit))
+      response.headers.set("X-RateLimit-Remaining", String(rateCheck.remaining))
+      response.headers.set("X-RateLimit-Reset", String(rateCheck.reset))
+      return response
+    }
+  }
 
   // MCP alias rewrite: /.well-known/mcp -> /.well-known/mcp.json
   if (pathname === "/.well-known/mcp") {
@@ -52,6 +113,7 @@ export const middleware = (request: NextRequest) => {
 
 export const config = {
   matcher: [
+    "/api/:path*",
     "/.well-known/mcp",
     "/tools/:path*",
     "/products/:path*",
