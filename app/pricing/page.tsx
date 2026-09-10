@@ -101,6 +101,7 @@ const PricingPage = () => {
           heading="💎 Sponsorship & Listing Plans"
           description="Amplify your reach across the developer community. Guaranteed visibility, verified badges, and high-authority backlinks."
           aiPrompt={AI_PROMPTS.pricing}
+          variant="pricing"
         />
 
         {/* Pricing Cards Grid */}
