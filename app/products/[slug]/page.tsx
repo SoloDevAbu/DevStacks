@@ -136,7 +136,7 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
 
   const breadcrumbJsonLd = breadcrumbSchema([
     { name: "Home", url: siteUrl },
-    { name: "Discover", url: `${siteUrl}/discover` },
+    { name: "Products", url: `${siteUrl}${ROUTES.PRODUCTS}` },
     { name: product.name, url: productUrl },
   ])
 
@@ -197,7 +197,7 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
           </Link>
           <ChevronRight className="size-3 text-slate-400" />
           <Link href={ROUTES.PRODUCTS} className="hover:text-slate-900">
-            Discover
+            Products
           </Link>
           <ChevronRight className="size-3 text-slate-400" />
           <span className="font-semibold text-slate-900">{product.name}</span>

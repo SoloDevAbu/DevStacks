@@ -776,6 +776,7 @@ export const seedDatabase = async () => {
       await db
         .insert(productTools)
         .values({ productId, toolId, name: bw.name })
+        .onConflictDoNothing()
 
       console.log(
         `  → Linked "${bw.name}" ${toolId ? "(with tool reference)" : "(name only)"}`
@@ -786,7 +787,11 @@ export const seedDatabase = async () => {
   console.log("✅ Database seeding completed successfully!")
 }
 
-if (process.argv[1]?.endsWith("seed.ts")) {
+const isDirectRun = process.argv.slice(1).some((arg) =>
+  arg.replace(/\\/g, "/").includes("db/seed")
+)
+
+if (isDirectRun) {
   seedDatabase()
     .then(() => process.exit(0))
     .catch((err) => {

@@ -3,7 +3,19 @@ import { HoverOutline } from "@/components/shared/hover-outline"
 import { AI_PROVIDERS } from "@/constants/ai-providers"
 import { cn } from "@/lib/utils"
 
-export type PageHeaderVariant = "default" | "home" | "trending" | "pricing"
+export type PageHeaderVariant =
+  | "default"
+  | "home"
+  | "trending"
+  | "pricing"
+  | "discover"
+  | "discover-new-rising"
+  | "discover-building-blocks"
+  | "discover-recently-added"
+  | "discover-rising-products"
+  | "discover-rising-tools"
+  | "products"
+  | "tools"
 
 interface PageHeaderProps {
   heading: string
@@ -32,6 +44,54 @@ const VARIANT_CONFIGS = {
     mesh1: "bg-indigo-200/25",
     mesh2: "bg-violet-200/20",
     aiLabel: "ASK AI ABOUT PLANS",
+  },
+  discover: {
+    bg: "bg-linear-to-b from-blue-50/40 via-white to-slate-50/30",
+    mesh1: "bg-blue-200/25",
+    mesh2: "bg-indigo-200/20",
+    aiLabel: "ASK AI ABOUT DISCOVERY",
+  },
+  "discover-new-rising": {
+    bg: "bg-linear-to-b from-amber-50/50 via-white to-slate-50/30",
+    mesh1: "bg-amber-200/30",
+    mesh2: "bg-orange-200/20",
+    aiLabel: "ASK AI ABOUT NEW & RISING",
+  },
+  "discover-building-blocks": {
+    bg: "bg-linear-to-b from-purple-50/45 via-white to-slate-50/30",
+    mesh1: "bg-purple-200/25",
+    mesh2: "bg-fuchsia-200/20",
+    aiLabel: "ASK AI ABOUT TECH STACKS",
+  },
+  "discover-recently-added": {
+    bg: "bg-linear-to-b from-sky-50/50 via-white to-slate-50/30",
+    mesh1: "bg-sky-200/25",
+    mesh2: "bg-cyan-200/20",
+    aiLabel: "ASK AI ABOUT RECENT SUBMISSIONS",
+  },
+  "discover-rising-products": {
+    bg: "bg-linear-to-b from-emerald-50/45 via-white to-slate-50/30",
+    mesh1: "bg-emerald-200/25",
+    mesh2: "bg-teal-200/20",
+    aiLabel: "ASK AI ABOUT RISING PRODUCTS",
+  },
+  "discover-rising-tools": {
+    bg: "bg-linear-to-b from-indigo-50/45 via-white to-slate-50/30",
+    mesh1: "bg-indigo-200/25",
+    mesh2: "bg-cyan-200/20",
+    aiLabel: "ASK AI ABOUT RISING TOOLS",
+  },
+  products: {
+    bg: "bg-linear-to-b from-violet-50/40 via-white to-slate-50/30",
+    mesh1: "bg-violet-200/25",
+    mesh2: "bg-amber-200/20",
+    aiLabel: "ASK AI ABOUT PRODUCTS",
+  },
+  tools: {
+    bg: "bg-linear-to-b from-indigo-50/40 via-white to-slate-50/30",
+    mesh1: "bg-indigo-200/25",
+    mesh2: "bg-emerald-200/20",
+    aiLabel: "ASK AI ABOUT TOOLS",
   },
   default: {
     bg: "bg-linear-to-b from-slate-50/60 via-white to-slate-50/30",

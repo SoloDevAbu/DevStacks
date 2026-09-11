@@ -1,9 +1,11 @@
 import type { Metadata } from "next"
+import { Cpu } from "lucide-react"
 import { PageHeader } from "@/components/shared/page-header"
 import { breadcrumbSchema, collectionPageSchema } from "@/lib/seo/schema"
 import { SITE_CONFIG } from "@/constants/site"
 import { AI_PROMPTS } from "@/lib/prompts"
 import { DISCOVER_PAGE_LIMIT } from "@/constants/rankings"
+import { heroStatPill } from "@/utils/styles"
 import { getPopularBuildingBlocks } from "@/lib/rankings/popular"
 import type { FeedItem } from "@/components/shared/feed-card"
 import { PopularBuildingBlocksContent } from "./popular-building-blocks-content"
@@ -48,7 +50,6 @@ export const metadata: Metadata = {
 const PopularBuildingBlocksPage = async () => {
   const breadcrumbs = breadcrumbSchema([
     { name: "Home", url: SITE_CONFIG.url },
-    { name: "Discover", url: `${SITE_CONFIG.url}/discover` },
     {
       name: "Popular Building Blocks",
       url: `${SITE_CONFIG.url}/discover/popular-building-blocks`,
@@ -84,9 +85,17 @@ const PopularBuildingBlocksPage = async () => {
       />
       <div className="relative flex min-h-full flex-col bg-slate-50/50">
         <PageHeader
-          heading="🔥 Popular Building Blocks"
+          heading="Popular Building Blocks"
           description="The tools developers are building with. Ranked by verified developer builds, ecosystem adoption, and lifetime engagement."
           aiPrompt={AI_PROMPTS.popularBuildingBlocks}
+          variant="discover-building-blocks"
+          metrics={
+            <div className={heroStatPill}>
+              <Cpu className="size-3.5 text-purple-600" />
+              <span className="font-bold text-slate-900">Tech Stacks</span>
+              <span className="text-slate-500">Popular Building Blocks</span>
+            </div>
+          }
         />
 
         <PopularBuildingBlocksContent

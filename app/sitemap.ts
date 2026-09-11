@@ -46,12 +46,6 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
       priority: 0.9,
     },
     {
-      url: `${siteUrl}${ROUTES.DISCOVER}`,
-      lastModified: new Date(),
-      changeFrequency: "daily",
-      priority: 0.85,
-    },
-    {
       url: `${siteUrl}${ROUTES.DISCOVER_NEW_RISING}`,
       lastModified: new Date(),
       changeFrequency: "daily",

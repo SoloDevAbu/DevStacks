@@ -1,10 +1,11 @@
 import type { Metadata } from "next"
-import { Flame } from "lucide-react"
+import { Flame, Wrench } from "lucide-react"
 import { PageHeader } from "@/components/shared/page-header"
 import { breadcrumbSchema, collectionPageSchema } from "@/lib/seo/schema"
 import { SITE_CONFIG } from "@/constants/site"
 import { AI_PROMPTS } from "@/lib/prompts"
 import { DISCOVER_PAGE_LIMIT } from "@/constants/rankings"
+import { heroStatPill } from "@/utils/styles"
 import { getRisingTools } from "@/lib/rankings/rising-tools"
 import type { DbTool } from "@/types/entities"
 import { RisingToolsContent } from "./rising-tools-content"
@@ -49,7 +50,6 @@ export const metadata: Metadata = {
 const RisingToolsPage = async () => {
   const breadcrumbs = breadcrumbSchema([
     { name: "Home", url: SITE_CONFIG.url },
-    { name: "Discover", url: `${SITE_CONFIG.url}/discover` },
     {
       name: "Rising Tools",
       url: `${SITE_CONFIG.url}/discover/rising-tools`,
@@ -85,9 +85,19 @@ const RisingToolsPage = async () => {
       />
       <div className="relative flex min-h-full flex-col bg-slate-50/50">
         <PageHeader
-          heading="🚀 Rising Tools"
+          heading="Rising Tools"
           description="Developer tools, APIs, and infrastructure gaining momentum, ranked dynamically by upvotes, build velocity, and community usage."
           aiPrompt={AI_PROMPTS.risingTools}
+          variant="discover-rising-tools"
+          metrics={
+            <div className={heroStatPill}>
+              <Wrench className="size-3.5 text-indigo-600" />
+              <span className="font-bold text-slate-900">
+                Momentum Velocity
+              </span>
+              <span className="text-slate-500">Developer APIs & Tools</span>
+            </div>
+          }
         />
 
         <div className="border-b border-dashed border-border bg-emerald-50/40 px-6 py-3 md:px-8">
