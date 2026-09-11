@@ -56,7 +56,16 @@ export const sectionGridWrapper =
   "grid grid-cols-1 gap-4 border-b border-dashed border-border px-6 py-6 md:px-8"
 
 export const sectionWrapper =
-  "border-b border-dashed border-border px-6 py-8 md:px-8"
+  "border-b border-dashed border-border px-6 py-8 md:px-8 md:py-10"
+
+export const sectionHeadingTitle =
+  "text-lg font-bold text-slate-900"
+
+export const sectionHeadingSubtitle =
+  "text-xs text-slate-500"
+
+export const specCard =
+  "flex flex-col gap-1 rounded-lg border border-dashed border-border bg-white p-4"
 
 export const upvoteButtonActive =
   "relative z-10 h-8 gap-1.5 rounded-lg border-amber-300 bg-amber-50 px-3 text-sm font-bold text-amber-600 hover:bg-amber-100/80 transition-colors"
