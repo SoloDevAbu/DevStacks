@@ -64,8 +64,11 @@ export const sectionHeadingTitle =
 export const sectionHeadingSubtitle =
   "text-xs text-slate-500"
 
-export const specCard =
-  "flex flex-col gap-1 rounded-lg border border-dashed border-border bg-white p-4"
+export const toolSpecsContainer =
+  "grid grid-cols-2 border border-dashed border-border bg-white sm:grid-cols-3 lg:grid-cols-6 divide-y sm:divide-y-0 sm:divide-x divide-dashed divide-border"
+
+export const toolDeepDiveContainer =
+  "grid grid-cols-1 md:grid-cols-3 border border-dashed border-border bg-white divide-y md:divide-y-0 md:divide-x divide-dashed divide-border"
 
 export const upvoteButtonActive =
   "relative z-10 h-8 gap-1.5 rounded-lg border-amber-300 bg-amber-50 px-3 text-sm font-bold text-amber-600 hover:bg-amber-100/80 transition-colors"
