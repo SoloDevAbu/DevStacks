@@ -13,4 +13,7 @@ export const ROUTES = {
   PRODUCT: (slug: string) => `/products/${slug}`,
   TOOLS: "/tools",
   TOOL: (slug: string) => `/tools/${slug}`,
+  PRIVACY: "/privacy",
+  TERMS: "/terms",
+  REFUND: "/refund",
 } as const

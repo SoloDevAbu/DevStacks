@@ -94,6 +94,24 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
       priority: 0.8,
     },
     {
+      url: `${siteUrl}${ROUTES.PRIVACY}`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.5,
+    },
+    {
+      url: `${siteUrl}${ROUTES.TERMS}`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.5,
+    },
+    {
+      url: `${siteUrl}${ROUTES.REFUND}`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.5,
+    },
+    {
       url: `${siteUrl}/llms.txt`,
       lastModified: new Date(),
       changeFrequency: "daily",

@@ -180,3 +180,6 @@ export const siteFooterLink =
 export const agentProtocolTray =
   "flex flex-wrap items-center gap-x-2.5 gap-y-2 border-t border-dashed border-border bg-amber-50/40 px-6 py-3.5 font-mono text-xs text-slate-700 md:px-8"
 
+export const siteFooterBottomStrip =
+  "flex flex-col items-start justify-between gap-2.5 border-t border-dashed border-border bg-white px-6 pt-4 pb-12 text-[11px] text-slate-500 sm:flex-row sm:items-center sm:gap-4 md:px-8 md:pb-14"
+

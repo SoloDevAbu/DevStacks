@@ -7,6 +7,7 @@ import {
   siteFooterWrapper,
   siteFooterColHeading,
   siteFooterLink,
+  siteFooterBottomStrip,
   agentProtocolTray,
   agentFooterLabel,
   agentFooterLink,
@@ -167,15 +168,36 @@ export const AgentFooter = () => (
     </div>
 
     {/* --- TIER 3: Copyright & Status Strip --- */}
-    <div className="flex flex-col items-center justify-between gap-3 border-t border-dashed border-border bg-white px-6 py-4 text-[11px] text-slate-500 sm:flex-row md:px-8">
-      <p>© {new Date().getFullYear()} {SITE_CONFIG.name}. Built for developers & autonomous agents.</p>
-      <div className="flex items-center gap-4 font-mono">
-        <span className="flex items-center gap-1.5 text-slate-600">
-          <span className="size-2 rounded-full bg-emerald-500" />
-          All Systems Operational
+    <div className={siteFooterBottomStrip}>
+      <div className="flex items-center gap-1.5 whitespace-nowrap text-[11px] text-slate-500">
+        <span className="font-semibold text-slate-700">
+          © {new Date().getFullYear()} {SITE_CONFIG.name}.
         </span>
-        <span className="text-slate-300">|</span>
-        <span className="text-slate-400">Edge 100ms</span>
+        <span className="text-slate-400">
+          Built for developers & autonomous agents.
+        </span>
+      </div>
+      <div className="flex items-center gap-x-2.5 whitespace-nowrap font-mono text-[11px] sm:gap-x-3.5 sm:text-xs">
+        <Link
+          href={ROUTES.PRIVACY}
+          className="text-slate-500 transition-colors hover:text-slate-900 underline-offset-4 hover:underline"
+        >
+          Privacy Policy
+        </Link>
+        <span className="text-slate-300 select-none">·</span>
+        <Link
+          href={ROUTES.TERMS}
+          className="text-slate-500 transition-colors hover:text-slate-900 underline-offset-4 hover:underline"
+        >
+          Terms of Service
+        </Link>
+        <span className="text-slate-300 select-none">·</span>
+        <Link
+          href={ROUTES.REFUND}
+          className="text-slate-500 transition-colors hover:text-slate-900 underline-offset-4 hover:underline"
+        >
+          Refund Policy
+        </Link>
       </div>
     </div>
   </footer>
