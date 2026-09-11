@@ -1,13 +1,21 @@
 import Link from "next/link"
+import Image from "next/image"
 import { Blocks, Bot, Sparkles, Terminal } from "lucide-react"
 import { HeaderLogo } from "@/components/layout/header-logo"
+import { HoverOutline } from "@/components/shared/hover-outline"
+import { AI_PROVIDERS } from "@/constants/ai-providers"
+import { AI_PROMPTS } from "@/lib/prompts"
 import { ROUTES } from "@/constants/routes"
 import { SITE_CONFIG } from "@/constants/site"
 import {
   siteFooterWrapper,
+  siteFooterGrid,
   siteFooterColHeading,
   siteFooterLink,
   siteFooterBottomStrip,
+  footerAiSection,
+  footerAiTrayLabel,
+  footerAiButton,
   agentProtocolTray,
   agentFooterLabel,
   agentFooterLink,
@@ -55,7 +63,43 @@ export const AgentFooter = () => (
   <footer aria-label="Site and Agent Footer" className="flex flex-col border-t border-dashed border-border bg-white">
     {/* --- TIER 1: Developer & Community Directory --- */}
     <div className={siteFooterWrapper}>
-      <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5">
+      {/* Ask AI Section inside Tier 1 */}
+      <div className={footerAiSection}>
+        <div className="flex items-center gap-2 shrink-0">
+          <Sparkles className="size-3.5 text-blue-600" />
+          <span className={footerAiTrayLabel}>
+            ASK AI ABOUT {SITE_CONFIG.name.toUpperCase()}
+          </span>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">
+          {AI_PROVIDERS.map((ai) => (
+            <div key={ai.id} className="group/btn relative inline-flex">
+              <a
+                href={`${ai.url}${encodeURIComponent(AI_PROMPTS.home)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={footerAiButton}
+                title={`Ask ${ai.name} about ${SITE_CONFIG.name}`}
+              >
+                <Image
+                  src={ai.icon}
+                  alt={ai.name}
+                  width={14}
+                  height={14}
+                  className="object-contain mix-blend-multiply"
+                />
+                <span className="text-xs font-medium text-slate-700 transition-colors group-hover/btn:text-slate-950">
+                  {ai.name}
+                </span>
+              </a>
+              <HoverOutline />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className={siteFooterGrid}>
         {/* Brand Column */}
         <div className="flex flex-col gap-3 sm:col-span-2 md:col-span-1 lg:col-span-2">
           <HeaderLogo />
