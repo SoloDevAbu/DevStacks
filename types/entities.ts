@@ -1,5 +1,10 @@
-import type { BuiltWithTool } from "@/db/schema"
 import type { Tier, Pricing } from "@/constants/plans"
+
+export type ProductBuiltWith = {
+  name: string
+  toolSlug?: string | null
+  toolId?: string | null
+}
 
 export type DbTool = {
   id: string
@@ -15,8 +20,13 @@ export type DbTool = {
   tier: Tier
   logoUrl?: string | null
   category?: string | null
+  categoryId?: string | null
+  categorySlug?: string | null
   websiteUrl?: string | null
   freshnessDaysLeft?: number
+  platforms?: string[]
+  createdAt?: Date
+  updatedAt?: Date
 }
 
 export type DbProduct = {
@@ -32,9 +42,14 @@ export type DbProduct = {
   tier: Tier
   logoUrl?: string | null
   category?: string | null
+  categoryId?: string | null
+  categorySlug?: string | null
   websiteUrl?: string | null
-  builtWithTools?: BuiltWithTool[]
+  builtWithTools?: ProductBuiltWith[]
   freshnessDaysLeft?: number
+  platforms?: string[]
+  createdAt?: Date
+  updatedAt?: Date
 }
 
 export type EntityItem = DbTool | DbProduct

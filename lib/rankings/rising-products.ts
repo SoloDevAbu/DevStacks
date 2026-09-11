@@ -1,8 +1,9 @@
 import { db } from "@/db"
-import { products } from "@/db/schema"
-import { eq } from "drizzle-orm"
+import { products, categories, productTools, tools } from "@/db/schema"
+import { eq, inArray } from "drizzle-orm"
 import { RISING_PRODUCTS_WEIGHTS } from "@/constants/rankings"
 import type { RankedProduct, RankingOptions } from "./types"
+import type { ProductBuiltWith } from "@/types/entities"
 
 export const calculateRisingScore = (
   createdAt: Date,
@@ -36,8 +37,28 @@ export const getRisingProducts = async ({
   const now = new Date()
 
   const allApproved = await db
-    .select()
+    .select({
+      id: products.id,
+      slug: products.slug,
+      name: products.name,
+      tagline: products.tagline,
+      tags: products.tags,
+      platforms: products.platforms,
+      likesCount: products.likesCount,
+      commentsCount: products.commentsCount,
+      viewsCount: products.viewsCount,
+      pricing: products.pricing,
+      tier: products.tier,
+      logoUrl: products.logoUrl,
+      websiteUrl: products.websiteUrl,
+      categoryId: products.categoryId,
+      category: categories.name,
+      categorySlug: categories.slug,
+      createdAt: products.createdAt,
+      updatedAt: products.updatedAt,
+    })
     .from(products)
+    .leftJoin(categories, eq(products.categoryId, categories.id))
     .where(eq(products.status, "approved"))
 
   const scored: RankedProduct[] = allApproved.map((p) => {
@@ -57,6 +78,37 @@ export const getRisingProducts = async ({
   })
 
   scored.sort((a, b) => (b.score ?? 0) - (a.score ?? 0))
+  const pageItems = scored.slice(offset, offset + safeLimit)
 
-  return scored.slice(offset, offset + safeLimit)
+  // Attach builtWithTools
+  const productIds = pageItems.map((p) => p.id)
+  if (productIds.length > 0) {
+    const ptRows = await db
+      .select({
+        productId: productTools.productId,
+        name: productTools.name,
+        toolId: productTools.toolId,
+        toolSlug: tools.slug,
+      })
+      .from(productTools)
+      .leftJoin(tools, eq(productTools.toolId, tools.id))
+      .where(inArray(productTools.productId, productIds))
+
+    const toolsMap = new Map<string, ProductBuiltWith[]>()
+    for (const pt of ptRows) {
+      const list = toolsMap.get(pt.productId) ?? []
+      list.push({
+        name: pt.name,
+        toolSlug: pt.toolSlug ?? null,
+        toolId: pt.toolId ?? null,
+      })
+      toolsMap.set(pt.productId, list)
+    }
+
+    for (const item of pageItems) {
+      item.builtWithTools = toolsMap.get(item.id) ?? []
+    }
+  }
+
+  return pageItems
 }

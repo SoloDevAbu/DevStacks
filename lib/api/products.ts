@@ -4,11 +4,12 @@ export type ProductListParams = {
   q?: string
   category?: string
   tag?: string
+  platform?: string
   pricing?: string
   tier?: string
   page?: number
   limit?: number
-  sortBy?: "likes" | "recent" | "views"
+  sortBy?: "likes" | "upvotes" | "recent" | "views"
 }
 
 export const fetchProducts = async (params: ProductListParams = {}) => {

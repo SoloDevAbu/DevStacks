@@ -6,7 +6,7 @@ export const submitBuildSchema = z.object({
   description: z.string().min(10, "Description too short").max(1000),
   logoText: z.string().min(1).max(4),
   logoBg: z.string().min(1, "Logo background class required"),
-  productIds: z.array(z.string().uuid()).min(1, "Select at least one product"),
+  productIds: z.array(z.string().uuid()).default([]),
 })
 
 export type SubmitBuildInput = z.input<typeof submitBuildSchema>

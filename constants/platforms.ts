@@ -1,14 +1,16 @@
 export const PLATFORMS = [
-  { id: "web", label: "Web Application" },
-  { id: "ios", label: "Mobile App (iOS)" },
-  { id: "android", label: "Mobile App (Android)" },
-  { id: "mac", label: "Desktop (macOS)" },
-  { id: "windows", label: "Desktop (Windows)" },
-  { id: "linux", label: "Desktop (Linux)" },
-  { id: "cli", label: "CLI / Terminal" },
-  { id: "api", label: "API / Backend" },
-  { id: "extension", label: "Browser Extension" },
-  { id: "plugin", label: "Plugin / Integration" },
+  { id: "Web", label: "Web Application" },
+  { id: "iOS", label: "Mobile App (iOS)" },
+  { id: "Android", label: "Mobile App (Android)" },
+  { id: "macOS", label: "Desktop (macOS)" },
+  { id: "Windows", label: "Desktop (Windows)" },
+  { id: "Linux", label: "Desktop (Linux)" },
+  { id: "CLI", label: "CLI / Terminal" },
+  { id: "API", label: "API / Backend" },
+  { id: "Extension", label: "Browser Extension" },
+  { id: "Plugin", label: "Plugin / Integration" },
+  { id: "Cloud", label: "Cloud" },
+  { id: "Self-Hosted", label: "Self-Hosted" },
 ] as const
 
 export type Platform = (typeof PLATFORMS)[number]["id"]

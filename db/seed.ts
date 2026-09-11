@@ -1,14 +1,60 @@
 import "dotenv/config"
 import { db } from "./index"
-import { tools, products, users } from "./schema"
-import type { BuiltWithTool } from "./schema"
+import { tools, products, users, categories, productTools } from "./schema"
 import { eq } from "drizzle-orm"
+
+type SeedPlatform =
+  | "Web"
+  | "iOS"
+  | "Android"
+  | "macOS"
+  | "Windows"
+  | "Linux"
+  | "CLI"
+  | "API"
+  | "Extension"
+  | "Plugin"
+  | "Cloud"
+  | "Self-Hosted"
+
+const slugify = (text: string) =>
+  text
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, "")
+    .replace(/[\s_-]+/g, "-")
+    .replace(/^-+|-+$/g, "")
 
 // ---------------------------------------------------------------------------
 // Seed Tools — infrastructure / developer tools
 // ---------------------------------------------------------------------------
 
-const SEED_TOOLS = [
+const SEED_TOOLS: {
+  name: string
+  slug: string
+  tagline: string
+  description: string
+  problemStatement?: string
+  solution?: string
+  uniqueValue?: string
+  websiteUrl: string
+  logoUrl: null
+  githubUrl: string | null
+  categoryName: string
+  tags: string[]
+  platforms: SeedPlatform[]
+  pricing: "Free" | "Freemium" | "Paid" | "Open Source"
+  tier: "free" | "premium" | "premium+"
+  status: "approved" | "pending" | "rejected"
+  upvotesCount: number
+  buildsCount: number
+  commentsCount: number
+  viewsCount: number
+  keywords?: string
+  targetAudience?: string
+  asoCategory?: string
+  aiContext?: string
+}[] = [
   {
     name: "Supabase",
     slug: "supabase",
@@ -24,12 +70,12 @@ const SEED_TOOLS = [
     websiteUrl: "https://supabase.com",
     logoUrl: null,
     githubUrl: "https://github.com/supabase/supabase",
-    category: "Database",
+    categoryName: "Database",
     tags: ["Database", "BaaS", "Postgres", "Auth"],
     platforms: ["Cloud", "Web", "Self-Hosted"],
-    pricing: "Freemium" as const,
-    tier: "premium+" as const,
-    status: "approved" as const,
+    pricing: "Freemium",
+    tier: "premium+",
+    status: "approved",
     upvotesCount: 3840,
     buildsCount: 82,
     commentsCount: 94,
@@ -57,12 +103,12 @@ const SEED_TOOLS = [
     websiteUrl: "https://stripe.com",
     logoUrl: null,
     githubUrl: "https://github.com/stripe/stripe-node",
-    category: "Payments",
+    categoryName: "Payments",
     tags: ["Payments", "Billing", "SaaS", "API"],
-    platforms: ["Web", "API", "Mobile"],
-    pricing: "Paid" as const,
-    tier: "premium" as const,
-    status: "approved" as const,
+    platforms: ["Web", "API", "iOS", "Android"],
+    pricing: "Paid",
+    tier: "premium",
+    status: "approved",
     upvotesCount: 2950,
     buildsCount: 71,
     commentsCount: 68,
@@ -90,12 +136,12 @@ const SEED_TOOLS = [
     websiteUrl: "https://vercel.com",
     logoUrl: null,
     githubUrl: "https://github.com/vercel/next.js",
-    category: "Infra",
+    categoryName: "Infra",
     tags: ["Hosting", "Edge", "Next.js", "Serverless"],
     platforms: ["Cloud", "Web", "CLI"],
-    pricing: "Freemium" as const,
-    tier: "premium+" as const,
-    status: "approved" as const,
+    pricing: "Freemium",
+    tier: "premium+",
+    status: "approved",
     upvotesCount: 3120,
     buildsCount: 68,
     commentsCount: 76,
@@ -121,12 +167,12 @@ const SEED_TOOLS = [
     websiteUrl: "https://posthog.com",
     logoUrl: null,
     githubUrl: "https://github.com/posthog/posthog",
-    category: "Analytics",
+    categoryName: "Analytics",
     tags: ["Analytics", "Open Source", "Telemetry", "DevTools"],
     platforms: ["Cloud", "Self-Hosted", "Web"],
-    pricing: "Freemium" as const,
-    tier: "free" as const,
-    status: "approved" as const,
+    pricing: "Freemium",
+    tier: "free",
+    status: "approved",
     upvotesCount: 1840,
     buildsCount: 34,
     commentsCount: 38,
@@ -154,12 +200,12 @@ const SEED_TOOLS = [
     websiteUrl: "https://better-auth.com",
     logoUrl: null,
     githubUrl: "https://github.com/better-auth/better-auth",
-    category: "Auth",
+    categoryName: "Auth",
     tags: ["Auth", "Security", "TypeScript", "Next.js"],
     platforms: ["Web", "API"],
-    pricing: "Open Source" as const,
-    tier: "premium" as const,
-    status: "approved" as const,
+    pricing: "Open Source",
+    tier: "premium",
+    status: "approved",
     upvotesCount: 1420,
     buildsCount: 28,
     commentsCount: 32,
@@ -187,12 +233,12 @@ const SEED_TOOLS = [
     websiteUrl: "https://dodopayments.com",
     logoUrl: null,
     githubUrl: null,
-    category: "Payments",
+    categoryName: "Payments",
     tags: ["Payments", "API", "Billing", "Tax"],
     platforms: ["Web", "API"],
-    pricing: "Freemium" as const,
-    tier: "free" as const,
-    status: "approved" as const,
+    pricing: "Freemium",
+    tier: "free",
+    status: "approved",
     upvotesCount: 920,
     buildsCount: 37,
     commentsCount: 19,
@@ -220,12 +266,12 @@ const SEED_TOOLS = [
     websiteUrl: "https://tinybase.org",
     logoUrl: null,
     githubUrl: "https://github.com/tinyplex/tinybase",
-    category: "Database",
+    categoryName: "Database",
     tags: ["Database", "Local-First", "Reactive", "Open Source"],
-    platforms: ["Web", "Desktop", "Mobile"],
-    pricing: "Open Source" as const,
-    tier: "free" as const,
-    status: "approved" as const,
+    platforms: ["Web", "macOS", "Windows", "Linux", "iOS", "Android"],
+    pricing: "Open Source",
+    tier: "free",
+    status: "approved",
     upvotesCount: 760,
     buildsCount: 22,
     commentsCount: 14,
@@ -253,12 +299,12 @@ const SEED_TOOLS = [
     websiteUrl: "https://resend.com",
     logoUrl: null,
     githubUrl: "https://github.com/resend/react-email",
-    category: "Email",
+    categoryName: "Email",
     tags: ["Email", "API", "React", "Developer Tools"],
     platforms: ["Web", "API"],
-    pricing: "Freemium" as const,
-    tier: "free" as const,
-    status: "approved" as const,
+    pricing: "Freemium",
+    tier: "free",
+    status: "approved",
     upvotesCount: 1650,
     buildsCount: 29,
     commentsCount: 22,
@@ -285,12 +331,12 @@ const SEED_TOOLS = [
     websiteUrl: "https://supernova.io",
     logoUrl: null,
     githubUrl: null,
-    category: "Design",
+    categoryName: "Design",
     tags: ["Design Tools", "SaaS", "Design System"],
-    platforms: ["Web", "Figma", "CLI"],
-    pricing: "Freemium" as const,
-    tier: "free" as const,
-    status: "approved" as const,
+    platforms: ["Web", "Plugin", "CLI"],
+    pricing: "Freemium",
+    tier: "free",
+    status: "approved",
     upvotesCount: 389,
     buildsCount: 112,
     commentsCount: 38,
@@ -320,13 +366,13 @@ const SEED_PRODUCTS: {
   websiteUrl: string
   logoUrl: null
   githubUrl: string | null
-  category: string
+  categoryName: string
   tags: string[]
-  platforms: string[]
+  platforms: SeedPlatform[]
   pricing: "Free" | "Freemium" | "Paid" | "Open Source"
   tier: "free" | "premium" | "premium+"
   status: "approved" | "pending" | "rejected"
-  builtWithTools: BuiltWithTool[]
+  builtWith: { name: string; toolSlug?: string }[]
   likesCount: number
   commentsCount: number
   viewsCount: number
@@ -335,7 +381,6 @@ const SEED_PRODUCTS: {
   asoCategory?: string
   aiContext?: string
 }[] = [
-  // --- From old products table (developer-built apps) ---
   {
     name: "MeetWave",
     slug: "meetwave",
@@ -351,13 +396,13 @@ const SEED_PRODUCTS: {
     websiteUrl: "https://meetwave.dev",
     logoUrl: null,
     githubUrl: "https://github.com/meetwave/meetwave",
-    category: "AI",
+    categoryName: "AI",
     tags: ["AI", "Productivity", "Desktop"],
-    platforms: ["Windows", "Desktop"],
-    pricing: "Freemium" as const,
-    tier: "premium+" as const,
-    status: "approved" as const,
-    builtWithTools: [
+    platforms: ["Windows"],
+    pricing: "Freemium",
+    tier: "premium+",
+    status: "approved",
+    builtWith: [
       { name: "Vercel", toolSlug: "vercel" },
       { name: "Supabase", toolSlug: "supabase" },
     ],
@@ -386,13 +431,13 @@ const SEED_PRODUCTS: {
     websiteUrl: "https://dreamstate.ai",
     logoUrl: null,
     githubUrl: null,
-    category: "Marketing",
+    categoryName: "Marketing",
     tags: ["Marketing", "AI", "Productivity"],
     platforms: ["Web", "API"],
-    pricing: "Paid" as const,
-    tier: "premium" as const,
-    status: "approved" as const,
-    builtWithTools: [
+    pricing: "Paid",
+    tier: "premium",
+    status: "approved",
+    builtWith: [
       { name: "PostHog", toolSlug: "posthog" },
       { name: "Resend", toolSlug: "resend" },
       { name: "Vercel", toolSlug: "vercel" },
@@ -422,13 +467,13 @@ const SEED_PRODUCTS: {
     websiteUrl: "https://distro.dev",
     logoUrl: null,
     githubUrl: null,
-    category: "Marketing",
+    categoryName: "Marketing",
     tags: ["Marketing", "SaaS", "SEO Tools"],
     platforms: ["Web", "API"],
-    pricing: "Freemium" as const,
-    tier: "free" as const,
-    status: "approved" as const,
-    builtWithTools: [
+    pricing: "Freemium",
+    tier: "free",
+    status: "approved",
+    builtWith: [
       { name: "Supabase", toolSlug: "supabase" },
       { name: "PostHog", toolSlug: "posthog" },
       { name: "Vercel", toolSlug: "vercel" },
@@ -443,8 +488,6 @@ const SEED_PRODUCTS: {
     aiContext:
       "Distro is an AI distribution platform designed for developer marketing and pipeline growth.",
   },
-
-  // --- From old builds table (promoted to full product entries) ---
   {
     name: "Nexus Workspace",
     slug: "nexus-workspace",
@@ -460,13 +503,13 @@ const SEED_PRODUCTS: {
     websiteUrl: "https://nexusworkspace.dev",
     logoUrl: null,
     githubUrl: null,
-    category: "Productivity",
+    categoryName: "Productivity",
     tags: ["AI", "Productivity", "Collaboration"],
-    platforms: ["Web", "Desktop"],
-    pricing: "Freemium" as const,
-    tier: "premium+" as const,
-    status: "approved" as const,
-    builtWithTools: [
+    platforms: ["Web", "macOS", "Windows", "Linux"],
+    pricing: "Freemium",
+    tier: "premium+",
+    status: "approved",
+    builtWith: [
       { name: "Supabase", toolSlug: "supabase" },
       { name: "Vercel", toolSlug: "vercel" },
       { name: "Dodo Payments", toolSlug: "dodo-payments" },
@@ -497,13 +540,13 @@ const SEED_PRODUCTS: {
     websiteUrl: "https://invoiceai.dev",
     logoUrl: null,
     githubUrl: null,
-    category: "Finance",
+    categoryName: "Finance",
     tags: ["Payments", "AI", "SaaS"],
     platforms: ["Web", "API"],
-    pricing: "Freemium" as const,
-    tier: "premium" as const,
-    status: "approved" as const,
-    builtWithTools: [
+    pricing: "Freemium",
+    tier: "premium",
+    status: "approved",
+    builtWith: [
       { name: "Stripe", toolSlug: "stripe" },
       { name: "PostHog", toolSlug: "posthog" },
       { name: "Resend", toolSlug: "resend" },
@@ -532,13 +575,13 @@ const SEED_PRODUCTS: {
     websiteUrl: "https://shipfa.st",
     logoUrl: null,
     githubUrl: null,
-    category: "Developer Tools",
+    categoryName: "Developer Tools",
     tags: ["Next.js", "SaaS", "Boilerplate"],
     platforms: ["Web", "CLI"],
-    pricing: "Paid" as const,
-    tier: "premium+" as const,
-    status: "approved" as const,
-    builtWithTools: [
+    pricing: "Paid",
+    tier: "premium+",
+    status: "approved",
+    builtWith: [
       { name: "Supabase", toolSlug: "supabase" },
       { name: "BetterAuth", toolSlug: "better-auth" },
       { name: "Stripe", toolSlug: "stripe" },
@@ -569,13 +612,13 @@ const SEED_PRODUCTS: {
     websiteUrl: "https://noteflow.app",
     logoUrl: null,
     githubUrl: null,
-    category: "Productivity",
+    categoryName: "Productivity",
     tags: ["Productivity", "Local-First", "Open Source"],
-    platforms: ["Web", "Desktop", "Mobile"],
-    pricing: "Open Source" as const,
-    tier: "free" as const,
-    status: "approved" as const,
-    builtWithTools: [
+    platforms: ["Web", "macOS", "Windows", "Linux", "iOS", "Android"],
+    pricing: "Open Source",
+    tier: "free",
+    status: "approved",
+    builtWith: [
       { name: "TinyBase", toolSlug: "tinybase" },
       { name: "Vercel", toolSlug: "vercel" },
     ],
@@ -619,56 +662,136 @@ export const seedDatabase = async () => {
 
   console.log(`Using user ${authorUserId} for all seed entries.`)
 
-  // 2. Seed Tools
-  for (const toolData of SEED_TOOLS) {
+  // 2. Seed Categories
+  const allCategoryNames = [
+    ...new Set([
+      ...SEED_TOOLS.map((t) => t.categoryName),
+      ...SEED_PRODUCTS.map((p) => p.categoryName),
+    ]),
+  ]
+
+  const categoryMap = new Map<string, string>()
+
+  for (const name of allCategoryNames) {
+    const slug = slugify(name)
     const existing = await db
-      .select({ id: tools.id })
-      .from(tools)
-      .where(eq(tools.slug, toolData.slug))
+      .select({ id: categories.id })
+      .from(categories)
+      .where(eq(categories.name, name))
       .limit(1)
 
     if (existing.length > 0) {
-      console.log(`Tool "${toolData.name}" already exists — updating...`)
-      await db
-        .update(tools)
-        .set({ ...toolData, submitterId: authorUserId, updatedAt: new Date() })
-        .where(eq(tools.id, existing[0].id))
+      categoryMap.set(name, existing[0].id)
+      console.log(`Category "${name}" already exists.`)
     } else {
-      console.log(`Inserting tool "${toolData.name}"...`)
-      await db.insert(tools).values({ ...toolData, submitterId: authorUserId })
+      const [inserted] = await db
+        .insert(categories)
+        .values({ name, slug })
+        .returning()
+      categoryMap.set(name, inserted.id)
+      console.log(`Inserted category "${name}" (${slug}).`)
     }
   }
 
-  // 3. Seed Products
-  for (const productData of SEED_PRODUCTS) {
+  // 3. Seed Tools
+  for (const toolData of SEED_TOOLS) {
+    const { categoryName, ...rest } = toolData
+    const categoryId = categoryMap.get(categoryName) ?? null
+
     const existing = await db
-      .select({ id: products.id })
-      .from(products)
-      .where(eq(products.slug, productData.slug))
+      .select({ id: tools.id })
+      .from(tools)
+      .where(eq(tools.slug, rest.slug))
       .limit(1)
 
     if (existing.length > 0) {
-      console.log(`Product "${productData.name}" already exists — updating...`)
+      console.log(`Tool "${rest.name}" already exists — updating...`)
       await db
-        .update(products)
+        .update(tools)
         .set({
-          ...productData,
+          ...rest,
+          categoryId,
           submitterId: authorUserId,
           updatedAt: new Date(),
         })
-        .where(eq(products.id, existing[0].id))
+        .where(eq(tools.id, existing[0].id))
     } else {
-      console.log(`Inserting product "${productData.name}"...`)
+      console.log(`Inserting tool "${rest.name}"...`)
       await db
+        .insert(tools)
+        .values({ ...rest, categoryId, submitterId: authorUserId })
+    }
+  }
+
+  // 4. Seed Products + Product-Tool links
+  for (const productData of SEED_PRODUCTS) {
+    const { categoryName, builtWith, ...rest } = productData
+    const categoryId = categoryMap.get(categoryName) ?? null
+
+    const existing = await db
+      .select({ id: products.id })
+      .from(products)
+      .where(eq(products.slug, rest.slug))
+      .limit(1)
+
+    let productId: string
+
+    if (existing.length > 0) {
+      productId = existing[0].id
+      console.log(`Product "${rest.name}" already exists — updating...`)
+      await db
+        .update(products)
+        .set({
+          ...rest,
+          categoryId,
+          submitterId: authorUserId,
+          updatedAt: new Date(),
+        })
+        .where(eq(products.id, productId))
+
+      await db
+        .delete(productTools)
+        .where(eq(productTools.productId, productId))
+    } else {
+      console.log(`Inserting product "${rest.name}"...`)
+      const [inserted] = await db
         .insert(products)
-        .values({ ...productData, submitterId: authorUserId })
+        .values({ ...rest, categoryId, submitterId: authorUserId })
+        .returning()
+      productId = inserted.id
+    }
+
+    for (const bw of builtWith) {
+      let toolId: string | null = null
+
+      if (bw.toolSlug) {
+        const [found] = await db
+          .select({ id: tools.id })
+          .from(tools)
+          .where(eq(tools.slug, bw.toolSlug))
+          .limit(1)
+        toolId = found?.id ?? null
+      }
+
+      await db
+        .insert(productTools)
+        .values({ productId, toolId, name: bw.name })
+        .onConflictDoNothing()
+
+      console.log(
+        `  → Linked "${bw.name}" ${toolId ? "(with tool reference)" : "(name only)"}`
+      )
     }
   }
 
   console.log("✅ Database seeding completed successfully!")
 }
 
-if (process.argv[1]?.endsWith("seed.ts")) {
+const isDirectRun = process.argv.slice(1).some((arg) =>
+  arg.replace(/\\/g, "/").includes("db/seed")
+)
+
+if (isDirectRun) {
   seedDatabase()
     .then(() => process.exit(0))
     .catch((err) => {

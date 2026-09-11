@@ -45,7 +45,6 @@ Every markdown twin returns:
 - \`/products\` — Developer products & software directory
 - \`/products/{slug}\` — Product detail (about, problem, solution, unique value, tech stack)
 - \`/trending\` — Community-ranked trending tools and products
-- \`/discover\` — Programmatic category & taxonomy explorer
 - \`/showcase\` — Developer project showcases & complete software stacks
 - \`/pricing\` — Platform plans and promotional listing boosts
 - \`/submit\` — Developer tool & product submission portal

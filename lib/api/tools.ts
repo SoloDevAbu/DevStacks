@@ -4,6 +4,7 @@ export type ToolListParams = {
   q?: string
   category?: string
   tag?: string
+  platform?: string
   pricing?: string
   tier?: string
   page?: number

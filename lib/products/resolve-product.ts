@@ -19,8 +19,8 @@ export interface FullProduct extends DbProduct {
   geoTarget?: string | null
   asoCategory?: string | null
   platforms: string[]
-  createdAt?: Date | null
-  updatedAt?: Date | null
+  createdAt?: Date
+  updatedAt?: Date
 }
 
 export const resolveProduct = async (
@@ -35,7 +35,7 @@ export const resolveProduct = async (
         tier: dbProduct.tier as FullProduct["tier"],
         platforms: dbProduct.platforms ?? [],
         tags: dbProduct.tags ?? [],
-      }
+      } as FullProduct
     }
   } catch {
     return null

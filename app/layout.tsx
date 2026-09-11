@@ -3,6 +3,8 @@ import type { Metadata } from "next"
 import { HeaderLogo } from "@/components/layout/header-logo"
 import { HeaderNav } from "@/components/layout/header-nav"
 import { HeaderActions } from "@/components/layout/header-actions"
+import { HeaderAdvertise } from "@/components/layout/header-advertise"
+import { MobileNav } from "@/components/layout/mobile-nav"
 import { LeftSidebar } from "@/components/shared/left-sidebar"
 import { RightSidebar } from "@/components/layout/right-sidebar"
 import { AgentFooter } from "@/components/layout/agent-footer"
@@ -124,27 +126,29 @@ const RootLayout = ({
 
               {/* Top Center */}
               <div className="flex w-full items-center justify-between gap-4 px-4 lg:px-6">
-                <div className="shrink-0 lg:hidden">
+                <div className="flex items-center gap-2 lg:hidden">
+                  <MobileNav />
                   <HeaderLogo />
                 </div>
-                <div className="hidden w-full justify-center md:flex">
+                <div className="hidden w-full items-center justify-between gap-4 md:flex">
                   <HeaderNav />
+                  <HeaderActions />
                 </div>
-                <div className="shrink-0 xl:hidden">
+                <div className="shrink-0 md:hidden">
                   <HeaderActions />
                 </div>
               </div>
 
               {/* Top Right */}
               <div className="hidden items-center justify-end border-l border-dashed border-border px-6 xl:flex">
-                <HeaderActions />
+                <HeaderAdvertise />
               </div>
             </header>
 
             {/* --- BOTTOM ROW (Content) --- */}
             <div className="grid flex-1 grid-cols-1 lg:grid-cols-[320px_1fr] xl:grid-cols-[320px_1fr_380px]">
               {/* Bottom Left (Sidebar) */}
-              <aside className="sticky top-16 hidden h-[calc(100vh-64px)] flex-col overflow-y-auto border-r border-dashed border-border bg-white lg:flex">
+              <aside className="sticky top-16 hidden h-[calc(100vh-64px)] flex-col overflow-y-auto scrollbar-thin border-r border-dashed border-border bg-white lg:flex">
                 <LeftSidebar />
               </aside>
 
@@ -155,7 +159,7 @@ const RootLayout = ({
               </main>
 
               {/* Bottom Right (Sidebar) */}
-              <aside className="sticky top-16 hidden h-[calc(100vh-64px)] flex-col overflow-y-auto border-l border-dashed border-border bg-white xl:flex">
+              <aside className="sticky top-16 hidden h-[calc(100vh-64px)] flex-col overflow-y-auto scrollbar-thin border-l border-dashed border-border bg-white xl:flex">
                 <RightSidebar />
               </aside>
             </div>

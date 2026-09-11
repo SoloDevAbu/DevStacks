@@ -263,9 +263,16 @@ export const GET = () => {
             slug: { type: "string" },
             tagline: { type: "string" },
             description: { type: "string" },
-            websiteUrl: { type: "string" },
-            builtWithTools: { type: "array", items: { type: "string" } },
-            likesCount: { type: "integer" },
+            builtWithTools: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  name: { type: "string" },
+                  toolSlug: { type: "string" },
+                },
+              },
+            },
             pricing: { type: "string" },
           },
         },

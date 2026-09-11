@@ -66,7 +66,7 @@ export const HeaderActions = () => {
     return (
       <div className="flex items-center gap-3">
         <Button
-          className="rounded-none text-xs font-semibold"
+          className="rounded-lg bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white shadow-xs transition-all hover:bg-slate-800 active:scale-[0.98]"
           nativeButton={false}
           render={<Link href={ROUTES.SUBMIT} />}
         >
@@ -76,17 +76,20 @@ export const HeaderActions = () => {
 
         <DropdownMenu>
           <DropdownMenuTrigger
-            className="flex cursor-pointer items-center gap-2 rounded-full focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none"
+            className="group relative flex cursor-pointer items-center gap-2 rounded-full focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none"
             aria-label="User account menu"
           >
-            <Avatar className="size-8 cursor-pointer border border-border">
-              {user.image && (
-                <AvatarImage src={user.image} alt={user.name || "User"} />
-              )}
-              <AvatarFallback className="bg-slate-900 text-xs font-medium text-white">
-                {getInitials(user.name, user.email)}
-              </AvatarFallback>
-            </Avatar>
+            <div className="relative">
+              <Avatar className="size-8 cursor-pointer border border-border shadow-2xs transition-transform group-hover:scale-105">
+                {user.image && (
+                  <AvatarImage src={user.image} alt={user.name || "User"} />
+                )}
+                <AvatarFallback className="bg-slate-900 text-xs font-medium text-white">
+                  {getInitials(user.name, user.email)}
+                </AvatarFallback>
+              </Avatar>
+              <span className="absolute -right-0.5 -bottom-0.5 size-2.5 rounded-full bg-emerald-500 ring-2 ring-white" />
+            </div>
           </DropdownMenuTrigger>
 
           <DropdownMenuContent align="end" className="w-56 p-1">
@@ -138,19 +141,20 @@ export const HeaderActions = () => {
   }
 
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex items-center gap-2.5">
       <Button
-        className="rounded-none text-xs font-semibold"
+        className="rounded-lg bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white shadow-xs transition-all hover:bg-slate-800 active:scale-[0.98]"
         onClick={handleListProductClick}
       >
+        <PlusCircle className="mr-1.5 size-3.5" />
         List a Product
       </Button>
       <Button
         variant="outline"
-        className="cursor-pointer rounded-md border-dashed border-slate-300 text-xs font-medium hover:bg-slate-50"
+        className="cursor-pointer rounded-lg border border-slate-200/80 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 shadow-2xs transition-colors hover:bg-slate-50 hover:text-slate-950"
         onClick={() => openAuthModal({ defaultTab: "signin" })}
       >
-        <UserIcon className="mr-1 size-3.5" />
+        <UserIcon className="mr-1 size-3.5 text-slate-400" />
         Sign In
       </Button>
     </div>

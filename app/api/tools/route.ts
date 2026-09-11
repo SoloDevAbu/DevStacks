@@ -5,11 +5,23 @@ import { createTool } from "@/db/queries/tools/create"
 import { submitToolSchema } from "@/lib/validation/tool"
 import { z } from "zod"
 
+const PRICING_OPTIONS = ["Free", "Freemium", "Paid", "Open Source"] as const
+
 const listQuerySchema = z.object({
   q: z.string().optional(),
   category: z.string().optional(),
   tag: z.string().optional(),
-  pricing: z.enum(["Free", "Freemium", "Paid", "Open Source"]).optional(),
+  platform: z.string().optional(),
+  pricing: z
+    .string()
+    .optional()
+    .transform((val) => {
+      if (!val || val.toLowerCase() === "all") return undefined
+      const match = PRICING_OPTIONS.find(
+        (p) => p.toLowerCase() === val.toLowerCase()
+      )
+      return match
+    }),
   tier: z.enum(["free", "premium", "premium+"]).optional(),
   page: z.coerce.number().int().min(1).default(1),
   limit: z.coerce.number().int().min(1).max(50).default(20),
@@ -63,7 +75,7 @@ export const POST = async (req: NextRequest) => {
       ...parsed.data,
       submitterId: session.user.id,
       tags: parsed.data.tags ?? [],
-      platforms: parsed.data.platforms ?? [],
+      platforms: (parsed.data.platforms ?? []) as any,
     })
 
     return NextResponse.json({ data: tool }, { status: 201 })

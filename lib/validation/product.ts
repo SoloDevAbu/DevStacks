@@ -49,6 +49,18 @@ export const submitProductSchema = z.object({
     .default([]),
   platforms: z.array(z.string()).default([]),
   pricing: z.enum(["Free", "Freemium", "Paid", "Open Source"]).default("Free"),
+  builtWithTools: z
+    .array(
+      z.union([
+        z.string().min(1).max(100),
+        z.object({
+          name: z.string().min(1).max(100),
+          toolSlug: z.string().optional(),
+          toolId: z.string().uuid().optional(),
+        }),
+      ])
+    )
+    .optional(),
 })
 
 export type SubmitProductInput = z.input<typeof submitProductSchema>

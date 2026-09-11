@@ -27,3 +27,17 @@ export const getLinkRel = (tier?: string | Tier | null): string => {
   }
   return "noopener noreferrer nofollow"
 }
+
+export const getFaviconUrl = (websiteUrl?: string | null): string | null => {
+  if (!websiteUrl) return null
+  try {
+    const raw = websiteUrl.startsWith("http") ? websiteUrl : `https://${websiteUrl}`
+    const parsed = new URL(raw)
+    const hostname = parsed.hostname.replace(/^www\./, "")
+    if (!hostname) return null
+    return `https://www.google.com/s2/favicons?domain=${hostname}&sz=128`
+  } catch {
+    return null
+  }
+}
+

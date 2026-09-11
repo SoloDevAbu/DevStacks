@@ -38,7 +38,6 @@ export const GET = async () => {
 - [Tools](${SITE_CONFIG.url}/tools): Complete developer tools and APIs directory, filterable by category and pricing model.
 - [Products](${SITE_CONFIG.url}/products): Live developer software directory with declared tech stacks.
 - [Trending](${SITE_CONFIG.url}/trending): Community-upvoted leaderboard with algorithmic freshness and momentum ranking.
-- [Discover](${SITE_CONFIG.url}/discover): Explore software by taxonomy categories (AI, Databases, DevTools, Auth, Hosting).
 - [Showcase](${SITE_CONFIG.url}/showcase): Real-world developer projects showcasing complete production stacks.
 - [Pricing](${SITE_CONFIG.url}/pricing): Platform plans and promotional listing boost options for tool creators.
 - [Submit](${SITE_CONFIG.url}/submit): Interactive portal to submit a new developer tool or product.
@@ -53,7 +52,6 @@ export const GET = async () => {
 - [/products](${SITE_CONFIG.url}/products): Developer products directory
 - [/products/{slug}](${SITE_CONFIG.url}/products/<param>): Single product detail (problem, solution, unique value, tech stack)
 - [/trending](${SITE_CONFIG.url}/trending): Trending rankings leaderboard
-- [/discover](${SITE_CONFIG.url}/discover): Category-based exploration
 - [/showcase](${SITE_CONFIG.url}/showcase): Developer showcases
 - [/pricing](${SITE_CONFIG.url}/pricing): Platform plans
 - [/mcp](${SITE_CONFIG.url}/mcp): MCP server documentation

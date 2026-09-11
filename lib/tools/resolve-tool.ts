@@ -1,6 +1,6 @@
 import { db } from "@/db"
-import { products } from "@/db/schema"
-import { eq } from "drizzle-orm"
+import { products, productTools, tools, categories } from "@/db/schema"
+import { and, eq, ilike, or } from "drizzle-orm"
 import { getToolBySlug } from "@/db/queries/tools/get"
 import type { DbTool, DbProduct } from "@/types/entities"
 
@@ -21,8 +21,8 @@ export interface FullTool extends DbTool {
   geoTarget?: string | null
   asoCategory?: string | null
   platforms: string[]
-  createdAt?: Date | null
-  updatedAt?: Date | null
+  createdAt?: Date
+  updatedAt?: Date
 }
 
 export const resolveTool = async (slug: string): Promise<FullTool | null> => {
@@ -35,7 +35,7 @@ export const resolveTool = async (slug: string): Promise<FullTool | null> => {
         tier: dbTool.tier as FullTool["tier"],
         platforms: dbTool.platforms ?? [],
         tags: dbTool.tags ?? [],
-      }
+      } as FullTool
     }
   } catch {
     return null
@@ -50,25 +50,45 @@ export const getProductsBuiltWithTool = async (
   limit = 10
 ): Promise<DbProduct[]> => {
   try {
-    const allProducts = await db
-      .select()
-      .from(products)
-      .where(eq(products.status, "approved"))
-      .limit(100)
+    const conditions = [eq(products.status, "approved")]
 
-    const normalizedSlug = toolSlug.toLowerCase()
-    const normalizedName = toolName?.toLowerCase()
-
-    const matching = allProducts.filter((p) => {
-      const toolsList = p.builtWithTools ?? []
-      return toolsList.some(
-        (t) =>
-          (t.toolSlug && t.toolSlug.toLowerCase() === normalizedSlug) ||
-          (normalizedName && t.name.toLowerCase() === normalizedName)
+    if (toolName && toolName.trim()) {
+      conditions.push(
+        or(eq(tools.slug, toolSlug), ilike(productTools.name, toolName.trim()))!
       )
-    })
+    } else {
+      conditions.push(eq(tools.slug, toolSlug))
+    }
 
-    return matching.slice(0, limit) as unknown as DbProduct[]
+    const rows = await db
+      .select({
+        id: products.id,
+        slug: products.slug,
+        name: products.name,
+        tagline: products.tagline,
+        tags: products.tags,
+        platforms: products.platforms,
+        likesCount: products.likesCount,
+        commentsCount: products.commentsCount,
+        viewsCount: products.viewsCount,
+        pricing: products.pricing,
+        tier: products.tier,
+        logoUrl: products.logoUrl,
+        websiteUrl: products.websiteUrl,
+        categoryId: products.categoryId,
+        category: categories.name,
+        categorySlug: categories.slug,
+        createdAt: products.createdAt,
+        updatedAt: products.updatedAt,
+      })
+      .from(products)
+      .innerJoin(productTools, eq(products.id, productTools.productId))
+      .leftJoin(tools, eq(productTools.toolId, tools.id))
+      .leftJoin(categories, eq(products.categoryId, categories.id))
+      .where(and(...conditions))
+      .limit(limit)
+
+    return rows as unknown as DbProduct[]
   } catch {
     return []
   }

@@ -1,8 +1,21 @@
 import type { MetadataRoute } from "next"
 import { getProducts } from "@/db/queries/products/list"
 import { getTools } from "@/db/queries/tools/list"
+import {
+  getProductCategories,
+  getToolCategories,
+} from "@/db/queries/categories/list"
 import { SITE_CONFIG } from "@/constants/site"
 import { ROUTES } from "@/constants/routes"
+
+const FALLBACK_CATEGORIES = [
+  "AI",
+  "Database",
+  "Auth",
+  "Payments",
+  "Infra",
+  "APIs",
+]
 
 const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
   const siteUrl = SITE_CONFIG.url
@@ -31,12 +44,6 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
       lastModified: new Date(),
       changeFrequency: "hourly",
       priority: 0.9,
-    },
-    {
-      url: `${siteUrl}${ROUTES.DISCOVER}`,
-      lastModified: new Date(),
-      changeFrequency: "daily",
-      priority: 0.85,
     },
     {
       url: `${siteUrl}${ROUTES.DISCOVER_NEW_RISING}`,
@@ -87,6 +94,24 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
       priority: 0.8,
     },
     {
+      url: `${siteUrl}${ROUTES.PRIVACY}`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.5,
+    },
+    {
+      url: `${siteUrl}${ROUTES.TERMS}`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.5,
+    },
+    {
+      url: `${siteUrl}${ROUTES.REFUND}`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.5,
+    },
+    {
       url: `${siteUrl}/llms.txt`,
       lastModified: new Date(),
       changeFrequency: "daily",
@@ -100,22 +125,14 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
     },
   ]
 
-  const featuredCategories = [
-    "AI",
-    "Database",
-    "Auth",
-    "Payments",
-    "Infra",
-    "APIs",
-  ]
-  const categoryRoutes: MetadataRoute.Sitemap = [
-    ...featuredCategories.map((cat) => ({
+  const fallbackCategoryRoutes: MetadataRoute.Sitemap = [
+    ...FALLBACK_CATEGORIES.map((cat) => ({
       url: `${siteUrl}${ROUTES.PRODUCTS}?category=${encodeURIComponent(cat)}`,
       lastModified: new Date(),
       changeFrequency: "daily" as const,
       priority: 0.8,
     })),
-    ...featuredCategories.map((cat) => ({
+    ...FALLBACK_CATEGORIES.map((cat) => ({
       url: `${siteUrl}${ROUTES.TOOLS}?category=${encodeURIComponent(cat)}`,
       lastModified: new Date(),
       changeFrequency: "daily" as const,
@@ -124,10 +141,38 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
   ]
 
   try {
-    const [dbProducts, dbTools] = await Promise.all([
-      getProducts({ limit: 5000 }),
-      getTools({ limit: 5000 }),
-    ])
+    const [dbProducts, dbTools, toolCategories, productCategories] =
+      await Promise.all([
+        getProducts({ limit: 5000 }),
+        getTools({ limit: 5000 }),
+        getToolCategories().catch(() => []),
+        getProductCategories().catch(() => []),
+      ])
+
+    const toolCats =
+      toolCategories && toolCategories.length > 0
+        ? toolCategories.map((c) => c.name)
+        : FALLBACK_CATEGORIES
+
+    const prodCats =
+      productCategories && productCategories.length > 0
+        ? productCategories.map((c) => c.name)
+        : FALLBACK_CATEGORIES
+
+    const categoryRoutes: MetadataRoute.Sitemap = [
+      ...prodCats.map((cat) => ({
+        url: `${siteUrl}${ROUTES.PRODUCTS}?category=${encodeURIComponent(cat)}`,
+        lastModified: new Date(),
+        changeFrequency: "daily" as const,
+        priority: 0.8,
+      })),
+      ...toolCats.map((cat) => ({
+        url: `${siteUrl}${ROUTES.TOOLS}?category=${encodeURIComponent(cat)}`,
+        lastModified: new Date(),
+        changeFrequency: "daily" as const,
+        priority: 0.8,
+      })),
+    ]
 
     const dynamicRoutes: MetadataRoute.Sitemap = []
 
@@ -158,7 +203,7 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
     // Return static routes if DB is temporarily unreachable
   }
 
-  return [...staticRoutes, ...categoryRoutes]
+  return [...staticRoutes, ...fallbackCategoryRoutes]
 }
 
 export default sitemap

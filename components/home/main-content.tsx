@@ -1,3 +1,4 @@
+import { Layers, Sparkles } from "lucide-react"
 import { PageHeader } from "@/components/shared/page-header"
 import { NewAndRisingSection } from "@/components/home/new-and-rising-section"
 import { RisingToolsSection } from "@/components/home/rising-tools-section"
@@ -6,6 +7,7 @@ import { RecentlyAddedSection } from "@/components/home/recently-added-section"
 import { PopularBuildingBlocksSection } from "@/components/home/popular-building-blocks-section"
 import { FaqSection } from "@/components/home/faq-section"
 import { AI_PROMPTS } from "@/lib/prompts"
+import { heroStatPill } from "@/utils/styles"
 import type { FeedItem } from "@/components/shared/feed-card"
 import type { DbTool, DbProduct } from "@/types/entities"
 
@@ -30,6 +32,18 @@ export const MainContent = ({
         heading="Discover what you can build with"
         description="Discover developer tools, APIs, and infrastructure, and the products people are already building with them"
         aiPrompt={AI_PROMPTS.home}
+        variant="home"
+        metrics={
+          <>
+            <div className={heroStatPill}>
+              <Layers className="size-3.5 text-sky-600" />
+              <span className="font-bold text-slate-900">
+                Developer Ecosystem
+              </span>
+              <span className="text-slate-500">APIs & Infrastructure</span>
+            </div>
+          </>
+        }
       />
 
       <div className="flex w-full flex-1 flex-col">
