@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import Image from "next/image"
 import { cn } from "@/lib/utils"
 
 export const ProductLogo = ({
@@ -31,13 +32,13 @@ export const ProductLogo = ({
           className
         )}
       >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
+        <Image
           src={imageUrl}
           alt={alt ?? text}
-          className="size-full max-h-full max-w-full object-contain p-2 transition-transform duration-200 group-hover:scale-105"
+          fill
+          unoptimized
+          className="object-contain p-2 transition-transform duration-200 group-hover:scale-105"
           onError={() => setImageFailed(true)}
-          loading="lazy"
         />
       </div>
     )

@@ -196,14 +196,14 @@ export const ToolCard = ({
                 target="_blank"
                 rel={linkRel}
                 onClick={(e) => e.stopPropagation()}
-                className="inline-flex items-center gap-1 transition-colors hover:text-indigo-600"
+                className="inline-flex items-center gap-1.5 transition-colors hover:text-indigo-600"
                 title={`Visit ${tool.name}`}
               >
-                {tool.name}
-                <ExternalLink className="size-3 text-slate-400 opacity-0 transition-opacity group-hover:opacity-100" />
+                <span className="truncate">{tool.name}</span>
+                <VerifiedBadge tier={tier} />
+                <ExternalLink className="size-3 shrink-0 text-slate-400 opacity-0 transition-opacity group-hover:opacity-100" />
               </a>
             </h3>
-            <VerifiedBadge tier={tier} />
             {showTrendingBadge && isTrending && (
               <Badge
                 variant="outline"
