@@ -2,7 +2,17 @@ import type { Metadata } from "next"
 import { notFound, redirect } from "next/navigation"
 import Link from "next/link"
 import Image from "next/image"
-import { ChevronRight, ArrowLeft, Layers, ShieldCheck, Cpu } from "lucide-react"
+import {
+  ChevronRight,
+  ArrowLeft,
+  Layers,
+  Cpu,
+  Sparkles,
+  Target,
+  Zap,
+  PlusCircle,
+  Wrench,
+} from "lucide-react"
 import { resolveProduct } from "@/lib/products/resolve-product"
 import { resolveTool } from "@/lib/tools/resolve-tool"
 import { SITE_CONFIG } from "@/constants/site"
@@ -14,10 +24,19 @@ import { productSchema, breadcrumbSchema, faqSchema } from "@/lib/seo/schema"
 import { ProductLogo } from "@/components/shared/product-logo"
 import { VerifiedBadge } from "@/components/shared/verified-badge"
 import { Badge } from "@/components/ui/badge"
-import { Card, CardContent } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
 import { ProductActionButtons } from "@/components/products/product-action-buttons"
 import { HoverOutline } from "@/components/shared/hover-outline"
-import { pricingBadgeColor } from "@/utils/styles"
+import { cn } from "@/lib/utils"
+import {
+  pricingBadgeColor,
+  sectionWrapper,
+  sectionHeadingTitle,
+  sectionHeadingSubtitle,
+  toolSpecsContainer,
+  toolDeepDiveContainer,
+  footerAiButton,
+} from "@/utils/styles"
 import type { Tier, Pricing } from "@/constants/plans"
 
 interface ProductPageProps {
@@ -182,7 +201,7 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
 
-      <article className="relative flex min-h-full flex-col bg-slate-50/50 pb-20">
+      <article className="relative flex min-h-full flex-col bg-white">
         {/* Top Breadcrumbs */}
         <nav
           aria-label="Breadcrumb"
@@ -256,30 +275,35 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
             />
           </div>
 
-          {/* Ask AI About This Tool (AEO / LLMO Integration) */}
-          <div className="flex flex-col gap-2 rounded-xl border border-slate-200 bg-slate-50/70 p-4">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold tracking-wider text-slate-500 uppercase">
-                Ask AI Assistant about {product.name}
+          {/* Ask AI Sub-tray with dashed divider */}
+          <div className="-mx-6 -mb-8 mt-2 flex flex-col gap-3 border-t border-dashed border-border bg-slate-50/50 px-6 py-4 sm:flex-row sm:items-center sm:justify-between md:-mx-8 md:px-8">
+            <div className="flex items-center gap-2 shrink-0">
+              <Sparkles className="size-3.5 text-blue-600" />
+              <span className="font-mono text-xs font-bold tracking-wider text-slate-700 uppercase">
+                ASK AI ABOUT {product.name.toUpperCase()}
               </span>
             </div>
-            <div className="flex flex-wrap items-center gap-3">
+
+            <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">
               {AI_PROVIDERS.map((ai) => (
                 <div key={ai.id} className="group/btn relative inline-flex">
                   <a
                     href={`${ai.url}${encodeURIComponent(aiPrompt)}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="relative z-10 flex items-center gap-1.5 rounded-md border border-slate-200 bg-white px-2.5 py-1 text-xs font-medium text-slate-700 shadow-sm transition-colors hover:bg-slate-50"
+                    className={footerAiButton}
+                    title={`Ask ${ai.name} about ${product.name}`}
                   >
                     <Image
                       src={ai.icon}
                       alt={ai.name}
-                      width={12}
-                      height={12}
+                      width={14}
+                      height={14}
                       className="object-contain mix-blend-multiply"
                     />
-                    <span>{ai.name}</span>
+                    <span className="text-xs font-medium text-slate-700 transition-colors group-hover/btn:text-slate-950">
+                      {ai.name}
+                    </span>
                   </a>
                   <HoverOutline />
                 </div>
@@ -288,216 +312,278 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
           </div>
         </header>
 
-        {/* Content Body */}
-        <div className="grid grid-cols-1 gap-8 p-6 md:p-8 lg:grid-cols-[1fr_340px]">
-          {/* Main Column */}
-          <main className="flex flex-col gap-8">
-            {/* Overview / Description */}
-            <section className="flex flex-col gap-3">
-              <h2 className="text-lg font-bold text-slate-900">
-                About {product.name}
-              </h2>
-              <p className="text-sm leading-relaxed text-slate-600">
-                {product.description}
-              </p>
-            </section>
+        {/* Section 1: About */}
+        <section className={cn(sectionWrapper, "bg-white")}>
+          <div className="flex flex-col gap-3">
+            <h2 className={sectionHeadingTitle}>
+              About {product.name}
+            </h2>
+            <p className="max-w-4xl text-sm leading-relaxed text-slate-600">
+              {product.description}
+            </p>
+          </div>
+        </section>
 
-            {/* Deep Dive: Problem, Solution, Unique Value */}
-            {(product.problemStatement ||
-              product.solution ||
-              product.uniqueValue) && (
-              <section className="flex flex-col gap-6">
-                <h2 className="text-lg font-bold text-slate-900">
+        {/* Section 2: Product Specifications */}
+        <section className={cn(sectionWrapper, "bg-slate-50/40")}>
+          <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-1">
+              <h2 className={sectionHeadingTitle}>
+                Product Specifications
+              </h2>
+              <p className={sectionHeadingSubtitle}>
+                Key metrics, tier status, and compatibility for {product.name}
+              </p>
+            </div>
+
+            <div className={toolSpecsContainer}>
+              <div className="flex flex-col gap-1.5 p-4.5">
+                <span className="font-mono text-[10px] font-bold tracking-wider text-slate-400 uppercase">
+                  Pricing Model
+                </span>
+                <span className="text-xs font-bold text-slate-900">
+                  {product.pricing}
+                </span>
+              </div>
+
+              <div className="flex flex-col gap-1.5 p-4.5">
+                <span className="font-mono text-[10px] font-bold tracking-wider text-slate-400 uppercase">
+                  Tier Status
+                </span>
+                <span className="text-xs font-bold text-slate-900 capitalize">
+                  {product.tier}
+                </span>
+              </div>
+
+              <div className="flex flex-col gap-1.5 p-4.5">
+                <span className="font-mono text-[10px] font-bold tracking-wider text-slate-400 uppercase">
+                  Category
+                </span>
+                <span className="text-xs font-bold text-slate-900 truncate">
+                  {product.category ?? "Developer Tools"}
+                </span>
+              </div>
+
+              <div className="flex flex-col gap-1.5 p-4.5">
+                <span className="font-mono text-[10px] font-bold tracking-wider text-slate-400 uppercase">
+                  Total Likes
+                </span>
+                <span className="text-xs font-bold text-pink-600">
+                  {product.likesCount.toLocaleString()}
+                </span>
+              </div>
+
+              <div className="flex flex-col gap-1.5 p-4.5">
+                <span className="font-mono text-[10px] font-bold tracking-wider text-slate-400 uppercase">
+                  Platforms
+                </span>
+                <span className="text-xs font-bold text-slate-900 truncate" title={product.platforms?.join(", ")}>
+                  {product.platforms && product.platforms.length > 0
+                    ? product.platforms.join(", ")
+                    : "Web / Cloud"}
+                </span>
+              </div>
+
+              <div className="flex flex-col gap-1.5 p-4.5">
+                <span className="font-mono text-[10px] font-bold tracking-wider text-slate-400 uppercase">
+                  Tools Integrated
+                </span>
+                <span className="text-xs font-bold text-indigo-600">
+                  {(product.builtWithTools ?? []).length} tools
+                </span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Section 3: Product Deep Dive */}
+        {(product.problemStatement || product.solution || product.uniqueValue) && (
+          <section className={cn(sectionWrapper, "bg-white")}>
+            <div className="flex flex-col gap-6">
+              <div className="flex flex-col gap-1">
+                <h2 className={sectionHeadingTitle}>
                   Product Deep Dive
                 </h2>
-                <div className="grid grid-cols-1 gap-4">
-                  {product.problemStatement && (
-                    <Card className="rounded-none border-dashed bg-white">
-                      <CardContent className="flex flex-col gap-2 p-5">
-                        <h3 className="text-sm font-bold text-slate-900">
-                          The Problem It Solves
-                        </h3>
-                        <p className="text-xs leading-relaxed text-slate-600">
-                          {product.problemStatement}
-                        </p>
-                      </CardContent>
-                    </Card>
-                  )}
-
-                  {product.solution && (
-                    <Card className="rounded-none border-dashed bg-white">
-                      <CardContent className="flex flex-col gap-2 p-5">
-                        <h3 className="text-sm font-bold text-slate-900">
-                          The Solution
-                        </h3>
-                        <p className="text-xs leading-relaxed text-slate-600">
-                          {product.solution}
-                        </p>
-                      </CardContent>
-                    </Card>
-                  )}
-
-                  {product.uniqueValue && (
-                    <Card className="rounded-none border-dashed bg-white">
-                      <CardContent className="flex flex-col gap-2 p-5">
-                        <h3 className="text-sm font-bold text-slate-900">
-                          What Makes It Unique
-                        </h3>
-                        <p className="text-xs leading-relaxed text-slate-600">
-                          {product.uniqueValue}
-                        </p>
-                      </CardContent>
-                    </Card>
-                  )}
-                </div>
-              </section>
-            )}
-
-            {/* AI Summary / Citation Block (GEO / AEO) */}
-            {product.aiContext && (
-              <section className="flex flex-col gap-3 rounded-lg border border-indigo-100 bg-indigo-50/40 p-5">
-                <div className="flex items-center gap-2 text-xs font-bold tracking-wider text-indigo-700 uppercase">
-                  <Cpu className="size-4" /> AI Overview & Direct Answers
-                </div>
-                <p className="text-xs leading-relaxed text-slate-700">
-                  {product.aiContext}
+                <p className={sectionHeadingSubtitle}>
+                  Architectural insights, developer pain points solved, and core value proposition
                 </p>
-              </section>
-            )}
+              </div>
 
-            {/* Q&A Section */}
-            <section className="flex flex-col gap-4">
-              <h2 className="text-lg font-bold text-slate-900">
-                Frequently Asked Questions
-              </h2>
-              <div className="flex flex-col gap-3">
-                {productFaqs.map((faq) => (
-                  <div
-                    key={faq.question}
-                    className="rounded-md border border-slate-200 bg-white p-4"
-                  >
-                    <h3 className="text-sm font-semibold text-slate-900">
+              <div className={toolDeepDiveContainer}>
+                {product.problemStatement && (
+                  <div className="flex flex-col gap-3.5 p-6 md:p-8 bg-slate-50/20 hover:bg-slate-50/50 transition-colors">
+                    <div className="flex items-center justify-between">
+                      <span className="font-mono text-[10px] font-bold tracking-widest text-rose-600 uppercase">
+                        01 / PROBLEM
+                      </span>
+                      <div className="flex size-7 items-center justify-center rounded-md border border-rose-200/80 bg-rose-50 text-rose-600">
+                        <Target className="size-3.5" />
+                      </div>
+                    </div>
+                    <h3 className="text-sm font-bold text-slate-900">
+                      The Problem It Solves
+                    </h3>
+                    <p className="text-xs leading-relaxed text-slate-600">
+                      {product.problemStatement}
+                    </p>
+                  </div>
+                )}
+
+                {product.solution && (
+                  <div className="flex flex-col gap-3.5 p-6 md:p-8 bg-slate-50/20 hover:bg-slate-50/50 transition-colors">
+                    <div className="flex items-center justify-between">
+                      <span className="font-mono text-[10px] font-bold tracking-widest text-emerald-600 uppercase">
+                        02 / ARCHITECTURE
+                      </span>
+                      <div className="flex size-7 items-center justify-center rounded-md border border-emerald-200/80 bg-emerald-50 text-emerald-600">
+                        <Zap className="size-3.5" />
+                      </div>
+                    </div>
+                    <h3 className="text-sm font-bold text-slate-900">
+                      The Solution
+                    </h3>
+                    <p className="text-xs leading-relaxed text-slate-600">
+                      {product.solution}
+                    </p>
+                  </div>
+                )}
+
+                {product.uniqueValue && (
+                  <div className="flex flex-col gap-3.5 p-6 md:p-8 bg-slate-50/20 hover:bg-slate-50/50 transition-colors">
+                    <div className="flex items-center justify-between">
+                      <span className="font-mono text-[10px] font-bold tracking-widest text-blue-600 uppercase">
+                        03 / ADVANTAGE
+                      </span>
+                      <div className="flex size-7 items-center justify-center rounded-md border border-blue-200/80 bg-blue-50 text-blue-600">
+                        <Sparkles className="size-3.5" />
+                      </div>
+                    </div>
+                    <h3 className="text-sm font-bold text-slate-900">
+                      What Makes It Unique
+                    </h3>
+                    <p className="text-xs leading-relaxed text-slate-600">
+                      {product.uniqueValue}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* Section 4: AI Summary / Citation Block (GEO / AEO) */}
+        {product.aiContext && (
+          <section className={cn(sectionWrapper, "bg-indigo-50/30")}>
+            <div className="flex flex-col gap-3">
+              <div className="flex items-center gap-2 text-xs font-bold tracking-wider text-indigo-700 uppercase">
+                <Cpu className="size-4" /> AI Overview & Direct Answers
+              </div>
+              <p className="max-w-4xl text-xs leading-relaxed text-slate-700">
+                {product.aiContext}
+              </p>
+            </div>
+          </section>
+        )}
+
+        {/* Section 5: Tech Stack & Tools Used */}
+        {product.builtWithTools && product.builtWithTools.length > 0 && (
+          <section className={cn(sectionWrapper, "bg-white")}>
+            <div className="flex flex-col gap-6">
+              <div className="flex flex-col gap-1">
+                <h2 className={sectionHeadingTitle}>
+                  Tech Stack & Tools Used
+                </h2>
+                <p className={sectionHeadingSubtitle}>
+                  Developer tools, APIs, and infrastructure powering {product.name}
+                </p>
+              </div>
+
+              <div className="flex flex-wrap gap-2.5">
+                {product.builtWithTools.map((t) =>
+                  t.toolSlug ? (
+                    <Link
+                      key={t.name}
+                      href={ROUTES.TOOL(t.toolSlug)}
+                      className="inline-flex items-center gap-2 rounded-lg border border-dashed border-border bg-slate-50/50 px-3.5 py-2 text-xs font-semibold text-slate-800 transition-all hover:border-indigo-300 hover:bg-indigo-50/60 hover:text-indigo-900"
+                    >
+                      <Wrench className="size-3.5 text-indigo-600" />
+                      <span>{t.name}</span>
+                    </Link>
+                  ) : (
+                    <div
+                      key={t.name}
+                      className="inline-flex items-center gap-2 rounded-lg border border-dashed border-border bg-slate-50/50 px-3.5 py-2 text-xs font-medium text-slate-700"
+                    >
+                      <Wrench className="size-3.5 text-slate-400" />
+                      <span>{t.name}</span>
+                    </div>
+                  )
+                )}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* Section 6: Q&A Section */}
+        <section className="border-b border-dashed border-border bg-white">
+          <div className="flex flex-col gap-1 border-b border-dashed border-border bg-slate-50/40 px-6 py-6 md:px-8 md:py-8">
+            <h2 className={sectionHeadingTitle}>
+              Frequently Asked Questions
+            </h2>
+            <p className={sectionHeadingSubtitle}>
+              Common questions and technical details about {product.name}
+            </p>
+          </div>
+
+          <div className="flex flex-col divide-y divide-dashed divide-border">
+            {productFaqs.map((faq, idx) => (
+              <div
+                key={faq.question}
+                className="flex flex-col gap-2 px-6 py-6 md:px-8 hover:bg-slate-50/40 transition-colors"
+              >
+                <div className="flex items-start gap-3">
+                  <span className="font-mono text-xs font-bold text-slate-400 select-none pt-0.5 shrink-0">
+                    Q{idx + 1}
+                  </span>
+                  <div className="flex flex-col gap-1.5 flex-1">
+                    <h3 className="text-sm font-bold text-slate-900">
                       {faq.question}
                     </h3>
-                    <p className="mt-1 text-xs leading-relaxed text-slate-600">
+                    <p className="max-w-4xl text-xs leading-relaxed text-slate-600">
                       {faq.answer}
                     </p>
                   </div>
-                ))}
+                </div>
               </div>
-            </section>
-          </main>
+            ))}
+          </div>
+        </section>
 
-          {/* Sidebar Specifications */}
-          <aside className="flex flex-col gap-6">
-            <Card className="rounded-none border-dashed bg-white">
-              <CardContent className="flex flex-col gap-4 p-5">
-                <h2 className="text-sm font-bold tracking-wider text-slate-900 uppercase">
-                  Tool Specifications
-                </h2>
-
-                <div className="flex flex-col gap-3 text-xs">
-                  <div className="flex justify-between border-b border-slate-100 pb-2">
-                    <span className="text-slate-500">Pricing Model</span>
-                    <span className="font-semibold text-slate-900">
-                      {product.pricing}
-                    </span>
-                  </div>
-
-                  <div className="flex justify-between border-b border-slate-100 pb-2">
-                    <span className="text-slate-500">Tier Status</span>
-                    <span className="font-semibold text-slate-900 capitalize">
-                      {product.tier}
-                    </span>
-                  </div>
-
-                  <div className="flex justify-between border-b border-slate-100 pb-2">
-                    <span className="text-slate-500">Category</span>
-                    <span className="font-semibold text-slate-900">
-                      {product.category ?? "Developer Tools"}
-                    </span>
-                  </div>
-
-                  <div className="flex justify-between border-b border-slate-100 pb-2">
-                    <span className="text-slate-500">Total Likes</span>
-                    <span className="font-semibold text-pink-600">
-                      {product.likesCount.toLocaleString()}
-                    </span>
-                  </div>
-                </div>
-
-                {product.platforms.length > 0 && (
-                  <div className="mt-2 flex flex-col gap-2">
-                    <span className="text-xs font-bold text-slate-700">
-                      Supported Platforms
-                    </span>
-                    <div className="flex flex-wrap gap-1.5">
-                      {product.platforms.map((plat) => (
-                        <Badge
-                          key={plat}
-                          variant="outline"
-                          className="border-slate-200 bg-slate-50 text-[11px] font-medium text-slate-700"
-                        >
-                          {plat}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {product.builtWithTools && product.builtWithTools.length > 0 && (
-                  <div className="mt-2 flex flex-col gap-2 border-t border-slate-100 pt-3">
-                    <span className="text-xs font-bold text-slate-700">
-                      Built With
-                    </span>
-                    <div className="flex flex-wrap gap-1.5">
-                      {product.builtWithTools.map((t) =>
-                        t.toolSlug ? (
-                          <Link
-                            key={t.name}
-                            href={ROUTES.TOOL(t.toolSlug)}
-                            className="rounded bg-indigo-50 px-2 py-0.5 text-[11px] font-semibold text-indigo-700 transition-colors hover:bg-indigo-100"
-                          >
-                            {t.name}
-                          </Link>
-                        ) : (
-                          <Badge
-                            key={t.name}
-                            variant="outline"
-                            className="border-slate-200 bg-slate-50 text-[11px] font-medium text-slate-700"
-                          >
-                            {t.name}
-                          </Badge>
-                        )
-                      )}
-                    </div>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-
-            <Card className="rounded-none border-dashed bg-slate-50/80">
-              <CardContent className="flex flex-col gap-3 p-5 text-center">
-                <div className="mx-auto flex size-10 items-center justify-center rounded-full bg-indigo-100 text-indigo-600">
-                  <Layers className="size-5" />
-                </div>
-                <h3 className="text-sm font-bold text-slate-900">
-                  Built with {product.name}?
-                </h3>
-                <p className="text-xs text-slate-500">
-                  Showcase what you created using {product.name} and get
-                  featured in the DevStacks directory.
-                </p>
-                <Link
-                  href={ROUTES.SHOWCASE}
-                  className="mt-1 inline-flex items-center justify-center rounded-md border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50"
-                >
-                  Showcase Your Build
-                </Link>
-              </CardContent>
-            </Card>
-          </aside>
-        </div>
+        {/* Section 7: Ecosystem Showcase */}
+        <section className="border-b border-dashed border-border bg-slate-50/70 px-6 py-10 md:px-8 md:py-12">
+          <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center gap-2 text-xs font-bold tracking-wider text-indigo-700 uppercase">
+                <Layers className="size-4 text-indigo-600" /> Ecosystem Showcase
+              </div>
+              <h3 className="text-lg font-bold text-slate-900">
+                Built with {product.name}?
+              </h3>
+              <p className="max-w-2xl text-xs text-slate-600">
+                Showcase what you created using {product.name} and get featured in the {SITE_CONFIG.name} directory.
+              </p>
+            </div>
+            <Button
+              variant="default"
+              size="sm"
+              className="self-start rounded-none md:self-auto bg-slate-900 text-white hover:bg-slate-800"
+              render={<Link href={ROUTES.SHOWCASE} />}
+            >
+              <PlusCircle className="mr-1.5 size-3.5" />
+              Showcase Your Build
+            </Button>
+          </div>
+        </section>
       </article>
     </>
   )
