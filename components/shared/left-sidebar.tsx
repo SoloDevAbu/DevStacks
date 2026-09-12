@@ -10,6 +10,14 @@ import {
   type NavItemBadge,
 } from "@/constants/navigation"
 import { ROUTES } from "@/constants/routes"
+import { CREATOR_SOCIALS } from "@/constants/site"
+import { XIcon, LinkedInIcon } from "@/components/shared/icons"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 import { useSession } from "@/lib/auth/client"
 import { useAuthModal } from "@/hooks/auth/use-auth-modal"
 import {
@@ -17,6 +25,7 @@ import {
   sidebarNavItem,
   sidebarNavItemActive,
   sidebarNavItemInactive,
+  sidebarSocialLink,
   sidebarBadgeHot,
   sidebarBadgeNew,
   sidebarBadgeNeutral,
@@ -168,16 +177,44 @@ export const LeftSidebar = () => {
           </Link>
         </div>
 
-        {/* Live Status indicator */}
-        <div className="flex items-center justify-between px-1 font-mono text-[11px] text-slate-400 select-none">
-          <span className="flex items-center gap-1.5">
-            <span className="relative flex size-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-              <span className="relative inline-flex size-2 rounded-full bg-emerald-500" />
-            </span>
-            <span className="text-slate-600">Ecosystem Online</span>
-          </span>
-          <span>v1.0</span>
+        <div className="flex items-center justify-end px-1">
+          <div className="flex items-center gap-1">
+            <TooltipProvider delay={150}>
+              <Tooltip>
+                <TooltipTrigger
+                  render={
+                    <a
+                      href={CREATOR_SOCIALS.x}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="Follow Abu Bakkar on X"
+                      className={sidebarSocialLink}
+                    />
+                  }
+                >
+                  <XIcon className="size-3.5" />
+                </TooltipTrigger>
+                <TooltipContent side="top">X</TooltipContent>
+              </Tooltip>
+
+              <Tooltip>
+                <TooltipTrigger
+                  render={
+                    <a
+                      href={CREATOR_SOCIALS.linkedin}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="Connect with Abu Bakkar on LinkedIn"
+                      className={sidebarSocialLink}
+                    />
+                  }
+                >
+                  <LinkedInIcon className="size-3.5" />
+                </TooltipTrigger>
+                <TooltipContent side="top">LinkedIn</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
         </div>
       </div>
     </div>

@@ -144,6 +144,9 @@ export const sidebarNavItemActive =
 export const sidebarNavItemInactive =
   "text-slate-600 hover:bg-slate-100/80 hover:text-slate-950"
 
+export const sidebarSocialLink =
+  "flex size-6 items-center justify-center rounded-md text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-900"
+
 export const sidebarBadgeHot =
   "rounded bg-amber-500/15 px-1.5 py-0.5 font-mono text-[10px] font-bold text-amber-700 border border-amber-500/20"
 

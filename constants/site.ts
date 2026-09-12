@@ -42,3 +42,10 @@ export const SITE_CONFIG = {
   },
   themeColor: "#0f172a",
 } as const
+
+export const CREATOR_SOCIALS = {
+  name: "Abu Bakkar Siddique",
+  x: "https://x.com/AbuBakkar2502",
+  linkedin: "https://www.linkedin.com/in/abu-bakkar-siddique-546112205/",
+} as const
+
