@@ -11,6 +11,7 @@ import {
   Sparkles,
 } from "lucide-react"
 import Link from "next/link"
+import { countryCodeToFlag } from "@/utils/country"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -226,8 +227,23 @@ export const ProductCard = ({
             {product.tagline}
           </p>
 
-          {/* Row 1: Tags + views */}
-          <div className="mt-2 flex flex-wrap items-center gap-3">
+          {/* Row 1: Maker + Tags + Views */}
+          <div className="mt-2 flex flex-wrap items-center gap-2.5">
+            {product.submitterUsername && (
+              <Link
+                href={ROUTES.MAKER(product.submitterUsername)}
+                onClick={(e) => e.stopPropagation()}
+                className="inline-flex items-center gap-1 rounded-md border border-slate-200/60 bg-slate-50/50 px-2 py-0.5 text-xs font-medium text-slate-500 transition-colors hover:bg-slate-100/80 hover:text-indigo-600"
+                title={`Maker: ${product.submitterName ?? product.submitterUsername}`}
+              >
+                {countryCodeToFlag(product.submitterCountry) && (
+                  <span className="select-none">
+                    {countryCodeToFlag(product.submitterCountry)}
+                  </span>
+                )}
+                <span>@{product.submitterUsername}</span>
+              </Link>
+            )}
             {(product.tags ?? []).slice(0, 3).map((tag) => (
               <Badge
                 key={tag}
