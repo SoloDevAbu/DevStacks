@@ -1,5 +1,11 @@
 import { NextResponse } from "next/server"
 import { SITE_CONFIG } from "@/constants/site"
+import type { MakerProfile } from "@/types/entities"
+import {
+  countryCodeToFlag,
+  countryCodeToName,
+  formatLocation,
+} from "@/utils/country"
 
 interface ToolTwinInput {
   name: string
@@ -32,7 +38,9 @@ interface ProductTwinInput {
   platforms?: string[] | null
   pricing?: string | null
   tier?: string | null
-  builtWithTools?: Array<string | { name: string; toolSlug?: string | null }> | null
+  builtWithTools?: Array<
+    string | { name: string; toolSlug?: string | null }
+  > | null
   likesCount?: number | null
   viewsCount?: number | null
   createdAt?: Date | string | null
@@ -40,7 +48,6 @@ interface ProductTwinInput {
     name?: string | null
   } | null
 }
-
 
 export const generateToolMarkdown = (
   tool: ToolTwinInput,
@@ -151,7 +158,78 @@ ${
 - **Official Website**: ${product.websiteUrl ?? canonical}
 - **Markdown Twin**: ${SITE_CONFIG.url}/api/md/products/${product.slug}
 `
+}
 
+export const generateMakerMarkdown = (maker: MakerProfile): string => {
+  const canonical = `${SITE_CONFIG.url}/makers/${maker.username}`
+  const createdDate = maker.createdAt
+    ? new Date(maker.createdAt).toISOString().split("T")[0]
+    : "2026-01-01"
+  const flag = countryCodeToFlag(maker.country)
+  const locationStr = formatLocation(maker.country, maker.state)
+
+  const productsList =
+    maker.products && maker.products.length > 0
+      ? maker.products
+          .map(
+            (p) =>
+              `- [${p.name}](${SITE_CONFIG.url}/products/${p.slug}) — ${p.tagline}`
+          )
+          .join("\n")
+      : "- No products listed yet."
+
+  const toolsList =
+    maker.tools && maker.tools.length > 0
+      ? maker.tools
+          .map(
+            (t) =>
+              `- [${t.name}](${SITE_CONFIG.url}/tools/${t.slug}) — ${t.tagline}`
+          )
+          .join("\n")
+      : "- No developer tools cataloged yet."
+
+  const faqsList =
+    maker.faqs && maker.faqs.length > 0
+      ? maker.faqs.map((f) => `### ${f.question}\n\n${f.answer}`).join("\n\n")
+      : "No FAQs added yet."
+
+  return `# ${maker.name} (@${maker.username}) ${flag}
+
+> ${maker.bio ?? maker.description ?? `Software creator and developer on ${SITE_CONFIG.name}`}
+
+\`\`\`yaml
+name: "${maker.name}"
+username: "${maker.username}"
+location: "${locationStr}"
+country: "${maker.country ?? ""}"
+state: "${maker.state ?? ""}"
+website: "${maker.websiteUrl ?? ""}"
+twitter: "${maker.twitterUrl ?? ""}"
+github: "${maker.githubUrl ?? ""}"
+linkedin: "${maker.linkedinUrl ?? ""}"
+products_count: ${maker.productsCount}
+tools_count: ${maker.toolsCount}
+joined: "${createdDate}"
+url: "${canonical}"
+\`\`\`
+
+## About
+${maker.description ?? maker.bio ?? `${maker.name} is an active maker and developer in the ${SITE_CONFIG.name} ecosystem.`}
+
+## Products by ${maker.name}
+${productsList}
+
+## Developer Tools & Infrastructure by ${maker.name}
+${toolsList}
+
+## Frequently Asked Questions
+${faqsList}
+
+## Machine & Canonical Links
+- **Maker Profile**: ${canonical}
+- **Machine Twin**: ${SITE_CONFIG.url}/api/md/makers/${maker.username}
+- **JSON API**: ${SITE_CONFIG.url}/v1/makers/${maker.username}
+`
 }
 
 export const createMarkdownResponse = (
@@ -168,7 +246,7 @@ export const createMarkdownResponse = (
       "X-Markdown-Tokens": tokens.toString(),
       "X-AEO-Version": "1.0.0",
       "X-Robots-Tag": "noindex, follow",
-      "Vary": "Accept, Origin",
+      Vary: "Accept, Origin",
       "Cache-Control": "public, max-age=3600, s-maxage=86400",
     },
   })

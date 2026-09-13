@@ -18,13 +18,16 @@ export const submitProductSchema = z.object({
   solution: z.string().max(1000).optional().or(z.literal("")),
   uniqueValue: z.string().max(1000).optional().or(z.literal("")),
 
-  // Links
+  // Links & Media
   websiteUrl: z.string().url("Website URL must be a valid URL"),
   logoUrl: urlSchema.optional(),
   githubUrl: urlSchema.optional(),
   twitterUrl: urlSchema.optional(),
   linkedinUrl: urlSchema.optional(),
   discordUrl: urlSchema.optional(),
+  images: z.array(z.string().url()).max(5).default([]),
+  demoVideoUrl: urlSchema.optional(),
+  useCases: z.string().max(2000).optional().or(z.literal("")),
 
   // Discoverability / SEO/AEO/GEO/ASO
   keywords: z.string().max(500).optional().or(z.literal("")),

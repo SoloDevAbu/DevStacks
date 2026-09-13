@@ -14,6 +14,8 @@ import {
   Zap,
 } from "lucide-react"
 import { resolveTool, getProductsBuiltWithTool } from "@/lib/tools/resolve-tool"
+import { getToolFaqs } from "@/db/queries/faqs/get-faqs"
+import { MakerProfileCard } from "@/components/shared/maker-profile-card"
 import { SITE_CONFIG } from "@/constants/site"
 import { ROUTES } from "@/constants/routes"
 import { AI_PROVIDERS } from "@/constants/ai-providers"
@@ -135,6 +137,8 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
   const siteUrl = SITE_CONFIG.url
   const toolUrl = `${siteUrl}/tools/${tool.slug}`
 
+  const customFaqs = await getToolFaqs(tool.id)
+
   const prodJsonLd = productSchema({
     name: tool.name,
     description: tool.description,
@@ -155,6 +159,17 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
     githubUrl: tool.githubUrl,
     twitterUrl: tool.twitterUrl,
     websiteUrl: tool.websiteUrl,
+    author: tool.submitterName
+      ? {
+          name: tool.submitterName,
+          url: tool.submitterUsername
+            ? `${siteUrl}/makers/${tool.submitterUsername}`
+            : undefined,
+          country: tool.submitterCountry,
+        }
+      : undefined,
+    screenshots: tool.images,
+    videoUrl: tool.demoVideoUrl,
     isRelatedTo: builtWithProducts.map((p) => ({
       name: p.name,
       url: `${siteUrl}${ROUTES.PRODUCT(p.slug)}`,
@@ -167,29 +182,35 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
     { name: tool.name, url: toolUrl },
   ])
 
-  const toolFaqs = [
-    {
-      question: `What is ${tool.name}?`,
-      answer: tool.description,
-    },
-    {
-      question: `What problem does ${tool.name} solve for developers?`,
-      answer:
-        tool.problemStatement ??
-        `${tool.name} eliminates developer friction by offering a streamlined solution for ${tool.tagline}.`,
-    },
-    {
-      question: `What is the pricing model for ${tool.name}?`,
-      answer: `${tool.name} is available under the ${tool.pricing} model. Check the official website for tier breakdowns.`,
-    },
-    {
-      question: `Which platforms and environments does ${tool.name} support?`,
-      answer:
-        tool.platforms && tool.platforms.length > 0
-          ? `${tool.name} supports: ${tool.platforms.join(", ")}.`
-          : `${tool.name} is available for Web and Cloud environments.`,
-    },
-  ]
+  const toolFaqs =
+    customFaqs.length > 0
+      ? customFaqs.map((f) => ({
+          question: f.question,
+          answer: f.answer,
+        }))
+      : [
+          {
+            question: `What is ${tool.name}?`,
+            answer: tool.description,
+          },
+          {
+            question: `What problem does ${tool.name} solve for developers?`,
+            answer:
+              tool.problemStatement ??
+              `${tool.name} eliminates developer friction by offering a streamlined solution for ${tool.tagline}.`,
+          },
+          {
+            question: `What is the pricing model for ${tool.name}?`,
+            answer: `${tool.name} is available under the ${tool.pricing} model. Check the official website for tier breakdowns.`,
+          },
+          {
+            question: `Which platforms and environments does ${tool.name} support?`,
+            answer:
+              tool.platforms && tool.platforms.length > 0
+                ? `${tool.name} supports: ${tool.platforms.join(", ")}.`
+                : `${tool.name} is available for Web and Cloud environments.`,
+          },
+        ]
 
   const faqJsonLd = faqSchema(toolFaqs)
   const aiPrompt = AI_PROMPTS.tool(tool.name, tool.tagline)
@@ -253,6 +274,7 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
             <div className="flex items-start gap-4 md:gap-5">
               <ProductLogo
                 text={tool.name.slice(0, 2).toUpperCase()}
+                imageUrl={tool.logoUrl}
                 bgColor="bg-slate-900"
                 textColor="text-white"
                 className="size-16 shrink-0 rounded-2xl border border-slate-200 text-2xl shadow-sm md:size-20 md:text-3xl"
@@ -290,6 +312,22 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
                     {tool.buildsCount} builds
                   </span>
                 </div>
+
+                {(tool.submitterName || tool.submitterUsername) && (
+                  <div className="mt-2 flex items-center gap-2">
+                    <span className="font-mono text-[11px] font-semibold text-slate-400 uppercase">
+                      Listed by
+                    </span>
+                    <MakerProfileCard
+                      name={tool.submitterName}
+                      username={tool.submitterUsername}
+                      avatarUrl={tool.submitterAvatarUrl}
+                      country={tool.submitterCountry}
+                      state={tool.submitterState}
+                      size="sm"
+                    />
+                  </div>
+                )}
               </div>
             </div>
 
@@ -304,8 +342,8 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
           </div>
 
           {/* Ask AI Sub-tray with dashed divider */}
-          <div className="-mx-6 -mb-8 mt-2 flex flex-col gap-3 border-t border-dashed border-border bg-slate-50/50 px-6 py-4 sm:flex-row sm:items-center sm:justify-between md:-mx-8 md:px-8">
-            <div className="flex items-center gap-2 shrink-0">
+          <div className="-mx-6 mt-2 -mb-8 flex flex-col gap-3 border-t border-dashed border-border bg-slate-50/50 px-6 py-4 sm:flex-row sm:items-center sm:justify-between md:-mx-8 md:px-8">
+            <div className="flex shrink-0 items-center gap-2">
               <Sparkles className="size-3.5 text-blue-600" />
               <span className="font-mono text-xs font-bold tracking-wider text-slate-700 uppercase">
                 ASK AI ABOUT {tool.name.toUpperCase()}
@@ -343,24 +381,103 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
         {/* Section 1: About */}
         <section className={cn(sectionWrapper, "bg-white")}>
           <div className="flex flex-col gap-3">
-            <h2 className={sectionHeadingTitle}>
-              About {tool.name}
-            </h2>
+            <h2 className={sectionHeadingTitle}>About {tool.name}</h2>
             <p className="max-w-4xl text-sm leading-relaxed text-slate-600">
               {tool.description}
             </p>
           </div>
         </section>
 
+        {/* Screenshots Gallery (if present) */}
+        {tool.images && tool.images.length > 0 && (
+          <section className={cn(sectionWrapper, "bg-slate-50/30")}>
+            <div className="flex flex-col gap-4">
+              <div>
+                <h2 className={sectionHeadingTitle}>Screenshots & Gallery</h2>
+                <p className={sectionHeadingSubtitle}>
+                  Visual interface and developer experience of {tool.name}
+                </p>
+              </div>
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
+                {tool.images.slice(0, 5).map((imgUrl, i) => (
+                  <div
+                    key={i}
+                    className="group relative aspect-video overflow-hidden rounded-xl border border-dashed border-border bg-white shadow-2xs transition-all hover:border-slate-300"
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={imgUrl}
+                      alt={`${tool.name} preview ${i + 1}`}
+                      className="size-full object-cover object-top transition-transform duration-300 group-hover:scale-102"
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* Demo Video (if present) */}
+        {tool.demoVideoUrl && (
+          <section className={cn(sectionWrapper, "bg-white")}>
+            <div className="flex flex-col gap-4">
+              <div>
+                <h2 className={sectionHeadingTitle}>Product Demo Video</h2>
+                <p className={sectionHeadingSubtitle}>
+                  Walkthrough and overview demonstration of {tool.name}
+                </p>
+              </div>
+              <div className="aspect-video max-w-3xl overflow-hidden rounded-xl border border-dashed border-border bg-black shadow-xs">
+                {tool.demoVideoUrl.includes("youtube.com") ||
+                tool.demoVideoUrl.includes("youtu.be") ? (
+                  <iframe
+                    src={tool.demoVideoUrl
+                      .replace("watch?v=", "embed/")
+                      .replace("youtu.be/", "youtube.com/embed/")}
+                    title={`${tool.name} demo video`}
+                    className="size-full border-0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  />
+                ) : tool.demoVideoUrl.includes("loom.com") ? (
+                  <iframe
+                    src={tool.demoVideoUrl.replace("share/", "embed/")}
+                    title={`${tool.name} loom demo`}
+                    className="size-full border-0"
+                    allowFullScreen
+                  />
+                ) : (
+                  <video
+                    src={tool.demoVideoUrl}
+                    controls
+                    className="size-full"
+                  />
+                )}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* Use Cases (if present) */}
+        {tool.useCases && (
+          <section className={cn(sectionWrapper, "bg-slate-50/40")}>
+            <div className="flex flex-col gap-2">
+              <h2 className={sectionHeadingTitle}>Target Use Cases</h2>
+              <p className="max-w-4xl text-sm leading-relaxed whitespace-pre-wrap text-slate-700">
+                {tool.useCases}
+              </p>
+            </div>
+          </section>
+        )}
+
         {/* Section 2: Tool Specifications */}
         <section className={cn(sectionWrapper, "bg-slate-50/40")}>
           <div className="flex flex-col gap-6">
             <div className="flex flex-col gap-1">
-              <h2 className={sectionHeadingTitle}>
-                Tool Specifications
-              </h2>
+              <h2 className={sectionHeadingTitle}>Tool Specifications</h2>
               <p className={sectionHeadingSubtitle}>
-                Key metrics, platform support, and technical compatibility for {tool.name}
+                Key metrics, platform support, and technical compatibility for{" "}
+                {tool.name}
               </p>
             </div>
 
@@ -396,7 +513,7 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
                 <span className="font-mono text-[10px] font-bold tracking-wider text-slate-400 uppercase">
                   Category
                 </span>
-                <span className="text-xs font-bold text-slate-900 truncate">
+                <span className="truncate text-xs font-bold text-slate-900">
                   {tool.category ?? "Developer Tool"}
                 </span>
               </div>
@@ -414,7 +531,10 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
                 <span className="font-mono text-[10px] font-bold tracking-wider text-slate-400 uppercase">
                   Platforms
                 </span>
-                <span className="text-xs font-bold text-slate-900 truncate" title={tool.platforms?.join(", ")}>
+                <span
+                  className="truncate text-xs font-bold text-slate-900"
+                  title={tool.platforms?.join(", ")}
+                >
                   {tool.platforms && tool.platforms.length > 0
                     ? tool.platforms.join(", ")
                     : "Web / Cloud"}
@@ -429,17 +549,16 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
           <section className={cn(sectionWrapper, "bg-white")}>
             <div className="flex flex-col gap-6">
               <div className="flex flex-col gap-1">
-                <h2 className={sectionHeadingTitle}>
-                  Tool Deep Dive
-                </h2>
+                <h2 className={sectionHeadingTitle}>Tool Deep Dive</h2>
                 <p className={sectionHeadingSubtitle}>
-                  Architectural insights, developer pain points solved, and core value proposition
+                  Architectural insights, developer pain points solved, and core
+                  value proposition
                 </p>
               </div>
 
               <div className={toolDeepDiveContainer}>
                 {tool.problemStatement && (
-                  <div className="flex flex-col gap-3.5 p-6 md:p-8 bg-slate-50/20 hover:bg-slate-50/50 transition-colors">
+                  <div className="flex flex-col gap-3.5 bg-slate-50/20 p-6 transition-colors hover:bg-slate-50/50 md:p-8">
                     <div className="flex items-center justify-between">
                       <span className="font-mono text-[10px] font-bold tracking-widest text-rose-600 uppercase">
                         01 / PROBLEM
@@ -458,7 +577,7 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
                 )}
 
                 {tool.solution && (
-                  <div className="flex flex-col gap-3.5 p-6 md:p-8 bg-slate-50/20 hover:bg-slate-50/50 transition-colors">
+                  <div className="flex flex-col gap-3.5 bg-slate-50/20 p-6 transition-colors hover:bg-slate-50/50 md:p-8">
                     <div className="flex items-center justify-between">
                       <span className="font-mono text-[10px] font-bold tracking-widest text-emerald-600 uppercase">
                         02 / ARCHITECTURE
@@ -477,7 +596,7 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
                 )}
 
                 {tool.uniqueValue && (
-                  <div className="flex flex-col gap-3.5 p-6 md:p-8 bg-slate-50/20 hover:bg-slate-50/50 transition-colors">
+                  <div className="flex flex-col gap-3.5 bg-slate-50/20 p-6 transition-colors hover:bg-slate-50/50 md:p-8">
                     <div className="flex items-center justify-between">
                       <span className="font-mono text-[10px] font-bold tracking-widest text-blue-600 uppercase">
                         03 / ADVANTAGE
@@ -521,14 +640,15 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
                 Products Built With {tool.name}
               </h2>
               <p className={sectionHeadingSubtitle}>
-                Discover projects and applications using {tool.name} in production
+                Discover projects and applications using {tool.name} in
+                production
               </p>
             </div>
             <Button
               variant="outline"
               size="sm"
               render={<Link href={ROUTES.SUBMIT} />}
-              className="self-start sm:self-auto rounded-none text-xs"
+              className="self-start rounded-none text-xs sm:self-auto"
             >
               <PlusCircle className="mr-1.5 size-3.5" />
               Submit Your Build
@@ -554,8 +674,8 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
                 No products submitted yet
               </h3>
               <p className="mt-1 max-w-sm text-xs text-slate-500">
-                Are you building with {tool.name}? Be the first to showcase
-                your project to the community!
+                Are you building with {tool.name}? Be the first to showcase your
+                project to the community!
               </p>
               <div className="mt-3">
                 <Button
@@ -574,9 +694,7 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
         {/* Section 6: Q&A Section */}
         <section className="border-b border-dashed border-border bg-white">
           <div className="flex flex-col gap-1 border-b border-dashed border-border bg-slate-50/40 px-6 py-6 md:px-8 md:py-8">
-            <h2 className={sectionHeadingTitle}>
-              Frequently Asked Questions
-            </h2>
+            <h2 className={sectionHeadingTitle}>Frequently Asked Questions</h2>
             <p className={sectionHeadingSubtitle}>
               Common questions and technical details about {tool.name}
             </p>
@@ -586,13 +704,13 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
             {toolFaqs.map((faq, idx) => (
               <div
                 key={faq.question}
-                className="flex flex-col gap-2 px-6 py-6 md:px-8 hover:bg-slate-50/40 transition-colors"
+                className="flex flex-col gap-2 px-6 py-6 transition-colors hover:bg-slate-50/40 md:px-8"
               >
                 <div className="flex items-start gap-3">
-                  <span className="font-mono text-xs font-bold text-slate-400 select-none pt-0.5 shrink-0">
+                  <span className="shrink-0 pt-0.5 font-mono text-xs font-bold text-slate-400 select-none">
                     Q{idx + 1}
                   </span>
-                  <div className="flex flex-col gap-1.5 flex-1">
+                  <div className="flex flex-1 flex-col gap-1.5">
                     <h3 className="text-sm font-bold text-slate-900">
                       {faq.question}
                     </h3>
@@ -617,13 +735,14 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
                 Built something with {tool.name}?
               </h3>
               <p className="max-w-2xl text-xs text-slate-600">
-                Showcase your project on {SITE_CONFIG.name} and get discovered by developers searching for tools in this stack.
+                Showcase your project on {SITE_CONFIG.name} and get discovered
+                by developers searching for tools in this stack.
               </p>
             </div>
             <Button
               variant="default"
               size="sm"
-              className="self-start rounded-none md:self-auto bg-slate-900 text-white hover:bg-slate-800"
+              className="self-start rounded-none bg-slate-900 text-white hover:bg-slate-800 md:self-auto"
               render={<Link href={ROUTES.SUBMIT} />}
             >
               <PlusCircle className="mr-1.5 size-3.5" />

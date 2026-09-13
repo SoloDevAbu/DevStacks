@@ -19,6 +19,7 @@ export interface FullProduct extends DbProduct {
   geoTarget?: string | null
   asoCategory?: string | null
   platforms: string[]
+  submitterState?: string | null
   createdAt?: Date
   updatedAt?: Date
 }

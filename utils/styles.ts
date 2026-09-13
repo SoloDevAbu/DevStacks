@@ -58,11 +58,9 @@ export const sectionGridWrapper =
 export const sectionWrapper =
   "border-b border-dashed border-border px-6 py-8 md:px-8 md:py-10"
 
-export const sectionHeadingTitle =
-  "text-lg font-bold text-slate-900"
+export const sectionHeadingTitle = "text-lg font-bold text-slate-900"
 
-export const sectionHeadingSubtitle =
-  "text-xs text-slate-500"
+export const sectionHeadingSubtitle = "text-xs text-slate-500"
 
 export const toolSpecsContainer =
   "grid grid-cols-2 border border-dashed border-border bg-white sm:grid-cols-3 lg:grid-cols-6 divide-y sm:divide-y-0 sm:divide-x divide-dashed divide-border"
@@ -140,9 +138,11 @@ export const sidebarNavItem =
 export const sidebarNavItemActive =
   "bg-slate-100 text-slate-900 font-semibold border border-slate-200/80 shadow-2xs"
 
-
 export const sidebarNavItemInactive =
   "text-slate-600 hover:bg-slate-100/80 hover:text-slate-950"
+
+export const sidebarSocialLink =
+  "flex size-6 items-center justify-center rounded-md text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-900"
 
 export const sidebarBadgeHot =
   "rounded bg-amber-500/15 px-1.5 py-0.5 font-mono text-[10px] font-bold text-amber-700 border border-amber-500/20"
@@ -177,8 +177,7 @@ export const navbarSearchInput =
 export const navbarNavLink =
   "shrink-0 text-xs font-semibold text-slate-600 transition-colors hover:text-slate-950"
 
-export const navbarNavLinkActive =
-  "text-slate-950 font-bold"
+export const navbarNavLinkActive = "text-slate-950 font-bold"
 
 export const siteFooterWrapper =
   "border-t border-dashed border-border bg-slate-50/40"
@@ -207,3 +206,17 @@ export const footerAiTrayLabel =
 export const footerAiButton =
   "relative z-10 flex items-center justify-center gap-1.5 rounded-md border border-slate-200/80 bg-white/90 px-2.5 py-1 text-xs font-medium text-slate-700 transition-all hover:bg-slate-50 hover:shadow-2xs"
 
+export const makerBadge =
+  "inline-flex items-center gap-1.5 rounded-md border border-slate-200/80 bg-slate-50/70 px-2 py-0.5 text-xs font-medium text-slate-700 hover:bg-slate-100/80 transition-colors"
+
+export const mediaGalleryGrid =
+  "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3"
+
+export const mediaThumbnail =
+  "group relative overflow-hidden rounded-lg border border-dashed border-border bg-slate-100 aspect-video"
+
+export const videoContainer =
+  "relative w-full overflow-hidden rounded-xl border border-dashed border-border aspect-video bg-black/90 shadow-sm"
+
+export const profileHeaderWrapper =
+  "flex flex-col gap-6 border-b border-dashed border-border bg-linear-to-b from-slate-50/70 via-white to-white px-6 py-8 md:px-8 md:py-10"

@@ -8,7 +8,8 @@ export const GET = () => {
     openapi: "3.1.0",
     info: {
       title: `${SITE_CONFIG.name} Public API`,
-      summary: "Read-only REST API for the developer tools and products catalog.",
+      summary:
+        "Read-only REST API for the developer tools and products catalog.",
       description: `Public, unauthenticated REST API for ${SITE_CONFIG.name}. Use this contract to search tools and products, inspect verified tech stacks, read leaderboard rankings, and fetch entity details. No API key required for GET requests. Rate limit: 120 requests per minute per IP. RFC 9457 Problem Details for errors. CLI: npx @devstacks/cli (see ${SITE_CONFIG.url}/cli). MCP Streamable HTTP: POST ${SITE_CONFIG.url}/api/mcp.`,
       version: "1.0.0",
       contact: {
@@ -30,8 +31,14 @@ export const GET = () => {
     tags: [
       { name: "Catalog", description: "Developer tools and products catalog" },
       { name: "Search", description: "Live full-text search across catalog" },
-      { name: "Rankings", description: "Community leaderboard and trending items" },
-      { name: "Discovery", description: "API index and machine-readable discovery" },
+      {
+        name: "Rankings",
+        description: "Community leaderboard and trending items",
+      },
+      {
+        name: "Discovery",
+        description: "API index and machine-readable discovery",
+      },
     ],
     paths: {
       "/v1": {
@@ -39,7 +46,8 @@ export const GET = () => {
           tags: ["Discovery"],
           operationId: "getApiIndex",
           summary: "Public API index",
-          description: "Lists all public REST endpoints, OpenAPI contract, CLI instructions, and MCP transport.",
+          description:
+            "Lists all public REST endpoints, OpenAPI contract, CLI instructions, and MCP transport.",
           responses: {
             "200": {
               description: "API index summary",
@@ -57,14 +65,43 @@ export const GET = () => {
           tags: ["Catalog"],
           operationId: "listTools",
           summary: "List developer infrastructure tools",
-          description: "Paginated catalog of developer tools with category and pricing filters.",
+          description:
+            "Paginated catalog of developer tools with category and pricing filters.",
           parameters: [
-            { name: "page", in: "query", schema: { type: "integer", default: 1, minimum: 1 } },
-            { name: "limit", in: "query", schema: { type: "integer", default: 20, minimum: 1, maximum: 60 } },
-            { name: "q", in: "query", description: "Search query across name and tagline", schema: { type: "string" } },
+            {
+              name: "page",
+              in: "query",
+              schema: { type: "integer", default: 1, minimum: 1 },
+            },
+            {
+              name: "limit",
+              in: "query",
+              schema: { type: "integer", default: 20, minimum: 1, maximum: 60 },
+            },
+            {
+              name: "q",
+              in: "query",
+              description: "Search query across name and tagline",
+              schema: { type: "string" },
+            },
             { name: "category", in: "query", schema: { type: "string" } },
-            { name: "pricing", in: "query", schema: { type: "string", enum: ["free", "freemium", "paid", "open_source"] } },
-            { name: "sort", in: "query", schema: { type: "string", enum: ["upvotes", "builds", "newest", "name"], default: "builds" } },
+            {
+              name: "pricing",
+              in: "query",
+              schema: {
+                type: "string",
+                enum: ["free", "freemium", "paid", "open_source"],
+              },
+            },
+            {
+              name: "sort",
+              in: "query",
+              schema: {
+                type: "string",
+                enum: ["upvotes", "builds", "newest", "name"],
+                default: "builds",
+              },
+            },
           ],
           responses: {
             "200": {
@@ -83,9 +120,15 @@ export const GET = () => {
           tags: ["Catalog"],
           operationId: "getTool",
           summary: "Get tool details by slug",
-          description: "Returns metadata, website, verified build count, and specifications for a single tool.",
+          description:
+            "Returns metadata, website, verified build count, and specifications for a single tool.",
           parameters: [
-            { name: "slug", in: "path", required: true, schema: { type: "string" } },
+            {
+              name: "slug",
+              in: "path",
+              required: true,
+              schema: { type: "string" },
+            },
           ],
           responses: {
             "200": {
@@ -112,14 +155,38 @@ export const GET = () => {
           tags: ["Catalog"],
           operationId: "listProducts",
           summary: "List developer products and applications",
-          description: "Paginated catalog of products with tag and category filtering.",
+          description:
+            "Paginated catalog of products with tag and category filtering.",
           parameters: [
-            { name: "page", in: "query", schema: { type: "integer", default: 1, minimum: 1 } },
-            { name: "limit", in: "query", schema: { type: "integer", default: 20, minimum: 1, maximum: 60 } },
+            {
+              name: "page",
+              in: "query",
+              schema: { type: "integer", default: 1, minimum: 1 },
+            },
+            {
+              name: "limit",
+              in: "query",
+              schema: { type: "integer", default: 20, minimum: 1, maximum: 60 },
+            },
             { name: "q", in: "query", schema: { type: "string" } },
             { name: "category", in: "query", schema: { type: "string" } },
-            { name: "pricing", in: "query", schema: { type: "string", enum: ["free", "freemium", "paid", "open_source"] } },
-            { name: "sort", in: "query", schema: { type: "string", enum: ["likes", "newest", "views"], default: "likes" } },
+            {
+              name: "pricing",
+              in: "query",
+              schema: {
+                type: "string",
+                enum: ["free", "freemium", "paid", "open_source"],
+              },
+            },
+            {
+              name: "sort",
+              in: "query",
+              schema: {
+                type: "string",
+                enum: ["likes", "newest", "views"],
+                default: "likes",
+              },
+            },
           ],
           responses: {
             "200": {
@@ -138,9 +205,15 @@ export const GET = () => {
           tags: ["Catalog"],
           operationId: "getProduct",
           summary: "Get product details by slug",
-          description: "Returns complete product overview, problem, solution, unique value, and verified tech stack.",
+          description:
+            "Returns complete product overview, problem, solution, unique value, and verified tech stack.",
           parameters: [
-            { name: "slug", in: "path", required: true, schema: { type: "string" } },
+            {
+              name: "slug",
+              in: "path",
+              required: true,
+              schema: { type: "string" },
+            },
           ],
           responses: {
             "200": {
@@ -169,8 +242,17 @@ export const GET = () => {
           summary: "Search tools and products",
           description: "Unified keyword search across tools and products.",
           parameters: [
-            { name: "q", in: "query", required: true, schema: { type: "string", minLength: 2 } },
-            { name: "limit", in: "query", schema: { type: "integer", default: 10, maximum: 30 } },
+            {
+              name: "q",
+              in: "query",
+              required: true,
+              schema: { type: "string", minLength: 2 },
+            },
+            {
+              name: "limit",
+              in: "query",
+              schema: { type: "integer", default: 10, maximum: 30 },
+            },
           ],
           responses: {
             "200": {
@@ -191,7 +273,11 @@ export const GET = () => {
           summary: "Top ranked tools and trending products",
           description: "Community upvotes and momentum rankings.",
           parameters: [
-            { name: "limit", in: "query", schema: { type: "integer", default: 20, maximum: 50 } },
+            {
+              name: "limit",
+              in: "query",
+              schema: { type: "integer", default: 20, maximum: 50 },
+            },
           ],
           responses: {
             "200": {
@@ -199,6 +285,41 @@ export const GET = () => {
               content: {
                 "application/json": {
                   schema: { $ref: "#/components/schemas/LeaderboardResponse" },
+                },
+              },
+            },
+          },
+        },
+      },
+      "/v1/makers/{username}": {
+        get: {
+          tags: ["Catalog"],
+          operationId: "getMaker",
+          summary: "Get maker profile and submitted tools/products",
+          description:
+            "Returns maker profile details including location, social links, FAQs, and submitted products and tools.",
+          parameters: [
+            {
+              name: "username",
+              in: "path",
+              required: true,
+              schema: { type: "string" },
+            },
+          ],
+          responses: {
+            "200": {
+              description: "Maker profile and portfolio",
+              content: {
+                "application/json": {
+                  schema: { $ref: "#/components/schemas/MakerDetail" },
+                },
+              },
+            },
+            "404": {
+              description: "Maker not found",
+              content: {
+                "application/problem+json": {
+                  schema: { $ref: "#/components/schemas/ProblemDetails" },
                 },
               },
             },
@@ -281,7 +402,10 @@ export const GET = () => {
           properties: {
             page: { type: "integer" },
             limit: { type: "integer" },
-            data: { type: "array", items: { $ref: "#/components/schemas/ToolDetail" } },
+            data: {
+              type: "array",
+              items: { $ref: "#/components/schemas/ToolDetail" },
+            },
           },
         },
         ProductListResponse: {
@@ -289,22 +413,74 @@ export const GET = () => {
           properties: {
             page: { type: "integer" },
             limit: { type: "integer" },
-            data: { type: "array", items: { $ref: "#/components/schemas/ProductDetail" } },
+            data: {
+              type: "array",
+              items: { $ref: "#/components/schemas/ProductDetail" },
+            },
           },
         },
         SearchResults: {
           type: "object",
           properties: {
             query: { type: "string" },
-            tools: { type: "array", items: { $ref: "#/components/schemas/ToolDetail" } },
-            products: { type: "array", items: { $ref: "#/components/schemas/ProductDetail" } },
+            tools: {
+              type: "array",
+              items: { $ref: "#/components/schemas/ToolDetail" },
+            },
+            products: {
+              type: "array",
+              items: { $ref: "#/components/schemas/ProductDetail" },
+            },
           },
         },
         LeaderboardResponse: {
           type: "object",
           properties: {
-            tools: { type: "array", items: { $ref: "#/components/schemas/ToolDetail" } },
-            products: { type: "array", items: { $ref: "#/components/schemas/ProductDetail" } },
+            tools: {
+              type: "array",
+              items: { $ref: "#/components/schemas/ToolDetail" },
+            },
+            products: {
+              type: "array",
+              items: { $ref: "#/components/schemas/ProductDetail" },
+            },
+          },
+        },
+        MakerDetail: {
+          type: "object",
+          properties: {
+            id: { type: "string" },
+            name: { type: "string" },
+            username: { type: "string" },
+            bio: { type: "string" },
+            description: { type: "string" },
+            country: { type: "string" },
+            state: { type: "string" },
+            websiteUrl: { type: "string" },
+            twitterUrl: { type: "string" },
+            githubUrl: { type: "string" },
+            linkedinUrl: { type: "string" },
+            faqs: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  id: { type: "string" },
+                  question: { type: "string" },
+                  answer: { type: "string" },
+                },
+              },
+            },
+            tools: {
+              type: "array",
+              items: { $ref: "#/components/schemas/ToolDetail" },
+            },
+            products: {
+              type: "array",
+              items: { $ref: "#/components/schemas/ProductDetail" },
+            },
+            toolsCount: { type: "integer" },
+            productsCount: { type: "integer" },
           },
         },
       },

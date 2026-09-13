@@ -1,5 +1,5 @@
 import { db } from "@/db"
-import { products, categories, productTools, tools } from "@/db/schema"
+import { products, categories, productTools, tools, users } from "@/db/schema"
 import { and, desc, eq, ilike, inArray, or, sql } from "drizzle-orm"
 import type { DbProduct, ProductBuiltWith } from "@/types/entities"
 import type { Pricing, Tier } from "@/constants/plans"
@@ -67,7 +67,9 @@ export const getProducts = async ({
   }
 
   if (platform && platform.trim()) {
-    conditions.push(sql`${products.platforms} @> ARRAY[${platform.trim()}]::platform[]`)
+    conditions.push(
+      sql`${products.platforms} @> ARRAY[${platform.trim()}]::platform[]`
+    )
   }
 
   if (pricing && pricing.trim() && pricing.toLowerCase() !== "all") {
@@ -121,14 +123,23 @@ export const getProducts = async ({
       likesCount: products.likesCount,
       commentsCount: products.commentsCount,
       viewsCount: products.viewsCount,
+      images: products.images,
+      demoVideoUrl: products.demoVideoUrl,
+      useCases: products.useCases,
       categoryId: products.categoryId,
       category: categories.name,
       categorySlug: categories.slug,
+      submitterId: products.submitterId,
+      submitterName: users.name,
+      submitterUsername: users.username,
+      submitterCountry: users.country,
+      submitterAvatarUrl: users.avatarUrl,
       createdAt: products.createdAt,
       updatedAt: products.updatedAt,
     })
     .from(products)
     .leftJoin(categories, eq(products.categoryId, categories.id))
+    .leftJoin(users, eq(products.submitterId, users.id))
     .where(and(...conditions))
     .orderBy(orderMap[sortBy] ?? desc(products.likesCount))
     .limit(safeLimit)

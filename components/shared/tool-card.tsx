@@ -2,6 +2,8 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+import Link from "next/link"
+import { countryCodeToFlag } from "@/utils/country"
 import {
   ArrowBigUp,
   Bookmark,
@@ -230,6 +232,21 @@ export const ToolCard = ({
 
           {/* Tags + stats row */}
           <div className="mt-2 flex flex-wrap items-center gap-2.5">
+            {tool.submitterUsername && (
+              <Link
+                href={ROUTES.MAKER(tool.submitterUsername)}
+                onClick={(e) => e.stopPropagation()}
+                className="inline-flex items-center gap-1 rounded-md border border-slate-200/60 bg-slate-50/50 px-2 py-0.5 text-xs font-medium text-slate-500 transition-colors hover:bg-slate-100/80 hover:text-indigo-600"
+                title={`Maker: ${tool.submitterName ?? tool.submitterUsername}`}
+              >
+                {countryCodeToFlag(tool.submitterCountry) && (
+                  <span className="select-none">
+                    {countryCodeToFlag(tool.submitterCountry)}
+                  </span>
+                )}
+                <span>@{tool.submitterUsername}</span>
+              </Link>
+            )}
             {(tool.tags ?? []).slice(0, 3).map((tag) => (
               <Badge
                 key={tag}

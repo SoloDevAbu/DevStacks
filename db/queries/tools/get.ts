@@ -1,5 +1,5 @@
 import { db } from "@/db"
-import { tools, categories } from "@/db/schema"
+import { tools, categories, users } from "@/db/schema"
 import { eq } from "drizzle-orm"
 
 export const getToolBySlug = async (slug: string) => {
@@ -19,6 +19,9 @@ export const getToolBySlug = async (slug: string) => {
       twitterUrl: tools.twitterUrl,
       linkedinUrl: tools.linkedinUrl,
       discordUrl: tools.discordUrl,
+      images: tools.images,
+      demoVideoUrl: tools.demoVideoUrl,
+      useCases: tools.useCases,
       keywords: tools.keywords,
       targetAudience: tools.targetAudience,
       metaTitle: tools.metaTitle,
@@ -38,11 +41,18 @@ export const getToolBySlug = async (slug: string) => {
       categoryId: tools.categoryId,
       category: categories.name,
       categorySlug: categories.slug,
+      submitterId: tools.submitterId,
+      submitterName: users.name,
+      submitterUsername: users.username,
+      submitterCountry: users.country,
+      submitterState: users.state,
+      submitterAvatarUrl: users.avatarUrl,
       createdAt: tools.createdAt,
       updatedAt: tools.updatedAt,
     })
     .from(tools)
     .leftJoin(categories, eq(tools.categoryId, categories.id))
+    .leftJoin(users, eq(tools.submitterId, users.id))
     .where(eq(tools.slug, slug))
     .limit(1)
 

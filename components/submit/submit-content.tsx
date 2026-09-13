@@ -17,6 +17,10 @@ import {
   Briefcase,
   CheckCircle2,
   AlertCircle,
+  Upload,
+  Video,
+  Plus,
+  Trash2,
 } from "lucide-react"
 import { Spinner } from "@/components/ui/spinner"
 import {
@@ -46,6 +50,9 @@ const emptyForm = {
   twitterUrl: "",
   linkedinUrl: "",
   discordUrl: "",
+  images: [] as string[],
+  demoVideoUrl: "",
+  useCases: "",
   keywords: "",
   targetAudience: "",
   metaTitle: "",
@@ -61,6 +68,7 @@ const emptyForm = {
 
 export const SubmitContent = () => {
   const [form, setForm] = useState(emptyForm)
+  const [screenshotInput, setScreenshotInput] = useState("")
   const [errors, setErrors] = useState<Record<string, string[]>>({})
   const [submitted, setSubmitted] = useState(false)
 
@@ -98,6 +106,25 @@ export const SubmitContent = () => {
       platforms: prev.platforms.includes(platform)
         ? prev.platforms.filter((p) => p !== platform)
         : [...prev.platforms, platform],
+    }))
+  }
+
+  const addScreenshot = (customUrl?: string) => {
+    const url = customUrl || screenshotInput
+    if (!url.trim() || form.images.length >= 5) return
+    setForm((prev) => ({
+      ...prev,
+      images: [...prev.images, url.trim()],
+    }))
+    if (!customUrl) {
+      setScreenshotInput("")
+    }
+  }
+
+  const removeScreenshot = (index: number) => {
+    setForm((prev) => ({
+      ...prev,
+      images: prev.images.filter((_, i) => i !== index),
     }))
   }
 
@@ -339,13 +366,127 @@ export const SubmitContent = () => {
                   )}
                 </div>
                 <div className="grid gap-2">
-                  <Label htmlFor="logo">Logo URL</Label>
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="logo">Logo URL or Upload</Label>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() =>
+                        setForm((prev) => ({
+                          ...prev,
+                          logoUrl:
+                            "https://api.dicebear.com/7.x/shapes/svg?seed=" +
+                            (form.name || "logo"),
+                        }))
+                      }
+                      className="h-6 gap-1 px-2 text-[11px] font-semibold text-indigo-600 hover:text-indigo-700"
+                    >
+                      <Upload className="size-3" />
+                      Mock Upload Demo
+                    </Button>
+                  </div>
                   <Input
                     id="logo"
                     type="url"
                     value={form.logoUrl}
                     onChange={set("logoUrl")}
                     placeholder="https://example.com/logo.png"
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="video">Product Demo Video URL</Label>
+                  <div className="relative">
+                    <Video className="absolute top-2.5 left-3 size-4 text-slate-400" />
+                    <Input
+                      id="video"
+                      type="url"
+                      value={form.demoVideoUrl}
+                      onChange={set("demoVideoUrl")}
+                      placeholder="https://youtube.com/watch?v=... or Loom"
+                      className="pl-9"
+                    />
+                  </div>
+                </div>
+                <div className="grid gap-2 md:col-span-2">
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="screenshots">
+                      Screenshots & Gallery (Max 5)
+                    </Label>
+                    <span className="text-[11px] text-slate-400">
+                      {form.images.length}/5 added
+                    </span>
+                  </div>
+                  <div className="flex gap-2">
+                    <Input
+                      id="screenshots"
+                      type="url"
+                      value={screenshotInput}
+                      onChange={(e) => setScreenshotInput(e.target.value)}
+                      placeholder="Paste image URL (https://...)"
+                      disabled={form.images.length >= 5}
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => addScreenshot()}
+                      disabled={
+                        !screenshotInput.trim() || form.images.length >= 5
+                      }
+                      className="shrink-0 gap-1"
+                    >
+                      <Plus className="size-3.5" />
+                      Add URL
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      size="sm"
+                      onClick={() =>
+                        addScreenshot(
+                          `https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&auto=format&fit=crop&q=80`
+                        )
+                      }
+                      disabled={form.images.length >= 5}
+                      className="shrink-0 gap-1 text-xs"
+                      title="Simulate image upload"
+                    >
+                      <Upload className="size-3.5" />
+                      Mock Upload
+                    </Button>
+                  </div>
+
+                  {form.images.length > 0 && (
+                    <div className="mt-2 flex flex-wrap gap-2">
+                      {form.images.map((url, i) => (
+                        <div
+                          key={i}
+                          className="flex items-center gap-1.5 rounded-md border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs text-slate-700"
+                        >
+                          <span className="max-w-[200px] truncate">{url}</span>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => removeScreenshot(i)}
+                            className="size-5 text-slate-400 hover:bg-transparent hover:text-red-600"
+                          >
+                            <Trash2 className="size-3" />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                <div className="grid gap-2 md:col-span-2">
+                  <Label htmlFor="useCases">Target Use Cases (Optional)</Label>
+                  <Textarea
+                    id="useCases"
+                    value={form.useCases}
+                    onChange={set("useCases")}
+                    placeholder="Describe specific engineering workflows, use cases, or developer scenarios your product is designed for..."
+                    rows={3}
                   />
                 </div>
                 <div className="grid gap-2">

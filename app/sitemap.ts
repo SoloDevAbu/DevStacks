@@ -5,6 +5,7 @@ import {
   getProductCategories,
   getToolCategories,
 } from "@/db/queries/categories/list"
+import { getAllMakers } from "@/db/queries/users/get-profile"
 import { SITE_CONFIG } from "@/constants/site"
 import { ROUTES } from "@/constants/routes"
 
@@ -141,10 +142,11 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
   ]
 
   try {
-    const [dbProducts, dbTools, toolCategories, productCategories] =
+    const [dbProducts, dbTools, dbMakers, toolCategories, productCategories] =
       await Promise.all([
         getProducts({ limit: 5000 }),
         getTools({ limit: 5000 }),
+        getAllMakers(5000).catch(() => []),
         getToolCategories().catch(() => []),
         getProductCategories().catch(() => []),
       ])
@@ -195,6 +197,19 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
           changeFrequency: "weekly" as const,
           priority: 0.8,
         }))
+      )
+    }
+
+    if (dbMakers && dbMakers.length > 0) {
+      dynamicRoutes.push(
+        ...dbMakers
+          .filter((maker) => Boolean(maker.username))
+          .map((maker) => ({
+            url: `${siteUrl}/makers/${maker.username}`,
+            lastModified: maker.updatedAt ?? maker.createdAt ?? new Date(),
+            changeFrequency: "weekly" as const,
+            priority: 0.75,
+          }))
       )
     }
 

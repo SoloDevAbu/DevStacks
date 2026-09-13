@@ -18,4 +18,6 @@ export const AI_PROMPTS = {
     `Tell me about ${productName}${tagline ? ` (${tagline})` : ""} featured on ${SITE_CONFIG.name}. What problem does it solve, what are its key features, tech stack compatibility, and alternatives?`,
   tool: (toolName: string, tagline?: string) =>
     `Tell me about ${toolName}${tagline ? ` (${tagline})` : ""} featured on ${SITE_CONFIG.name}. What problem does it solve, what are its key features, pricing, and what products are built with it?`,
+  maker: (makerName: string, username?: string, bio?: string | null) =>
+    `Tell me about ${makerName}${username ? ` (@${username})` : ""}, developer and maker on ${SITE_CONFIG.name}.${bio ? ` Bio: "${bio}".` : ""} What developer tools, products, and tech stacks have they built?`,
 }
