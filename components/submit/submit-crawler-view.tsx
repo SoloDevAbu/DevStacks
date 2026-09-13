@@ -73,25 +73,21 @@ export const SubmitCrawlerView = () => {
           <h2 className="text-base font-bold text-slate-900">
             Developer Submission Guidelines
           </h2>
-          <ul className="list-disc space-y-2 pl-5 text-xs leading-relaxed text-slate-600">
+          <ul className="list-disc space-y-2.5 pl-5 text-xs leading-relaxed text-slate-600">
             <li>
-              <strong>General Information:</strong> Provide your product name,
-              official website URL, tagline, and technical description.
+              <strong>Required Information:</strong> Provide your product name,
+              catchy tagline, official website URL, full description, and pricing model.
             </li>
             <li>
-              <strong>Technical Deep-Dive:</strong> Specify the exact problem
-              your tool solves, its technical solution, and its unique value
-              proposition.
+              <strong>Product Showcase & Deep Dive (Optional):</strong> Detail the specific
+              problem your tool solves, architectural solution, unique advantages, target use cases,
+              categories, tags, supported platforms, media gallery, demo video, and social channels.
             </li>
             <li>
-              <strong>Discoverability (SEO / AEO / GEO / ASO):</strong> Include
-              target audience, relevant search keywords, ASO directory
-              categories, and an AI Context prompt for LLM answer engines.
-            </li>
-            <li>
-              <strong>Tech Stack (Built With):</strong> List the underlying
-              libraries, databases, authentication providers, and cloud hosting
-              used to build the product.
+              <strong>SEO, GEO & AI Discoverability (Metadata Only):</strong> Specify search
+              keywords, target audience personas, geographical targeting (GEO), directory categories (ASO),
+              SERP meta tags, and an AI Context prompt for LLM answer engines (ChatGPT, Claude, Perplexity).
+              This data is machine-readable and not displayed on your public product page.
             </li>
           </ul>
 

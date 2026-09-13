@@ -220,3 +220,12 @@ export const videoContainer =
 
 export const profileHeaderWrapper =
   "flex flex-col gap-6 border-b border-dashed border-border bg-linear-to-b from-slate-50/70 via-white to-white px-6 py-8 md:px-8 md:py-10"
+
+export const submitSectionHeaderRequired =
+  "flex flex-col gap-1 border-b border-dashed border-border bg-linear-to-r from-rose-100/60 via-amber-50/50 to-white px-6 py-6 md:px-8"
+
+export const submitSectionHeaderOptional =
+  "flex flex-col gap-1 border-b border-dashed border-border bg-linear-to-r from-emerald-100/50 via-teal-50/40 to-white px-6 py-6 md:px-8"
+
+export const submitSectionHeaderDiscoverability =
+  "flex flex-col gap-1 border-b border-dashed border-border bg-linear-to-r from-indigo-100/50 via-violet-50/40 to-white px-6 py-6 md:px-8"

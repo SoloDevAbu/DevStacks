@@ -6,7 +6,6 @@ import {
   ChevronRight,
   ArrowLeft,
   Layers,
-  Cpu,
   Sparkles,
   Target,
   Zap,
@@ -587,20 +586,6 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
                   </div>
                 )}
               </div>
-            </div>
-          </section>
-        )}
-
-        {/* Section 4: AI Summary / Citation Block (GEO / AEO) */}
-        {product.aiContext && (
-          <section className={cn(sectionWrapper, "bg-indigo-50/30")}>
-            <div className="flex flex-col gap-3">
-              <div className="flex items-center gap-2 text-xs font-bold tracking-wider text-indigo-700 uppercase">
-                <Cpu className="size-4" /> AI Overview & Direct Answers
-              </div>
-              <p className="max-w-4xl text-xs leading-relaxed text-slate-700">
-                {product.aiContext}
-              </p>
             </div>
           </section>
         )}
