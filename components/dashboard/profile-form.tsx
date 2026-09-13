@@ -1,0 +1,534 @@
+"use client"
+
+import { useState } from "react"
+import Link from "next/link"
+import {
+  User,
+  MapPin,
+  Globe,
+  Plus,
+  Trash2,
+  ExternalLink,
+  Loader2,
+  Sparkles,
+} from "lucide-react"
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
+import { FieldGroup, Field, FieldLabel } from "@/components/ui/field"
+import { MakerProfileCard } from "@/components/shared/maker-profile-card"
+import {
+  countryCodeToFlag,
+  countryCodeToName,
+  formatLocation,
+} from "@/utils/country"
+import { useUpdateProfile } from "@/hooks/users/use-update-profile"
+import { toast } from "@/components/ui/toast"
+import { ROUTES } from "@/constants/routes"
+import type { MakerProfile } from "@/types/entities"
+
+interface ProfileFormProps {
+  initialProfile: MakerProfile
+}
+
+export const ProfileForm = ({ initialProfile }: ProfileFormProps) => {
+  const [name, setName] = useState(initialProfile.name || "")
+  const [username, setUsername] = useState(initialProfile.username || "")
+  const [bio, setBio] = useState(initialProfile.bio || "")
+  const [description, setDescription] = useState(
+    initialProfile.description || ""
+  )
+  const [websiteUrl, setWebsiteUrl] = useState(initialProfile.websiteUrl || "")
+  const [twitterUrl, setTwitterUrl] = useState(initialProfile.twitterUrl || "")
+  const [githubUrl, setGithubUrl] = useState(initialProfile.githubUrl || "")
+  const [linkedinUrl, setLinkedinUrl] = useState(
+    initialProfile.linkedinUrl || ""
+  )
+
+  const [faqs, setFaqs] = useState<
+    Array<{ id?: string; question: string; answer: string }>
+  >(
+    initialProfile.faqs?.length > 0
+      ? initialProfile.faqs.map((f) => ({
+          id: f.id,
+          question: f.question,
+          answer: f.answer,
+        }))
+      : []
+  )
+
+  const updateMutation = useUpdateProfile()
+
+  const handleAddFaq = () => {
+    setFaqs((prev) => [...prev, { question: "", answer: "" }])
+  }
+
+  const handleUpdateFaq = (
+    index: number,
+    field: "question" | "answer",
+    value: string
+  ) => {
+    setFaqs((prev) => {
+      const copy = [...prev]
+      copy[index] = { ...copy[index], [field]: value }
+      return copy
+    })
+  }
+
+  const handleRemoveFaq = (index: number) => {
+    setFaqs((prev) => prev.filter((_, i) => i !== index))
+  }
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+
+    const cleanUsername = username.trim().toLowerCase().replace(/^@/, "")
+    if (!cleanUsername) {
+      toast.error("Username required", "Please enter a unique username handle.")
+      return
+    }
+
+    if (cleanUsername.length < 2) {
+      toast.error("Invalid username", "Username must be at least 2 characters.")
+      return
+    }
+
+    // Filter FAQs: remove ones where both are blank
+    const nonBlankFaqs = faqs
+      .map((f) => ({
+        id: f.id,
+        question: f.question.trim(),
+        answer: f.answer.trim(),
+      }))
+      .filter((f) => f.question || f.answer)
+
+    const incomplete = nonBlankFaqs.find((f) => !f.question || !f.answer)
+    if (incomplete) {
+      toast.error(
+        "Incomplete FAQ",
+        "Every added FAQ must have both a question and an answer."
+      )
+      return
+    }
+
+    updateMutation.mutate(
+      {
+        name: name.trim(),
+        username: cleanUsername,
+        bio: bio.trim(),
+        description: description.trim(),
+        websiteUrl: websiteUrl.trim(),
+        twitterUrl: twitterUrl.trim(),
+        githubUrl: githubUrl.trim(),
+        linkedinUrl: linkedinUrl.trim(),
+        faqs: nonBlankFaqs,
+      },
+      {
+        onSuccess: (data) => {
+          toast.success(
+            "Profile saved successfully",
+            "Your maker profile, handle, and FAQs are now live."
+          )
+          if (data?.username) {
+            setUsername(data.username)
+          }
+        },
+        onError: (err: unknown) => {
+          interface ApiErrorResponse {
+            response?: {
+              data?: {
+                error?: string
+                details?: Record<string, string[]>
+              }
+            }
+            message?: string
+          }
+          const axiosErr = err as ApiErrorResponse
+          const message =
+            axiosErr.response?.data?.error ||
+            axiosErr.message ||
+            "Failed to save profile. Please review the inputs and try again."
+
+          toast.error("Unable to update profile", message)
+        },
+      }
+    )
+  }
+
+  const flag = countryCodeToFlag(initialProfile.country)
+  const countryName = countryCodeToName(initialProfile.country)
+  const formattedLocation = formatLocation(
+    initialProfile.country,
+    initialProfile.state
+  )
+
+  const activeUsername = username.trim().toLowerCase().replace(/^@/, "")
+
+  return (
+    <form onSubmit={handleSubmit} className="flex flex-col gap-8">
+      {/* Live Preview Bar */}
+      <Card className="rounded-none border-dashed border-border bg-slate-50/50">
+        <CardHeader className="pb-3">
+          <div className="flex items-center justify-between">
+            <CardTitle className="flex items-center gap-2 text-sm font-bold text-slate-900">
+              <Sparkles className="size-4 text-amber-500" />
+              Live Preview
+            </CardTitle>
+            {activeUsername && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-7 px-2 text-xs font-semibold text-indigo-600 hover:text-indigo-700"
+              >
+                <Link
+                  href={ROUTES.MAKER(activeUsername)}
+                  target="_blank"
+                  className="flex items-center gap-1"
+                >
+                  <span>View Public Profile</span>
+                  <ExternalLink className="size-3" />
+                </Link>
+              </Button>
+            )}
+          </div>
+          <CardDescription className="text-xs text-slate-500">
+            How other developers and AI agents see your maker badge across
+            directory cards and tools.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <MakerProfileCard
+            name={name || "Your Name"}
+            username={activeUsername || "username"}
+            avatarUrl={initialProfile.avatarUrl ?? initialProfile.image}
+            country={initialProfile.country}
+            state={initialProfile.state}
+            size="md"
+          />
+        </CardContent>
+      </Card>
+
+      {/* Section 1: Identity */}
+      <Card className="rounded-none border-dashed border-border bg-white">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-base font-bold text-slate-900">
+            <User className="size-4 text-slate-500" />
+            Maker Identity
+          </CardTitle>
+          <CardDescription className="text-xs text-slate-500">
+            Your public handle, display name, and introduction.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <FieldGroup className="gap-5">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <Field>
+                <FieldLabel htmlFor="name">Display Name</FieldLabel>
+                <Input
+                  id="name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="e.g. Satoshi Nakamoto"
+                  required
+                />
+              </Field>
+
+              <Field>
+                <FieldLabel htmlFor="username">Username (Handle)</FieldLabel>
+                <Input
+                  id="username"
+                  value={username}
+                  onChange={(e) =>
+                    setUsername(
+                      e.target.value.toLowerCase().replace(/[^a-z0-9_-]/g, "")
+                    )
+                  }
+                  placeholder="e.g. satoshi"
+                  required
+                />
+                <span className="text-[11px] text-slate-400">
+                  Public profile URL: /makers/{activeUsername || "username"}
+                </span>
+              </Field>
+            </div>
+
+            <Field>
+              <div className="flex items-center justify-between">
+                <FieldLabel htmlFor="bio">One-Liner Bio</FieldLabel>
+                <span className="text-[11px] text-slate-400">
+                  {bio.length}/160
+                </span>
+              </div>
+              <Input
+                id="bio"
+                value={bio}
+                onChange={(e) => setBio(e.target.value)}
+                maxLength={160}
+                placeholder="e.g. Indie hacker building developer tools and open source software"
+              />
+            </Field>
+
+            <Field>
+              <div className="flex items-center justify-between">
+                <FieldLabel htmlFor="description">
+                  About You (Full Description)
+                </FieldLabel>
+                <span className="text-[11px] text-slate-400">
+                  {description.length}/5000
+                </span>
+              </div>
+              <Textarea
+                id="description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                maxLength={5000}
+                rows={4}
+                placeholder="Share your engineering background, what you love to build, tech stacks you specialize in, and what projects you are actively launching..."
+              />
+            </Field>
+          </FieldGroup>
+        </CardContent>
+      </Card>
+
+      {/* Section 2: Location (Read-Only) */}
+      {/* <Card className="rounded-none border-dashed border-border bg-white">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-base font-bold text-slate-900">
+            <MapPin className="size-4 text-slate-500" />
+            Location & Country
+          </CardTitle>
+          <CardDescription className="text-xs text-slate-500">
+            Location detected during your sign-in to display your country flag
+            on submissions.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-between rounded-lg border border-dashed border-slate-200 bg-slate-50/80 p-4">
+            <div className="flex items-center gap-3">
+              <span className="text-2xl select-none">{flag || "🌐"}</span>
+              <div>
+                <p className="text-sm font-semibold text-slate-900">
+                  {formattedLocation || countryName || "Global / Worldwide"}
+                </p>
+                <p className="text-xs text-slate-500">
+                  {initialProfile.country
+                    ? `ISO Code: ${initialProfile.country}`
+                    : "No specific region detected"}
+                </p>
+              </div>
+            </div>
+            <Badge
+              variant="outline"
+              className="border-dashed text-xs text-slate-500"
+            >
+              Auto-verified on Sign-in
+            </Badge>
+          </div>
+        </CardContent>
+      </Card> */}
+
+      {/* Section 3: Social & Portfolio Links */}
+      <Card className="rounded-none border-dashed border-border bg-white">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-base font-bold text-slate-900">
+            <Globe className="size-4 text-slate-500" />
+            Social & Portfolio Links
+          </CardTitle>
+          <CardDescription className="text-xs text-slate-500">
+            Links displayed on your maker profile and indexed in search and AI
+            engine results.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <Field>
+              <FieldLabel htmlFor="websiteUrl">Portfolio / Website</FieldLabel>
+              <Input
+                id="websiteUrl"
+                type="text"
+                value={websiteUrl}
+                onChange={(e) => setWebsiteUrl(e.target.value)}
+                placeholder="https://yourportfolio.dev or yourportfolio.dev"
+              />
+            </Field>
+
+            <Field>
+              <FieldLabel htmlFor="githubUrl">GitHub Profile</FieldLabel>
+              <Input
+                id="githubUrl"
+                type="text"
+                value={githubUrl}
+                onChange={(e) => setGithubUrl(e.target.value)}
+                placeholder="https://github.com/handle or github.com/handle"
+              />
+            </Field>
+
+            <Field>
+              <FieldLabel htmlFor="twitterUrl">Twitter / X Profile</FieldLabel>
+              <Input
+                id="twitterUrl"
+                type="text"
+                value={twitterUrl}
+                onChange={(e) => setTwitterUrl(e.target.value)}
+                placeholder="https://x.com/handle or x.com/handle"
+              />
+            </Field>
+
+            <Field>
+              <FieldLabel htmlFor="linkedinUrl">LinkedIn Profile</FieldLabel>
+              <Input
+                id="linkedinUrl"
+                type="text"
+                value={linkedinUrl}
+                onChange={(e) => setLinkedinUrl(e.target.value)}
+                placeholder="https://linkedin.com/in/handle or linkedin.com/in/handle"
+              />
+            </Field>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Section 4: Maker FAQs */}
+      <Card className="rounded-none border-dashed border-border bg-white">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="flex items-center gap-2 text-base font-bold text-slate-900">
+                Maker FAQs
+              </CardTitle>
+              <CardDescription className="text-xs text-slate-500">
+                Frequently asked questions about you, your tech stack,
+                availability, or roadmap.
+              </CardDescription>
+            </div>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={handleAddFaq}
+              className="gap-1.5"
+            >
+              <Plus className="size-3.5" />
+              <span>Add Question</span>
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent>
+          {faqs.length === 0 ? (
+            <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-slate-200 py-8 text-center">
+              <p className="text-xs text-slate-500">
+                No personal FAQs added yet. Add common questions like your
+                primary tech stacks, freelance availability, or what you are
+                building next.
+              </p>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleAddFaq}
+                className="mt-3 gap-1.5"
+              >
+                <Plus className="size-3.5" />
+                <span>Add First Question</span>
+              </Button>
+            </div>
+          ) : (
+            <div className="flex flex-col gap-4">
+              {faqs.map((faq, idx) => (
+                <div
+                  key={idx}
+                  className="relative flex flex-col gap-3 rounded-lg border border-dashed border-slate-200 bg-slate-50/40 p-4"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="font-mono text-xs font-bold text-slate-400">
+                      FAQ #{idx + 1}
+                    </span>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleRemoveFaq(idx)}
+                      className="h-7 px-2 text-red-500 hover:bg-red-50 hover:text-red-600"
+                    >
+                      <Trash2 className="size-3.5" />
+                    </Button>
+                  </div>
+
+                  <Field>
+                    <FieldLabel>Question</FieldLabel>
+                    <Input
+                      value={faq.question}
+                      onChange={(e) =>
+                        handleUpdateFaq(idx, "question", e.target.value)
+                      }
+                      placeholder="e.g. What tech stacks do you specialize in?"
+                    />
+                  </Field>
+
+                  <Field>
+                    <FieldLabel>Answer</FieldLabel>
+                    <Textarea
+                      value={faq.answer}
+                      onChange={(e) =>
+                        handleUpdateFaq(idx, "answer", e.target.value)
+                      }
+                      rows={2}
+                      placeholder="e.g. I work primarily with Next.js, TypeScript, PostgreSQL, and Cloudflare workers."
+                    />
+                  </Field>
+                </div>
+              ))}
+
+              {/* Bottom Add Question Button */}
+              <div className="pt-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={handleAddFaq}
+                  className="w-full cursor-pointer gap-1.5 border-dashed py-4 text-xs text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                >
+                  <Plus className="size-3.5" />
+                  <span>Add Another Question</span>
+                </Button>
+              </div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Submit Toolbar */}
+      <div className="flex items-center justify-end gap-3 pt-4">
+        {activeUsername && (
+          <Button variant="outline">
+            <Link href={ROUTES.MAKER(activeUsername)} target="_blank">
+              Preview Profile
+            </Link>
+          </Button>
+        )}
+        <Button
+          type="submit"
+          disabled={updateMutation.isPending}
+          className="min-w-32 cursor-pointer bg-slate-900 text-white hover:bg-slate-800"
+        >
+          {updateMutation.isPending ? (
+            <>
+              <Loader2 className="size-4 animate-spin" />
+              <span>Saving...</span>
+            </>
+          ) : (
+            <span>Save Profile</span>
+          )}
+        </Button>
+      </div>
+    </form>
+  )
+}
