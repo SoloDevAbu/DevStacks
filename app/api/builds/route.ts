@@ -1,6 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
-import { createBuild } from "@/db/queries/builds/create"
+import { createProduct } from "@/db/queries/products/create"
 import { submitBuildSchema } from "@/lib/validation/build"
 
 export const POST = async (req: NextRequest) => {
@@ -19,6 +19,7 @@ export const POST = async (req: NextRequest) => {
     const body = await req.json()
     const parsed = submitBuildSchema.safeParse({
       ...body,
+      submitterId: session.user.id,
       authorId: session.user.id,
     })
 
@@ -29,17 +30,35 @@ export const POST = async (req: NextRequest) => {
       )
     }
 
-    const { productIds, ...buildData } = parsed.data
-    const build = await createBuild(
-      {
-        ...buildData,
-        authorId: session.user.id,
-      },
-      productIds
-    )
+    const { tags, builtWithTools, tools, authorId, logoText, logoBg, ...rest } =
+      parsed.data
 
-    return NextResponse.json({ data: build }, { status: 201 })
-  } catch {
+    const toolList = Array.isArray(builtWithTools)
+      ? [...builtWithTools]
+      : tools
+        ? tools
+            .split(",")
+            .map((t) => t.trim())
+            .filter(Boolean)
+        : []
+
+    const product = await createProduct({
+      ...rest,
+      submitterId: session.user.id,
+      tags: Array.isArray(tags) ? tags : [],
+      platforms: (rest.platforms ?? []) as any,
+      builtWithTools: toolList.length > 0 ? toolList : undefined,
+    })
+
+    return NextResponse.json({ data: product }, { status: 201 })
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : "Unknown error"
+    if (message.includes("unique")) {
+      return NextResponse.json(
+        { error: "A product with this name already exists" },
+        { status: 409 }
+      )
+    }
     return NextResponse.json(
       { error: "Failed to create build" },
       { status: 500 }

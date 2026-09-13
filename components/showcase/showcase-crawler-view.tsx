@@ -81,6 +81,18 @@ export const ShowcaseCrawlerView = () => {
             architecture.
           </p>
 
+          <ul className="list-disc space-y-2.5 pl-5 text-xs leading-relaxed text-slate-600">
+            <li>
+              <strong>Required Information:</strong> Product name, catchy tagline, live website URL, full technical description, and pricing model.
+            </li>
+            <li>
+              <strong>Product Showcase & Deep Dive (Optional):</strong> Problem it solves, architectural solution, unique advantages, built-with tech stack tools, platforms, media gallery, demo video, and social channels.
+            </li>
+            <li>
+              <strong>SEO, GEO & AI Discoverability (Metadata Only):</strong> Search keywords, target audience, regional geo-targeting (GEO), directory categories (ASO), SERP meta tags, and AI Context prompt for LLM answer engines (ChatGPT, Claude, Perplexity).
+            </li>
+          </ul>
+
           <div className="mt-4 flex items-center justify-between border-t border-dashed border-slate-200 pt-4">
             <p className="text-xs text-slate-500">
               Ready to submit your build showcase? Sign in with your GitHub or

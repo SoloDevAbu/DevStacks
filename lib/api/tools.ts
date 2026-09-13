@@ -1,4 +1,5 @@
 import { apiClient } from "@/lib/api/axios-instance"
+import type { DbTool } from "@/types/entities"
 
 export type ToolListParams = {
   q?: string
@@ -12,9 +13,9 @@ export type ToolListParams = {
   sortBy?: "upvotes" | "builds" | "recent" | "views"
 }
 
-export const fetchTools = async (params: ToolListParams = {}) => {
+export const fetchTools = async (params: ToolListParams = {}): Promise<DbTool[]> => {
   const { data } = await apiClient.get("/tools", { params })
-  return data.data
+  return (data.data ?? []) as DbTool[]
 }
 
 export const fetchTool = async (slug: string) => {

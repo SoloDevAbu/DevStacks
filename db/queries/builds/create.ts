@@ -23,6 +23,7 @@ export const createBuild = async (
     logoText?: string
     logoBg?: string
     websiteUrl?: string
+    githubUrl?: string
   },
   toolIds: string[] = []
 ) => {
@@ -38,6 +39,7 @@ export const createBuild = async (
       tagline: data.description.slice(0, 150),
       description: data.description,
       websiteUrl: data.websiteUrl || "https://example.com",
+      githubUrl: data.githubUrl || null,
       status: "approved",
       tags: [],
       platforms: [],

@@ -42,6 +42,10 @@ import {
   submitSectionHeaderOptional,
   submitSectionHeaderDiscoverability,
 } from "@/utils/styles"
+import {
+  BuiltWithToolsInput,
+  type BuiltWithToolItem,
+} from "@/components/shared/built-with-tools-input"
 
 const emptyForm = {
   name: "",
@@ -59,6 +63,7 @@ const emptyForm = {
   images: [] as string[],
   demoVideoUrl: "",
   useCases: "",
+  builtWithTools: [] as BuiltWithToolItem[],
   keywords: "",
   targetAudience: "",
   metaTitle: "",
@@ -435,6 +440,27 @@ export const SubmitContent = () => {
                     rows={3}
                   />
                 </div>
+              </div>
+            </div>
+
+            {/* Subsection: Tech Stack & Built With */}
+            <div className="flex flex-col gap-5 border-b border-dashed border-border px-6 py-6 md:px-8 md:py-8">
+              <div className="flex flex-col gap-1">
+                <h3 className="text-sm font-bold text-slate-900">
+                  Tech Stack & Built With
+                </h3>
+                <p className="text-xs text-slate-500">
+                  Link developer tools from DevStacks powering your product, or add custom unlinked tools.
+                </p>
+              </div>
+
+              <div className="flex flex-col gap-4">
+                <BuiltWithToolsInput
+                  value={form.builtWithTools}
+                  onChange={(tools) =>
+                    setForm((prev) => ({ ...prev, builtWithTools: tools }))
+                  }
+                />
               </div>
             </div>
 
