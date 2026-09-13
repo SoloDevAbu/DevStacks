@@ -1,5 +1,5 @@
 import { db } from "@/db"
-import { tools, categories } from "@/db/schema"
+import { tools, categories, users } from "@/db/schema"
 import { and, desc, eq, ilike, or, sql } from "drizzle-orm"
 import type { DbTool } from "@/types/entities"
 import type { Pricing, Tier } from "@/constants/plans"
@@ -67,7 +67,9 @@ export const getTools = async ({
   }
 
   if (platform && platform.trim()) {
-    conditions.push(sql`${tools.platforms} @> ARRAY[${platform.trim()}]::platform[]`)
+    conditions.push(
+      sql`${tools.platforms} @> ARRAY[${platform.trim()}]::platform[]`
+    )
   }
 
   if (pricing && pricing.trim() && pricing.toLowerCase() !== "all") {
@@ -106,14 +108,23 @@ export const getTools = async ({
       tier: tools.tier,
       logoUrl: tools.logoUrl,
       websiteUrl: tools.websiteUrl,
+      images: tools.images,
+      demoVideoUrl: tools.demoVideoUrl,
+      useCases: tools.useCases,
       categoryId: tools.categoryId,
       category: categories.name,
       categorySlug: categories.slug,
+      submitterId: tools.submitterId,
+      submitterName: users.name,
+      submitterUsername: users.username,
+      submitterCountry: users.country,
+      submitterAvatarUrl: users.avatarUrl,
       createdAt: tools.createdAt,
       updatedAt: tools.updatedAt,
     })
     .from(tools)
     .leftJoin(categories, eq(tools.categoryId, categories.id))
+    .leftJoin(users, eq(tools.submitterId, users.id))
     .where(and(...conditions))
     .orderBy(orderMap[sortBy] ?? desc(tools.upvotesCount))
     .limit(safeLimit)

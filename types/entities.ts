@@ -25,6 +25,14 @@ export type DbTool = {
   websiteUrl?: string | null
   freshnessDaysLeft?: number
   platforms?: string[]
+  submitterId?: string | null
+  submitterName?: string | null
+  submitterUsername?: string | null
+  submitterCountry?: string | null
+  submitterAvatarUrl?: string | null
+  images?: string[]
+  demoVideoUrl?: string | null
+  useCases?: string | null
   createdAt?: Date
   updatedAt?: Date
 }
@@ -48,8 +56,46 @@ export type DbProduct = {
   builtWithTools?: ProductBuiltWith[]
   freshnessDaysLeft?: number
   platforms?: string[]
+  submitterId?: string | null
+  submitterName?: string | null
+  submitterUsername?: string | null
+  submitterCountry?: string | null
+  submitterAvatarUrl?: string | null
+  images?: string[]
+  demoVideoUrl?: string | null
+  useCases?: string | null
   createdAt?: Date
   updatedAt?: Date
 }
 
 export type EntityItem = DbTool | DbProduct
+
+export type MakerFaqItem = {
+  id: string
+  question: string
+  answer: string
+  sortOrder: number
+}
+
+export type MakerProfile = {
+  id: string
+  name: string
+  email?: string
+  username: string
+  avatarUrl?: string | null
+  image?: string | null
+  bio?: string | null
+  description?: string | null
+  country?: string | null
+  state?: string | null
+  websiteUrl?: string | null
+  twitterUrl?: string | null
+  githubUrl?: string | null
+  linkedinUrl?: string | null
+  createdAt: Date
+  faqs: MakerFaqItem[]
+  tools: DbTool[]
+  products: DbProduct[]
+  toolsCount: number
+  productsCount: number
+}
