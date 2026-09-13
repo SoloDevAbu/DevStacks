@@ -2,25 +2,45 @@ import { NextResponse } from "next/server"
 import { SITE_CONFIG } from "@/constants/site"
 import { getTools } from "@/db/queries/tools/list"
 import { getProducts } from "@/db/queries/products/list"
+import { db } from "@/db"
+import { users } from "@/db/schema"
+import { sql } from "drizzle-orm"
 
 export const revalidate = 3600
 
 export const GET = async () => {
   let toolsList: Awaited<ReturnType<typeof getTools>> = []
   let productsList: Awaited<ReturnType<typeof getProducts>> = []
+  let makersList: Array<{
+    name: string
+    username: string | null
+    country: string | null
+    bio: string | null
+  }> = []
 
   try {
-    const [fetchedTools, fetchedProducts] = await Promise.all([
+    const [fetchedTools, fetchedProducts, fetchedMakers] = await Promise.all([
       getTools({ sortBy: "builds", limit: 20 }),
       getProducts({ sortBy: "likes", limit: 20 }),
+      db
+        .select({
+          name: users.name,
+          username: users.username,
+          country: users.country,
+          bio: users.bio,
+        })
+        .from(users)
+        .where(sql`${users.username} IS NOT NULL`)
+        .limit(12),
     ])
     toolsList = fetchedTools ?? []
     productsList = fetchedProducts ?? []
+    makersList = fetchedMakers ?? []
   } catch {
     toolsList = []
     productsList = []
+    makersList = []
   }
-
 
   const snapshot = {
     generatedAt: new Date().toISOString(),
@@ -30,8 +50,18 @@ export const GET = async () => {
     stats: {
       totalTools: toolsList.length,
       totalProducts: productsList.length,
+      totalMakers: makersList.length,
       activeEcosystem: true,
     },
+    topMakers: makersList
+      .filter((m) => m.username)
+      .map((m) => ({
+        name: m.name,
+        username: m.username!,
+        url: `${SITE_CONFIG.url}/makers/${m.username}`,
+        country: m.country,
+        bio: m.bio,
+      })),
     trendingTools: toolsList.slice(0, 15).map((t) => ({
       name: t.name,
       slug: t.slug,
@@ -42,6 +72,13 @@ export const GET = async () => {
       pricing: t.pricing,
       buildsCount: t.buildsCount,
       upvotes: t.upvotesCount,
+      maker: t.submitterUsername
+        ? {
+            name: t.submitterName,
+            username: t.submitterUsername,
+            country: t.submitterCountry,
+          }
+        : undefined,
     })),
     topProducts: productsList.slice(0, 15).map((p) => ({
       name: p.name,
@@ -54,7 +91,16 @@ export const GET = async () => {
       pricing: p.pricing,
       tier: p.tier,
       likes: p.likesCount,
-      builtWith: (p.builtWithTools ?? []).map((b) => (typeof b === "string" ? b : b.name)),
+      maker: p.submitterUsername
+        ? {
+            name: p.submitterName,
+            username: p.submitterUsername,
+            country: p.submitterCountry,
+          }
+        : undefined,
+      builtWith: (p.builtWithTools ?? []).map((b) =>
+        typeof b === "string" ? b : b.name
+      ),
     })),
 
     links: {

@@ -51,6 +51,7 @@ export const GET = async () => {
 - [/tools/{slug}](${SITE_CONFIG.url}/tools/<param>): Single developer tool detail (tagline, categories, pricing, verified builds, upvotes)
 - [/products](${SITE_CONFIG.url}/products): Developer products directory
 - [/products/{slug}](${SITE_CONFIG.url}/products/<param>): Single product detail (problem, solution, unique value, tech stack)
+- [/makers/{username}](${SITE_CONFIG.url}/makers/<param>): Maker & developer profile (bio, country, maker FAQs, submitted tools & products)
 - [/trending](${SITE_CONFIG.url}/trending): Trending rankings leaderboard
 - [/showcase](${SITE_CONFIG.url}/showcase): Developer showcases
 - [/pricing](${SITE_CONFIG.url}/pricing): Platform plans
