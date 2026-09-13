@@ -45,16 +45,32 @@ export const platformEnum = pgEnum("platform", [
 // users (Better Auth user table)
 // ---------------------------------------------------------------------------
 
-export const users = pgTable("users", {
-  id: text("id").primaryKey(),
-  name: text("name").notNull(),
-  email: text("email").notNull().unique(),
-  emailVerified: boolean("email_verified").notNull().default(false),
-  image: text("image"),
-  avatarUrl: text("avatar_url"),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
-  updatedAt: timestamp("updated_at").notNull().defaultNow(),
-})
+export const users = pgTable(
+  "users",
+  {
+    id: text("id").primaryKey(),
+    name: text("name").notNull(),
+    email: text("email").notNull().unique(),
+    emailVerified: boolean("email_verified").notNull().default(false),
+    image: text("image"),
+    avatarUrl: text("avatar_url"),
+
+    // Maker profile fields
+    username: text("username").unique(),
+    bio: text("bio"),
+    description: text("description"),
+    country: text("country"),
+    state: text("state"),
+    websiteUrl: text("website_url"),
+    twitterUrl: text("twitter_url"),
+    githubUrl: text("github_url"),
+    linkedinUrl: text("linkedin_url"),
+
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+    updatedAt: timestamp("updated_at").notNull().defaultNow(),
+  },
+  (t) => [index("users_country_idx").on(t.country)]
+)
 
 // ---------------------------------------------------------------------------
 // categories
@@ -99,6 +115,9 @@ export const tools = pgTable(
     twitterUrl: text("twitter_url"),
     linkedinUrl: text("linkedin_url"),
     discordUrl: text("discord_url"),
+    images: text("images").array().notNull().default([]),
+    demoVideoUrl: text("demo_video_url"),
+    useCases: text("use_cases"),
 
     // Discoverability & SEO/AEO/GEO/ASO
     keywords: text("keywords"),
@@ -176,6 +195,9 @@ export const products = pgTable(
     twitterUrl: text("twitter_url"),
     linkedinUrl: text("linkedin_url"),
     discordUrl: text("discord_url"),
+    images: text("images").array().notNull().default([]),
+    demoVideoUrl: text("demo_video_url"),
+    useCases: text("use_cases"),
 
     // Discoverability & SEO/AEO/GEO/ASO
     keywords: text("keywords"),
@@ -380,6 +402,78 @@ export const productComments = pgTable(
 )
 
 // ---------------------------------------------------------------------------
+// maker_faqs
+// ---------------------------------------------------------------------------
+
+export const makerFaqs = pgTable(
+  "maker_faqs",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    question: text("question").notNull(),
+    answer: text("answer").notNull(),
+    sortOrder: integer("sort_order").notNull().default(0),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (t) => [
+    index("maker_faqs_user_id_idx").on(t.userId),
+    index("maker_faqs_user_sort_idx").on(t.userId, t.sortOrder),
+  ]
+)
+
+// ---------------------------------------------------------------------------
+// tool_faqs
+// ---------------------------------------------------------------------------
+
+export const toolFaqs = pgTable(
+  "tool_faqs",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    toolId: uuid("tool_id")
+      .notNull()
+      .references(() => tools.id, { onDelete: "cascade" }),
+    question: text("question").notNull(),
+    answer: text("answer").notNull(),
+    sortOrder: integer("sort_order").notNull().default(0),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (t) => [
+    index("tool_faqs_tool_id_idx").on(t.toolId),
+    index("tool_faqs_tool_sort_idx").on(t.toolId, t.sortOrder),
+  ]
+)
+
+// ---------------------------------------------------------------------------
+// product_faqs
+// ---------------------------------------------------------------------------
+
+export const productFaqs = pgTable(
+  "product_faqs",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    productId: uuid("product_id")
+      .notNull()
+      .references(() => products.id, { onDelete: "cascade" }),
+    question: text("question").notNull(),
+    answer: text("answer").notNull(),
+    sortOrder: integer("sort_order").notNull().default(0),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (t) => [
+    index("product_faqs_product_id_idx").on(t.productId),
+    index("product_faqs_product_sort_idx").on(t.productId, t.sortOrder),
+  ]
+)
+
+// ---------------------------------------------------------------------------
 // sessions (Better Auth session table)
 // ---------------------------------------------------------------------------
 
@@ -467,6 +561,9 @@ export const relations = defineRelations(
     productBookmarks,
     toolComments,
     productComments,
+    makerFaqs,
+    toolFaqs,
+    productFaqs,
     sessions,
     accounts,
   },
@@ -474,6 +571,7 @@ export const relations = defineRelations(
     users: {
       tools: r.many.tools(),
       products: r.many.products(),
+      makerFaqs: r.many.makerFaqs(),
       toolUpvotes: r.many.toolUpvotes(),
       productLikes: r.many.productLikes(),
       toolBookmarks: r.many.toolBookmarks(),
@@ -499,6 +597,7 @@ export const relations = defineRelations(
         from: r.tools.categoryId,
         to: r.categories.id,
       }),
+      faqs: r.many.toolFaqs(),
       upvotes: r.many.toolUpvotes(),
       bookmarks: r.many.toolBookmarks(),
       comments: r.many.toolComments(),
@@ -510,10 +609,23 @@ export const relations = defineRelations(
         from: r.products.categoryId,
         to: r.categories.id,
       }),
+      faqs: r.many.productFaqs(),
       likes: r.many.productLikes(),
       bookmarks: r.many.productBookmarks(),
       comments: r.many.productComments(),
       productTools: r.many.productTools(),
+    },
+    makerFaqs: {
+      user: r.one.users({ from: r.makerFaqs.userId, to: r.users.id }),
+    },
+    toolFaqs: {
+      tool: r.one.tools({ from: r.toolFaqs.toolId, to: r.tools.id }),
+    },
+    productFaqs: {
+      product: r.one.products({
+        from: r.productFaqs.productId,
+        to: r.products.id,
+      }),
     },
     productTools: {
       product: r.one.products({
@@ -603,3 +715,12 @@ export type NewToolComment = typeof toolComments.$inferInsert
 
 export type ProductComment = typeof productComments.$inferSelect
 export type NewProductComment = typeof productComments.$inferInsert
+
+export type MakerFaq = typeof makerFaqs.$inferSelect
+export type NewMakerFaq = typeof makerFaqs.$inferInsert
+
+export type ToolFaq = typeof toolFaqs.$inferSelect
+export type NewToolFaq = typeof toolFaqs.$inferInsert
+
+export type ProductFaq = typeof productFaqs.$inferSelect
+export type NewProductFaq = typeof productFaqs.$inferInsert
