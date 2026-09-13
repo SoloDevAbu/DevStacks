@@ -21,7 +21,24 @@ export type ProductSchemaInput = {
   githubUrl?: string | null
   twitterUrl?: string | null
   websiteUrl?: string | null
+  author?: {
+    name: string
+    url?: string
+    country?: string | null
+  }
+  screenshots?: string[]
+  videoUrl?: string | null
   isRelatedTo?: ReadonlyArray<{ readonly name: string; readonly url: string }>
+}
+
+export type PersonSchemaInput = {
+  name: string
+  username?: string | null
+  url: string
+  image?: string | null
+  description?: string | null
+  country?: string | null
+  sameAs?: string[]
 }
 
 export const websiteSchema = () => ({
@@ -140,6 +157,33 @@ export const productSchema = (product: ProductSchemaInput) => {
       name: SITE_CONFIG.name,
       url: SITE_CONFIG.url,
     },
+    author: product.author
+      ? {
+          "@type": "Person",
+          name: product.author.name,
+          url: product.author.url,
+          nationality: product.author.country
+            ? {
+                "@type": "Country",
+                name: product.author.country,
+              }
+            : undefined,
+        }
+      : undefined,
+    screenshot:
+      product.screenshots && product.screenshots.length > 0
+        ? product.screenshots
+        : undefined,
+    video: product.videoUrl
+      ? {
+          "@type": "VideoObject",
+          name: `${product.name} Demo Video`,
+          contentUrl: product.videoUrl,
+          thumbnailUrl: product.logoUrl ?? `${SITE_CONFIG.url}/opengraph-image`,
+          uploadDate:
+            product.createdAt?.toISOString() ?? new Date().toISOString(),
+        }
+      : undefined,
     isRelatedTo:
       product.isRelatedTo && product.isRelatedTo.length > 0
         ? product.isRelatedTo.map((item) => ({
@@ -150,6 +194,39 @@ export const productSchema = (product: ProductSchemaInput) => {
         : undefined,
   }
 }
+
+export const personSchema = (person: PersonSchemaInput) => ({
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: person.name,
+  alternateName: person.username ? `@${person.username}` : undefined,
+  url: person.url,
+  image: person.image ?? undefined,
+  description: person.description ?? undefined,
+  nationality: person.country
+    ? {
+        "@type": "Country",
+        name: person.country,
+      }
+    : undefined,
+  sameAs: person.sameAs && person.sameAs.length > 0 ? person.sameAs : undefined,
+})
+
+export const profilePageSchema = ({
+  name,
+  url,
+  person,
+}: {
+  name: string
+  url: string
+  person: PersonSchemaInput
+}) => ({
+  "@context": "https://schema.org",
+  "@type": "ProfilePage",
+  name,
+  url,
+  mainEntity: personSchema(person),
+})
 
 export const breadcrumbSchema = (
   crumbs: ReadonlyArray<{ readonly name: string; readonly url: string }>
