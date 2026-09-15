@@ -14,6 +14,9 @@ interface ToolTwinInput {
   description?: string | null
   websiteUrl?: string | null
   logoUrl?: string | null
+  appStoreUrl?: string | null
+  playStoreUrl?: string | null
+  chromeExtensionUrl?: string | null
   category?: string | null
   pricing?: string | null
   buildsCount?: number | null
@@ -33,6 +36,9 @@ interface ProductTwinInput {
   websiteUrl?: string | null
   logoUrl?: string | null
   githubUrl?: string | null
+  appStoreUrl?: string | null
+  playStoreUrl?: string | null
+  chromeExtensionUrl?: string | null
   category?: string | null
   tags?: string[] | null
   platforms?: string[] | null
@@ -84,7 +90,7 @@ ${tool.description ?? `${tool.name} is a developer tool and software building bl
 
 ## Integration & Official Links
 - **Website**: ${tool.websiteUrl ?? canonical}
-- **DevStacks Profile**: ${canonical}
+${tool.appStoreUrl ? `- **iOS App Store**: ${tool.appStoreUrl}\n` : ""}${tool.playStoreUrl ? `- **Google Play Store**: ${tool.playStoreUrl}\n` : ""}${tool.chromeExtensionUrl ? `- **Chrome Extension**: ${tool.chromeExtensionUrl}\n` : ""}- **DevStacks Profile**: ${canonical}
 - **Machine Discovery**: ${SITE_CONFIG.url}/api/md/tools/${tool.slug}
 `
 }
@@ -156,7 +162,7 @@ ${
 ## Canonical & Machine Links
 - **Product Page**: ${canonical}
 - **Official Website**: ${product.websiteUrl ?? canonical}
-- **Markdown Twin**: ${SITE_CONFIG.url}/api/md/products/${product.slug}
+${product.appStoreUrl ? `- **iOS App Store**: ${product.appStoreUrl}\n` : ""}${product.playStoreUrl ? `- **Google Play Store**: ${product.playStoreUrl}\n` : ""}${product.chromeExtensionUrl ? `- **Chrome Extension**: ${product.chromeExtensionUrl}\n` : ""}- **Markdown Twin**: ${SITE_CONFIG.url}/api/md/products/${product.slug}
 `
 }
 

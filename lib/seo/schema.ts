@@ -20,6 +20,11 @@ export type ProductSchemaInput = {
   uniqueValue?: string | null
   githubUrl?: string | null
   twitterUrl?: string | null
+  linkedinUrl?: string | null
+  discordUrl?: string | null
+  appStoreUrl?: string | null
+  playStoreUrl?: string | null
+  chromeExtensionUrl?: string | null
   websiteUrl?: string | null
   author?: {
     name: string
@@ -114,8 +119,18 @@ export const productSchema = (product: ProductSchemaInput) => {
   const sameAs: string[] = []
   if (product.githubUrl) sameAs.push(product.githubUrl)
   if (product.twitterUrl) sameAs.push(product.twitterUrl)
+  if (product.linkedinUrl) sameAs.push(product.linkedinUrl)
+  if (product.discordUrl) sameAs.push(product.discordUrl)
+  if (product.appStoreUrl) sameAs.push(product.appStoreUrl)
+  if (product.playStoreUrl) sameAs.push(product.playStoreUrl)
+  if (product.chromeExtensionUrl) sameAs.push(product.chromeExtensionUrl)
   if (product.websiteUrl && product.websiteUrl !== product.url)
     sameAs.push(product.websiteUrl)
+
+  const downloadUrls: string[] = []
+  if (product.appStoreUrl) downloadUrls.push(product.appStoreUrl)
+  if (product.playStoreUrl) downloadUrls.push(product.playStoreUrl)
+  if (product.chromeExtensionUrl) downloadUrls.push(product.chromeExtensionUrl)
 
   return {
     "@context": "https://schema.org",
@@ -134,6 +149,18 @@ export const productSchema = (product: ProductSchemaInput) => {
     keywords: product.keywords ?? undefined,
     featureList: featureList.length > 0 ? featureList : undefined,
     sameAs: sameAs.length > 0 ? sameAs : undefined,
+    downloadUrl:
+      downloadUrls.length > 0
+        ? downloadUrls.length === 1
+          ? downloadUrls[0]
+          : downloadUrls
+        : undefined,
+    installUrl:
+      downloadUrls.length > 0
+        ? downloadUrls.length === 1
+          ? downloadUrls[0]
+          : downloadUrls
+        : undefined,
     aggregateRating: {
       "@type": "AggregateRating",
       ratingValue,
