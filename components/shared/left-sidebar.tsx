@@ -166,13 +166,13 @@ export const LeftSidebar = () => {
             Launch Your Product
           </p>
           <p className="mt-1 text-[11px] leading-relaxed text-slate-500">
-            Join 500+ tools and showcase your stack to modern builders.
+            Showcase products you built and the tools powering your stack.
           </p>
           <Link
-            href={ROUTES.SUBMIT}
+            href={ROUTES.SHOWCASE}
             className="mt-3 inline-flex items-center gap-1 font-mono text-xs font-semibold text-indigo-600 hover:text-indigo-800"
           >
-            Submit Tool
+            Submit Product
             <ArrowUpRight className="size-3" />
           </Link>
         </div>

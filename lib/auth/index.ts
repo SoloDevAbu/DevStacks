@@ -3,6 +3,9 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle"
 import { db } from "@/db"
 import * as schema from "@/db/schema"
 
+import { randomBytes } from "crypto"
+import { eq } from "drizzle-orm"
+
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
     provider: "pg",
@@ -39,9 +42,21 @@ export const auth = betterAuth({
             )
               .toLowerCase()
               .replace(/[^a-z0-9]/g, "")
-              .slice(0, 18)
-            const randomSuffix = Math.random().toString(36).substring(2, 6)
-            username = `${base || "maker"}_${randomSuffix}`
+              .slice(0, 15)
+
+            let candidate = `${base || "maker"}_${randomBytes(3).toString("hex")}`
+            let attempts = 0
+            while (attempts < 5) {
+              const existing = await db
+                .select({ id: schema.users.id })
+                .from(schema.users)
+                .where(eq(schema.users.username, candidate))
+                .limit(1)
+              if (existing.length === 0) break
+              candidate = `${base || "maker"}_${randomBytes(4).toString("hex")}`
+              attempts++
+            }
+            username = candidate
           }
 
           let country = (user as Record<string, unknown>).country as

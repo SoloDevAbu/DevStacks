@@ -63,8 +63,8 @@ export const updateUserProfile = async (
     .where(eq(users.id, userId))
     .returning()
 
-  if (Array.isArray(data.faqs)) {
-    // Delete existing FAQs and insert new ordered set
+  if (data.faqs !== undefined && Array.isArray(data.faqs)) {
+    // Delete existing FAQs and insert new ordered set only when faqs is explicitly provided
     await db.delete(makerFaqs).where(eq(makerFaqs.userId, userId))
 
     if (data.faqs.length > 0) {

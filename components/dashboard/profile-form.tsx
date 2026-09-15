@@ -1,7 +1,8 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
+import axios from "axios"
 import {
   User,
   MapPin,
@@ -11,7 +12,10 @@ import {
   ExternalLink,
   Loader2,
   Sparkles,
+  Check,
+  X,
 } from "lucide-react"
+import { useDebounce } from "@/hooks/shared/use-debounce"
 import {
   Card,
   CardContent,
@@ -52,6 +56,61 @@ export const ProfileForm = ({ initialProfile }: ProfileFormProps) => {
   const [linkedinUrl, setLinkedinUrl] = useState(
     initialProfile.linkedinUrl || ""
   )
+
+  const [usernameStatus, setUsernameStatus] = useState<{
+    status: "idle" | "checking" | "available" | "taken" | "invalid"
+    message?: string
+  }>({ status: "idle" })
+
+  const debouncedUsername = useDebounce(username, 300)
+
+  useEffect(() => {
+    const clean = debouncedUsername.trim().toLowerCase().replace(/^@/, "")
+    if (!clean) {
+      setUsernameStatus({ status: "idle" })
+      return
+    }
+
+    if (clean.length < 2) {
+      setUsernameStatus({ status: "invalid", message: "Minimum 2 characters" })
+      return
+    }
+
+    if (!/^[a-z0-9_-]+$/i.test(clean)) {
+      setUsernameStatus({
+        status: "invalid",
+        message: "Only letters, numbers, hyphens, underscores",
+      })
+      return
+    }
+
+    let isMounted = true
+    setUsernameStatus({ status: "checking" })
+
+    axios
+      .get(`/api/users/check-username?username=${encodeURIComponent(clean)}`)
+      .then((res) => {
+        if (!isMounted) return
+        if (res.data.available) {
+          setUsernameStatus({
+            status: "available",
+            message: res.data.isCurrent ? "Your current handle" : `@${clean} is available`,
+          })
+        } else {
+          setUsernameStatus({
+            status: "taken",
+            message: res.data.message || `@${clean} is already taken`,
+          })
+        }
+      })
+      .catch(() => {
+        if (isMounted) setUsernameStatus({ status: "idle" })
+      })
+
+    return () => {
+      isMounted = false
+    }
+  }, [debouncedUsername])
 
   const [faqs, setFaqs] = useState<
     Array<{ id?: string; question: string; answer: string }>
@@ -243,20 +302,50 @@ export const ProfileForm = ({ initialProfile }: ProfileFormProps) => {
 
               <Field>
                 <FieldLabel htmlFor="username">Username (Handle)</FieldLabel>
-                <Input
-                  id="username"
-                  value={username}
-                  onChange={(e) =>
-                    setUsername(
-                      e.target.value.toLowerCase().replace(/[^a-z0-9_-]/g, "")
-                    )
-                  }
-                  placeholder="e.g. satoshi"
-                  required
-                />
-                <span className="text-[11px] text-slate-400">
-                  Public profile URL: /makers/{activeUsername || "username"}
-                </span>
+                <div className="relative">
+                  <Input
+                    id="username"
+                    value={username}
+                    onChange={(e) =>
+                      setUsername(
+                        e.target.value.toLowerCase().replace(/[^a-z0-9_-]/g, "")
+                      )
+                    }
+                    placeholder="e.g. satoshi"
+                    className="pr-9"
+                    required
+                  />
+                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+                    {usernameStatus.status === "checking" && (
+                      <Loader2 className="size-4 animate-spin text-slate-400" />
+                    )}
+                    {usernameStatus.status === "available" && (
+                      <Check className="size-4 text-emerald-600" />
+                    )}
+                    {(usernameStatus.status === "taken" ||
+                      usernameStatus.status === "invalid") && (
+                      <X className="size-4 text-red-500" />
+                    )}
+                  </div>
+                </div>
+                <div className="flex items-center justify-between text-[11px]">
+                  <span className="text-slate-400">
+                    Public URL: /makers/{activeUsername || "username"}
+                  </span>
+                  {usernameStatus.message && (
+                    <span
+                      className={
+                        usernameStatus.status === "available"
+                          ? "font-medium text-emerald-600"
+                          : usernameStatus.status === "checking"
+                            ? "text-slate-400"
+                            : "font-medium text-red-500"
+                      }
+                    >
+                      {usernameStatus.message}
+                    </span>
+                  )}
+                </div>
               </Field>
             </div>
 

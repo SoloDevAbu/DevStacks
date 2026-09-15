@@ -1,6 +1,6 @@
 import { db } from "@/db"
 import { products, categories, productTools, tools } from "@/db/schema"
-import { eq, inArray } from "drizzle-orm"
+import { desc, eq, inArray, sql } from "drizzle-orm"
 import { RISING_PRODUCTS_WEIGHTS } from "@/constants/rankings"
 import type { RankedProduct, RankingOptions } from "./types"
 import type { ProductBuiltWith } from "@/types/entities"
@@ -34,9 +34,22 @@ export const getRisingProducts = async ({
   const safePage = Math.max(1, page)
   const offset = (safePage - 1) * safeLimit
 
-  const now = new Date()
+  const momentumScoreSql = sql<number>`
+    ROUND(
+      (
+        (
+          ${products.likesCount} * ${RISING_PRODUCTS_WEIGHTS.upvotesWeight} +
+          ${products.commentsCount} * ${RISING_PRODUCTS_WEIGHTS.commentsWeight} +
+          ${products.viewsCount} * ${RISING_PRODUCTS_WEIGHTS.viewsWeight}
+        )
+        /
+        (LN(GREATEST(1.0, EXTRACT(EPOCH FROM (NOW() - ${products.createdAt})) / 3600.0) + 2.0) / LN(2.0))
+      )::numeric,
+      1
+    )
+  `
 
-  const allApproved = await db
+  const rows = await db
     .select({
       id: products.id,
       slug: products.slug,
@@ -56,31 +69,21 @@ export const getRisingProducts = async ({
       categorySlug: categories.slug,
       createdAt: products.createdAt,
       updatedAt: products.updatedAt,
+      score: momentumScoreSql,
     })
     .from(products)
     .leftJoin(categories, eq(products.categoryId, categories.id))
     .where(eq(products.status, "approved"))
+    .orderBy(desc(momentumScoreSql), desc(products.id))
+    .limit(safeLimit)
+    .offset(offset)
 
-  const scored: RankedProduct[] = allApproved.map((p) => {
-    const momentumScore = calculateRisingScore(
-      p.createdAt,
-      p.likesCount,
-      p.commentsCount,
-      p.viewsCount,
-      now
-    )
+  const pageItems: RankedProduct[] = rows.map((p) => ({
+    ...p,
+    itemKind: "product" as const,
+    score: Number(p.score) || 0,
+  }))
 
-    return {
-      ...p,
-      itemKind: "product" as const,
-      score: momentumScore,
-    }
-  })
-
-  scored.sort((a, b) => (b.score ?? 0) - (a.score ?? 0))
-  const pageItems = scored.slice(offset, offset + safeLimit)
-
-  // Attach builtWithTools
   const productIds = pageItems.map((p) => p.id)
   if (productIds.length > 0) {
     const ptRows = await db
@@ -112,3 +115,4 @@ export const getRisingProducts = async ({
 
   return pageItems
 }
+

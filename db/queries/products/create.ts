@@ -58,7 +58,7 @@ export const createProduct = async (data: CreateProductInput) => {
       ...rest,
       categoryId,
       slug,
-      status: "pending",
+      status: "approved",
     })
     .returning()
 

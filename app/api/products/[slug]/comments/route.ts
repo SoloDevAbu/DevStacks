@@ -1,4 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server"
+import { auth } from "@/lib/auth"
 import { getProductComments } from "@/db/queries/comments/list"
 import { createProductComment } from "@/db/queries/comments/create"
 import { getProductBySlug } from "@/db/queries/products/get"
@@ -31,6 +32,14 @@ export const POST = async (
   { params }: { params: Promise<{ slug: string }> }
 ) => {
   try {
+    const session = await auth.api.getSession({
+      headers: req.headers,
+    })
+
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+
     const { slug } = await params
     const body = await req.json()
     const parsed = createCommentSchema.safeParse(body)
@@ -49,7 +58,7 @@ export const POST = async (
 
     const comment = await createProductComment(
       product.id,
-      parsed.data.userId,
+      session.user.id,
       parsed.data.body
     )
 

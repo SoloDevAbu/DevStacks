@@ -9,13 +9,13 @@ import { breadcrumbSchema, faqSchema } from "@/lib/seo/schema"
 import { isCrawler } from "@/lib/seo/crawlers"
 
 export const metadata: Metadata = {
-  title: "Submit a Developer Product — Get Discovered by Engineers & AI",
+  title: "Submit a Developer Tool — Get Discovered by Engineers & AI",
   description: `List your developer tool, API, or infrastructure product on ${SITE_CONFIG.name} for the community and AI models to discover. Includes structured SEO, AEO, GEO, and ASO metadata.`,
   keywords: [
     "submit developer tool",
     "list developer tool",
     "submit API",
-    "developer product directory",
+    "developer tool directory",
     "devtools submission",
     "promote dev tools",
     "developer platform discovery",
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     canonical: `${SITE_CONFIG.url}/submit`,
   },
   openGraph: {
-    title: `Submit a Developer Product | ${SITE_CONFIG.name}`,
+    title: `Submit a Developer Tool | ${SITE_CONFIG.name}`,
     description: `List your developer tool or API on ${SITE_CONFIG.name} to reach thousands of builders.`,
     type: "website",
     url: `${SITE_CONFIG.url}/submit`,
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: `Submit a Developer Product | ${SITE_CONFIG.name}`,
+    title: `Submit a Developer Tool | ${SITE_CONFIG.name}`,
     description: `List your developer tool or API on ${SITE_CONFIG.name}.`,
     images: [`${SITE_CONFIG.url}/twitter-image`],
   },

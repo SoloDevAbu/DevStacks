@@ -10,19 +10,8 @@ export const toggleProductBookmark = async (
   productId: string,
   userId: string
 ): Promise<BookmarkResult> => {
-  const [existing] = await db
-    .select()
-    .from(productBookmarks)
-    .where(
-      and(
-        eq(productBookmarks.productId, productId),
-        eq(productBookmarks.userId, userId)
-      )
-    )
-    .limit(1)
-
-  if (existing) {
-    await db
+  return await db.transaction(async (tx) => {
+    const deleted = await tx
       .delete(productBookmarks)
       .where(
         and(
@@ -30,9 +19,17 @@ export const toggleProductBookmark = async (
           eq(productBookmarks.userId, userId)
         )
       )
-    return { action: "removed" }
-  }
+      .returning({ id: productBookmarks.id })
 
-  await db.insert(productBookmarks).values({ productId, userId })
-  return { action: "added" }
+    if (deleted.length > 0) {
+      return { action: "removed" }
+    }
+
+    await tx
+      .insert(productBookmarks)
+      .values({ productId, userId })
+      .onConflictDoNothing()
+
+    return { action: "added" }
+  })
 }

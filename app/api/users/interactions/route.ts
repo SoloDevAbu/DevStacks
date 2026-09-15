@@ -4,16 +4,12 @@ import { getUserInteractions } from "@/db/queries/users/interactions"
 
 export const GET = async (req: NextRequest) => {
   try {
-    let userId = req.nextUrl.searchParams.get("userId")
+    const session = await auth.api.getSession({
+      headers: req.headers,
+    })
+    const sessionUserId = session?.user?.id
 
-    if (!userId) {
-      const session = await auth.api.getSession({
-        headers: req.headers,
-      })
-      userId = session?.user?.id ?? null
-    }
-
-    if (!userId) {
+    if (!sessionUserId) {
       return NextResponse.json(
         {
           data: {
@@ -31,7 +27,7 @@ export const GET = async (req: NextRequest) => {
       )
     }
 
-    const interactions = await getUserInteractions(userId)
+    const interactions = await getUserInteractions(sessionUserId)
     return NextResponse.json({ data: interactions }, { status: 200 })
   } catch {
     return NextResponse.json(

@@ -105,7 +105,12 @@ export const getDbCategories = getAllCategories
 
 export const getOrCreateCategory = async (rawName: string): Promise<string> => {
   const name = rawName.trim()
-  const slug = slugify(name)
+  if (!name) {
+    throw new Error("Category name cannot be empty")
+  }
+
+  const baseSlug = slugify(name)
+  const slug = baseSlug || `cat-${Math.random().toString(36).substring(2, 7)}`
 
   const existing = await db
     .select({ id: categories.id })
@@ -113,18 +118,22 @@ export const getOrCreateCategory = async (rawName: string): Promise<string> => {
     .where(or(ilike(categories.name, name), eq(categories.slug, slug)))
     .limit(1)
 
-  if (existing[0]) {
+  if (existing[0]?.id) {
     return existing[0].id
   }
 
-  const [inserted] = await db
-    .insert(categories)
-    .values({ name, slug })
-    .onConflictDoNothing({ target: categories.name })
-    .returning({ id: categories.id })
+  try {
+    const [inserted] = await db
+      .insert(categories)
+      .values({ name, slug })
+      .onConflictDoNothing()
+      .returning({ id: categories.id })
 
-  if (inserted) {
-    return inserted.id
+    if (inserted?.id) {
+      return inserted.id
+    }
+  } catch {
+    // Conflict on slug or concurrent insert
   }
 
   const fallback = await db
@@ -133,5 +142,16 @@ export const getOrCreateCategory = async (rawName: string): Promise<string> => {
     .where(or(ilike(categories.name, name), eq(categories.slug, slug)))
     .limit(1)
 
-  return fallback[0]!.id
+  if (fallback[0]?.id) {
+    return fallback[0].id
+  }
+
+  const uniqueSlug = `${slug}-${Math.random().toString(36).substring(2, 6)}`
+  const [created] = await db
+    .insert(categories)
+    .values({ name, slug: uniqueSlug })
+    .onConflictDoNothing()
+    .returning({ id: categories.id })
+
+  return created?.id ?? fallback[0]!.id
 }

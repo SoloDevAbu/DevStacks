@@ -50,7 +50,7 @@ export const createTool = async (data: CreateToolInput) => {
       ...rest,
       categoryId,
       slug,
-      status: "pending",
+      status: "approved",
     })
     .returning()
 

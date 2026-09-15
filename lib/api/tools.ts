@@ -32,3 +32,8 @@ export const toggleToolBookmark = async (slug: string, userId: string) => {
   const { data } = await apiClient.post(`/tools/${slug}/bookmark`, { userId })
   return data.data as { action: "added" | "removed" }
 }
+
+export const submitTool = async (payload: unknown) => {
+  const { data } = await apiClient.post("/tools", payload)
+  return data.data as DbTool
+}

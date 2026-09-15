@@ -1,6 +1,6 @@
 import { db } from "@/db"
 import { tools, categories } from "@/db/schema"
-import { eq } from "drizzle-orm"
+import { desc, eq, sql } from "drizzle-orm"
 import { RISING_TOOLS_WEIGHTS } from "@/constants/rankings"
 import type { RankedTool, RankingOptions } from "./types"
 
@@ -35,9 +35,23 @@ export const getRisingTools = async ({
   const safePage = Math.max(1, page)
   const offset = (safePage - 1) * safeLimit
 
-  const now = new Date()
+  const momentumScoreSql = sql<number>`
+    ROUND(
+      (
+        (
+          ${tools.upvotesCount} * ${RISING_TOOLS_WEIGHTS.upvotesWeight} +
+          ${tools.buildsCount} * ${RISING_TOOLS_WEIGHTS.buildsWeight} +
+          ${tools.commentsCount} * ${RISING_TOOLS_WEIGHTS.commentsWeight} +
+          ${tools.viewsCount} * ${RISING_TOOLS_WEIGHTS.viewsWeight}
+        )
+        /
+        (LN(GREATEST(1.0, EXTRACT(EPOCH FROM (NOW() - ${tools.createdAt})) / 3600.0) + 2.0) / LN(2.0))
+      )::numeric,
+      1
+    )
+  `
 
-  const allApproved = await db
+  const rows = await db
     .select({
       id: tools.id,
       slug: tools.slug,
@@ -58,29 +72,19 @@ export const getRisingTools = async ({
       categorySlug: categories.slug,
       createdAt: tools.createdAt,
       updatedAt: tools.updatedAt,
+      score: momentumScoreSql,
     })
     .from(tools)
     .leftJoin(categories, eq(tools.categoryId, categories.id))
     .where(eq(tools.status, "approved"))
+    .orderBy(desc(momentumScoreSql), desc(tools.id))
+    .limit(safeLimit)
+    .offset(offset)
 
-  const scored: RankedTool[] = allApproved.map((t) => {
-    const momentumScore = calculateRisingToolScore(
-      t.createdAt,
-      t.upvotesCount,
-      t.buildsCount,
-      t.commentsCount,
-      t.viewsCount,
-      now
-    )
-
-    return {
-      ...t,
-      itemKind: "tool" as const,
-      score: momentumScore,
-    }
-  })
-
-  scored.sort((a, b) => (b.score ?? 0) - (a.score ?? 0))
-
-  return scored.slice(offset, offset + safeLimit)
+  return rows.map((t) => ({
+    ...t,
+    itemKind: "tool" as const,
+    score: Number(t.score) || 0,
+  }))
 }
+

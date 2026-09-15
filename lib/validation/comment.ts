@@ -1,7 +1,7 @@
 import { z } from "zod"
 
 export const createCommentSchema = z.object({
-  userId: z.string().min(1, "User ID required"),
+  userId: z.string().optional(),
   body: z
     .string()
     .min(1, "Comment cannot be empty")

@@ -76,8 +76,7 @@ export const updateProfileSchema = z.object({
           .max(3000, "Answer must be 3000 characters or less"),
       })
     )
-    .optional()
-    .default([]),
+    .optional(),
 })
 
 export type UpdateProfileInput = z.infer<typeof updateProfileSchema>

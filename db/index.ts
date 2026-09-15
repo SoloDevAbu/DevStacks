@@ -6,7 +6,13 @@ const sql = neon(process.env.DATABASE_URL!)
 
 export const db = drizzle({ client: sql })
 
-sql`ALTER TABLE "accounts" ADD COLUMN IF NOT EXISTS "issuer" text NOT NULL DEFAULT '';`.catch(
+sql`ALTER TABLE "accounts" ADD COLUMN IF NOT EXISTS "issuer" text NOT NULL DEFAULT 'google';`.catch(
+  () => {}
+)
+sql`ALTER TABLE "accounts" ALTER COLUMN "issuer" SET DEFAULT 'google';`.catch(
+  () => {}
+)
+sql`CREATE UNIQUE INDEX IF NOT EXISTS "accounts_providerId_accountId_uidx" ON "accounts" ("provider_id", "account_id");`.catch(
   () => {}
 )
 sql`CREATE UNIQUE INDEX IF NOT EXISTS "accounts_issuer_accountId_uidx" ON "accounts" ("issuer", "account_id");`.catch(

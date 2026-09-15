@@ -10,23 +10,23 @@ export const toggleToolBookmark = async (
   toolId: string,
   userId: string
 ): Promise<BookmarkResult> => {
-  const [existing] = await db
-    .select()
-    .from(toolBookmarks)
-    .where(
-      and(eq(toolBookmarks.toolId, toolId), eq(toolBookmarks.userId, userId))
-    )
-    .limit(1)
-
-  if (existing) {
-    await db
+  return await db.transaction(async (tx) => {
+    const deleted = await tx
       .delete(toolBookmarks)
       .where(
         and(eq(toolBookmarks.toolId, toolId), eq(toolBookmarks.userId, userId))
       )
-    return { action: "removed" }
-  }
+      .returning({ id: toolBookmarks.id })
 
-  await db.insert(toolBookmarks).values({ toolId, userId })
-  return { action: "added" }
+    if (deleted.length > 0) {
+      return { action: "removed" }
+    }
+
+    await tx
+      .insert(toolBookmarks)
+      .values({ toolId, userId })
+      .onConflictDoNothing()
+
+    return { action: "added" }
+  })
 }

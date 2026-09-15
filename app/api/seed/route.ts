@@ -2,6 +2,13 @@ import { NextResponse } from "next/server"
 import { seedDatabase } from "@/db/seed"
 
 export const POST = async () => {
+  if (process.env.NODE_ENV === "production") {
+    return NextResponse.json(
+      { success: false, error: "Seeding is disabled in production." },
+      { status: 403 }
+    )
+  }
+
   try {
     await seedDatabase()
     return NextResponse.json({
