@@ -13,6 +13,9 @@ export interface FullTool extends DbTool {
   twitterUrl?: string | null
   linkedinUrl?: string | null
   discordUrl?: string | null
+  appStoreUrl?: string | null
+  playStoreUrl?: string | null
+  chromeExtensionUrl?: string | null
   keywords?: string | null
   targetAudience?: string | null
   metaTitle?: string | null

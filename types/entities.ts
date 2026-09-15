@@ -23,6 +23,13 @@ export type DbTool = {
   categoryId?: string | null
   categorySlug?: string | null
   websiteUrl?: string | null
+  githubUrl?: string | null
+  twitterUrl?: string | null
+  linkedinUrl?: string | null
+  discordUrl?: string | null
+  appStoreUrl?: string | null
+  playStoreUrl?: string | null
+  chromeExtensionUrl?: string | null
   freshnessDaysLeft?: number
   platforms?: string[]
   submitterId?: string | null
@@ -53,6 +60,13 @@ export type DbProduct = {
   categoryId?: string | null
   categorySlug?: string | null
   websiteUrl?: string | null
+  githubUrl?: string | null
+  twitterUrl?: string | null
+  linkedinUrl?: string | null
+  discordUrl?: string | null
+  appStoreUrl?: string | null
+  playStoreUrl?: string | null
+  chromeExtensionUrl?: string | null
   builtWithTools?: ProductBuiltWith[]
   freshnessDaysLeft?: number
   platforms?: string[]

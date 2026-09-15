@@ -24,6 +24,9 @@ export const createBuild = async (
     logoBg?: string
     websiteUrl?: string
     githubUrl?: string
+    appStoreUrl?: string
+    playStoreUrl?: string
+    chromeExtensionUrl?: string
   },
   toolIds: string[] = []
 ) => {
@@ -40,6 +43,9 @@ export const createBuild = async (
       description: data.description,
       websiteUrl: data.websiteUrl || "https://example.com",
       githubUrl: data.githubUrl || null,
+      appStoreUrl: data.appStoreUrl || null,
+      playStoreUrl: data.playStoreUrl || null,
+      chromeExtensionUrl: data.chromeExtensionUrl || null,
       status: "approved",
       tags: [],
       platforms: [],

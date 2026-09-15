@@ -2,6 +2,21 @@ import { z } from "zod"
 
 const urlSchema = z.string().url("Must be a valid URL").or(z.literal(""))
 
+export const platformEnumSchema = z.enum([
+  "Web",
+  "iOS",
+  "Android",
+  "macOS",
+  "Windows",
+  "Linux",
+  "CLI",
+  "API",
+  "Extension",
+  "Plugin",
+  "Cloud",
+  "Self-Hosted",
+])
+
 export const submitProductSchema = z.object({
   submitterId: z.string().min(1, "User ID required"),
 
@@ -25,6 +40,9 @@ export const submitProductSchema = z.object({
   twitterUrl: urlSchema.optional(),
   linkedinUrl: urlSchema.optional(),
   discordUrl: urlSchema.optional(),
+  appStoreUrl: urlSchema.optional(),
+  playStoreUrl: urlSchema.optional(),
+  chromeExtensionUrl: urlSchema.optional(),
   images: z.array(z.string().url()).max(5).default([]),
   demoVideoUrl: urlSchema.optional(),
   useCases: z.string().max(2000).optional().or(z.literal("")),
@@ -50,7 +68,7 @@ export const submitProductSchema = z.object({
     )
     .or(z.array(z.string()))
     .default([]),
-  platforms: z.array(z.string()).default([]),
+  platforms: z.array(platformEnumSchema).default([]),
   pricing: z.enum(["Free", "Freemium", "Paid", "Open Source"]).default("Free"),
   builtWithTools: z
     .array(
