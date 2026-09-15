@@ -115,6 +115,9 @@ export const tools = pgTable(
     twitterUrl: text("twitter_url"),
     linkedinUrl: text("linkedin_url"),
     discordUrl: text("discord_url"),
+    appStoreUrl: text("app_store_url"),
+    playStoreUrl: text("play_store_url"),
+    chromeExtensionUrl: text("chrome_extension_url"),
     images: text("images").array().notNull().default([]),
     demoVideoUrl: text("demo_video_url"),
     useCases: text("use_cases"),
@@ -138,7 +141,7 @@ export const tools = pgTable(
     tier: tierEnum("tier").notNull().default("free"),
 
     // Moderation
-    status: statusEnum("status").notNull().default("pending"),
+    status: statusEnum("status").notNull().default("approved"),
 
     // Denormalised counters
     upvotesCount: integer("upvotes_count").notNull().default(0),
@@ -195,6 +198,9 @@ export const products = pgTable(
     twitterUrl: text("twitter_url"),
     linkedinUrl: text("linkedin_url"),
     discordUrl: text("discord_url"),
+    appStoreUrl: text("app_store_url"),
+    playStoreUrl: text("play_store_url"),
+    chromeExtensionUrl: text("chrome_extension_url"),
     images: text("images").array().notNull().default([]),
     demoVideoUrl: text("demo_video_url"),
     useCases: text("use_cases"),
@@ -218,7 +224,7 @@ export const products = pgTable(
     tier: tierEnum("tier").notNull().default("free"),
 
     // Moderation
-    status: statusEnum("status").notNull().default("pending"),
+    status: statusEnum("status").notNull().default("approved"),
 
     // Denormalised counters (NO upvotesCount, NO buildsCount)
     likesCount: integer("likes_count").notNull().default(0),
@@ -507,7 +513,7 @@ export const accounts = pgTable(
       .references(() => users.id, { onDelete: "cascade" }),
     accountId: text("account_id").notNull(),
     providerId: text("provider_id").notNull(),
-    issuer: text("issuer").notNull(),
+    issuer: text("issuer").notNull().default("google"),
     accessToken: text("access_token"),
     refreshToken: text("refresh_token"),
     idToken: text("id_token"),
@@ -519,6 +525,10 @@ export const accounts = pgTable(
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
   },
   (table) => [
+    uniqueIndex("accounts_providerId_accountId_uidx").on(
+      table.providerId,
+      table.accountId
+    ),
     uniqueIndex("accounts_issuer_accountId_uidx").on(
       table.issuer,
       table.accountId
