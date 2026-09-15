@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
+import Image from "next/image"
 import { PageHeader } from "@/components/shared/page-header"
 import { AI_PROMPTS } from "@/lib/prompts"
 import { Input } from "@/components/ui/input"
@@ -12,10 +13,6 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
 import {
   Globe,
-  MessageSquare,
-  Code2,
-  Hash,
-  Briefcase,
   CheckCircle2,
   AlertCircle,
   Upload,
@@ -60,6 +57,9 @@ const emptyForm = {
   twitterUrl: "",
   linkedinUrl: "",
   discordUrl: "",
+  appStoreUrl: "",
+  playStoreUrl: "",
+  chromeExtensionUrl: "",
   images: [] as string[],
   demoVideoUrl: "",
   useCases: "",
@@ -152,20 +152,13 @@ export const ShowcaseContent = () => {
       return
     }
 
-    mutate(
-      {
-        ...form,
-        submitterId: userId,
-        authorId: userId,
+    mutate(parsed.data, {
+      onSuccess: () => {
+        setSubmitted(true)
+        setForm(emptyForm)
+        setErrors({})
       },
-      {
-        onSuccess: () => {
-          setSubmitted(true)
-          setForm(emptyForm)
-          setErrors({})
-        },
-      }
-    )
+    })
   }
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -521,8 +514,17 @@ export const ShowcaseContent = () => {
                         />
                         <Label
                           htmlFor={`platform-${platform.id}`}
-                          className="cursor-pointer text-xs font-medium text-slate-700"
+                          className="flex cursor-pointer items-center gap-2 text-xs font-medium text-slate-700"
                         >
+                          {"logo" in platform && platform.logo && (
+                            <Image
+                              src={platform.logo}
+                              alt={platform.label}
+                              width={16}
+                              height={16}
+                              className="size-4 object-contain rounded-xs"
+                            />
+                          )}
                           {platform.label}
                         </Label>
                       </div>
@@ -665,23 +667,40 @@ export const ShowcaseContent = () => {
               </div>
             </div>
 
-            {/* Subsection: Community & Social Links */}
+            {/* Subsection: Community, Store & Social Links */}
             <div className="flex flex-col gap-5 px-6 py-6 md:px-8 md:py-8">
               <div className="flex flex-col gap-1">
                 <h3 className="text-sm font-bold text-slate-900">
-                  Community & Social Links
+                  Community, Store & Social Links
                 </h3>
                 <p className="text-xs text-slate-500">
-                  Connect developers directly to your repository, team, and
-                  community discussions.
+                  Connect developers directly to your repository, team, app stores,
+                  browser extensions, and community discussions.
                 </p>
               </div>
 
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <div className="grid gap-2">
-                  <Label htmlFor="github">GitHub Repository</Label>
+                  <Label htmlFor="github" className="flex items-center gap-1.5 text-xs font-semibold text-slate-700">
+                    <Image
+                      src="/social-logo/github.png"
+                      alt="GitHub"
+                      width={16}
+                      height={16}
+                      className="size-4 object-contain rounded-xs"
+                    />
+                    GitHub Repository
+                  </Label>
                   <div className="relative">
-                    <Code2 className="absolute top-2.5 left-3 size-4 text-slate-400" />
+                    <div className="pointer-events-none absolute top-2.5 left-3 flex size-4 items-center justify-center">
+                      <Image
+                        src="/social-logo/github.png"
+                        alt="GitHub"
+                        width={16}
+                        height={16}
+                        className="size-4 object-contain rounded-xs"
+                      />
+                    </div>
                     <Input
                       id="github"
                       type="url"
@@ -694,9 +713,26 @@ export const ShowcaseContent = () => {
                 </div>
 
                 <div className="grid gap-2">
-                  <Label htmlFor="twitter">X (Twitter)</Label>
+                  <Label htmlFor="twitter" className="flex items-center gap-1.5 text-xs font-semibold text-slate-700">
+                    <Image
+                      src="/social-logo/twitter.png"
+                      alt="X (Twitter)"
+                      width={16}
+                      height={16}
+                      className="size-4 object-contain rounded-xs"
+                    />
+                    X (Twitter)
+                  </Label>
                   <div className="relative">
-                    <Hash className="absolute top-2.5 left-3 size-4 text-slate-400" />
+                    <div className="pointer-events-none absolute top-2.5 left-3 flex size-4 items-center justify-center">
+                      <Image
+                        src="/social-logo/twitter.png"
+                        alt="X"
+                        width={16}
+                        height={16}
+                        className="size-4 object-contain rounded-xs"
+                      />
+                    </div>
                     <Input
                       id="twitter"
                       type="url"
@@ -709,9 +745,26 @@ export const ShowcaseContent = () => {
                 </div>
 
                 <div className="grid gap-2">
-                  <Label htmlFor="linkedin">LinkedIn</Label>
+                  <Label htmlFor="linkedin" className="flex items-center gap-1.5 text-xs font-semibold text-slate-700">
+                    <Image
+                      src="/social-logo/linkedin.png"
+                      alt="LinkedIn"
+                      width={16}
+                      height={16}
+                      className="size-4 object-contain rounded-xs"
+                    />
+                    LinkedIn
+                  </Label>
                   <div className="relative">
-                    <Briefcase className="absolute top-2.5 left-3 size-4 text-slate-400" />
+                    <div className="pointer-events-none absolute top-2.5 left-3 flex size-4 items-center justify-center">
+                      <Image
+                        src="/social-logo/linkedin.png"
+                        alt="LinkedIn"
+                        width={16}
+                        height={16}
+                        className="size-4 object-contain rounded-xs"
+                      />
+                    </div>
                     <Input
                       id="linkedin"
                       type="url"
@@ -724,9 +777,26 @@ export const ShowcaseContent = () => {
                 </div>
 
                 <div className="grid gap-2">
-                  <Label htmlFor="discord">Discord Community</Label>
+                  <Label htmlFor="discord" className="flex items-center gap-1.5 text-xs font-semibold text-slate-700">
+                    <Image
+                      src="/social-logo/discord.png"
+                      alt="Discord"
+                      width={16}
+                      height={16}
+                      className="size-4 object-contain rounded-xs"
+                    />
+                    Discord Community
+                  </Label>
                   <div className="relative">
-                    <MessageSquare className="absolute top-2.5 left-3 size-4 text-slate-400" />
+                    <div className="pointer-events-none absolute top-2.5 left-3 flex size-4 items-center justify-center">
+                      <Image
+                        src="/social-logo/discord.png"
+                        alt="Discord"
+                        width={16}
+                        height={16}
+                        className="size-4 object-contain rounded-xs"
+                      />
+                    </div>
                     <Input
                       id="discord"
                       type="url"
@@ -736,6 +806,111 @@ export const ShowcaseContent = () => {
                       className="pl-9"
                     />
                   </div>
+                </div>
+
+                <div className="grid gap-2">
+                  <Label htmlFor="appStore" className="flex items-center gap-1.5 text-xs font-semibold text-slate-700">
+                    <Image
+                      src="/social-logo/app-store.png"
+                      alt="App Store"
+                      width={16}
+                      height={16}
+                      className="size-4 object-contain rounded-xs"
+                    />
+                    Apple App Store
+                  </Label>
+                  <div className="relative">
+                    <div className="pointer-events-none absolute top-2.5 left-3 flex size-4 items-center justify-center">
+                      <Image
+                        src="/social-logo/app-store.png"
+                        alt="App Store"
+                        width={16}
+                        height={16}
+                        className="size-4 object-contain rounded-xs"
+                      />
+                    </div>
+                    <Input
+                      id="appStore"
+                      type="url"
+                      value={form.appStoreUrl}
+                      onChange={set("appStoreUrl")}
+                      placeholder="https://apps.apple.com/app/your-app/id..."
+                      className="pl-9"
+                    />
+                  </div>
+                  {errors.appStoreUrl && (
+                    <p className="text-xs text-red-500">{errors.appStoreUrl[0]}</p>
+                  )}
+                </div>
+
+                <div className="grid gap-2">
+                  <Label htmlFor="playStore" className="flex items-center gap-1.5 text-xs font-semibold text-slate-700">
+                    <Image
+                      src="/social-logo/playstore.png"
+                      alt="Google Play Store"
+                      width={16}
+                      height={16}
+                      className="size-4 object-contain rounded-xs"
+                    />
+                    Google Play Store
+                  </Label>
+                  <div className="relative">
+                    <div className="pointer-events-none absolute top-2.5 left-3 flex size-4 items-center justify-center">
+                      <Image
+                        src="/social-logo/playstore.png"
+                        alt="Google Play Store"
+                        width={16}
+                        height={16}
+                        className="size-4 object-contain rounded-xs"
+                      />
+                    </div>
+                    <Input
+                      id="playStore"
+                      type="url"
+                      value={form.playStoreUrl}
+                      onChange={set("playStoreUrl")}
+                      placeholder="https://play.google.com/store/apps/details?id=..."
+                      className="pl-9"
+                    />
+                  </div>
+                  {errors.playStoreUrl && (
+                    <p className="text-xs text-red-500">{errors.playStoreUrl[0]}</p>
+                  )}
+                </div>
+
+                <div className="grid gap-2">
+                  <Label htmlFor="chromeExtension" className="flex items-center gap-1.5 text-xs font-semibold text-slate-700">
+                    <Image
+                      src="/social-logo/chrome.png"
+                      alt="Chrome Web Store"
+                      width={16}
+                      height={16}
+                      className="size-4 object-contain rounded-xs"
+                    />
+                    Chrome Web Store Extension
+                  </Label>
+                  <div className="relative">
+                    <div className="pointer-events-none absolute top-2.5 left-3 flex size-4 items-center justify-center">
+                      <Image
+                        src="/social-logo/chrome.png"
+                        alt="Chrome Web Store"
+                        width={16}
+                        height={16}
+                        className="size-4 object-contain rounded-xs"
+                      />
+                    </div>
+                    <Input
+                      id="chromeExtension"
+                      type="url"
+                      value={form.chromeExtensionUrl}
+                      onChange={set("chromeExtensionUrl")}
+                      placeholder="https://chromewebstore.google.com/detail/..."
+                      className="pl-9"
+                    />
+                  </div>
+                  {errors.chromeExtensionUrl && (
+                    <p className="text-xs text-red-500">{errors.chromeExtensionUrl[0]}</p>
+                  )}
                 </div>
               </div>
             </div>
