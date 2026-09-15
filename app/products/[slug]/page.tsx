@@ -149,6 +149,11 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
     uniqueValue: product.uniqueValue,
     githubUrl: product.githubUrl,
     twitterUrl: product.twitterUrl,
+    linkedinUrl: product.linkedinUrl,
+    discordUrl: product.discordUrl,
+    appStoreUrl: product.appStoreUrl,
+    playStoreUrl: product.playStoreUrl,
+    chromeExtensionUrl: product.chromeExtensionUrl,
     websiteUrl: product.websiteUrl,
     author: product.submitterName
       ? {
@@ -309,6 +314,9 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
               initialLikes={product.likesCount}
               websiteUrl={product.websiteUrl}
               githubUrl={product.githubUrl}
+              appStoreUrl={product.appStoreUrl}
+              playStoreUrl={product.playStoreUrl}
+              chromeExtensionUrl={product.chromeExtensionUrl}
             />
           </div>
 

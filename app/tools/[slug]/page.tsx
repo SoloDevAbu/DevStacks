@@ -158,6 +158,11 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
     uniqueValue: tool.uniqueValue,
     githubUrl: tool.githubUrl,
     twitterUrl: tool.twitterUrl,
+    linkedinUrl: tool.linkedinUrl,
+    discordUrl: tool.discordUrl,
+    appStoreUrl: tool.appStoreUrl,
+    playStoreUrl: tool.playStoreUrl,
+    chromeExtensionUrl: tool.chromeExtensionUrl,
     websiteUrl: tool.websiteUrl,
     author: tool.submitterName
       ? {
@@ -338,6 +343,9 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
               initialUpvotes={tool.upvotesCount}
               websiteUrl={tool.websiteUrl}
               githubUrl={tool.githubUrl}
+              appStoreUrl={tool.appStoreUrl}
+              playStoreUrl={tool.playStoreUrl}
+              chromeExtensionUrl={tool.chromeExtensionUrl}
             />
           </div>
 

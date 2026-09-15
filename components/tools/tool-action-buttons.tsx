@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import Image from "next/image"
 import { ArrowBigUp, Bookmark, ExternalLink, Code2 } from "lucide-react"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { useUpvoteTool } from "@/hooks/tools/use-upvote-tool"
@@ -18,6 +19,9 @@ interface ToolActionButtonsProps {
   initialUpvotes: number
   websiteUrl?: string | null
   githubUrl?: string | null
+  appStoreUrl?: string | null
+  playStoreUrl?: string | null
+  chromeExtensionUrl?: string | null
 }
 
 export const ToolActionButtons = ({
@@ -27,6 +31,9 @@ export const ToolActionButtons = ({
   initialUpvotes,
   websiteUrl,
   githubUrl,
+  appStoreUrl,
+  playStoreUrl,
+  chromeExtensionUrl,
 }: ToolActionButtonsProps) => {
   const { data: session } = useSession()
   const { requireAuth } = useAuthModal()
@@ -149,6 +156,69 @@ export const ToolActionButtons = ({
         >
           <Code2 className="size-4" />
           GitHub
+        </a>
+      )}
+
+      {appStoreUrl && (
+        <a
+          href={appStoreUrl}
+          target="_blank"
+          rel="noopener noreferrer nofollow"
+          className={cn(
+            buttonVariants({ variant: "outline" }),
+            "h-8 gap-2 rounded-lg border-slate-200 bg-white px-3 text-slate-700 hover:bg-slate-50"
+          )}
+        >
+          <Image
+            src="/social-logo/app-store.png"
+            alt="App Store"
+            width={14}
+            height={14}
+            className="size-3.5 object-contain rounded-xs"
+          />
+          App Store
+        </a>
+      )}
+
+      {playStoreUrl && (
+        <a
+          href={playStoreUrl}
+          target="_blank"
+          rel="noopener noreferrer nofollow"
+          className={cn(
+            buttonVariants({ variant: "outline" }),
+            "h-8 gap-2 rounded-lg border-slate-200 bg-white px-3 text-slate-700 hover:bg-slate-50"
+          )}
+        >
+          <Image
+            src="/social-logo/playstore.png"
+            alt="Play Store"
+            width={14}
+            height={14}
+            className="size-3.5 object-contain rounded-xs"
+          />
+          Play Store
+        </a>
+      )}
+
+      {chromeExtensionUrl && (
+        <a
+          href={chromeExtensionUrl}
+          target="_blank"
+          rel="noopener noreferrer nofollow"
+          className={cn(
+            buttonVariants({ variant: "outline" }),
+            "h-8 gap-2 rounded-lg border-slate-200 bg-white px-3 text-slate-700 hover:bg-slate-50"
+          )}
+        >
+          <Image
+            src="/social-logo/chrome.png"
+            alt="Extension"
+            width={14}
+            height={14}
+            className="size-3.5 object-contain rounded-xs"
+          />
+          Extension
         </a>
       )}
     </div>
