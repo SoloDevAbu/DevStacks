@@ -78,8 +78,15 @@ const emptyForm = {
   platforms: [] as string[],
 }
 
-export const ShowcaseContent = () => {
-  const [form, setForm] = useState(emptyForm)
+interface ShowcaseContentProps {
+  initialTool?: BuiltWithToolItem | null
+}
+
+export const ShowcaseContent = ({ initialTool }: ShowcaseContentProps = {}) => {
+  const [form, setForm] = useState(() => ({
+    ...emptyForm,
+    builtWithTools: initialTool ? [initialTool] : [],
+  }))
   const [screenshotInput, setScreenshotInput] = useState("")
   const [errors, setErrors] = useState<Record<string, string[]>>({})
   const [submitted, setSubmitted] = useState(false)
@@ -90,9 +97,30 @@ export const ShowcaseContent = () => {
 
   useEffect(() => {
     if (!isPending && !session?.user) {
-      router.replace("/?redirect=/showcase")
+      const currentPath =
+        typeof window !== "undefined"
+          ? window.location.pathname + window.location.search
+          : "/showcase"
+      router.replace(`/?redirect=${encodeURIComponent(currentPath)}`)
     }
   }, [isPending, session?.user, router])
+
+  useEffect(() => {
+    if (initialTool) {
+      setForm((prev) => {
+        const exists = prev.builtWithTools.some(
+          (t) =>
+            (initialTool.toolSlug && t.toolSlug === initialTool.toolSlug) ||
+            t.name.toLowerCase() === initialTool.name.toLowerCase()
+        )
+        if (exists) return prev
+        return {
+          ...prev,
+          builtWithTools: [...prev.builtWithTools, initialTool],
+        }
+      })
+    }
+  }, [initialTool])
 
   if (isPending || !session?.user) {
     return (
@@ -450,7 +478,8 @@ export const ShowcaseContent = () => {
                   Tech Stack & Built With
                 </h3>
                 <p className="text-xs text-slate-500">
-                  Link your build to developer tools in DevStacks, or add custom unlinked tools.
+                  Link your build to developer tools in DevStacks, or add custom
+                  unlinked tools.
                 </p>
               </div>
 
@@ -522,7 +551,7 @@ export const ShowcaseContent = () => {
                               alt={platform.label}
                               width={16}
                               height={16}
-                              className="size-4 object-contain rounded-xs"
+                              className="size-4 rounded-xs object-contain"
                             />
                           )}
                           {platform.label}
@@ -649,7 +678,7 @@ export const ShowcaseContent = () => {
                           key={i}
                           className="flex items-center gap-1.5 rounded-md border border-slate-200 bg-white px-2.5 py-1 text-xs text-slate-700 shadow-2xs"
                         >
-                          <span className="max-w-[200px] truncate">{url}</span>
+                          <span className="max-w-50 truncate">{url}</span>
                           <Button
                             type="button"
                             variant="ghost"
@@ -674,20 +703,23 @@ export const ShowcaseContent = () => {
                   Community, Store & Social Links
                 </h3>
                 <p className="text-xs text-slate-500">
-                  Connect developers directly to your repository, team, app stores,
-                  browser extensions, and community discussions.
+                  Connect developers directly to your repository, team, app
+                  stores, browser extensions, and community discussions.
                 </p>
               </div>
 
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <div className="grid gap-2">
-                  <Label htmlFor="github" className="flex items-center gap-1.5 text-xs font-semibold text-slate-700">
+                  <Label
+                    htmlFor="github"
+                    className="flex items-center gap-1.5 text-xs font-semibold text-slate-700"
+                  >
                     <Image
                       src="/social-logo/github.png"
                       alt="GitHub"
                       width={16}
                       height={16}
-                      className="size-4 object-contain rounded-xs"
+                      className="size-4 rounded-xs object-contain"
                     />
                     GitHub Repository
                   </Label>
@@ -698,7 +730,7 @@ export const ShowcaseContent = () => {
                         alt="GitHub"
                         width={16}
                         height={16}
-                        className="size-4 object-contain rounded-xs"
+                        className="size-4 rounded-xs object-contain"
                       />
                     </div>
                     <Input
@@ -713,13 +745,16 @@ export const ShowcaseContent = () => {
                 </div>
 
                 <div className="grid gap-2">
-                  <Label htmlFor="twitter" className="flex items-center gap-1.5 text-xs font-semibold text-slate-700">
+                  <Label
+                    htmlFor="twitter"
+                    className="flex items-center gap-1.5 text-xs font-semibold text-slate-700"
+                  >
                     <Image
                       src="/social-logo/twitter.png"
                       alt="X (Twitter)"
                       width={16}
                       height={16}
-                      className="size-4 object-contain rounded-xs"
+                      className="size-4 rounded-xs object-contain"
                     />
                     X (Twitter)
                   </Label>
@@ -730,7 +765,7 @@ export const ShowcaseContent = () => {
                         alt="X"
                         width={16}
                         height={16}
-                        className="size-4 object-contain rounded-xs"
+                        className="size-4 rounded-xs object-contain"
                       />
                     </div>
                     <Input
@@ -745,13 +780,16 @@ export const ShowcaseContent = () => {
                 </div>
 
                 <div className="grid gap-2">
-                  <Label htmlFor="linkedin" className="flex items-center gap-1.5 text-xs font-semibold text-slate-700">
+                  <Label
+                    htmlFor="linkedin"
+                    className="flex items-center gap-1.5 text-xs font-semibold text-slate-700"
+                  >
                     <Image
                       src="/social-logo/linkedin.png"
                       alt="LinkedIn"
                       width={16}
                       height={16}
-                      className="size-4 object-contain rounded-xs"
+                      className="size-4 rounded-xs object-contain"
                     />
                     LinkedIn
                   </Label>
@@ -762,7 +800,7 @@ export const ShowcaseContent = () => {
                         alt="LinkedIn"
                         width={16}
                         height={16}
-                        className="size-4 object-contain rounded-xs"
+                        className="size-4 rounded-xs object-contain"
                       />
                     </div>
                     <Input
@@ -777,13 +815,16 @@ export const ShowcaseContent = () => {
                 </div>
 
                 <div className="grid gap-2">
-                  <Label htmlFor="discord" className="flex items-center gap-1.5 text-xs font-semibold text-slate-700">
+                  <Label
+                    htmlFor="discord"
+                    className="flex items-center gap-1.5 text-xs font-semibold text-slate-700"
+                  >
                     <Image
                       src="/social-logo/discord.png"
                       alt="Discord"
                       width={16}
                       height={16}
-                      className="size-4 object-contain rounded-xs"
+                      className="size-4 rounded-xs object-contain"
                     />
                     Discord Community
                   </Label>
@@ -794,7 +835,7 @@ export const ShowcaseContent = () => {
                         alt="Discord"
                         width={16}
                         height={16}
-                        className="size-4 object-contain rounded-xs"
+                        className="size-4 rounded-xs object-contain"
                       />
                     </div>
                     <Input
@@ -809,13 +850,16 @@ export const ShowcaseContent = () => {
                 </div>
 
                 <div className="grid gap-2">
-                  <Label htmlFor="appStore" className="flex items-center gap-1.5 text-xs font-semibold text-slate-700">
+                  <Label
+                    htmlFor="appStore"
+                    className="flex items-center gap-1.5 text-xs font-semibold text-slate-700"
+                  >
                     <Image
                       src="/social-logo/app-store.png"
                       alt="App Store"
                       width={16}
                       height={16}
-                      className="size-4 object-contain rounded-xs"
+                      className="size-4 rounded-xs object-contain"
                     />
                     Apple App Store
                   </Label>
@@ -826,7 +870,7 @@ export const ShowcaseContent = () => {
                         alt="App Store"
                         width={16}
                         height={16}
-                        className="size-4 object-contain rounded-xs"
+                        className="size-4 rounded-xs object-contain"
                       />
                     </div>
                     <Input
@@ -839,18 +883,23 @@ export const ShowcaseContent = () => {
                     />
                   </div>
                   {errors.appStoreUrl && (
-                    <p className="text-xs text-red-500">{errors.appStoreUrl[0]}</p>
+                    <p className="text-xs text-red-500">
+                      {errors.appStoreUrl[0]}
+                    </p>
                   )}
                 </div>
 
                 <div className="grid gap-2">
-                  <Label htmlFor="playStore" className="flex items-center gap-1.5 text-xs font-semibold text-slate-700">
+                  <Label
+                    htmlFor="playStore"
+                    className="flex items-center gap-1.5 text-xs font-semibold text-slate-700"
+                  >
                     <Image
                       src="/social-logo/playstore.png"
                       alt="Google Play Store"
                       width={16}
                       height={16}
-                      className="size-4 object-contain rounded-xs"
+                      className="size-4 rounded-xs object-contain"
                     />
                     Google Play Store
                   </Label>
@@ -861,7 +910,7 @@ export const ShowcaseContent = () => {
                         alt="Google Play Store"
                         width={16}
                         height={16}
-                        className="size-4 object-contain rounded-xs"
+                        className="size-4 rounded-xs object-contain"
                       />
                     </div>
                     <Input
@@ -874,18 +923,23 @@ export const ShowcaseContent = () => {
                     />
                   </div>
                   {errors.playStoreUrl && (
-                    <p className="text-xs text-red-500">{errors.playStoreUrl[0]}</p>
+                    <p className="text-xs text-red-500">
+                      {errors.playStoreUrl[0]}
+                    </p>
                   )}
                 </div>
 
                 <div className="grid gap-2">
-                  <Label htmlFor="chromeExtension" className="flex items-center gap-1.5 text-xs font-semibold text-slate-700">
+                  <Label
+                    htmlFor="chromeExtension"
+                    className="flex items-center gap-1.5 text-xs font-semibold text-slate-700"
+                  >
                     <Image
                       src="/social-logo/chrome.png"
                       alt="Chrome Web Store"
                       width={16}
                       height={16}
-                      className="size-4 object-contain rounded-xs"
+                      className="size-4 rounded-xs object-contain"
                     />
                     Chrome Web Store Extension
                   </Label>
@@ -896,7 +950,7 @@ export const ShowcaseContent = () => {
                         alt="Chrome Web Store"
                         width={16}
                         height={16}
-                        className="size-4 object-contain rounded-xs"
+                        className="size-4 rounded-xs object-contain"
                       />
                     </div>
                     <Input
@@ -909,7 +963,9 @@ export const ShowcaseContent = () => {
                     />
                   </div>
                   {errors.chromeExtensionUrl && (
-                    <p className="text-xs text-red-500">{errors.chromeExtensionUrl[0]}</p>
+                    <p className="text-xs text-red-500">
+                      {errors.chromeExtensionUrl[0]}
+                    </p>
                   )}
                 </div>
               </div>
@@ -1056,8 +1112,7 @@ export const ShowcaseContent = () => {
                   AI & Answer Engine Optimization (AEO)
                 </h3>
                 <p className="text-xs text-slate-500">
-                  Prompt citation guidance for ChatGPT, Claude, and
-                  Perplexity.
+                  Prompt citation guidance for ChatGPT, Claude, and Perplexity.
                 </p>
               </div>
 

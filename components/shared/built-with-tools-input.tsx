@@ -6,7 +6,9 @@ import { useDebounce } from "@/hooks/shared/use-debounce"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Wrench, Link2, Plus, X, Search, Check, Sparkles } from "lucide-react"
+import { Spinner } from "@/components/ui/spinner"
+import { HoverOutline } from "@/components/shared/hover-outline"
+import { Wrench, Link2, Plus, X, Search, Check } from "lucide-react"
 import { cn } from "@/lib/utils"
 import type { DbTool } from "@/types/entities"
 
@@ -35,8 +37,18 @@ export const BuiltWithToolsInput = ({
   const [isOpen, setIsOpen] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
 
-  const debouncedQuery = useDebounce(query, 200)
-  const { data: allTools = [], isLoading } = useTools({ limit: 100 })
+  const debouncedQuery = useDebounce(query.trim(), 250)
+  const hasSearchQuery = debouncedQuery.length > 0
+
+  const { data: searchResults = [], isFetching: isSearching } = useTools(
+    { q: debouncedQuery, limit: 15 },
+    { enabled: hasSearchQuery }
+  )
+
+  const { data: popularToolsData = [] } = useTools(
+    { sortBy: "builds", limit: 8 },
+    { enabled: !hasSearchQuery }
+  )
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -53,26 +65,37 @@ export const BuiltWithToolsInput = ({
 
   const trimmedQuery = query.trim()
   const lowerQuery = trimmedQuery.toLowerCase()
+  const isDebouncingOrSearching =
+    hasSearchQuery && (query.trim() !== debouncedQuery || isSearching)
 
-  // Filter DevStacks tools matching the query
-  const matchingTools = (allTools as DbTool[]).filter(
-    (tool: DbTool) =>
-      tool.name.toLowerCase().includes(lowerQuery) ||
-      tool.slug.toLowerCase().includes(lowerQuery)
-  )
+  const matchingTools = (hasSearchQuery ? (searchResults as DbTool[]) : [])
+    .slice()
+    .sort((a, b) => {
+      const aName = a.name.toLowerCase()
+      const bName = b.name.toLowerCase()
+      if (aName === lowerQuery && bName !== lowerQuery) return -1
+      if (bName === lowerQuery && aName !== lowerQuery) return 1
+      if (aName.startsWith(lowerQuery) && !bName.startsWith(lowerQuery))
+        return -1
+      if (bName.startsWith(lowerQuery) && !aName.startsWith(lowerQuery))
+        return 1
+      return 0
+    })
 
-  // Check if current query already exists in selected list
   const isAlreadySelected = value.some(
     (item) => item.name.toLowerCase() === lowerQuery
   )
 
-  // Check if an exact match exists in DevStacks
-  const exactDevStacksMatch = (allTools as DbTool[]).find(
+  const exactDevStacksMatch = matchingTools.find(
     (tool: DbTool) => tool.name.toLowerCase() === lowerQuery
   )
 
-  const addLinkedTool = (tool: { id: string; name: string; slug: string } | DbTool) => {
-    if (value.some((item) => item.name.toLowerCase() === tool.name.toLowerCase())) {
+  const addLinkedTool = (
+    tool: { id: string; name: string; slug: string } | DbTool
+  ) => {
+    if (
+      value.some((item) => item.name.toLowerCase() === tool.name.toLowerCase())
+    ) {
       setQuery("")
       setIsOpen(false)
       return
@@ -94,16 +117,22 @@ export const BuiltWithToolsInput = ({
     const cleanName = name.trim()
     if (!cleanName) return
 
-    // If matches a DevStacks tool, link it instead
-    const matched = (allTools as DbTool[]).find(
-      (t: DbTool) => t.name.toLowerCase() === cleanName.toLowerCase()
-    )
+    const matched =
+      matchingTools.find(
+        (t) => t.name.toLowerCase() === cleanName.toLowerCase()
+      ) ??
+      (popularToolsData as DbTool[]).find(
+        (t) => t.name.toLowerCase() === cleanName.toLowerCase()
+      )
+
     if (matched) {
       addLinkedTool(matched)
       return
     }
 
-    if (value.some((item) => item.name.toLowerCase() === cleanName.toLowerCase())) {
+    if (
+      value.some((item) => item.name.toLowerCase() === cleanName.toLowerCase())
+    ) {
       setQuery("")
       setIsOpen(false)
       return
@@ -123,7 +152,7 @@ export const BuiltWithToolsInput = ({
       e.preventDefault()
       if (exactDevStacksMatch) {
         addLinkedTool(exactDevStacksMatch)
-      } else if (matchingTools.length > 0 && query.trim()) {
+      } else if (matchingTools.length > 0 && trimmedQuery) {
         addLinkedTool(matchingTools[0])
       } else if (trimmedQuery) {
         addUnlinkedTool(trimmedQuery)
@@ -133,8 +162,7 @@ export const BuiltWithToolsInput = ({
     }
   }
 
-  // Popular tools suggestions
-  const popularTools: DbTool[] = (allTools as DbTool[]).slice(0, 6)
+  const popularTools: DbTool[] = (popularToolsData as DbTool[]).slice(0, 8)
 
   return (
     <div className="flex flex-col gap-3" ref={containerRef}>
@@ -161,14 +189,14 @@ export const BuiltWithToolsInput = ({
                 )}
               >
                 {isLinked ? (
-                  <Link2 className="size-3 text-indigo-600 shrink-0" />
+                  <Link2 className="size-3 shrink-0 text-indigo-600" />
                 ) : (
-                  <Wrench className="size-3 text-slate-400 shrink-0" />
+                  <Wrench className="size-3 shrink-0 text-slate-400" />
                 )}
                 <span>{item.name}</span>
                 <span
                   className={cn(
-                    "text-[10px] font-mono px-1 py-0.2 rounded",
+                    "py-0.2 rounded px-1 font-mono text-[10px]",
                     isLinked
                       ? "bg-indigo-100 text-indigo-700"
                       : "bg-slate-200/80 text-slate-600"
@@ -179,7 +207,7 @@ export const BuiltWithToolsInput = ({
                 <button
                   type="button"
                   onClick={() => removeTool(idx)}
-                  className="size-4 ml-0.5 inline-flex items-center justify-center rounded-sm text-slate-400 hover:text-red-600 hover:bg-slate-200/50"
+                  className="ml-0.5 inline-flex size-4 items-center justify-center rounded-sm text-slate-400 hover:bg-slate-200/50 hover:text-red-600"
                   title="Remove tool"
                 >
                   <X className="size-3" />
@@ -203,7 +231,7 @@ export const BuiltWithToolsInput = ({
             onFocus={() => setIsOpen(true)}
             onKeyDown={handleKeyDown}
             placeholder={placeholder}
-            className="pl-9 pr-24 text-xs"
+            className="pr-24 pl-9 text-xs"
           />
           {trimmedQuery && (
             <Button
@@ -211,9 +239,9 @@ export const BuiltWithToolsInput = ({
               variant="ghost"
               size="sm"
               onClick={() => addUnlinkedTool(trimmedQuery)}
-              className="absolute right-1 top-1 h-7 px-2 text-[11px] font-semibold text-indigo-600 hover:text-indigo-700"
+              className="absolute top-1 right-1 h-7 px-2 text-[11px] font-semibold text-indigo-600 hover:text-indigo-700"
             >
-              <Plus className="size-3 mr-1" />
+              <Plus className="mr-1 size-3" />
               Add
             </Button>
           )}
@@ -224,65 +252,84 @@ export const BuiltWithToolsInput = ({
           <div className="absolute z-50 mt-1 max-h-64 w-full overflow-y-auto rounded-lg border border-slate-200 bg-white p-2 shadow-lg">
             {trimmedQuery ? (
               <div className="flex flex-col gap-1">
+                {isDebouncingOrSearching && (
+                  <div className="flex items-center gap-2 px-2.5 py-2 text-xs text-slate-500">
+                    <Spinner className="size-3.5 text-indigo-600" />
+                    <span>Searching DevStacks tools...</span>
+                  </div>
+                )}
+
                 {/* Matching DevStacks Tools */}
                 {matchingTools.length > 0 && (
                   <div className="flex flex-col gap-1">
-                    <div className="px-2 py-1 text-[10px] font-mono font-bold uppercase tracking-wider text-indigo-600">
+                    <div className="px-2 py-1 font-mono text-[10px] font-bold tracking-wider text-indigo-600 uppercase">
                       DevStacks Tools (Linked)
                     </div>
-                    {matchingTools.slice(0, 5).map((tool: DbTool) => {
+                    {matchingTools.slice(0, 6).map((tool: DbTool) => {
                       const selected = value.some(
                         (i) => i.name.toLowerCase() === tool.name.toLowerCase()
                       )
                       return (
-                        <button
+                        <div
                           key={tool.id}
-                          type="button"
-                          disabled={selected}
-                          onClick={() => addLinkedTool(tool)}
-                          className={cn(
-                            "flex w-full items-center justify-between rounded-md px-2.5 py-1.5 text-left text-xs transition-colors",
-                            selected
-                              ? "opacity-50 cursor-not-allowed bg-slate-50"
-                              : "hover:bg-indigo-50/70 hover:text-indigo-900 cursor-pointer"
-                          )}
+                          className="group/btn relative flex w-full"
                         >
-                          <div className="flex items-center gap-2">
-                            <Link2 className="size-3.5 text-indigo-600 shrink-0" />
-                            <span className="font-semibold text-slate-900">
-                              {tool.name}
-                            </span>
-                            {tool.tagline && (
-                              <span className="text-[11px] text-slate-400 truncate max-w-xs">
-                                — {tool.tagline}
-                              </span>
+                          <button
+                            type="button"
+                            disabled={selected}
+                            onClick={() => addLinkedTool(tool)}
+                            className={cn(
+                              "relative z-10 flex w-full items-center justify-between rounded-md border border-transparent px-2.5 py-1.5 text-left text-xs transition-colors",
+                              selected
+                                ? "cursor-not-allowed bg-slate-50 opacity-50"
+                                : "cursor-pointer hover:border-slate-200/80 hover:bg-indigo-50/70 hover:text-indigo-900"
                             )}
-                          </div>
-                          {selected ? (
-                            <span className="text-[10px] font-medium text-emerald-600 flex items-center gap-1">
-                              <Check className="size-3" /> Added
-                            </span>
-                          ) : (
-                            <Badge
-                              variant="outline"
-                              className="border-indigo-200 bg-indigo-50 text-[10px] text-indigo-700 font-normal"
-                            >
-                              Link to tool
-                            </Badge>
-                          )}
-                        </button>
+                          >
+                            <div className="flex items-center gap-2">
+                              <Link2 className="size-3.5 shrink-0 text-indigo-600" />
+                              <span className="font-semibold text-slate-900">
+                                {tool.name}
+                              </span>
+                              {tool.tagline && (
+                                <span className="max-w-xs truncate text-[11px] text-slate-400">
+                                  — {tool.tagline}
+                                </span>
+                              )}
+                            </div>
+                            {selected ? (
+                              <span className="flex items-center gap-1 text-[10px] font-medium text-emerald-600">
+                                <Check className="size-3" /> Added
+                              </span>
+                            ) : (
+                              <Badge
+                                variant="outline"
+                                className="border-indigo-200 bg-indigo-50 text-[10px] font-normal text-indigo-700"
+                              >
+                                Link to tool
+                              </Badge>
+                            )}
+                          </button>
+                          {!selected && <HoverOutline className="-inset-0.5" />}
+                        </div>
                       )
                     })}
                   </div>
                 )}
 
+                {!isDebouncingOrSearching && matchingTools.length === 0 && (
+                  <div className="px-2.5 py-2 text-xs text-slate-400">
+                    No matching DevStacks tool found for &quot;{trimmedQuery}
+                    &quot;.
+                  </div>
+                )}
+
                 {/* Option to Add as Unlinked Custom Tool */}
                 {!isAlreadySelected && (
-                  <div className="border-t border-dashed border-slate-100 pt-1 mt-1">
+                  <div className="mt-1 border-t border-dashed border-slate-100 pt-1">
                     <button
                       type="button"
                       onClick={() => addUnlinkedTool(trimmedQuery)}
-                      className="flex w-full items-center gap-2 rounded-md px-2.5 py-1.5 text-left text-xs text-slate-700 hover:bg-slate-100 transition-colors"
+                      className="flex w-full items-center gap-2 rounded-md px-2.5 py-1.5 text-left text-xs text-slate-700 transition-colors hover:bg-slate-100"
                     >
                       <Plus className="size-3.5 text-slate-500" />
                       <span>
@@ -296,35 +343,42 @@ export const BuiltWithToolsInput = ({
             ) : (
               <div className="flex flex-col gap-2 p-1">
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400">
+                  <span className="font-mono text-[10px] font-bold tracking-wider text-slate-400 uppercase">
                     Popular DevStacks Tools
                   </span>
                   <span className="text-[10px] text-slate-400">
                     Click to link
                   </span>
                 </div>
-                <div className="flex flex-wrap gap-1.5">
+                <div className="flex flex-wrap gap-2.5 p-1.5">
                   {popularTools.map((tool: DbTool) => {
                     const selected = value.some(
                       (i) => i.name.toLowerCase() === tool.name.toLowerCase()
                     )
                     return (
-                      <button
+                      <div
                         key={tool.id}
-                        type="button"
-                        disabled={selected}
-                        onClick={() => addLinkedTool(tool)}
-                        className={cn(
-                          "inline-flex items-center gap-1 rounded-md border px-2 py-1 text-xs transition-colors",
-                          selected
-                            ? "border-slate-200 bg-slate-100 text-slate-400 cursor-not-allowed"
-                            : "border-slate-200 bg-white text-slate-700 hover:border-indigo-300 hover:bg-indigo-50/60 hover:text-indigo-900 cursor-pointer"
-                        )}
+                        className="group/btn relative inline-flex"
                       >
-                        <Link2 className="size-3 text-indigo-600" />
-                        <span>{tool.name}</span>
-                        {selected && <Check className="size-3 text-emerald-600" />}
-                      </button>
+                        <button
+                          type="button"
+                          disabled={selected}
+                          onClick={() => addLinkedTool(tool)}
+                          className={cn(
+                            "relative z-10 inline-flex items-center gap-1.5 rounded-md border bg-white px-2.5 py-1 text-xs transition-colors",
+                            selected
+                              ? "cursor-not-allowed border-slate-200 bg-slate-100 text-slate-400"
+                              : "cursor-pointer border-slate-200/80 text-slate-700 hover:border-indigo-300 hover:bg-indigo-50/60 hover:text-indigo-900"
+                          )}
+                        >
+                          <Link2 className="size-3 text-indigo-600" />
+                          <span>{tool.name}</span>
+                          {selected && (
+                            <Check className="size-3 text-emerald-600" />
+                          )}
+                        </button>
+                        {!selected && <HoverOutline />}
+                      </div>
                     )
                   })}
                 </div>

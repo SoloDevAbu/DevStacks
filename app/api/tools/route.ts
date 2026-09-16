@@ -24,7 +24,7 @@ const listQuerySchema = z.object({
     }),
   tier: z.enum(["free", "premium", "premium+"]).optional(),
   page: z.coerce.number().int().min(1).default(1),
-  limit: z.coerce.number().int().min(1).max(50).default(20),
+  limit: z.coerce.number().int().min(1).max(100).default(20),
   sortBy: z.enum(["upvotes", "builds", "recent", "views"]).default("upvotes"),
 })
 

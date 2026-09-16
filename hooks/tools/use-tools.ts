@@ -10,11 +10,15 @@ export const TOOLS_INFINITE_QUERY_KEY = (params: ToolListParams) => [
   params,
 ]
 
-export const useTools = (params: ToolListParams = {}) => {
+export const useTools = (
+  params: ToolListParams = {},
+  options?: { enabled?: boolean }
+) => {
   return useQuery<DbTool[]>({
     queryKey: TOOLS_QUERY_KEY(params),
     queryFn: () => fetchTools(params),
     staleTime: 60_000,
+    ...options,
   })
 }
 

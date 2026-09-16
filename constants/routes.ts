@@ -9,6 +9,7 @@ export const ROUTES = {
   PRICING: "/pricing",
   SUBMIT: "/submit",
   SHOWCASE: "/showcase",
+  SHOWCASE_TOOL: (toolSlug: string) => `/showcase?tool=${encodeURIComponent(toolSlug)}`,
   PRODUCTS: "/products",
   PRODUCT: (slug: string) => `/products/${slug}`,
   TOOLS: "/tools",

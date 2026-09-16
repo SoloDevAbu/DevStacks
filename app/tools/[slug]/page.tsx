@@ -655,7 +655,7 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
             <Button
               variant="outline"
               size="sm"
-              render={<Link href={ROUTES.SUBMIT} />}
+              render={<Link href={ROUTES.SHOWCASE_TOOL(tool.slug)} />}
               className="self-start rounded-none text-xs sm:self-auto"
             >
               <PlusCircle className="mr-1.5 size-3.5" />
@@ -688,7 +688,7 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
               <div className="mt-3">
                 <Button
                   size="sm"
-                  render={<Link href={ROUTES.SUBMIT} />}
+                  render={<Link href={ROUTES.SHOWCASE_TOOL(tool.slug)} />}
                   className="rounded-none text-xs"
                 >
                   <PlusCircle className="mr-1.5 size-3.5" />
@@ -751,7 +751,7 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
               variant="default"
               size="sm"
               className="self-start rounded-none bg-slate-900 text-white hover:bg-slate-800 md:self-auto"
-              render={<Link href={ROUTES.SUBMIT} />}
+              render={<Link href={ROUTES.SHOWCASE_TOOL(tool.slug)} />}
             >
               <PlusCircle className="mr-1.5 size-3.5" />
               Submit Your Build

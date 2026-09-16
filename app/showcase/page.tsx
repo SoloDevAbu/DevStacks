@@ -7,6 +7,8 @@ import { ShowcaseCrawlerView } from "@/components/showcase/showcase-crawler-view
 import { SITE_CONFIG } from "@/constants/site"
 import { breadcrumbSchema, faqSchema } from "@/lib/seo/schema"
 import { isCrawler } from "@/lib/seo/crawlers"
+import { getToolBySlugOrName } from "@/db/queries/tools/get"
+import type { BuiltWithToolItem } from "@/components/shared/built-with-tools-input"
 
 export const metadata: Metadata = {
   title: "Showcase Your Build — Developer Tech Stacks & Architecture",
@@ -60,7 +62,14 @@ const SHOWCASE_FAQS = [
   },
 ] as const
 
-const ShowcasePage = async () => {
+type ShowcasePageProps = {
+  searchParams?: Promise<{ tool?: string; toolSlug?: string }>
+}
+
+const ShowcasePage = async (props: ShowcasePageProps) => {
+  const searchParams = props.searchParams ? await props.searchParams : undefined
+  const toolSlugOrName = searchParams?.tool ?? searchParams?.toolSlug
+
   let session = null
   let userAgent = ""
   try {
@@ -76,7 +85,26 @@ const ShowcasePage = async () => {
   const isBot = isCrawler(userAgent)
 
   if (!session?.user && !isBot) {
-    redirect("/?redirect=/showcase")
+    const redirectTarget = toolSlugOrName
+      ? `/showcase?tool=${encodeURIComponent(toolSlugOrName)}`
+      : "/showcase"
+    redirect(`/?redirect=${encodeURIComponent(redirectTarget)}`)
+  }
+
+  let initialTool: BuiltWithToolItem | null = null
+  if (toolSlugOrName) {
+    const foundTool = await getToolBySlugOrName(toolSlugOrName)
+    if (foundTool) {
+      initialTool = {
+        name: foundTool.name,
+        toolSlug: foundTool.slug,
+        toolId: foundTool.id,
+      }
+    } else {
+      initialTool = {
+        name: toolSlugOrName.trim(),
+      }
+    }
   }
 
   const breadcrumbs = breadcrumbSchema([
@@ -96,7 +124,11 @@ const ShowcasePage = async () => {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqs) }}
       />
-      {session?.user ? <ShowcaseContent /> : <ShowcaseCrawlerView />}
+      {session?.user ? (
+        <ShowcaseContent initialTool={initialTool} />
+      ) : (
+        <ShowcaseCrawlerView />
+      )}
     </>
   )
 }
