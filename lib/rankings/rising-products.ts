@@ -1,6 +1,6 @@
 import { db } from "@/db"
 import { products, categories, productTools, tools } from "@/db/schema"
-import { desc, eq, inArray, sql } from "drizzle-orm"
+import { eq, inArray } from "drizzle-orm"
 import { RISING_PRODUCTS_WEIGHTS } from "@/constants/rankings"
 import type { RankedProduct, RankingOptions } from "./types"
 import type { ProductBuiltWith } from "@/types/entities"
@@ -34,21 +34,6 @@ export const getRisingProducts = async ({
   const safePage = Math.max(1, page)
   const offset = (safePage - 1) * safeLimit
 
-  const momentumScoreSql = sql<number>`
-    ROUND(
-      (
-        (
-          ${products.likesCount} * ${RISING_PRODUCTS_WEIGHTS.upvotesWeight} +
-          ${products.commentsCount} * ${RISING_PRODUCTS_WEIGHTS.commentsWeight} +
-          ${products.viewsCount} * ${RISING_PRODUCTS_WEIGHTS.viewsWeight}
-        )
-        /
-        (LN(GREATEST(1.0, EXTRACT(EPOCH FROM (NOW() - ${products.createdAt})) / 3600.0) + 2.0) / LN(2.0))
-      )::numeric,
-      1
-    )
-  `
-
   const rows = await db
     .select({
       id: products.id,
@@ -69,20 +54,34 @@ export const getRisingProducts = async ({
       categorySlug: categories.slug,
       createdAt: products.createdAt,
       updatedAt: products.updatedAt,
-      score: momentumScoreSql,
     })
     .from(products)
     .leftJoin(categories, eq(products.categoryId, categories.id))
     .where(eq(products.status, "approved"))
-    .orderBy(desc(momentumScoreSql), desc(products.id))
-    .limit(safeLimit)
-    .offset(offset)
 
-  const pageItems: RankedProduct[] = rows.map((p) => ({
+  const now = new Date()
+
+  const scored: RankedProduct[] = rows.map((p) => ({
     ...p,
     itemKind: "product" as const,
-    score: Number(p.score) || 0,
+    score: calculateRisingScore(
+      p.createdAt ? new Date(p.createdAt) : new Date(),
+      p.likesCount,
+      p.commentsCount,
+      p.viewsCount,
+      now
+    ),
   }))
+
+  scored.sort((a, b) => {
+    const scoreDiff = (b.score ?? 0) - (a.score ?? 0)
+    if (scoreDiff !== 0) return scoreDiff
+    const bTime = b.createdAt ? new Date(b.createdAt).getTime() : 0
+    const aTime = a.createdAt ? new Date(a.createdAt).getTime() : 0
+    return bTime - aTime
+  })
+
+  const pageItems = scored.slice(offset, offset + safeLimit)
 
   const productIds = pageItems.map((p) => p.id)
   if (productIds.length > 0) {
@@ -115,4 +114,3 @@ export const getRisingProducts = async ({
 
   return pageItems
 }
-

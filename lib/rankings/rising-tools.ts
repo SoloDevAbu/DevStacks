@@ -1,6 +1,6 @@
 import { db } from "@/db"
 import { tools, categories } from "@/db/schema"
-import { desc, eq, sql } from "drizzle-orm"
+import { eq } from "drizzle-orm"
 import { RISING_TOOLS_WEIGHTS } from "@/constants/rankings"
 import type { RankedTool, RankingOptions } from "./types"
 
@@ -35,22 +35,6 @@ export const getRisingTools = async ({
   const safePage = Math.max(1, page)
   const offset = (safePage - 1) * safeLimit
 
-  const momentumScoreSql = sql<number>`
-    ROUND(
-      (
-        (
-          ${tools.upvotesCount} * ${RISING_TOOLS_WEIGHTS.upvotesWeight} +
-          ${tools.buildsCount} * ${RISING_TOOLS_WEIGHTS.buildsWeight} +
-          ${tools.commentsCount} * ${RISING_TOOLS_WEIGHTS.commentsWeight} +
-          ${tools.viewsCount} * ${RISING_TOOLS_WEIGHTS.viewsWeight}
-        )
-        /
-        (LN(GREATEST(1.0, EXTRACT(EPOCH FROM (NOW() - ${tools.createdAt})) / 3600.0) + 2.0) / LN(2.0))
-      )::numeric,
-      1
-    )
-  `
-
   const rows = await db
     .select({
       id: tools.id,
@@ -72,19 +56,33 @@ export const getRisingTools = async ({
       categorySlug: categories.slug,
       createdAt: tools.createdAt,
       updatedAt: tools.updatedAt,
-      score: momentumScoreSql,
     })
     .from(tools)
     .leftJoin(categories, eq(tools.categoryId, categories.id))
     .where(eq(tools.status, "approved"))
-    .orderBy(desc(momentumScoreSql), desc(tools.id))
-    .limit(safeLimit)
-    .offset(offset)
 
-  return rows.map((t) => ({
+  const now = new Date()
+
+  const scored: RankedTool[] = rows.map((t) => ({
     ...t,
     itemKind: "tool" as const,
-    score: Number(t.score) || 0,
+    score: calculateRisingToolScore(
+      t.createdAt ? new Date(t.createdAt) : new Date(),
+      t.upvotesCount,
+      t.buildsCount,
+      t.commentsCount,
+      t.viewsCount,
+      now
+    ),
   }))
-}
 
+  scored.sort((a, b) => {
+    const scoreDiff = (b.score ?? 0) - (a.score ?? 0)
+    if (scoreDiff !== 0) return scoreDiff
+    const bTime = b.createdAt ? new Date(b.createdAt).getTime() : 0
+    const aTime = a.createdAt ? new Date(a.createdAt).getTime() : 0
+    return bTime - aTime
+  })
+
+  return scored.slice(offset, offset + safeLimit)
+}
