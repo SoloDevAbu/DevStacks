@@ -80,6 +80,7 @@ export const POST = async (req: NextRequest) => {
 
     return NextResponse.json({ data: tool }, { status: 201 })
   } catch (err: unknown) {
+    console.error("Failed to create tool error:", err)
     const message = err instanceof Error ? err.message : "Unknown error"
     if (message.includes("unique")) {
       return NextResponse.json(
@@ -88,7 +89,7 @@ export const POST = async (req: NextRequest) => {
       )
     }
     return NextResponse.json(
-      { error: "Failed to create tool" },
+      { error: `Failed to create tool: ${message}` },
       { status: 500 }
     )
   }

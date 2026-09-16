@@ -538,7 +538,7 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
 
               <div className={toolDeepDiveContainer}>
                 {product.problemStatement && (
-                  <div className="flex flex-col gap-3.5 bg-slate-50/20 p-6 transition-colors hover:bg-slate-50/50 md:p-8">
+                  <div className="flex w-full min-w-0 flex-col gap-3.5 bg-slate-50/20 p-6 transition-colors hover:bg-slate-50/50 md:p-8">
                     <div className="flex items-center justify-between">
                       <span className="font-mono text-[10px] font-bold tracking-widest text-rose-600 uppercase">
                         01 / PROBLEM
@@ -547,17 +547,17 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
                         <Target className="size-3.5" />
                       </div>
                     </div>
-                    <h3 className="text-sm font-bold text-slate-900">
+                    <h3 className="text-sm font-bold text-slate-900 sm:text-base">
                       The Problem It Solves
                     </h3>
-                    <p className="text-xs leading-relaxed text-slate-600">
+                    <p className="max-w-4xl text-xs leading-relaxed text-slate-600 break-words whitespace-pre-line sm:text-sm">
                       {product.problemStatement}
                     </p>
                   </div>
                 )}
 
                 {product.solution && (
-                  <div className="flex flex-col gap-3.5 bg-slate-50/20 p-6 transition-colors hover:bg-slate-50/50 md:p-8">
+                  <div className="flex w-full min-w-0 flex-col gap-3.5 bg-slate-50/20 p-6 transition-colors hover:bg-slate-50/50 md:p-8">
                     <div className="flex items-center justify-between">
                       <span className="font-mono text-[10px] font-bold tracking-widest text-emerald-600 uppercase">
                         02 / ARCHITECTURE
@@ -566,17 +566,17 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
                         <Zap className="size-3.5" />
                       </div>
                     </div>
-                    <h3 className="text-sm font-bold text-slate-900">
+                    <h3 className="text-sm font-bold text-slate-900 sm:text-base">
                       The Solution
                     </h3>
-                    <p className="text-xs leading-relaxed text-slate-600">
+                    <p className="max-w-4xl text-xs leading-relaxed text-slate-600 break-words whitespace-pre-line sm:text-sm">
                       {product.solution}
                     </p>
                   </div>
                 )}
 
                 {product.uniqueValue && (
-                  <div className="flex flex-col gap-3.5 bg-slate-50/20 p-6 transition-colors hover:bg-slate-50/50 md:p-8">
+                  <div className="flex w-full min-w-0 flex-col gap-3.5 bg-slate-50/20 p-6 transition-colors hover:bg-slate-50/50 md:p-8">
                     <div className="flex items-center justify-between">
                       <span className="font-mono text-[10px] font-bold tracking-widest text-blue-600 uppercase">
                         03 / ADVANTAGE
@@ -585,10 +585,10 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
                         <Sparkles className="size-3.5" />
                       </div>
                     </div>
-                    <h3 className="text-sm font-bold text-slate-900">
+                    <h3 className="text-sm font-bold text-slate-900 sm:text-base">
                       What Makes It Unique
                     </h3>
-                    <p className="text-xs leading-relaxed text-slate-600">
+                    <p className="max-w-4xl text-xs leading-relaxed text-slate-600 break-words whitespace-pre-line sm:text-sm">
                       {product.uniqueValue}
                     </p>
                   </div>

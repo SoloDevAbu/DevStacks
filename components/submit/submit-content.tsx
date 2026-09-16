@@ -39,6 +39,8 @@ import {
   submitSectionHeaderOptional,
   submitSectionHeaderDiscoverability,
 } from "@/utils/styles"
+import { FaqBuilder, type FaqBuilderItem } from "@/components/shared/faq-builder"
+import { toast } from "@/components/ui/toast"
 
 const emptyForm = {
   name: "",
@@ -70,6 +72,7 @@ const emptyForm = {
   tags: "",
   pricing: "Free" as const,
   platforms: [] as string[],
+  faqs: [] as FaqBuilderItem[],
 }
 
 export const SubmitContent = () => {
@@ -135,7 +138,28 @@ export const SubmitContent = () => {
   }
 
   const executeSubmit = () => {
-    const parsed = submitToolSchema.safeParse(form)
+    const nonBlankFaqs = form.faqs
+      .map((f) => ({
+        question: f.question.trim(),
+        answer: f.answer.trim(),
+      }))
+      .filter((f) => f.question || f.answer)
+
+    const incompleteFaq = nonBlankFaqs.find((f) => !f.question || !f.answer)
+    if (incompleteFaq) {
+      toast.error(
+        "Incomplete FAQ",
+        "Every added FAQ must have both a question and an answer."
+      )
+      return
+    }
+
+    const payload = {
+      ...form,
+      faqs: nonBlankFaqs,
+    }
+
+    const parsed = submitToolSchema.safeParse(payload)
     if (!parsed.success) {
       setErrors(parsed.error.flatten().fieldErrors as Record<string, string[]>)
       return
@@ -423,6 +447,45 @@ export const SubmitContent = () => {
                   />
                 </div>
               </div>
+            </div>
+
+            {/* Subsection: Frequently Asked Questions (Tool FAQs) */}
+            <div className="flex flex-col gap-5 border-b border-dashed border-border px-6 py-6 md:px-8 md:py-8">
+              <div className="flex items-center justify-between">
+                <div className="flex flex-col gap-1">
+                  <h3 className="text-sm font-bold text-slate-900">
+                    Frequently Asked Questions (Tool FAQs)
+                  </h3>
+                  <p className="text-xs text-slate-500">
+                    Address common questions developers might have about your tool, integration, or self-hosting.
+                  </p>
+                </div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() =>
+                    setForm((prev) => ({
+                      ...prev,
+                      faqs: [...prev.faqs, { question: "", answer: "" }],
+                    }))
+                  }
+                  className="gap-1.5"
+                >
+                  <Plus className="size-3.5" />
+                  <span>Add Question</span>
+                </Button>
+              </div>
+
+              <FaqBuilder
+                faqs={form.faqs}
+                onChange={(faqs) => setForm((prev) => ({ ...prev, faqs }))}
+                questionPlaceholder="e.g. Is this tool open source or self-hostable?"
+                answerPlaceholder="e.g. Yes, you can deploy using Docker or sign up for our managed cloud."
+                emptyPrompt="No FAQs added yet. Help developers evaluate your tool faster by adding answers to common questions."
+                addFirstLabel="Add First Question"
+                addAnotherLabel="Add Another Question"
+              />
             </div>
 
             {/* Subsection: Categories & Platforms */}

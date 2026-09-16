@@ -29,6 +29,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { FieldGroup, Field, FieldLabel } from "@/components/ui/field"
 import { MakerProfileCard } from "@/components/shared/maker-profile-card"
+import { FaqBuilder } from "@/components/shared/faq-builder"
 import {
   countryCodeToFlag,
   countryCodeToName,
@@ -94,7 +95,9 @@ export const ProfileForm = ({ initialProfile }: ProfileFormProps) => {
         if (res.data.available) {
           setUsernameStatus({
             status: "available",
-            message: res.data.isCurrent ? "Your current handle" : `@${clean} is available`,
+            message: res.data.isCurrent
+              ? "Your current handle"
+              : `@${clean} is available`,
           })
         } else {
           setUsernameStatus({
@@ -128,22 +131,6 @@ export const ProfileForm = ({ initialProfile }: ProfileFormProps) => {
 
   const handleAddFaq = () => {
     setFaqs((prev) => [...prev, { question: "", answer: "" }])
-  }
-
-  const handleUpdateFaq = (
-    index: number,
-    field: "question" | "answer",
-    value: string
-  ) => {
-    setFaqs((prev) => {
-      const copy = [...prev]
-      copy[index] = { ...copy[index], [field]: value }
-      return copy
-    })
-  }
-
-  const handleRemoveFaq = (index: number) => {
-    setFaqs((prev) => prev.filter((_, i) => i !== index))
   }
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -511,86 +498,13 @@ export const ProfileForm = ({ initialProfile }: ProfileFormProps) => {
           </div>
         </CardHeader>
         <CardContent>
-          {faqs.length === 0 ? (
-            <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-slate-200 py-8 text-center">
-              <p className="text-xs text-slate-500">
-                No personal FAQs added yet. Add common questions like your
-                primary tech stacks, freelance availability, or what you are
-                building next.
-              </p>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={handleAddFaq}
-                className="mt-3 gap-1.5"
-              >
-                <Plus className="size-3.5" />
-                <span>Add First Question</span>
-              </Button>
-            </div>
-          ) : (
-            <div className="flex flex-col gap-4">
-              {faqs.map((faq, idx) => (
-                <div
-                  key={idx}
-                  className="relative flex flex-col gap-3 rounded-lg border border-dashed border-slate-200 bg-slate-50/40 p-4"
-                >
-                  <div className="flex items-center justify-between">
-                    <span className="font-mono text-xs font-bold text-slate-400">
-                      FAQ #{idx + 1}
-                    </span>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleRemoveFaq(idx)}
-                      className="h-7 px-2 text-red-500 hover:bg-red-50 hover:text-red-600"
-                    >
-                      <Trash2 className="size-3.5" />
-                    </Button>
-                  </div>
-
-                  <Field>
-                    <FieldLabel>Question</FieldLabel>
-                    <Input
-                      value={faq.question}
-                      onChange={(e) =>
-                        handleUpdateFaq(idx, "question", e.target.value)
-                      }
-                      placeholder="e.g. What tech stacks do you specialize in?"
-                    />
-                  </Field>
-
-                  <Field>
-                    <FieldLabel>Answer</FieldLabel>
-                    <Textarea
-                      value={faq.answer}
-                      onChange={(e) =>
-                        handleUpdateFaq(idx, "answer", e.target.value)
-                      }
-                      rows={2}
-                      placeholder="e.g. I work primarily with Next.js, TypeScript, PostgreSQL, and Cloudflare workers."
-                    />
-                  </Field>
-                </div>
-              ))}
-
-              {/* Bottom Add Question Button */}
-              <div className="pt-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={handleAddFaq}
-                  className="w-full cursor-pointer gap-1.5 border-dashed py-4 text-xs text-slate-600 hover:bg-slate-50 hover:text-slate-900"
-                >
-                  <Plus className="size-3.5" />
-                  <span>Add Another Question</span>
-                </Button>
-              </div>
-            </div>
-          )}
+          <FaqBuilder
+            faqs={faqs}
+            onChange={setFaqs}
+            questionPlaceholder="e.g. What tech stacks do you specialize in?"
+            answerPlaceholder="e.g. I work primarily with Next.js, TypeScript, PostgreSQL, and Cloudflare workers."
+            emptyPrompt="No personal FAQs added yet. Add common questions like your primary tech stacks, freelance availability, or what you are building next."
+          />
         </CardContent>
       </Card>
 

@@ -1,5 +1,5 @@
 import { db } from "@/db"
-import { tools } from "@/db/schema"
+import { tools, toolFaqs } from "@/db/schema"
 import type { NewTool } from "@/db/schema"
 import { getOrCreateCategory } from "@/db/queries/categories/list"
 
@@ -31,10 +31,11 @@ export type CreateToolInput = Omit<
   | "updatedAt"
 > & {
   category?: string
+  faqs?: Array<{ question: string; answer: string }>
 }
 
 export const createTool = async (data: CreateToolInput) => {
-  const { category, ...rest } = data
+  const { category, faqs, ...rest } = data
 
   let categoryId = rest.categoryId
   if (!categoryId && category && category.trim()) {
@@ -53,6 +54,21 @@ export const createTool = async (data: CreateToolInput) => {
       status: "approved",
     })
     .returning()
+
+  if (tool && faqs && faqs.length > 0) {
+    const validFaqs = faqs
+      .filter((f) => f.question?.trim() && f.answer?.trim())
+      .map((f, idx) => ({
+        toolId: tool.id,
+        question: f.question.trim(),
+        answer: f.answer.trim(),
+        sortOrder: idx,
+      }))
+
+    if (validFaqs.length > 0) {
+      await db.insert(toolFaqs).values(validFaqs)
+    }
+  }
 
   return tool
 }

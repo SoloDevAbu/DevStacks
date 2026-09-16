@@ -23,6 +23,7 @@ interface ToolTwinInput {
   upvotesCount?: number | null
   viewsCount?: number | null
   createdAt?: Date | string | null
+  faqs?: Array<{ question: string; answer: string }> | null
 }
 
 interface ProductTwinInput {
@@ -92,7 +93,11 @@ ${tool.description ?? `${tool.name} is a developer tool and software building bl
 - **Website**: ${tool.websiteUrl ?? canonical}
 ${tool.appStoreUrl ? `- **iOS App Store**: ${tool.appStoreUrl}\n` : ""}${tool.playStoreUrl ? `- **Google Play Store**: ${tool.playStoreUrl}\n` : ""}${tool.chromeExtensionUrl ? `- **Chrome Extension**: ${tool.chromeExtensionUrl}\n` : ""}- **DevStacks Profile**: ${canonical}
 - **Machine Discovery**: ${SITE_CONFIG.url}/api/md/tools/${tool.slug}
-`
+${
+  tool.faqs && tool.faqs.length > 0
+    ? `\n## Frequently Asked Questions\n\n${tool.faqs.map((f) => `### ${f.question}\n\n${f.answer}`).join("\n\n")}\n`
+    : ""
+}`
 }
 
 export const generateProductMarkdown = (product: ProductTwinInput): string => {

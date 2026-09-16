@@ -187,37 +187,13 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
     { name: tool.name, url: toolUrl },
   ])
 
-  const toolFaqs =
-    customFaqs.length > 0
-      ? customFaqs.map((f) => ({
-          question: f.question,
-          answer: f.answer,
-        }))
-      : [
-          {
-            question: `What is ${tool.name}?`,
-            answer: tool.description,
-          },
-          {
-            question: `What problem does ${tool.name} solve for developers?`,
-            answer:
-              tool.problemStatement ??
-              `${tool.name} eliminates developer friction by offering a streamlined solution for ${tool.tagline}.`,
-          },
-          {
-            question: `What is the pricing model for ${tool.name}?`,
-            answer: `${tool.name} is available under the ${tool.pricing} model. Check the official website for tier breakdowns.`,
-          },
-          {
-            question: `Which platforms and environments does ${tool.name} support?`,
-            answer:
-              tool.platforms && tool.platforms.length > 0
-                ? `${tool.name} supports: ${tool.platforms.join(", ")}.`
-                : `${tool.name} is available for Web and Cloud environments.`,
-          },
-        ]
+  const toolFaqs = customFaqs.map((f) => ({
+    id: f.id,
+    question: f.question,
+    answer: f.answer,
+  }))
 
-  const faqJsonLd = faqSchema(toolFaqs)
+  const faqJsonLd = toolFaqs.length > 0 ? faqSchema(toolFaqs) : null
   const aiPrompt = AI_PROMPTS.tool(tool.name, tool.tagline)
 
   const builtWithJsonLd =
@@ -241,10 +217,12 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
-      />
+      {faqJsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+        />
+      )}
       {builtWithJsonLd && (
         <script
           type="application/ld+json"
@@ -566,7 +544,7 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
 
               <div className={toolDeepDiveContainer}>
                 {tool.problemStatement && (
-                  <div className="flex flex-col gap-3.5 bg-slate-50/20 p-6 transition-colors hover:bg-slate-50/50 md:p-8">
+                  <div className="flex w-full min-w-0 flex-col gap-3.5 bg-slate-50/20 p-6 transition-colors hover:bg-slate-50/50 md:p-8">
                     <div className="flex items-center justify-between">
                       <span className="font-mono text-[10px] font-bold tracking-widest text-rose-600 uppercase">
                         01 / PROBLEM
@@ -575,17 +553,17 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
                         <Target className="size-3.5" />
                       </div>
                     </div>
-                    <h3 className="text-sm font-bold text-slate-900">
+                    <h3 className="text-sm font-bold text-slate-900 sm:text-base">
                       The Problem It Solves
                     </h3>
-                    <p className="text-xs leading-relaxed text-slate-600">
+                    <p className="max-w-4xl text-xs leading-relaxed text-slate-600 break-words whitespace-pre-line sm:text-sm">
                       {tool.problemStatement}
                     </p>
                   </div>
                 )}
 
                 {tool.solution && (
-                  <div className="flex flex-col gap-3.5 bg-slate-50/20 p-6 transition-colors hover:bg-slate-50/50 md:p-8">
+                  <div className="flex w-full min-w-0 flex-col gap-3.5 bg-slate-50/20 p-6 transition-colors hover:bg-slate-50/50 md:p-8">
                     <div className="flex items-center justify-between">
                       <span className="font-mono text-[10px] font-bold tracking-widest text-emerald-600 uppercase">
                         02 / ARCHITECTURE
@@ -594,17 +572,17 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
                         <Zap className="size-3.5" />
                       </div>
                     </div>
-                    <h3 className="text-sm font-bold text-slate-900">
+                    <h3 className="text-sm font-bold text-slate-900 sm:text-base">
                       The Solution
                     </h3>
-                    <p className="text-xs leading-relaxed text-slate-600">
+                    <p className="max-w-4xl text-xs leading-relaxed text-slate-600 break-words whitespace-pre-line sm:text-sm">
                       {tool.solution}
                     </p>
                   </div>
                 )}
 
                 {tool.uniqueValue && (
-                  <div className="flex flex-col gap-3.5 bg-slate-50/20 p-6 transition-colors hover:bg-slate-50/50 md:p-8">
+                  <div className="flex w-full min-w-0 flex-col gap-3.5 bg-slate-50/20 p-6 transition-colors hover:bg-slate-50/50 md:p-8">
                     <div className="flex items-center justify-between">
                       <span className="font-mono text-[10px] font-bold tracking-widest text-blue-600 uppercase">
                         03 / ADVANTAGE
@@ -613,10 +591,10 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
                         <Sparkles className="size-3.5" />
                       </div>
                     </div>
-                    <h3 className="text-sm font-bold text-slate-900">
+                    <h3 className="text-sm font-bold text-slate-900 sm:text-base">
                       What Makes It Unique
                     </h3>
-                    <p className="text-xs leading-relaxed text-slate-600">
+                    <p className="max-w-4xl text-xs leading-relaxed text-slate-600 break-words whitespace-pre-line sm:text-sm">
                       {tool.uniqueValue}
                     </p>
                   </div>
@@ -700,37 +678,39 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
         </section>
 
         {/* Section 6: Q&A Section */}
-        <section className="border-b border-dashed border-border bg-white">
-          <div className="flex flex-col gap-1 border-b border-dashed border-border bg-slate-50/40 px-6 py-6 md:px-8 md:py-8">
-            <h2 className={sectionHeadingTitle}>Frequently Asked Questions</h2>
-            <p className={sectionHeadingSubtitle}>
-              Common questions and technical details about {tool.name}
-            </p>
-          </div>
+        {toolFaqs.length > 0 && (
+          <section className="border-b border-dashed border-border bg-white">
+            <div className="flex flex-col gap-1 border-b border-dashed border-border bg-slate-50/40 px-6 py-6 md:px-8 md:py-8">
+              <h2 className={sectionHeadingTitle}>Frequently Asked Questions</h2>
+              <p className={sectionHeadingSubtitle}>
+                Common questions and technical details about {tool.name}
+              </p>
+            </div>
 
-          <div className="flex flex-col divide-y divide-dashed divide-border">
-            {toolFaqs.map((faq, idx) => (
-              <div
-                key={faq.question}
-                className="flex flex-col gap-2 px-6 py-6 transition-colors hover:bg-slate-50/40 md:px-8"
-              >
-                <div className="flex items-start gap-3">
-                  <span className="shrink-0 pt-0.5 font-mono text-xs font-bold text-slate-400 select-none">
-                    Q{idx + 1}
-                  </span>
-                  <div className="flex flex-1 flex-col gap-1.5">
-                    <h3 className="text-sm font-bold text-slate-900">
-                      {faq.question}
-                    </h3>
-                    <p className="max-w-4xl text-xs leading-relaxed text-slate-600">
-                      {faq.answer}
-                    </p>
+            <div className="flex flex-col divide-y divide-dashed divide-border">
+              {toolFaqs.map((faq, idx) => (
+                <div
+                  key={faq.id ?? `${faq.question}-${idx}`}
+                  className="flex flex-col gap-2 px-6 py-6 transition-colors hover:bg-slate-50/40 md:px-8"
+                >
+                  <div className="flex items-start gap-3">
+                    <span className="shrink-0 pt-0.5 font-mono text-xs font-bold text-slate-400 select-none">
+                      Q{idx + 1}
+                    </span>
+                    <div className="flex flex-1 min-w-0 flex-col gap-1.5">
+                      <h3 className="text-sm font-bold text-slate-900 break-words">
+                        {faq.question}
+                      </h3>
+                      <p className="max-w-4xl text-xs leading-relaxed text-slate-600 break-words whitespace-pre-line sm:text-sm">
+                        {faq.answer}
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        </section>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* Section 7: Ecosystem Callout */}
         <section className="border-b border-dashed border-border bg-slate-50/70 px-6 py-10 md:px-8 md:py-12">

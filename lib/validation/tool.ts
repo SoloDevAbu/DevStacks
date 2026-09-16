@@ -42,6 +42,17 @@ export const submitToolSchema = z.object({
   metaTitle: z.string().max(60).optional().or(z.literal("")),
   metaDescription: z.string().max(160).optional().or(z.literal("")),
   aiContext: z.string().max(1000).optional().or(z.literal("")),
+  faqs: z
+    .array(
+      z.object({
+        id: z.string().optional(),
+        question: z.string().trim().min(1, "Question is required"),
+        answer: z.string().trim().min(1, "Answer is required"),
+      })
+    )
+    .optional()
+    .nullable()
+    .transform((val) => val ?? []),
 })
 
 export type SubmitToolInput = z.infer<typeof submitToolSchema>
