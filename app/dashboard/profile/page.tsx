@@ -3,6 +3,7 @@ import { headers } from "next/headers"
 import { redirect } from "next/navigation"
 import { auth } from "@/lib/auth"
 import { getCurrentUserProfile } from "@/db/queries/users/get-profile"
+import { DashboardNav } from "@/components/dashboard/dashboard-nav"
 import { ProfileForm } from "@/components/dashboard/profile-form"
 import { ROUTES } from "@/constants/routes"
 import type { MakerProfile } from "@/types/entities"
@@ -17,7 +18,7 @@ export const metadata: Metadata = {
   },
 }
 
-export default async function DashboardProfilePage() {
+const DashboardProfilePage = async () => {
   const reqHeaders = await headers()
   const session = await auth.api.getSession({
     headers: reqHeaders,
@@ -57,27 +58,12 @@ export default async function DashboardProfilePage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <div className="border-b border-dashed border-border bg-linear-to-b from-slate-50/80 via-white to-white px-6 py-8 md:px-8 md:py-10">
-        <div className="max-w-4xl">
-          <p className="font-mono text-xs font-bold tracking-widest text-[#a06138] uppercase">
-            Dashboard
-          </p>
-          <h1 className="mt-1 text-2xl font-black tracking-tight text-slate-900 md:text-3xl">
-            Maker Profile Settings
-          </h1>
-          <p className="mt-1.5 text-xs text-slate-500 md:text-sm">
-            Configure your public profile, developer identity, personal FAQs,
-            and social links.
-          </p>
-        </div>
-      </div>
-
-      <div className="px-6 py-8 md:px-8 md:py-10">
-        <div className="max-w-4xl">
-          <ProfileForm initialProfile={initialProfile} />
-        </div>
-      </div>
+    <div className="relative flex min-h-full flex-col bg-slate-50/50">
+      <DashboardNav activeTab="profile" username={profile.username} />
+      <ProfileForm initialProfile={initialProfile} />
     </div>
   )
 }
+
+export default DashboardProfilePage
+
