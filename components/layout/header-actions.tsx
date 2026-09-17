@@ -16,7 +16,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { LogOut, PlusCircle, Sparkles, User as UserIcon } from "lucide-react"
+import {
+  LayoutDashboard,
+  LogOut,
+  PlusCircle,
+  Settings,
+  Sparkles,
+  User as UserIcon,
+} from "lucide-react"
 
 export const HeaderActions = () => {
   const { data: session, isPending } = useSession()
@@ -38,6 +45,7 @@ export const HeaderActions = () => {
   }
 
   const user = session?.user
+  const username = (user as { username?: string | null } | undefined)?.username
 
   const getInitials = (name?: string | null, email?: string | null) => {
     if (name?.trim()) {
@@ -105,6 +113,34 @@ export const HeaderActions = () => {
                 </div>
               </DropdownMenuLabel>
             </DropdownMenuGroup>
+            <DropdownMenuSeparator />
+
+            <DropdownMenuGroup>
+              <DropdownMenuItem
+                className="cursor-pointer text-xs"
+                render={<Link href={ROUTES.DASHBOARD} />}
+              >
+                <LayoutDashboard className="mr-2 size-3.5 text-slate-500" />
+                Dashboard
+              </DropdownMenuItem>
+              {username ? (
+                <DropdownMenuItem
+                  className="cursor-pointer text-xs"
+                  render={<Link href={ROUTES.MAKER(username)} />}
+                >
+                  <UserIcon className="mr-2 size-3.5 text-slate-500" />
+                  View Public Profile
+                </DropdownMenuItem>
+              ) : null}
+              <DropdownMenuItem
+                className="cursor-pointer text-xs"
+                render={<Link href={ROUTES.DASHBOARD_PROFILE} />}
+              >
+                <Settings className="mr-2 size-3.5 text-slate-500" />
+                Profile Settings
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+
             <DropdownMenuSeparator />
 
             <DropdownMenuGroup>
