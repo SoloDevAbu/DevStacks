@@ -51,6 +51,7 @@ interface ProductTwinInput {
   likesCount?: number | null
   viewsCount?: number | null
   createdAt?: Date | string | null
+  faqs?: Array<{ question: string; answer: string }> | null
   submitter?: {
     name?: string | null
   } | null
@@ -168,7 +169,11 @@ ${
 - **Product Page**: ${canonical}
 - **Official Website**: ${product.websiteUrl ?? canonical}
 ${product.appStoreUrl ? `- **iOS App Store**: ${product.appStoreUrl}\n` : ""}${product.playStoreUrl ? `- **Google Play Store**: ${product.playStoreUrl}\n` : ""}${product.chromeExtensionUrl ? `- **Chrome Extension**: ${product.chromeExtensionUrl}\n` : ""}- **Markdown Twin**: ${SITE_CONFIG.url}/api/md/products/${product.slug}
-`
+${
+  product.faqs && product.faqs.length > 0
+    ? `\n## Frequently Asked Questions\n\n${product.faqs.map((f) => `### ${f.question}\n\n${f.answer}`).join("\n\n")}\n`
+    : ""
+}`
 }
 
 export const generateMakerMarkdown = (maker: MakerProfile): string => {

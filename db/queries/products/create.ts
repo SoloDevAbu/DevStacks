@@ -1,5 +1,5 @@
 import { db } from "@/db"
-import { products, productTools, tools } from "@/db/schema"
+import { products, productTools, tools, productFaqs } from "@/db/schema"
 import type { NewProduct } from "@/db/schema"
 import { getOrCreateCategory } from "@/db/queries/categories/list"
 import { eq, ilike, or, sql } from "drizzle-orm"
@@ -39,10 +39,11 @@ export type CreateProductInput = Omit<
         toolId?: string
       }
   >
+  faqs?: Array<{ question: string; answer: string }>
 }
 
 export const createProduct = async (data: CreateProductInput) => {
-  const { category, builtWithTools: toolsToLink, ...rest } = data
+  const { category, builtWithTools: toolsToLink, faqs, ...rest } = data
 
   let categoryId = rest.categoryId
   if (!categoryId && category && category.trim()) {
@@ -104,6 +105,21 @@ export const createProduct = async (data: CreateProductInput) => {
           .where(eq(tools.id, toolId))
           .catch(() => {})
       }
+    }
+  }
+
+  if (product && faqs && faqs.length > 0) {
+    const validFaqs = faqs
+      .filter((f) => f.question?.trim() && f.answer?.trim())
+      .map((f, idx) => ({
+        productId: product.id,
+        question: f.question.trim(),
+        answer: f.answer.trim(),
+        sortOrder: idx,
+      }))
+
+    if (validFaqs.length > 0) {
+      await db.insert(productFaqs).values(validFaqs)
     }
   }
 

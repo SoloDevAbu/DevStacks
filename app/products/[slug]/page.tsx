@@ -178,37 +178,13 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
     { name: product.name, url: productUrl },
   ])
 
-  const productFaqs =
-    customFaqs.length > 0
-      ? customFaqs.map((f) => ({
-          question: f.question,
-          answer: f.answer,
-        }))
-      : [
-          {
-            question: `What is ${product.name}?`,
-            answer: product.description,
-          },
-          {
-            question: `What problem does ${product.name} solve for developers?`,
-            answer:
-              product.problemStatement ??
-              `${product.name} eliminates developer friction by offering a streamlined solution for ${product.tagline}.`,
-          },
-          {
-            question: `What is the pricing model for ${product.name}?`,
-            answer: `${product.name} is available under the ${product.pricing} model. Check the official website for tier breakdowns.`,
-          },
-          {
-            question: `Which platforms and environments does ${product.name} support?`,
-            answer:
-              product.platforms.length > 0
-                ? `${product.name} supports: ${product.platforms.join(", ")}.`
-                : `${product.name} is available for Web and Cloud environments.`,
-          },
-        ]
+  const productFaqs = customFaqs.map((f) => ({
+    id: f.id,
+    question: f.question,
+    answer: f.answer,
+  }))
 
-  const faqJsonLd = faqSchema(productFaqs)
+  const faqJsonLd = productFaqs.length > 0 ? faqSchema(productFaqs) : null
   const aiPrompt = AI_PROMPTS.product(product.name, product.tagline)
 
   return (
@@ -221,10 +197,12 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
-      />
+      {faqJsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+        />
+      )}
 
       <article className="relative flex min-h-full flex-col bg-white">
         {/* Top Breadcrumbs */}
@@ -522,17 +500,16 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
           </div>
         </section>
 
-        {/* Section 3: Product Deep Dive */}
+        {/* Section 3: Value Proposition & Deep Dive */}
         {(product.problemStatement ||
           product.solution ||
           product.uniqueValue) && (
           <section className={cn(sectionWrapper, "bg-white")}>
             <div className="flex flex-col gap-6">
               <div className="flex flex-col gap-1">
-                <h2 className={sectionHeadingTitle}>Product Deep Dive</h2>
+                <h2 className={sectionHeadingTitle}>Value Proposition & Deep Dive</h2>
                 <p className={sectionHeadingSubtitle}>
-                  Architectural insights, developer pain points solved, and core
-                  value proposition
+                  Core values, architectural insights, and developer pain points solved
                 </p>
               </div>
 
@@ -550,7 +527,7 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
                     <h3 className="text-sm font-bold text-slate-900 sm:text-base">
                       The Problem It Solves
                     </h3>
-                    <p className="max-w-4xl text-xs leading-relaxed text-slate-600 break-words whitespace-pre-line sm:text-sm">
+                    <p className="max-w-4xl text-xs leading-relaxed break-words whitespace-pre-line text-slate-600 sm:text-sm">
                       {product.problemStatement}
                     </p>
                   </div>
@@ -569,7 +546,7 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
                     <h3 className="text-sm font-bold text-slate-900 sm:text-base">
                       The Solution
                     </h3>
-                    <p className="max-w-4xl text-xs leading-relaxed text-slate-600 break-words whitespace-pre-line sm:text-sm">
+                    <p className="max-w-4xl text-xs leading-relaxed break-words whitespace-pre-line text-slate-600 sm:text-sm">
                       {product.solution}
                     </p>
                   </div>
@@ -579,7 +556,7 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
                   <div className="flex w-full min-w-0 flex-col gap-3.5 bg-slate-50/20 p-6 transition-colors hover:bg-slate-50/50 md:p-8">
                     <div className="flex items-center justify-between">
                       <span className="font-mono text-[10px] font-bold tracking-widest text-blue-600 uppercase">
-                        03 / ADVANTAGE
+                        03 / ADVANTAGE & VALUES
                       </span>
                       <div className="flex size-7 items-center justify-center rounded-md border border-blue-200/80 bg-blue-50 text-blue-600">
                         <Sparkles className="size-3.5" />
@@ -588,7 +565,7 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
                     <h3 className="text-sm font-bold text-slate-900 sm:text-base">
                       What Makes It Unique
                     </h3>
-                    <p className="max-w-4xl text-xs leading-relaxed text-slate-600 break-words whitespace-pre-line sm:text-sm">
+                    <p className="max-w-4xl text-xs leading-relaxed break-words whitespace-pre-line text-slate-600 sm:text-sm">
                       {product.uniqueValue}
                     </p>
                   </div>
@@ -636,41 +613,43 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
           </section>
         )}
 
-        {/* Section 6: Q&A Section */}
-        <section className="border-b border-dashed border-border bg-white">
-          <div className="flex flex-col gap-1 border-b border-dashed border-border bg-slate-50/40 px-6 py-6 md:px-8 md:py-8">
-            <h2 className={sectionHeadingTitle}>Frequently Asked Questions</h2>
-            <p className={sectionHeadingSubtitle}>
-              Common questions and technical details about {product.name}
-            </p>
-          </div>
+        {/* Section 6: Frequently Asked Questions */}
+        {productFaqs.length > 0 && (
+          <section className="border-b border-dashed border-border bg-white">
+            <div className="flex flex-col gap-1 border-b border-dashed border-border bg-slate-50/40 px-6 py-6 md:px-8 md:py-8">
+              <h2 className={sectionHeadingTitle}>Frequently Asked Questions</h2>
+              <p className={sectionHeadingSubtitle}>
+                Common questions and developer answers about {product.name}
+              </p>
+            </div>
 
-          <div className="flex flex-col divide-y divide-dashed divide-border">
-            {productFaqs.map((faq, idx) => (
-              <div
-                key={faq.question}
-                className="flex flex-col gap-2 px-6 py-6 transition-colors hover:bg-slate-50/40 md:px-8"
-              >
-                <div className="flex items-start gap-3">
-                  <span className="shrink-0 pt-0.5 font-mono text-xs font-bold text-slate-400 select-none">
-                    Q{idx + 1}
-                  </span>
-                  <div className="flex flex-1 flex-col gap-1.5">
-                    <h3 className="text-sm font-bold text-slate-900">
-                      {faq.question}
-                    </h3>
-                    <p className="max-w-4xl text-xs leading-relaxed text-slate-600">
-                      {faq.answer}
-                    </p>
+            <div className="flex flex-col divide-y divide-dashed divide-border">
+              {productFaqs.map((faq, idx) => (
+                <div
+                  key={faq.id ?? `${faq.question}-${idx}`}
+                  className="flex flex-col gap-2 px-6 py-6 transition-colors hover:bg-slate-50/40 md:px-8"
+                >
+                  <div className="flex items-start gap-3">
+                    <span className="shrink-0 pt-0.5 font-mono text-xs font-bold text-slate-400 select-none">
+                      Q{idx + 1}
+                    </span>
+                    <div className="flex flex-1 min-w-0 flex-col gap-1.5">
+                      <h3 className="text-sm font-bold text-slate-900 break-words">
+                        {faq.question}
+                      </h3>
+                      <p className="max-w-4xl text-xs leading-relaxed text-slate-600 break-words whitespace-pre-line sm:text-sm">
+                        {faq.answer}
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        </section>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* Section 7: Ecosystem Showcase */}
-        <section className="border-b border-dashed border-border bg-slate-50/70 px-6 py-10 md:px-8 md:py-12">
+        {/* <section className="border-b border-dashed border-border bg-slate-50/70 px-6 py-10 md:px-8 md:py-12">
           <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
             <div className="flex flex-col gap-2">
               <div className="flex items-center gap-2 text-xs font-bold tracking-wider text-indigo-700 uppercase">
@@ -694,7 +673,7 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
               Showcase Your Build
             </Button>
           </div>
-        </section>
+        </section> */}
       </article>
     </>
   )

@@ -43,6 +43,8 @@ import {
   BuiltWithToolsInput,
   type BuiltWithToolItem,
 } from "@/components/shared/built-with-tools-input"
+import { FaqBuilder, type FaqBuilderItem } from "@/components/shared/faq-builder"
+import { toast } from "@/components/ui/toast"
 
 const emptyForm = {
   name: "",
@@ -76,6 +78,7 @@ const emptyForm = {
   tags: "",
   pricing: "Free" as const,
   platforms: [] as string[],
+  faqs: [] as FaqBuilderItem[],
 }
 
 interface ShowcaseContentProps {
@@ -169,11 +172,30 @@ export const ShowcaseContent = ({ initialTool }: ShowcaseContentProps = {}) => {
   }
 
   const executeSubmit = (userId: string) => {
-    const parsed = submitBuildSchema.safeParse({
+    const nonBlankFaqs = form.faqs
+      .map((f) => ({
+        question: f.question.trim(),
+        answer: f.answer.trim(),
+      }))
+      .filter((f) => f.question || f.answer)
+
+    const incompleteFaq = nonBlankFaqs.find((f) => !f.question || !f.answer)
+    if (incompleteFaq) {
+      toast.error(
+        "Incomplete FAQ",
+        "Every added FAQ must have both a question and an answer."
+      )
+      return
+    }
+
+    const payload = {
       ...form,
+      faqs: nonBlankFaqs,
       submitterId: userId,
       authorId: userId,
-    })
+    }
+
+    const parsed = submitBuildSchema.safeParse(payload)
 
     if (!parsed.success) {
       setErrors(parsed.error.flatten().fieldErrors as Record<string, string[]>)
@@ -469,6 +491,45 @@ export const ShowcaseContent = ({ initialTool }: ShowcaseContentProps = {}) => {
                   />
                 </div>
               </div>
+            </div>
+
+            {/* Subsection: Frequently Asked Questions (Product FAQs) */}
+            <div className="flex flex-col gap-5 border-b border-dashed border-border px-6 py-6 md:px-8 md:py-8">
+              <div className="flex items-center justify-between">
+                <div className="flex flex-col gap-1">
+                  <h3 className="text-sm font-bold text-slate-900">
+                    Frequently Asked Questions (Product FAQs)
+                  </h3>
+                  <p className="text-xs text-slate-500">
+                    Address common questions developers might have about your product, architecture, pricing, or integration.
+                  </p>
+                </div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() =>
+                    setForm((prev) => ({
+                      ...prev,
+                      faqs: [...prev.faqs, { question: "", answer: "" }],
+                    }))
+                  }
+                  className="gap-1.5"
+                >
+                  <Plus className="size-3.5" />
+                  <span>Add Question</span>
+                </Button>
+              </div>
+
+              <FaqBuilder
+                faqs={form.faqs}
+                onChange={(faqs) => setForm((prev) => ({ ...prev, faqs }))}
+                questionPlaceholder="e.g. Is this build open source or is there an API available?"
+                answerPlaceholder="e.g. Yes, the core repository is on GitHub and we offer a hosted REST API."
+                emptyPrompt="No FAQs added yet. Help developers evaluate your product faster by adding answers to common questions."
+                addFirstLabel="Add First Question"
+                addAnotherLabel="Add Another Question"
+              />
             </div>
 
             {/* Subsection: Tech Stack & Built With */}

@@ -52,6 +52,7 @@ export const POST = async (req: NextRequest) => {
 
     return NextResponse.json({ data: product }, { status: 201 })
   } catch (err: unknown) {
+    console.error("Failed to create build error:", err)
     const message = err instanceof Error ? err.message : "Unknown error"
     if (message.includes("unique")) {
       return NextResponse.json(
@@ -60,7 +61,7 @@ export const POST = async (req: NextRequest) => {
       )
     }
     return NextResponse.json(
-      { error: "Failed to create build" },
+      { error: `Failed to create build: ${message}` },
       { status: 500 }
     )
   }

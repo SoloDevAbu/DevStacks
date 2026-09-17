@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
 import { getProductBySlug } from "@/db/queries/products/get"
+import { getProductFaqs } from "@/db/queries/faqs/get-faqs"
 import {
   generateProductMarkdown,
   createMarkdownResponse,
@@ -25,6 +26,10 @@ export const GET = async (
     })
   }
 
-  const markdown = generateProductMarkdown(product)
+  const customFaqs = await getProductFaqs(product.id)
+  const markdown = generateProductMarkdown({
+    ...product,
+    faqs: customFaqs.length > 0 ? customFaqs : null,
+  })
   return createMarkdownResponse(markdown, `${SITE_CONFIG.url}/products/${product.slug}`)
 }

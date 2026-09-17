@@ -82,6 +82,17 @@ export const submitProductSchema = z.object({
       ])
     )
     .optional(),
+  faqs: z
+    .array(
+      z.object({
+        id: z.string().optional(),
+        question: z.string().trim().min(1, "Question is required"),
+        answer: z.string().trim().min(1, "Answer is required"),
+      })
+    )
+    .optional()
+    .nullable()
+    .transform((val) => val ?? []),
 })
 
 export type SubmitProductInput = z.input<typeof submitProductSchema>
