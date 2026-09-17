@@ -17,6 +17,8 @@ export const ROUTES = {
   PRIVACY: "/privacy",
   TERMS: "/terms",
   REFUND: "/refund",
+  FAQ: "/faq",
+  DASHBOARD: "/dashboard",
   DASHBOARD_PROFILE: "/dashboard/profile",
   MAKERS: "/makers",
   MAKER: (username: string) => `/makers/${username}`,

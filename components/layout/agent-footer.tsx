@@ -27,6 +27,7 @@ const DIRECTORY_LINKS = [
   { label: "Products Showcase", href: ROUTES.PRODUCTS },
   { label: "Trending Stacks", href: ROUTES.TRENDING },
   { label: "Showcase a Build", href: ROUTES.SHOWCASE },
+  { label: "FAQs", href: ROUTES.FAQ },
 ] as const
 
 const BUILDER_LINKS = [
@@ -222,6 +223,13 @@ export const AgentFooter = () => (
         </span>
       </div>
       <div className="flex items-center gap-x-2.5 whitespace-nowrap font-mono text-[11px] sm:gap-x-3.5 sm:text-xs">
+        <Link
+          href={ROUTES.FAQ}
+          className="text-slate-500 transition-colors hover:text-slate-900 underline-offset-4 hover:underline"
+        >
+          FAQs
+        </Link>
+        <span className="text-slate-300 select-none">·</span>
         <Link
           href={ROUTES.PRIVACY}
           className="text-slate-500 transition-colors hover:text-slate-900 underline-offset-4 hover:underline"

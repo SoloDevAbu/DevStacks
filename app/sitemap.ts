@@ -113,6 +113,12 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
       priority: 0.5,
     },
     {
+      url: `${siteUrl}${ROUTES.FAQ}`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.7,
+    },
+    {
       url: `${siteUrl}/llms.txt`,
       lastModified: new Date(),
       changeFrequency: "daily",
