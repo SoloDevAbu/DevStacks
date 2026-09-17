@@ -43,7 +43,10 @@ import {
   BuiltWithToolsInput,
   type BuiltWithToolItem,
 } from "@/components/shared/built-with-tools-input"
-import { FaqBuilder, type FaqBuilderItem } from "@/components/shared/faq-builder"
+import {
+  FaqBuilder,
+  type FaqBuilderItem,
+} from "@/components/shared/faq-builder"
 import { toast } from "@/components/ui/toast"
 
 const emptyForm = {
@@ -501,7 +504,8 @@ export const ShowcaseContent = ({ initialTool }: ShowcaseContentProps = {}) => {
                     Frequently Asked Questions (Product FAQs)
                   </h3>
                   <p className="text-xs text-slate-500">
-                    Address common questions developers might have about your product, architecture, pricing, or integration.
+                    Address common questions developers might have about your
+                    product, architecture, pricing, or integration.
                   </p>
                 </div>
                 <Button
@@ -775,14 +779,7 @@ export const ShowcaseContent = ({ initialTool }: ShowcaseContentProps = {}) => {
                     htmlFor="github"
                     className="flex items-center gap-1.5 text-xs font-semibold text-slate-700"
                   >
-                    <Image
-                      src="/social-logo/github.png"
-                      alt="GitHub"
-                      width={16}
-                      height={16}
-                      className="size-4 rounded-xs object-contain"
-                    />
-                    GitHub Repository
+                    GitHub
                   </Label>
                   <div className="relative">
                     <div className="pointer-events-none absolute top-2.5 left-3 flex size-4 items-center justify-center">
@@ -810,13 +807,6 @@ export const ShowcaseContent = ({ initialTool }: ShowcaseContentProps = {}) => {
                     htmlFor="twitter"
                     className="flex items-center gap-1.5 text-xs font-semibold text-slate-700"
                   >
-                    <Image
-                      src="/social-logo/twitter.png"
-                      alt="X (Twitter)"
-                      width={16}
-                      height={16}
-                      className="size-4 rounded-xs object-contain"
-                    />
                     X (Twitter)
                   </Label>
                   <div className="relative">
@@ -845,13 +835,6 @@ export const ShowcaseContent = ({ initialTool }: ShowcaseContentProps = {}) => {
                     htmlFor="linkedin"
                     className="flex items-center gap-1.5 text-xs font-semibold text-slate-700"
                   >
-                    <Image
-                      src="/social-logo/linkedin.png"
-                      alt="LinkedIn"
-                      width={16}
-                      height={16}
-                      className="size-4 rounded-xs object-contain"
-                    />
                     LinkedIn
                   </Label>
                   <div className="relative">
@@ -880,14 +863,7 @@ export const ShowcaseContent = ({ initialTool }: ShowcaseContentProps = {}) => {
                     htmlFor="discord"
                     className="flex items-center gap-1.5 text-xs font-semibold text-slate-700"
                   >
-                    <Image
-                      src="/social-logo/discord.png"
-                      alt="Discord"
-                      width={16}
-                      height={16}
-                      className="size-4 rounded-xs object-contain"
-                    />
-                    Discord Community
+                    Discord
                   </Label>
                   <div className="relative">
                     <div className="pointer-events-none absolute top-2.5 left-3 flex size-4 items-center justify-center">
@@ -915,13 +891,6 @@ export const ShowcaseContent = ({ initialTool }: ShowcaseContentProps = {}) => {
                     htmlFor="appStore"
                     className="flex items-center gap-1.5 text-xs font-semibold text-slate-700"
                   >
-                    <Image
-                      src="/social-logo/app-store.png"
-                      alt="App Store"
-                      width={16}
-                      height={16}
-                      className="size-4 rounded-xs object-contain"
-                    />
                     Apple App Store
                   </Label>
                   <div className="relative">
@@ -955,13 +924,6 @@ export const ShowcaseContent = ({ initialTool }: ShowcaseContentProps = {}) => {
                     htmlFor="playStore"
                     className="flex items-center gap-1.5 text-xs font-semibold text-slate-700"
                   >
-                    <Image
-                      src="/social-logo/playstore.png"
-                      alt="Google Play Store"
-                      width={16}
-                      height={16}
-                      className="size-4 rounded-xs object-contain"
-                    />
                     Google Play Store
                   </Label>
                   <div className="relative">
@@ -995,13 +957,6 @@ export const ShowcaseContent = ({ initialTool }: ShowcaseContentProps = {}) => {
                     htmlFor="chromeExtension"
                     className="flex items-center gap-1.5 text-xs font-semibold text-slate-700"
                   >
-                    <Image
-                      src="/social-logo/chrome.png"
-                      alt="Chrome Web Store"
-                      width={16}
-                      height={16}
-                      className="size-4 rounded-xs object-contain"
-                    />
                     Chrome Web Store Extension
                   </Label>
                   <div className="relative">

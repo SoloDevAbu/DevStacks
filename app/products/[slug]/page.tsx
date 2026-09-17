@@ -323,7 +323,7 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
             <div className="flex shrink-0 items-center gap-2">
               <Sparkles className="size-3.5 text-blue-600" />
               <span className="font-mono text-xs font-bold tracking-wider text-slate-700 uppercase">
-                ASK AI ABOUT {product.name.toUpperCase()}
+                ASK AI
               </span>
             </div>
 
