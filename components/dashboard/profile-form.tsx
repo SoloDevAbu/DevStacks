@@ -2,13 +2,12 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import axios from "axios"
 import {
   User,
-  MapPin,
   Globe,
   Plus,
-  Trash2,
   ExternalLink,
   Loader2,
   Sparkles,
@@ -16,28 +15,20 @@ import {
   X,
 } from "lucide-react"
 import { useDebounce } from "@/hooks/shared/use-debounce"
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
 import { FieldGroup, Field, FieldLabel } from "@/components/ui/field"
 import { MakerProfileCard } from "@/components/shared/maker-profile-card"
 import { FaqBuilder } from "@/components/shared/faq-builder"
-import {
-  countryCodeToFlag,
-  countryCodeToName,
-  formatLocation,
-} from "@/utils/country"
 import { useUpdateProfile } from "@/hooks/users/use-update-profile"
 import { toast } from "@/components/ui/toast"
 import { ROUTES } from "@/constants/routes"
+import {
+  socialInputWrapper,
+  socialInputIconContainer,
+  socialInputWithIcon,
+} from "@/utils/styles"
 import type { MakerProfile } from "@/types/entities"
 
 interface ProfileFormProps {
@@ -209,48 +200,41 @@ export const ProfileForm = ({ initialProfile }: ProfileFormProps) => {
     )
   }
 
-  const flag = countryCodeToFlag(initialProfile.country)
-  const countryName = countryCodeToName(initialProfile.country)
-  const formattedLocation = formatLocation(
-    initialProfile.country,
-    initialProfile.state
-  )
-
   const activeUsername = username.trim().toLowerCase().replace(/^@/, "")
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-8">
+    <form onSubmit={handleSubmit} className="flex w-full flex-col">
       {/* Live Preview Bar */}
-      <Card className="rounded-none border-dashed border-border bg-slate-50/50">
-        <CardHeader className="pb-3">
-          <div className="flex items-center justify-between">
-            <CardTitle className="flex items-center gap-2 text-sm font-bold text-slate-900">
+      <div className="flex flex-col border-b border-dashed border-border bg-slate-50/50">
+        <div className="flex items-center justify-between border-b border-dashed border-border px-6 py-4 md:px-8">
+          <div>
+            <h2 className="flex items-center gap-2 text-sm font-bold text-slate-900">
               <Sparkles className="size-4 text-amber-500" />
               Live Preview
-            </CardTitle>
-            {activeUsername && (
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-7 px-2 text-xs font-semibold text-indigo-600 hover:text-indigo-700"
-              >
-                <Link
-                  href={ROUTES.MAKER(activeUsername)}
-                  target="_blank"
-                  className="flex items-center gap-1"
-                >
-                  <span>View Public Profile</span>
-                  <ExternalLink className="size-3" />
-                </Link>
-              </Button>
-            )}
+            </h2>
+            <p className="text-xs text-slate-500">
+              How other developers and AI agents see your maker badge across
+              directory cards and tools.
+            </p>
           </div>
-          <CardDescription className="text-xs text-slate-500">
-            How other developers and AI agents see your maker badge across
-            directory cards and tools.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
+          {activeUsername && (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-7 px-2 text-xs font-semibold text-indigo-600 hover:text-indigo-700"
+            >
+              <Link
+                href={ROUTES.MAKER(activeUsername)}
+                target="_blank"
+                className="flex items-center gap-1"
+              >
+                <span>View Public Profile</span>
+                <ExternalLink className="size-3" />
+              </Link>
+            </Button>
+          )}
+        </div>
+        <div className="px-6 py-6 md:px-8">
           <MakerProfileCard
             name={name || "Your Name"}
             username={activeUsername || "username"}
@@ -259,21 +243,21 @@ export const ProfileForm = ({ initialProfile }: ProfileFormProps) => {
             state={initialProfile.state}
             size="md"
           />
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       {/* Section 1: Identity */}
-      <Card className="rounded-none border-dashed border-border bg-white">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-base font-bold text-slate-900">
+      <div className="flex flex-col border-b border-dashed border-border">
+        <div className="flex flex-col gap-1 border-b border-dashed border-border bg-slate-50/40 px-6 py-4 md:px-8">
+          <h2 className="flex items-center gap-2 text-sm font-bold text-slate-900">
             <User className="size-4 text-slate-500" />
             Maker Identity
-          </CardTitle>
-          <CardDescription className="text-xs text-slate-500">
+          </h2>
+          <p className="text-xs text-slate-500">
             Your public handle, display name, and introduction.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
+          </p>
+        </div>
+        <div className="bg-white px-6 py-6 md:px-8">
           <FieldGroup className="gap-5">
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <Field>
@@ -371,133 +355,162 @@ export const ProfileForm = ({ initialProfile }: ProfileFormProps) => {
               />
             </Field>
           </FieldGroup>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
-      {/* Section 2: Location (Read-Only) */}
-      {/* <Card className="rounded-none border-dashed border-border bg-white">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-base font-bold text-slate-900">
-            <MapPin className="size-4 text-slate-500" />
-            Location & Country
-          </CardTitle>
-          <CardDescription className="text-xs text-slate-500">
-            Location detected during your sign-in to display your country flag
-            on submissions.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center justify-between rounded-lg border border-dashed border-slate-200 bg-slate-50/80 p-4">
-            <div className="flex items-center gap-3">
-              <span className="text-2xl select-none">{flag || "🌐"}</span>
-              <div>
-                <p className="text-sm font-semibold text-slate-900">
-                  {formattedLocation || countryName || "Global / Worldwide"}
-                </p>
-                <p className="text-xs text-slate-500">
-                  {initialProfile.country
-                    ? `ISO Code: ${initialProfile.country}`
-                    : "No specific region detected"}
-                </p>
-              </div>
-            </div>
-            <Badge
-              variant="outline"
-              className="border-dashed text-xs text-slate-500"
-            >
-              Auto-verified on Sign-in
-            </Badge>
-          </div>
-        </CardContent>
-      </Card> */}
-
-      {/* Section 3: Social & Portfolio Links */}
-      <Card className="rounded-none border-dashed border-border bg-white">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-base font-bold text-slate-900">
+      {/* Section 2: Social & Portfolio Links */}
+      <div className="flex flex-col border-b border-dashed border-border">
+        <div className="flex flex-col gap-1 border-b border-dashed border-border bg-slate-50/40 px-6 py-4 md:px-8">
+          <h2 className="flex items-center gap-2 text-sm font-bold text-slate-900">
             <Globe className="size-4 text-slate-500" />
             Social & Portfolio Links
-          </CardTitle>
-          <CardDescription className="text-xs text-slate-500">
+          </h2>
+          <p className="text-xs text-slate-500">
             Links displayed on your maker profile and indexed in search and AI
             engine results.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
+          </p>
+        </div>
+        <div className="bg-white px-6 py-6 md:px-8">
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <Field>
-              <FieldLabel htmlFor="websiteUrl">Portfolio / Website</FieldLabel>
-              <Input
-                id="websiteUrl"
-                type="text"
-                value={websiteUrl}
-                onChange={(e) => setWebsiteUrl(e.target.value)}
-                placeholder="https://yourportfolio.dev or yourportfolio.dev"
-              />
+              <FieldLabel
+                htmlFor="websiteUrl"
+                className="flex items-center gap-1.5"
+              >
+                Portfolio / Website
+              </FieldLabel>
+              <div className={socialInputWrapper}>
+                <div className={socialInputIconContainer}>
+                  <Image
+                    src="/social-logo/world-wide-web.png"
+                    alt="Website"
+                    width={16}
+                    height={16}
+                    className="size-4 rounded-xs object-contain"
+                  />
+                </div>
+                <Input
+                  id="websiteUrl"
+                  type="text"
+                  value={websiteUrl}
+                  onChange={(e) => setWebsiteUrl(e.target.value)}
+                  placeholder="https://yourportfolio.dev or yourportfolio.dev"
+                  className={socialInputWithIcon}
+                />
+              </div>
             </Field>
 
             <Field>
-              <FieldLabel htmlFor="githubUrl">GitHub Profile</FieldLabel>
-              <Input
-                id="githubUrl"
-                type="text"
-                value={githubUrl}
-                onChange={(e) => setGithubUrl(e.target.value)}
-                placeholder="https://github.com/handle or github.com/handle"
-              />
+              <FieldLabel
+                htmlFor="githubUrl"
+                className="flex items-center gap-1.5"
+              >
+                GitHub Profile
+              </FieldLabel>
+              <div className={socialInputWrapper}>
+                <div className={socialInputIconContainer}>
+                  <Image
+                    src="/social-logo/github.png"
+                    alt="GitHub"
+                    width={16}
+                    height={16}
+                    className="size-4 rounded-xs object-contain"
+                  />
+                </div>
+                <Input
+                  id="githubUrl"
+                  type="text"
+                  value={githubUrl}
+                  onChange={(e) => setGithubUrl(e.target.value)}
+                  placeholder="https://github.com/handle or github.com/handle"
+                  className={socialInputWithIcon}
+                />
+              </div>
             </Field>
 
             <Field>
-              <FieldLabel htmlFor="twitterUrl">Twitter / X Profile</FieldLabel>
-              <Input
-                id="twitterUrl"
-                type="text"
-                value={twitterUrl}
-                onChange={(e) => setTwitterUrl(e.target.value)}
-                placeholder="https://x.com/handle or x.com/handle"
-              />
+              <FieldLabel
+                htmlFor="twitterUrl"
+                className="flex items-center gap-1.5"
+              >
+                Twitter / X Profile
+              </FieldLabel>
+              <div className={socialInputWrapper}>
+                <div className={socialInputIconContainer}>
+                  <Image
+                    src="/social-logo/twitter.png"
+                    alt="X"
+                    width={16}
+                    height={16}
+                    className="size-4 rounded-xs object-contain"
+                  />
+                </div>
+                <Input
+                  id="twitterUrl"
+                  type="text"
+                  value={twitterUrl}
+                  onChange={(e) => setTwitterUrl(e.target.value)}
+                  placeholder="https://x.com/handle or x.com/handle"
+                  className={socialInputWithIcon}
+                />
+              </div>
             </Field>
 
             <Field>
-              <FieldLabel htmlFor="linkedinUrl">LinkedIn Profile</FieldLabel>
-              <Input
-                id="linkedinUrl"
-                type="text"
-                value={linkedinUrl}
-                onChange={(e) => setLinkedinUrl(e.target.value)}
-                placeholder="https://linkedin.com/in/handle or linkedin.com/in/handle"
-              />
+              <FieldLabel
+                htmlFor="linkedinUrl"
+                className="flex items-center gap-1.5"
+              >
+                LinkedIn Profile
+              </FieldLabel>
+              <div className={socialInputWrapper}>
+                <div className={socialInputIconContainer}>
+                  <Image
+                    src="/social-logo/linkedin.png"
+                    alt="LinkedIn"
+                    width={16}
+                    height={16}
+                    className="size-4 rounded-xs object-contain"
+                  />
+                </div>
+                <Input
+                  id="linkedinUrl"
+                  type="text"
+                  value={linkedinUrl}
+                  onChange={(e) => setLinkedinUrl(e.target.value)}
+                  placeholder="https://linkedin.com/in/handle or linkedin.com/in/handle"
+                  className={socialInputWithIcon}
+                />
+              </div>
             </Field>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
-      {/* Section 4: Maker FAQs */}
-      <Card className="rounded-none border-dashed border-border bg-white">
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle className="flex items-center gap-2 text-base font-bold text-slate-900">
-                Maker FAQs
-              </CardTitle>
-              <CardDescription className="text-xs text-slate-500">
-                Frequently asked questions about you, your tech stack,
-                availability, or roadmap.
-              </CardDescription>
-            </div>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={handleAddFaq}
-              className="gap-1.5"
-            >
-              <Plus className="size-3.5" />
-              <span>Add Question</span>
-            </Button>
+      {/* Section 3: Maker FAQs */}
+      <div className="flex flex-col border-b border-dashed border-border">
+        <div className="flex items-center justify-between border-b border-dashed border-border bg-slate-50/40 px-6 py-4 md:px-8">
+          <div>
+            <h2 className="flex items-center gap-2 text-sm font-bold text-slate-900">
+              Maker FAQs
+            </h2>
+            <p className="text-xs text-slate-500">
+              Frequently asked questions about you, your tech stack,
+              availability, or roadmap.
+            </p>
           </div>
-        </CardHeader>
-        <CardContent>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={handleAddFaq}
+            className="gap-1.5"
+          >
+            <Plus className="size-3.5" />
+            <span>Add Question</span>
+          </Button>
+        </div>
+        <div className="bg-white px-6 py-6 md:px-8">
           <FaqBuilder
             faqs={faqs}
             onChange={setFaqs}
@@ -505,13 +518,13 @@ export const ProfileForm = ({ initialProfile }: ProfileFormProps) => {
             answerPlaceholder="e.g. I work primarily with Next.js, TypeScript, PostgreSQL, and Cloudflare workers."
             emptyPrompt="No personal FAQs added yet. Add common questions like your primary tech stacks, freelance availability, or what you are building next."
           />
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       {/* Submit Toolbar */}
-      <div className="flex items-center justify-end gap-3 pt-4">
+      <div className="flex items-center justify-end gap-3 border-b border-dashed border-border bg-slate-50/80 px-6 py-4 md:px-8">
         {activeUsername && (
-          <Button variant="outline">
+          <Button variant="outline" size="sm">
             <Link href={ROUTES.MAKER(activeUsername)} target="_blank">
               Preview Profile
             </Link>

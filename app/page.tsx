@@ -2,11 +2,9 @@ import type { Metadata } from "next"
 import { MainContent } from "@/components/home/main-content"
 import {
   organizationSchema,
-  faqSchema,
   collectionPageSchema,
 } from "@/lib/seo/schema"
 import { SITE_CONFIG } from "@/constants/site"
-import { DEVSTACKS_FAQS } from "@/constants/faqs"
 import { HOMEPAGE_LIMITS } from "@/constants/rankings"
 import { getNewAndRisingProducts } from "@/lib/rankings/new-and-rising"
 import { getRisingTools } from "@/lib/rankings/rising-tools"
@@ -50,7 +48,6 @@ export const metadata: Metadata = {
 
 const Page = async () => {
   const orgJsonLd = organizationSchema()
-  const faqJsonLd = faqSchema(DEVSTACKS_FAQS)
 
   const [
     newAndRising,
@@ -94,10 +91,6 @@ const Page = async () => {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
       <script
         type="application/ld+json"

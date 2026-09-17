@@ -40,6 +40,11 @@ export type DbTool = {
   images?: string[]
   demoVideoUrl?: string | null
   useCases?: string | null
+  problemStatement?: string | null
+  solution?: string | null
+  uniqueValue?: string | null
+  description?: string | null
+  status?: string
   createdAt?: Date
   updatedAt?: Date
 }
@@ -78,6 +83,11 @@ export type DbProduct = {
   images?: string[]
   demoVideoUrl?: string | null
   useCases?: string | null
+  problemStatement?: string | null
+  solution?: string | null
+  uniqueValue?: string | null
+  description?: string | null
+  status?: string
   createdAt?: Date
   updatedAt?: Date
 }
@@ -113,3 +123,30 @@ export type MakerProfile = {
   toolsCount: number
   productsCount: number
 }
+
+export type UserDashboardComment = {
+  id: string
+  body: string
+  createdAt: Date
+  targetKind: "tool" | "product"
+  targetName: string
+  targetSlug: string
+  authorName?: string | null
+  authorUsername?: string | null
+  authorImage?: string | null
+}
+
+export type UserDashboardData = {
+  tools: DbTool[]
+  products: DbProduct[]
+  comments: UserDashboardComment[]
+  stats: {
+    totalTools: number
+    totalProducts: number
+    totalUpvotesAndLikes: number
+    totalComments: number
+    totalViews: number
+    totalBuilds: number
+  }
+}
+

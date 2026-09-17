@@ -281,3 +281,33 @@ export const submitSectionHeaderOptional =
 
 export const submitSectionHeaderDiscoverability =
   "flex flex-col gap-1 border-b border-dashed border-border bg-linear-to-r from-indigo-100/50 via-violet-50/40 to-white px-6 py-6 md:px-8"
+
+export const socialInputWrapper = "relative"
+
+export const socialInputIconContainer =
+  "pointer-events-none absolute top-2.5 left-3 flex size-4 items-center justify-center"
+
+export const socialInputWithIcon = "pl-9"
+
+export const submissionStatusBadge = (status?: string) => {
+  switch (status?.toLowerCase()) {
+    case "approved":
+      return "border-emerald-200 bg-emerald-50 text-emerald-700"
+    case "pending":
+      return "border-amber-200 bg-amber-50 text-amber-700"
+    case "rejected":
+      return "border-rose-200 bg-rose-50 text-rose-700"
+    default:
+      return "border-slate-200 bg-slate-50 text-slate-700"
+  }
+}
+
+export const dashboardMetricsGrid =
+  "grid w-full grid-cols-2 border-b border-dashed border-border bg-white sm:grid-cols-3 lg:grid-cols-6 divide-y sm:divide-y-0 sm:divide-x divide-dashed divide-border"
+
+export const dashboardMetricCell =
+  "flex flex-col justify-between gap-2 p-5 sm:p-6 transition-colors hover:bg-slate-50/60"
+
+export const dashboardRow =
+  "flex flex-col gap-4 border-b border-dashed border-border bg-white px-6 py-5 transition-colors hover:bg-slate-50/30 md:px-8"
+

@@ -1,11 +1,10 @@
-import { Layers, Sparkles } from "lucide-react"
+import { Layers } from "lucide-react"
 import { PageHeader } from "@/components/shared/page-header"
 import { NewAndRisingSection } from "@/components/home/new-and-rising-section"
 import { RisingToolsSection } from "@/components/home/rising-tools-section"
 import { DeveloperBuildsSection } from "@/components/home/developer-builds-section"
 import { RecentlyAddedSection } from "@/components/home/recently-added-section"
 import { PopularBuildingBlocksSection } from "@/components/home/popular-building-blocks-section"
-import { FaqSection } from "@/components/home/faq-section"
 import { AI_PROMPTS } from "@/lib/prompts"
 import { heroStatPill } from "@/utils/styles"
 import type { FeedItem } from "@/components/shared/feed-card"
@@ -53,8 +52,6 @@ export const MainContent = ({
         <RecentlyAddedSection items={recentlyAdded} />
         <PopularBuildingBlocksSection items={popularBuildingBlocks} />
       </div>
-
-      <FaqSection />
     </div>
   )
 }

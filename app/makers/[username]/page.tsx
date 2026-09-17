@@ -259,11 +259,17 @@ export default async function MakerPage({ params }: MakerPageProps) {
                   href={maker.websiteUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex size-8 items-center justify-center rounded-lg border border-slate-200/80 bg-white text-indigo-600 shadow-2xs transition-colors hover:border-slate-300 hover:bg-slate-50"
+                  className="flex size-8 items-center justify-center rounded-lg border border-slate-200/80 bg-white shadow-2xs transition-colors hover:border-slate-300 hover:bg-slate-50"
                   title="Personal Website / Portfolio"
                   aria-label="Website"
                 >
-                  <Globe className="size-4" />
+                  <Image
+                    src="/social-logo/world-wide-web.png"
+                    alt="Website"
+                    width={16}
+                    height={16}
+                    className="size-4 object-contain"
+                  />
                 </a>
               )}
               {maker.githubUrl && (
@@ -271,11 +277,17 @@ export default async function MakerPage({ params }: MakerPageProps) {
                   href={maker.githubUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex size-8 items-center justify-center rounded-lg border border-slate-200/80 bg-white text-[#181717] shadow-2xs transition-colors hover:border-slate-300 hover:bg-slate-50"
+                  className="flex size-8 items-center justify-center rounded-lg border border-slate-200/80 bg-white shadow-2xs transition-colors hover:border-slate-300 hover:bg-slate-50"
                   title="GitHub Profile"
                   aria-label="GitHub"
                 >
-                  <GithubIcon className="size-4" />
+                  <Image
+                    src="/social-logo/github.png"
+                    alt="GitHub"
+                    width={16}
+                    height={16}
+                    className="size-4 object-contain"
+                  />
                 </a>
               )}
               {maker.twitterUrl && (
@@ -283,11 +295,17 @@ export default async function MakerPage({ params }: MakerPageProps) {
                   href={maker.twitterUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex size-8 items-center justify-center rounded-lg border border-slate-200/80 bg-white text-black shadow-2xs transition-colors hover:border-slate-300 hover:bg-slate-50"
+                  className="flex size-8 items-center justify-center rounded-lg border border-slate-200/80 bg-white shadow-2xs transition-colors hover:border-slate-300 hover:bg-slate-50"
                   title="Twitter / X Profile"
                   aria-label="Twitter / X"
                 >
-                  <XIcon className="size-3.5" />
+                  <Image
+                    src="/social-logo/twitter.png"
+                    alt="X (Twitter)"
+                    width={16}
+                    height={16}
+                    className="size-4 object-contain"
+                  />
                 </a>
               )}
               {maker.linkedinUrl && (
@@ -295,11 +313,17 @@ export default async function MakerPage({ params }: MakerPageProps) {
                   href={maker.linkedinUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex size-8 items-center justify-center rounded-lg border border-slate-200/80 bg-white text-[#0A66C2] shadow-2xs transition-colors hover:border-[#0A66C2]/40 hover:bg-[#0A66C2]/5"
+                  className="flex size-8 items-center justify-center rounded-lg border border-slate-200/80 bg-white shadow-2xs transition-colors hover:border-slate-300 hover:bg-slate-50"
                   title="LinkedIn Profile"
                   aria-label="LinkedIn"
                 >
-                  <LinkedInIcon className="size-4" />
+                  <Image
+                    src="/social-logo/linkedin.png"
+                    alt="LinkedIn"
+                    width={16}
+                    height={16}
+                    className="size-4 object-contain"
+                  />
                 </a>
               )}
               {!maker.websiteUrl &&
