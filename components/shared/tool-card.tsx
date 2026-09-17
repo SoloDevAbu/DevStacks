@@ -2,16 +2,14 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import Link from "next/link"
-import { countryCodeToFlag } from "@/utils/country"
 import {
   ArrowBigUp,
   Bookmark,
-  Eye,
   ExternalLink,
   ArrowUp,
   Sparkles,
   Layers,
+  Tag,
 } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -35,7 +33,8 @@ import {
   directoryCardContent,
   medalBadge,
   toolBuildsBadge,
-  toolViewsPill,
+  cardTagIcon,
+  cardTagsGroup,
 } from "@/utils/styles"
 import { getOutboundUrl, getLinkRel, getFaviconUrl } from "@/utils/urls"
 import { useUpvoteTool } from "@/hooks/tools/use-upvote-tool"
@@ -74,7 +73,6 @@ export const ToolCard = ({
   const tier: Tier = (tool.tier ?? "free") as Tier
   const pricing: Pricing = (tool.pricing ?? "Free") as Pricing
   const isTrending = index < 2
-  const views = ((tool.viewsCount ?? 0) / 1000).toFixed(1) + "K"
   const upvoteCount = localUpvotes ?? tool.upvotesCount ?? 0
 
   const isUpvoted = isToolUpvoted(tool.id, tool.slug)
@@ -231,42 +229,30 @@ export const ToolCard = ({
           </p>
 
           {/* Tags + stats row */}
-          <div className="mt-2 flex flex-wrap items-center gap-2.5">
-            {tool.submitterUsername && (
-              <Link
-                href={ROUTES.MAKER(tool.submitterUsername)}
-                onClick={(e) => e.stopPropagation()}
-                className="inline-flex items-center gap-1 rounded-md border border-slate-200/60 bg-slate-50/50 px-2 py-0.5 text-xs font-medium text-slate-500 transition-colors hover:bg-slate-100/80 hover:text-indigo-600"
-                title={`Maker: ${tool.submitterName ?? tool.submitterUsername}`}
-              >
-                {countryCodeToFlag(tool.submitterCountry) && (
-                  <span className="select-none">
-                    {countryCodeToFlag(tool.submitterCountry)}
-                  </span>
-                )}
-                <span>@{tool.submitterUsername}</span>
-              </Link>
-            )}
-            {(tool.tags ?? []).slice(0, 3).map((tag) => (
-              <Badge
-                key={tag}
-                variant="secondary"
-                className="rounded-md border border-slate-200/80 bg-slate-100/70 px-2 py-0.5 text-xs font-medium text-slate-600 transition-colors hover:bg-slate-200/60"
-              >
-                {tag}
-              </Badge>
-            ))}
-            <div className={toolViewsPill}>
-              <Eye className="size-3.5" />
-              <span>{views}</span>
+          {((tool.tags ?? []).length > 0 || tool.buildsCount > 0) && (
+            <div className="mt-2 flex flex-wrap items-center gap-2.5">
+              {(tool.tags ?? []).length > 0 && (
+                <div className={cardTagsGroup}>
+                  <Tag className={cardTagIcon} />
+                  {(tool.tags ?? []).slice(0, 3).map((tag) => (
+                    <Badge
+                      key={tag}
+                      variant="secondary"
+                      className="rounded-md border border-slate-200/80 bg-slate-100/70 px-2 py-0.5 text-xs font-medium text-slate-600 transition-colors hover:bg-slate-200/60"
+                    >
+                      {tag}
+                    </Badge>
+                  ))}
+                </div>
+              )}
+              {tool.buildsCount > 0 && (
+                <Badge variant="outline" className={toolBuildsBadge}>
+                  <Layers className="size-3" />
+                  <span>{tool.buildsCount} builds</span>
+                </Badge>
+              )}
             </div>
-            {tool.buildsCount > 0 && (
-              <Badge variant="outline" className={toolBuildsBadge}>
-                <Layers className="size-3" />
-                <span>{tool.buildsCount} builds</span>
-              </Badge>
-            )}
-          </div>
+          )}
         </div>
 
         {/* Action Buttons & Pricing */}

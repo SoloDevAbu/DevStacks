@@ -5,13 +5,12 @@ import { useRouter } from "next/navigation"
 import {
   Heart,
   Bookmark,
-  Eye,
   ExternalLink,
   ArrowUp,
   Sparkles,
+  Tag,
 } from "lucide-react"
 import Link from "next/link"
-import { countryCodeToFlag } from "@/utils/country"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -31,6 +30,8 @@ import {
   directoryCard,
   directoryCardContent,
   medalBadge,
+  cardTagIcon,
+  cardTagsGroup,
 } from "@/utils/styles"
 import { getOutboundUrl, getLinkRel, getFaviconUrl } from "@/utils/urls"
 import { useLikeProduct } from "@/hooks/products/use-like-product"
@@ -69,7 +70,6 @@ export const ProductCard = ({
   const tier: Tier = (product.tier ?? "free") as Tier
   const pricing: Pricing = (product.pricing ?? "Free") as Pricing
   const isTrending = index < 2
-  const views = ((product.viewsCount ?? 0) / 1000).toFixed(1) + "K"
   const likeCount = localLikes ?? product.likesCount ?? 0
   const builtWithTools = product.builtWithTools ?? []
 
@@ -227,62 +227,49 @@ export const ProductCard = ({
             {product.tagline}
           </p>
 
-          {/* Row 1: Maker + Tags + Views */}
-          <div className="mt-2 flex flex-wrap items-center gap-2.5">
-            {product.submitterUsername && (
-              <Link
-                href={ROUTES.MAKER(product.submitterUsername)}
-                onClick={(e) => e.stopPropagation()}
-                className="inline-flex items-center gap-1 rounded-md border border-slate-200/60 bg-slate-50/50 px-2 py-0.5 text-xs font-medium text-slate-500 transition-colors hover:bg-slate-100/80 hover:text-indigo-600"
-                title={`Maker: ${product.submitterName ?? product.submitterUsername}`}
-              >
-                {countryCodeToFlag(product.submitterCountry) && (
-                  <span className="select-none">
-                    {countryCodeToFlag(product.submitterCountry)}
-                  </span>
-                )}
-                <span>@{product.submitterUsername}</span>
-              </Link>
-            )}
-            {(product.tags ?? []).slice(0, 3).map((tag) => (
-              <Badge
-                key={tag}
-                variant="secondary"
-                className="rounded-none bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-600"
-              >
-                {tag}
-              </Badge>
-            ))}
-            <div className="ml-2 flex items-center gap-1.5 text-sm font-semibold text-slate-400">
-              <Eye className="size-4" />
-              {views}
-            </div>
-          </div>
+          {/* Tags + Built with row */}
+          {((product.tags ?? []).length > 0 || builtWithTools.length > 0) && (
+            <div className="mt-2 flex flex-wrap items-center gap-3">
+              {(product.tags ?? []).length > 0 && (
+                <div className={cardTagsGroup}>
+                  <Tag className={cardTagIcon} />
+                  {(product.tags ?? []).slice(0, 3).map((tag) => (
+                    <Badge
+                      key={tag}
+                      variant="secondary"
+                      className="rounded-none bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-600"
+                    >
+                      {tag}
+                    </Badge>
+                  ))}
+                </div>
+              )}
 
-          {/* Row 2: Built with (only shown when builtWithTools is non-empty) */}
-          {builtWithTools.length > 0 && (
-            <div className="mt-1 flex flex-wrap items-center gap-2">
-              <span className="text-[10px] font-bold tracking-wider text-slate-400 uppercase">
-                Built with
-              </span>
-              {builtWithTools.slice(0, 4).map((tool) =>
-                tool.toolSlug ? (
-                  <Link
-                    key={tool.name}
-                    href={ROUTES.TOOL(tool.toolSlug)}
-                    onClick={(e) => e.stopPropagation()}
-                    className="rounded-none bg-indigo-50 px-2 py-0.5 text-xs font-semibold text-indigo-700 transition-colors hover:bg-indigo-100"
-                  >
-                    {tool.name}
-                  </Link>
-                ) : (
-                  <span
-                    key={tool.name}
-                    className="rounded-none bg-slate-100 px-2 py-0.5 text-xs font-semibold text-slate-600"
-                  >
-                    {tool.name}
+              {builtWithTools.length > 0 && (
+                <div className="flex flex-wrap items-center gap-1.5">
+                  <span className="text-[10px] font-bold tracking-wider text-slate-400 uppercase">
+                    Built with
                   </span>
-                )
+                  {builtWithTools.slice(0, 4).map((tool) =>
+                    tool.toolSlug ? (
+                      <Link
+                        key={tool.name}
+                        href={ROUTES.TOOL(tool.toolSlug)}
+                        onClick={(e) => e.stopPropagation()}
+                        className="rounded-none bg-indigo-50 px-2 py-0.5 text-xs font-semibold text-indigo-700 transition-colors hover:bg-indigo-100"
+                      >
+                        {tool.name}
+                      </Link>
+                    ) : (
+                      <span
+                        key={tool.name}
+                        className="rounded-none bg-slate-100 px-2 py-0.5 text-xs font-semibold text-slate-600"
+                      >
+                        {tool.name}
+                      </span>
+                    )
+                  )}
+                </div>
               )}
             </div>
           )}

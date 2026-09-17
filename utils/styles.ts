@@ -254,6 +254,9 @@ export const agentFooterDot = "text-slate-300 select-none"
 export const toolBuildsBadge =
   "inline-flex items-center gap-1 rounded-md border border-blue-200/80 bg-blue-50/80 px-2 py-0.5 text-xs font-semibold text-blue-700 hover:bg-blue-100/80 transition-colors"
 
+export const cardTagIcon = "size-3.5 shrink-0 text-slate-400"
+export const cardTagsGroup = "flex flex-wrap items-center gap-1.5"
+
 export const toolViewsPill =
   "inline-flex items-center gap-1 text-xs font-medium text-slate-400"
 
