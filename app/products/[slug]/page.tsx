@@ -355,9 +355,7 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
         <section className="border-b border-dashed border-border bg-white">
           <DetailSectionHeader title="About" icon={Info} theme="blue" />
           <div className={sectionContentBox}>
-            <p className={detailSectionText}>
-              {product.description}
-            </p>
+            <p className={detailSectionText}>{product.description}</p>
           </div>
         </section>
 
@@ -438,9 +436,7 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
               theme="emerald"
             />
             <div className={sectionContentBox}>
-              <p className={detailSectionText}>
-                {product.useCases}
-              </p>
+              <p className={detailSectionText}>{product.useCases}</p>
             </div>
           </section>
         )}
@@ -507,13 +503,9 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
                     <span className="inline-flex size-5 shrink-0 items-center justify-center rounded-sm bg-rose-100 font-mono text-[10px] font-bold text-rose-700">
                       01
                     </span>
-                    <h3 className={deepDiveItemTitle}>
-                      The Problem It Solves
-                    </h3>
+                    <h3 className={deepDiveItemTitle}>The Problem It Solves</h3>
                   </div>
-                  <p className={deepDiveItemText}>
-                    {product.problemStatement}
-                  </p>
+                  <p className={deepDiveItemText}>{product.problemStatement}</p>
                 </div>
               )}
 
@@ -523,9 +515,7 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
                     <span className="inline-flex size-5 shrink-0 items-center justify-center rounded-sm bg-emerald-100 font-mono text-[10px] font-bold text-emerald-700">
                       02
                     </span>
-                    <h3 className={deepDiveItemTitle}>
-                      The Solution
-                    </h3>
+                    <h3 className={deepDiveItemTitle}>The Solution</h3>
                   </div>
                   <p className={deepDiveItemText}>{product.solution}</p>
                 </div>
@@ -537,13 +527,9 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
                     <span className="inline-flex size-5 shrink-0 items-center justify-center rounded-sm bg-indigo-100 font-mono text-[10px] font-bold text-indigo-700">
                       03
                     </span>
-                    <h3 className={deepDiveItemTitle}>
-                      What Makes It Unique
-                    </h3>
+                    <h3 className={deepDiveItemTitle}>What Makes It Unique</h3>
                   </div>
-                  <p className={deepDiveItemText}>
-                    {product.uniqueValue}
-                  </p>
+                  <p className={deepDiveItemText}>{product.uniqueValue}</p>
                 </div>
               )}
             </div>
