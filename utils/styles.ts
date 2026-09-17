@@ -58,15 +58,67 @@ export const sectionGridWrapper =
 export const sectionWrapper =
   "border-b border-dashed border-border px-6 py-8 md:px-8 md:py-10"
 
-export const sectionHeadingTitle = "text-lg font-bold text-slate-900"
+export const sectionHeadingTitle =
+  "flex items-center gap-2 font-mono text-xs font-bold tracking-wider text-slate-900 uppercase sm:text-sm"
 
 export const sectionHeadingSubtitle = "text-xs text-slate-500"
 
+export const sectionHeaderBox =
+  "flex flex-col gap-1 border-b border-dashed border-border bg-slate-50/50 px-6 py-4.5 md:px-8"
+
+export const sectionContentBox = "px-6 py-6 md:px-8"
+
 export const toolSpecsContainer =
-  "grid grid-cols-2 border border-dashed border-border bg-white sm:grid-cols-3 lg:grid-cols-6 divide-y sm:divide-y-0 sm:divide-x divide-dashed divide-border"
+  "grid grid-cols-2 bg-white sm:grid-cols-3 lg:grid-cols-5 divide-y sm:divide-y-0 sm:divide-x divide-dashed divide-border"
+
+export const specItemBox =
+  "flex flex-col gap-1.5 p-4.5 transition-colors hover:bg-slate-50/50"
+
+export const specItemLabel =
+  "flex items-center gap-1.5 font-mono text-[10px] font-bold tracking-wider text-slate-400 uppercase"
+
+export const specItemValue =
+  "truncate text-xs font-bold text-slate-900"
 
 export const toolDeepDiveContainer =
-  "flex flex-col divide-y divide-dashed divide-border border border-dashed border-border bg-white"
+  "flex flex-col divide-y divide-dashed divide-border"
+
+export const deepDiveSectionTitle = sectionHeadingTitle
+
+export const deepDiveSubSection =
+  "flex flex-col transition-colors hover:bg-slate-50/20"
+
+export const deepDiveSubSectionHeader =
+  "flex flex-col gap-1 border-b border-dashed border-border/80 bg-slate-50/40 px-6 py-3.5 md:px-8"
+
+export const deepDiveSubHeading =
+  "flex items-center gap-2 font-mono text-xs font-bold tracking-wider text-slate-900 uppercase"
+
+export const deepDiveSubSubtitle =
+  "text-[11px] text-slate-500"
+
+export const deepDiveSubSectionBody = "px-6 py-5 md:px-8 bg-white"
+
+export const deepDiveSubSectionText =
+  "max-w-4xl text-xs sm:text-sm leading-relaxed wrap-break-word whitespace-pre-line text-slate-700"
+
+export const faqContainer =
+  "flex flex-col divide-y divide-dashed divide-border"
+
+export const faqItem =
+  "flex flex-col transition-colors hover:bg-slate-50/30"
+
+export const faqQuestionHeader =
+  "flex items-center gap-3 border-b border-dashed border-border/70 bg-slate-50/30 px-6 py-3.5 md:px-8"
+
+export const faqQuestionText =
+  "text-xs sm:text-sm font-bold text-slate-900"
+
+export const faqAnswerBody =
+  "px-6 py-4.5 md:px-8"
+
+export const faqAnswerText =
+  "max-w-4xl text-xs sm:text-sm leading-relaxed wrap-break-word whitespace-pre-line text-slate-600"
 
 export const upvoteButtonActive =
   "relative z-10 h-8 gap-1.5 rounded-lg border-amber-300 bg-amber-50 px-3 text-sm font-bold text-amber-600 hover:bg-amber-100/80 transition-colors"
