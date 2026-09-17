@@ -507,9 +507,12 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
           <section className={cn(sectionWrapper, "bg-white")}>
             <div className="flex flex-col gap-6">
               <div className="flex flex-col gap-1">
-                <h2 className={sectionHeadingTitle}>Value Proposition & Deep Dive</h2>
+                <h2 className={sectionHeadingTitle}>
+                  Value Proposition & Deep Dive
+                </h2>
                 <p className={sectionHeadingSubtitle}>
-                  Core values, architectural insights, and developer pain points solved
+                  Core values, architectural insights, and developer pain points
+                  solved
                 </p>
               </div>
 
@@ -527,7 +530,7 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
                     <h3 className="text-sm font-bold text-slate-900 sm:text-base">
                       The Problem It Solves
                     </h3>
-                    <p className="max-w-4xl text-xs leading-relaxed break-words whitespace-pre-line text-slate-600 sm:text-sm">
+                    <p className="max-w-4xl text-xs leading-relaxed wrap-break-word whitespace-pre-line text-slate-600 sm:text-sm">
                       {product.problemStatement}
                     </p>
                   </div>
@@ -546,7 +549,7 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
                     <h3 className="text-sm font-bold text-slate-900 sm:text-base">
                       The Solution
                     </h3>
-                    <p className="max-w-4xl text-xs leading-relaxed break-words whitespace-pre-line text-slate-600 sm:text-sm">
+                    <p className="max-w-4xl text-xs leading-relaxed wrap-break-word whitespace-pre-line text-slate-600 sm:text-sm">
                       {product.solution}
                     </p>
                   </div>
@@ -565,7 +568,7 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
                     <h3 className="text-sm font-bold text-slate-900 sm:text-base">
                       What Makes It Unique
                     </h3>
-                    <p className="max-w-4xl text-xs leading-relaxed break-words whitespace-pre-line text-slate-600 sm:text-sm">
+                    <p className="max-w-4xl text-xs leading-relaxed wrap-break-word whitespace-pre-line text-slate-600 sm:text-sm">
                       {product.uniqueValue}
                     </p>
                   </div>
@@ -617,7 +620,9 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
         {productFaqs.length > 0 && (
           <section className="border-b border-dashed border-border bg-white">
             <div className="flex flex-col gap-1 border-b border-dashed border-border bg-slate-50/40 px-6 py-6 md:px-8 md:py-8">
-              <h2 className={sectionHeadingTitle}>Frequently Asked Questions</h2>
+              <h2 className={sectionHeadingTitle}>
+                Frequently Asked Questions
+              </h2>
               <p className={sectionHeadingSubtitle}>
                 Common questions and developer answers about {product.name}
               </p>
@@ -633,11 +638,11 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
                     <span className="shrink-0 pt-0.5 font-mono text-xs font-bold text-slate-400 select-none">
                       Q{idx + 1}
                     </span>
-                    <div className="flex flex-1 min-w-0 flex-col gap-1.5">
-                      <h3 className="text-sm font-bold text-slate-900 break-words">
+                    <div className="flex min-w-0 flex-1 flex-col gap-1.5">
+                      <h3 className="text-sm font-bold wrap-break-word text-slate-900">
                         {faq.question}
                       </h3>
-                      <p className="max-w-4xl text-xs leading-relaxed text-slate-600 break-words whitespace-pre-line sm:text-sm">
+                      <p className="max-w-4xl text-xs leading-relaxed wrap-break-word whitespace-pre-line text-slate-600 sm:text-sm">
                         {faq.answer}
                       </p>
                     </div>

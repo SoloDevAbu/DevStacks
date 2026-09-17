@@ -8,7 +8,7 @@ export const HoverOutline = ({ className }: HoverOutlineProps = {}) => {
   return (
     <div
       className={cn(
-        "pointer-events-none absolute -inset-[6px] z-0 opacity-0 transition-opacity group-hover/btn:opacity-100",
+        "pointer-events-none absolute -inset-1.5 z-0 opacity-0 transition-opacity group-hover/btn:opacity-100",
         className
       )}
     >

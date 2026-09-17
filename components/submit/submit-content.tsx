@@ -39,7 +39,10 @@ import {
   submitSectionHeaderOptional,
   submitSectionHeaderDiscoverability,
 } from "@/utils/styles"
-import { FaqBuilder, type FaqBuilderItem } from "@/components/shared/faq-builder"
+import {
+  FaqBuilder,
+  type FaqBuilderItem,
+} from "@/components/shared/faq-builder"
 import { toast } from "@/components/ui/toast"
 
 const emptyForm = {
@@ -184,11 +187,10 @@ export const SubmitContent = () => {
       <div className="relative flex min-h-full flex-col items-center justify-center gap-6 bg-slate-50/50 p-12 text-center">
         <CheckCircle2 className="size-16 text-emerald-500" />
         <div>
-          <h2 className="text-2xl font-bold text-slate-900">
-            Tool Submitted!
-          </h2>
+          <h2 className="text-2xl font-bold text-slate-900">Tool Submitted!</h2>
           <p className="mt-2 text-slate-500">
-            Your tool is now live on DevStacks and discoverable by developers and AI engines.
+            Your tool is now live on DevStacks and discoverable by developers
+            and AI engines.
           </p>
         </div>
         <Button onClick={() => setSubmitted(false)}>Submit Another Tool</Button>
@@ -242,7 +244,8 @@ export const SubmitContent = () => {
                 </Badge>
               </div>
               <p className="text-xs text-slate-500">
-                Essential details required to list and index your developer tool on the directory.
+                Essential details required to list and index your developer tool
+                on the directory.
               </p>
             </div>
 
@@ -281,7 +284,8 @@ export const SubmitContent = () => {
                     maxLength={60}
                   />
                   <span className="text-[11px] text-slate-400">
-                    Short summary displayed on cards and search lists (10-60 characters).
+                    Short summary displayed on cards and search lists (10-60
+                    characters).
                   </span>
                   {errors.tagline && (
                     <p className="text-xs text-red-500">{errors.tagline[0]}</p>
@@ -302,7 +306,8 @@ export const SubmitContent = () => {
                     />
                   </div>
                   <span className="text-[11px] text-slate-400">
-                    Primary landing page or documentation (must include https://).
+                    Primary landing page or documentation (must include
+                    https://).
                   </span>
                   {errors.websiteUrl && (
                     <p className="text-xs text-red-500">
@@ -335,7 +340,8 @@ export const SubmitContent = () => {
                     rows={4}
                   />
                   <span className="text-[11px] text-slate-400">
-                    Comprehensive explanation of features, architecture, and benefits (min 20 characters).
+                    Comprehensive explanation of features, architecture, and
+                    benefits (min 20 characters).
                   </span>
                   {errors.description && (
                     <p className="text-xs text-red-500">
@@ -387,7 +393,8 @@ export const SubmitContent = () => {
                 </Badge>
               </div>
               <p className="text-xs text-slate-500">
-                Add richer context on the developer bottleneck you eliminate, media previews, platform availability, and community links.
+                Add richer context on the developer bottleneck you eliminate,
+                media previews, platform availability, and community links.
               </p>
             </div>
 
@@ -398,7 +405,8 @@ export const SubmitContent = () => {
                   Value Proposition & Deep Dive
                 </h3>
                 <p className="text-xs text-slate-500">
-                  Help engineers understand your technical architecture and unique value.
+                  Help engineers understand your technical architecture and
+                  unique value.
                 </p>
               </div>
 
@@ -457,7 +465,8 @@ export const SubmitContent = () => {
                     Frequently Asked Questions (Tool FAQs)
                   </h3>
                   <p className="text-xs text-slate-500">
-                    Address common questions developers might have about your tool, integration, or self-hosting.
+                    Address common questions developers might have about your
+                    tool, integration, or self-hosting.
                   </p>
                 </div>
                 <Button
@@ -545,7 +554,7 @@ export const SubmitContent = () => {
                               alt={platform.label}
                               width={16}
                               height={16}
-                              className="size-4 object-contain rounded-xs"
+                              className="size-4 rounded-xs object-contain"
                             />
                           )}
                           {platform.label}
@@ -672,7 +681,7 @@ export const SubmitContent = () => {
                           key={i}
                           className="flex items-center gap-1.5 rounded-md border border-slate-200 bg-white px-2.5 py-1 text-xs text-slate-700 shadow-2xs"
                         >
-                          <span className="max-w-[200px] truncate">{url}</span>
+                          <span className="max-w-50 truncate">{url}</span>
                           <Button
                             type="button"
                             variant="ghost"
@@ -697,19 +706,23 @@ export const SubmitContent = () => {
                   Community, Store & Social Links
                 </h3>
                 <p className="text-xs text-slate-500">
-                  Connect developers directly to your repository, team, app stores, browser extensions, and community discussions.
+                  Connect developers directly to your repository, team, app
+                  stores, browser extensions, and community discussions.
                 </p>
               </div>
 
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <div className="grid gap-2">
-                  <Label htmlFor="github" className="flex items-center gap-1.5 text-xs font-semibold text-slate-700">
+                  <Label
+                    htmlFor="github"
+                    className="flex items-center gap-1.5 text-xs font-semibold text-slate-700"
+                  >
                     <Image
                       src="/social-logo/github.png"
                       alt="GitHub"
                       width={16}
                       height={16}
-                      className="size-4 object-contain rounded-xs"
+                      className="size-4 rounded-xs object-contain"
                     />
                     GitHub Repository
                   </Label>
@@ -720,7 +733,7 @@ export const SubmitContent = () => {
                         alt="GitHub"
                         width={16}
                         height={16}
-                        className="size-4 object-contain rounded-xs"
+                        className="size-4 rounded-xs object-contain"
                       />
                     </div>
                     <Input
@@ -735,13 +748,16 @@ export const SubmitContent = () => {
                 </div>
 
                 <div className="grid gap-2">
-                  <Label htmlFor="twitter" className="flex items-center gap-1.5 text-xs font-semibold text-slate-700">
+                  <Label
+                    htmlFor="twitter"
+                    className="flex items-center gap-1.5 text-xs font-semibold text-slate-700"
+                  >
                     <Image
                       src="/social-logo/twitter.png"
                       alt="X (Twitter)"
                       width={16}
                       height={16}
-                      className="size-4 object-contain rounded-xs"
+                      className="size-4 rounded-xs object-contain"
                     />
                     X (Twitter)
                   </Label>
@@ -752,7 +768,7 @@ export const SubmitContent = () => {
                         alt="X"
                         width={16}
                         height={16}
-                        className="size-4 object-contain rounded-xs"
+                        className="size-4 rounded-xs object-contain"
                       />
                     </div>
                     <Input
@@ -767,13 +783,16 @@ export const SubmitContent = () => {
                 </div>
 
                 <div className="grid gap-2">
-                  <Label htmlFor="linkedin" className="flex items-center gap-1.5 text-xs font-semibold text-slate-700">
+                  <Label
+                    htmlFor="linkedin"
+                    className="flex items-center gap-1.5 text-xs font-semibold text-slate-700"
+                  >
                     <Image
                       src="/social-logo/linkedin.png"
                       alt="LinkedIn"
                       width={16}
                       height={16}
-                      className="size-4 object-contain rounded-xs"
+                      className="size-4 rounded-xs object-contain"
                     />
                     LinkedIn
                   </Label>
@@ -784,7 +803,7 @@ export const SubmitContent = () => {
                         alt="LinkedIn"
                         width={16}
                         height={16}
-                        className="size-4 object-contain rounded-xs"
+                        className="size-4 rounded-xs object-contain"
                       />
                     </div>
                     <Input
@@ -799,13 +818,16 @@ export const SubmitContent = () => {
                 </div>
 
                 <div className="grid gap-2">
-                  <Label htmlFor="discord" className="flex items-center gap-1.5 text-xs font-semibold text-slate-700">
+                  <Label
+                    htmlFor="discord"
+                    className="flex items-center gap-1.5 text-xs font-semibold text-slate-700"
+                  >
                     <Image
                       src="/social-logo/discord.png"
                       alt="Discord"
                       width={16}
                       height={16}
-                      className="size-4 object-contain rounded-xs"
+                      className="size-4 rounded-xs object-contain"
                     />
                     Discord Community
                   </Label>
@@ -816,7 +838,7 @@ export const SubmitContent = () => {
                         alt="Discord"
                         width={16}
                         height={16}
-                        className="size-4 object-contain rounded-xs"
+                        className="size-4 rounded-xs object-contain"
                       />
                     </div>
                     <Input
@@ -831,13 +853,16 @@ export const SubmitContent = () => {
                 </div>
 
                 <div className="grid gap-2">
-                  <Label htmlFor="appStore" className="flex items-center gap-1.5 text-xs font-semibold text-slate-700">
+                  <Label
+                    htmlFor="appStore"
+                    className="flex items-center gap-1.5 text-xs font-semibold text-slate-700"
+                  >
                     <Image
                       src="/social-logo/app-store.png"
                       alt="App Store"
                       width={16}
                       height={16}
-                      className="size-4 object-contain rounded-xs"
+                      className="size-4 rounded-xs object-contain"
                     />
                     Apple App Store
                   </Label>
@@ -848,7 +873,7 @@ export const SubmitContent = () => {
                         alt="App Store"
                         width={16}
                         height={16}
-                        className="size-4 object-contain rounded-xs"
+                        className="size-4 rounded-xs object-contain"
                       />
                     </div>
                     <Input
@@ -861,18 +886,23 @@ export const SubmitContent = () => {
                     />
                   </div>
                   {errors.appStoreUrl && (
-                    <p className="text-xs text-red-500">{errors.appStoreUrl[0]}</p>
+                    <p className="text-xs text-red-500">
+                      {errors.appStoreUrl[0]}
+                    </p>
                   )}
                 </div>
 
                 <div className="grid gap-2">
-                  <Label htmlFor="playStore" className="flex items-center gap-1.5 text-xs font-semibold text-slate-700">
+                  <Label
+                    htmlFor="playStore"
+                    className="flex items-center gap-1.5 text-xs font-semibold text-slate-700"
+                  >
                     <Image
                       src="/social-logo/playstore.png"
                       alt="Google Play Store"
                       width={16}
                       height={16}
-                      className="size-4 object-contain rounded-xs"
+                      className="size-4 rounded-xs object-contain"
                     />
                     Google Play Store
                   </Label>
@@ -883,7 +913,7 @@ export const SubmitContent = () => {
                         alt="Google Play Store"
                         width={16}
                         height={16}
-                        className="size-4 object-contain rounded-xs"
+                        className="size-4 rounded-xs object-contain"
                       />
                     </div>
                     <Input
@@ -896,18 +926,23 @@ export const SubmitContent = () => {
                     />
                   </div>
                   {errors.playStoreUrl && (
-                    <p className="text-xs text-red-500">{errors.playStoreUrl[0]}</p>
+                    <p className="text-xs text-red-500">
+                      {errors.playStoreUrl[0]}
+                    </p>
                   )}
                 </div>
 
                 <div className="grid gap-2">
-                  <Label htmlFor="chromeExtension" className="flex items-center gap-1.5 text-xs font-semibold text-slate-700">
+                  <Label
+                    htmlFor="chromeExtension"
+                    className="flex items-center gap-1.5 text-xs font-semibold text-slate-700"
+                  >
                     <Image
                       src="/social-logo/chrome.png"
                       alt="Chrome Web Store"
                       width={16}
                       height={16}
-                      className="size-4 object-contain rounded-xs"
+                      className="size-4 rounded-xs object-contain"
                     />
                     Chrome Web Store Extension
                   </Label>
@@ -918,7 +953,7 @@ export const SubmitContent = () => {
                         alt="Chrome Web Store"
                         width={16}
                         height={16}
-                        className="size-4 object-contain rounded-xs"
+                        className="size-4 rounded-xs object-contain"
                       />
                     </div>
                     <Input
@@ -931,7 +966,9 @@ export const SubmitContent = () => {
                     />
                   </div>
                   {errors.chromeExtensionUrl && (
-                    <p className="text-xs text-red-500">{errors.chromeExtensionUrl[0]}</p>
+                    <p className="text-xs text-red-500">
+                      {errors.chromeExtensionUrl[0]}
+                    </p>
                   )}
                 </div>
               </div>
@@ -954,7 +991,10 @@ export const SubmitContent = () => {
                 </Badge>
               </div>
               <p className="text-xs text-slate-500">
-                Data configured strictly for search engine indexing (SEO), regional query routing (GEO), and AI model citation (ChatGPT, Claude, Perplexity - AEO). None of this is displayed on your public tool page.
+                Data configured strictly for search engine indexing (SEO),
+                regional query routing (GEO), and AI model citation (ChatGPT,
+                Claude, Perplexity - AEO). None of this is displayed on your
+                public tool page.
               </p>
             </div>
 
@@ -965,7 +1005,8 @@ export const SubmitContent = () => {
                   Target Audience & Regional Targeting
                 </h3>
                 <p className="text-xs text-slate-500">
-                  Help AI answer engines recommend your tool to specific developer personas and regional search queries.
+                  Help AI answer engines recommend your tool to specific
+                  developer personas and regional search queries.
                 </p>
               </div>
 
@@ -1020,7 +1061,8 @@ export const SubmitContent = () => {
                   Organic Search Metadata (SEO)
                 </h3>
                 <p className="text-xs text-slate-500">
-                  Custom titles, descriptions, and search terms for Google and Bing crawlers.
+                  Custom titles, descriptions, and search terms for Google and
+                  Bing crawlers.
                 </p>
               </div>
 
