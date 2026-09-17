@@ -35,31 +35,27 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { ProductActionButtons } from "@/components/products/product-action-buttons"
 import { HoverOutline } from "@/components/shared/hover-outline"
+import { DetailSectionHeader } from "@/components/shared/detail-section-header"
 import { cn } from "@/lib/utils"
 import {
   pricingBadgeColor,
-  sectionHeadingTitle,
-  sectionHeadingSubtitle,
-  sectionHeaderBox,
   sectionContentBox,
-  toolSpecsContainer,
+  productSpecsContainer,
   specItemBox,
   specItemLabel,
   specItemValue,
   toolDeepDiveContainer,
-  deepDiveSubSection,
-  deepDiveSubSectionHeader,
-  deepDiveSubHeading,
-  deepDiveSubSubtitle,
-  deepDiveSubSectionBody,
-  deepDiveSubSectionText,
+  deepDiveItem,
+  deepDiveItemHeader,
+  deepDiveItemTitle,
+  deepDiveItemText,
   faqContainer,
   faqItem,
   faqQuestionHeader,
   faqQuestionText,
-  faqAnswerBody,
   faqAnswerText,
   footerAiButton,
+  detailSectionText,
 } from "@/utils/styles"
 import type { Tier, Pricing } from "@/constants/plans"
 
@@ -357,14 +353,9 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
 
         {/* Section 1: About */}
         <section className="border-b border-dashed border-border bg-white">
-          <div className={sectionHeaderBox}>
-            <h2 className={sectionHeadingTitle}>
-              <Info className="size-3.5 text-slate-400" />
-              About
-            </h2>
-          </div>
+          <DetailSectionHeader title="About" icon={Info} theme="blue" />
           <div className={sectionContentBox}>
-            <p className="max-w-4xl text-sm leading-relaxed whitespace-pre-line text-slate-700 sm:text-base/7">
+            <p className={detailSectionText}>
               {product.description}
             </p>
           </div>
@@ -373,12 +364,11 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
         {/* Screenshots Gallery (if present) */}
         {product.images && product.images.length > 0 && (
           <section className="border-b border-dashed border-border bg-white">
-            <div className={sectionHeaderBox}>
-              <h2 className={sectionHeadingTitle}>
-                <ImageIcon className="size-3.5 text-slate-400" />
-                Screenshots & Gallery
-              </h2>
-            </div>
+            <DetailSectionHeader
+              title="Screenshots & Gallery"
+              icon={ImageIcon}
+              theme="sky"
+            />
             <div className="bg-slate-50/20 p-6 md:p-8">
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
                 {product.images.slice(0, 5).map((imgUrl, i) => (
@@ -402,12 +392,11 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
         {/* Demo Video (if present) */}
         {product.demoVideoUrl && (
           <section className="border-b border-dashed border-border bg-white">
-            <div className={sectionHeaderBox}>
-              <h2 className={sectionHeadingTitle}>
-                <Video className="size-3.5 text-slate-400" />
-                Product Demo Video
-              </h2>
-            </div>
+            <DetailSectionHeader
+              title="Product Demo Video"
+              icon={Video}
+              theme="violet"
+            />
             <div className="p-6 md:p-8">
               <div className="aspect-video max-w-3xl overflow-hidden rounded-xl border border-dashed border-border bg-black shadow-xs">
                 {product.demoVideoUrl.includes("youtube.com") ||
@@ -443,14 +432,13 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
         {/* Use Cases (if present) */}
         {product.useCases && (
           <section className="border-b border-dashed border-border bg-white">
-            <div className={sectionHeaderBox}>
-              <h2 className={sectionHeadingTitle}>
-                <Target className="size-3.5 text-slate-400" />
-                Target Use Cases
-              </h2>
-            </div>
+            <DetailSectionHeader
+              title="Target Use Cases"
+              icon={Target}
+              theme="emerald"
+            />
             <div className={sectionContentBox}>
-              <p className="max-w-4xl text-sm leading-relaxed whitespace-pre-line text-slate-700 sm:text-base/7">
+              <p className={detailSectionText}>
                 {product.useCases}
               </p>
             </div>
@@ -459,14 +447,13 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
 
         {/* Section 2: Product Specifications */}
         <section className="border-b border-dashed border-border bg-white">
-          <div className={sectionHeaderBox}>
-            <h2 className={sectionHeadingTitle}>
-              <Sliders className="size-3.5 text-slate-400" />
-              Product Specifications
-            </h2>
-          </div>
+          <DetailSectionHeader
+            title="Product Specifications"
+            icon={Sliders}
+            theme="slate"
+          />
 
-          <div className={toolSpecsContainer}>
+          <div className={productSpecsContainer}>
             <div className={specItemBox}>
               <span className={specItemLabel}>
                 <DollarSign className="size-3 text-slate-400" />
@@ -507,63 +494,56 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
           product.solution ||
           product.uniqueValue) && (
           <section className="border-b border-dashed border-border bg-white">
-            <div className={sectionHeaderBox}>
-              <h2 className={sectionHeadingTitle}>
-                <Sparkles className="size-3.5 text-amber-600" />
-                Value Proposition & Deep Dive
-              </h2>
-            </div>
+            <DetailSectionHeader
+              title="Value Proposition & Deep Dive"
+              icon={Sparkles}
+              theme="amber"
+            />
 
             <div className={toolDeepDiveContainer}>
               {product.problemStatement && (
-                <div className={deepDiveSubSection}>
-                  <div className={deepDiveSubSectionHeader}>
-                    <h3 className={deepDiveSubHeading}>
-                      <span className="inline-flex size-5 items-center justify-center rounded-sm bg-rose-100 font-mono text-[10px] font-bold text-rose-700">
-                        01
-                      </span>
+                <div className={deepDiveItem}>
+                  <div className={deepDiveItemHeader}>
+                    <span className="inline-flex size-5 shrink-0 items-center justify-center rounded-sm bg-rose-100 font-mono text-[10px] font-bold text-rose-700">
+                      01
+                    </span>
+                    <h3 className={deepDiveItemTitle}>
                       The Problem It Solves
                     </h3>
                   </div>
-                  <div className={deepDiveSubSectionBody}>
-                    <p className={deepDiveSubSectionText}>
-                      {product.problemStatement}
-                    </p>
-                  </div>
+                  <p className={deepDiveItemText}>
+                    {product.problemStatement}
+                  </p>
                 </div>
               )}
 
               {product.solution && (
-                <div className={deepDiveSubSection}>
-                  <div className={deepDiveSubSectionHeader}>
-                    <h3 className={deepDiveSubHeading}>
-                      <span className="inline-flex size-5 items-center justify-center rounded-sm bg-emerald-100 font-mono text-[10px] font-bold text-emerald-700">
-                        02
-                      </span>
+                <div className={deepDiveItem}>
+                  <div className={deepDiveItemHeader}>
+                    <span className="inline-flex size-5 shrink-0 items-center justify-center rounded-sm bg-emerald-100 font-mono text-[10px] font-bold text-emerald-700">
+                      02
+                    </span>
+                    <h3 className={deepDiveItemTitle}>
                       The Solution
                     </h3>
                   </div>
-                  <div className={deepDiveSubSectionBody}>
-                    <p className={deepDiveSubSectionText}>{product.solution}</p>
-                  </div>
+                  <p className={deepDiveItemText}>{product.solution}</p>
                 </div>
               )}
 
               {product.uniqueValue && (
-                <div className={deepDiveSubSection}>
-                  <div className={deepDiveSubSectionHeader}>
-                    <h3 className={deepDiveSubHeading}>
-                      <span className="inline-flex size-5 items-center justify-center rounded-sm bg-indigo-100 font-mono text-[10px] font-bold text-indigo-700">
-                        03
-                      </span>
+                <div className={deepDiveItem}>
+                  <div className={deepDiveItemHeader}>
+                    <span className="inline-flex size-5 shrink-0 items-center justify-center rounded-sm bg-indigo-100 font-mono text-[10px] font-bold text-indigo-700">
+                      03
+                    </span>
+                    <h3 className={deepDiveItemTitle}>
                       What Makes It Unique
                     </h3>
                   </div>
-                  <div className={deepDiveSubSectionBody}>
-                    <p className={deepDiveSubSectionText}>
-                      {product.uniqueValue}
-                    </p>
-                  </div>
+                  <p className={deepDiveItemText}>
+                    {product.uniqueValue}
+                  </p>
                 </div>
               )}
             </div>
@@ -573,16 +553,12 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
         {/* Section 5: Tech Stack & Tools Used */}
         {product.builtWithTools && product.builtWithTools.length > 0 && (
           <section className="border-b border-dashed border-border bg-white">
-            <div className={sectionHeaderBox}>
-              <h2 className={sectionHeadingTitle}>
-                <Wrench className="size-3.5 text-indigo-600" />
-                Tech Stack & Tools Used
-              </h2>
-              <p className={sectionHeadingSubtitle}>
-                Developer tools, APIs, and infrastructure powering{" "}
-                {product.name}
-              </p>
-            </div>
+            <DetailSectionHeader
+              title="Tech Stack & Tools Used"
+              subtitle={`Developer tools, APIs, and infrastructure powering ${product.name}`}
+              icon={Wrench}
+              theme="indigo"
+            />
 
             <div className="flex flex-wrap gap-2.5 p-6 md:p-8">
               {product.builtWithTools.map((t) =>
@@ -612,15 +588,12 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
         {/* Section 6: Frequently Asked Questions */}
         {productFaqs.length > 0 && (
           <section className="border-b border-dashed border-border bg-white">
-            <div className={sectionHeaderBox}>
-              <h2 className={sectionHeadingTitle}>
-                <HelpCircle className="size-3.5 text-slate-400" />
-                Frequently Asked Questions
-              </h2>
-              <p className={sectionHeadingSubtitle}>
-                Common questions and developer answers about {product.name}
-              </p>
-            </div>
+            <DetailSectionHeader
+              title="Frequently Asked Questions"
+              subtitle={`Common questions and developer answers about ${product.name}`}
+              icon={HelpCircle}
+              theme="teal"
+            />
 
             <div className={faqContainer}>
               {productFaqs.map((faq, idx) => (
@@ -629,14 +602,12 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
                   className={faqItem}
                 >
                   <div className={faqQuestionHeader}>
-                    <span className="inline-flex size-5 shrink-0 items-center justify-center rounded-sm bg-slate-200 font-mono text-[10px] font-bold text-slate-700">
+                    <span className="inline-flex size-5 shrink-0 items-center justify-center rounded-sm bg-teal-100 font-mono text-[10px] font-bold text-teal-800">
                       Q{idx + 1}
                     </span>
                     <h3 className={faqQuestionText}>{faq.question}</h3>
                   </div>
-                  <div className={faqAnswerBody}>
-                    <p className={faqAnswerText}>{faq.answer}</p>
-                  </div>
+                  <p className={faqAnswerText}>{faq.answer}</p>
                 </div>
               ))}
             </div>
