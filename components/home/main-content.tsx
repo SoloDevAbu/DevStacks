@@ -7,6 +7,13 @@ import { AI_PROMPTS } from "@/lib/prompts"
 import { heroStatPill } from "@/utils/styles"
 import type { FeedItem } from "@/components/shared/feed-card"
 
+// VERSION A — Tabbed (Today + This Week in a single tab switcher)
+import { LaunchesTabsSection } from "@/components/home/launches-tabs-section"
+
+// VERSION B — Stacked (Today and This Week as separate sections)
+// import { TodaysLaunchesSection } from "@/components/home/todays-launches-section"
+// import { WeeklyLaunchesSection } from "@/components/home/weekly-launches-section"
+
 interface MainContentProps {
   todaysLaunches: FeedItem[]
   weeklyLaunches: FeedItem[]
@@ -37,8 +44,18 @@ export const MainContent = ({
       />
 
       <div className="flex w-full flex-1 flex-col">
+        {/* ── VERSION A: Tabbed layout (active) ────────────────────────── */}
+        <LaunchesTabsSection
+          todaysLaunches={todaysLaunches}
+          weeklyLaunches={weeklyLaunches}
+        />
+
+        {/* ── VERSION B: Stacked layout (swap in by uncommenting below) ── */}
+        {/*
         <TodaysLaunchesSection items={todaysLaunches} />
         <WeeklyLaunchesSection initialItems={weeklyLaunches} />
+        */}
+
         <PopularBuildingBlocksSection items={popularBuildingBlocks} />
       </div>
     </div>
