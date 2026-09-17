@@ -5,12 +5,9 @@ import {
   Check,
   Sparkles,
   HelpCircle,
-  Mail,
   ArrowRight,
-  MousePointerClick,
-  Layers,
-  ShieldCheck,
 } from "lucide-react"
+import { XIcon } from "@/components/shared/icons"
 import { PageHeader } from "@/components/shared/page-header"
 import {
   Card,
@@ -23,7 +20,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { HoverOutline } from "@/components/shared/hover-outline"
-import { SITE_CONFIG } from "@/constants/site"
+import { SITE_CONFIG, CREATOR_SOCIALS } from "@/constants/site"
 import { ROUTES } from "@/constants/routes"
 import { breadcrumbSchema, faqSchema } from "@/lib/seo/schema"
 import { AI_PROMPTS } from "@/lib/prompts"
@@ -77,7 +74,7 @@ const FAQ_ITEMS = [
   {
     question: "How do I reserve a sponsorship slot?",
     answer:
-      "Click the inquiry button below to reach out to our sponsorships team. Slots are allocated on a weekly or monthly basis with category exclusivity options.",
+      "Send a direct message on X to discuss available slots and placement details. Slots are allocated on a weekly or monthly basis with category exclusivity options.",
   },
 ]
 
@@ -107,10 +104,9 @@ const PricingPage = () => {
           variant="pricing"
         />
 
-        {/* Sponsorship Grid */}
-        <div className="grid grid-cols-1 gap-8 border-b border-dashed border-border bg-white p-6 md:p-10 lg:grid-cols-12">
-          {/* Main Sponsorship Offer Card */}
-          <div className="group relative flex lg:col-span-7">
+        {/* Sponsorship Card */}
+        <div className="border-b border-dashed border-border bg-white px-6 py-10 md:px-10 md:py-16">
+          <div className="group relative mx-auto flex max-w-3xl">
             <Card className="flex w-full flex-col justify-between rounded-xl border border-indigo-200 bg-gradient-to-b from-indigo-50/30 via-white to-white p-6 shadow-sm md:p-8">
               <CardHeader className="p-0">
                 <div className="flex flex-wrap items-center justify-between gap-2">
@@ -142,7 +138,8 @@ const PricingPage = () => {
                     </span>
                   </div>
                   <p className="mt-1 text-xs text-indigo-800/80">
-                    Direct access to software engineers, technical founders, and indie hackers evaluating new tools.
+                    Direct access to software engineers, technical founders, and
+                    indie hackers evaluating new tools.
                   </p>
                 </div>
               </CardHeader>
@@ -155,110 +152,73 @@ const PricingPage = () => {
                   <li className="flex items-start gap-2.5">
                     <Check className="size-4 shrink-0 text-indigo-600" />
                     <span>
-                      <strong>Persistent Sidebar Visibility:</strong> Displayed across tool directories, product showcases, and maker profiles.
+                      <strong>Persistent Sidebar Visibility:</strong> Displayed
+                      across tool directories, product showcases, and maker
+                      profiles.
                     </span>
                   </li>
                   <li className="flex items-start gap-2.5">
                     <Check className="size-4 shrink-0 text-indigo-600" />
                     <span>
-                      <strong>Direct Do-Follow Backlinks:</strong> Drive high-intent traffic directly to your landing page or sign-up flow.
+                      <strong>Direct Do-Follow Backlinks:</strong> Drive
+                      high-intent traffic directly to your landing page or
+                      sign-up flow.
                     </span>
                   </li>
                   <li className="flex items-start gap-2.5">
                     <Check className="size-4 shrink-0 text-indigo-600" />
                     <span>
-                      <strong>Category Relevance:</strong> Option to sponsor specific tech categories (AI, Backend, DevOps, DB).
+                      <strong>Category Relevance:</strong> Option to sponsor
+                      specific tech categories (AI, Backend, DevOps, DB).
                     </span>
                   </li>
-                  <li className="flex items-start gap-2.5">
+                  {/* <li className="flex items-start gap-2.5">
                     <Check className="size-4 shrink-0 text-indigo-600" />
                     <span>
                       <strong>Transparent Metrics:</strong> Real-time click and impression tracking.
                     </span>
-                  </li>
+                  </li> */}
                 </ul>
               </CardContent>
 
-              <CardFooter className="mt-8 flex flex-col gap-3 p-0 sm:flex-row">
+              <CardFooter className="mt-8 grid w-full grid-cols-1 gap-3 p-0 pb-6 sm:grid-cols-3 md:pb-8">
                 <Button
-                  className="w-full bg-indigo-600 text-white shadow-sm hover:bg-indigo-700 sm:w-auto"
+                  className="w-full bg-slate-900 text-white shadow-sm hover:bg-slate-800"
                   nativeButton={false}
                   render={
                     <a
-                      href="mailto:sponsor@devstacks.io?subject=Sidebar%20Ad%20Placement%20Inquiry"
+                      href={CREATOR_SOCIALS.x}
                       target="_blank"
                       rel="noopener noreferrer"
                     />
                   }
                 >
-                  <Mail className="mr-2 size-4" /> Inquire for Placement
+                  <XIcon className="mr-2 size-3.5 shrink-0" /> DM on X for Placement
                 </Button>
                 <Button
                   variant="outline"
-                  className="w-full sm:w-auto"
+                  className="w-full"
+                  nativeButton={false}
+                  render={<Link href={ROUTES.SHOWCASE} />}
+                >
+                  Add Product Free <ArrowRight className="ml-1 size-3.5 shrink-0" />
+                </Button>
+                <Button
+                  variant="outline"
+                  className="w-full"
                   nativeButton={false}
                   render={<Link href={ROUTES.SUBMIT} />}
                 >
-                  Add Your Tool Free <ArrowRight className="ml-1 size-3.5" />
+                  Add Tool Free <ArrowRight className="ml-1 size-3.5 shrink-0" />
                 </Button>
               </CardFooter>
             </Card>
             <HoverOutline />
           </div>
-
-          {/* Sidebar Preview Box */}
-          <div className="flex flex-col justify-between rounded-xl border border-dashed border-slate-200 bg-slate-50/70 p-6 lg:col-span-5">
-            <div>
-              <div className="flex items-center gap-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                <Layers className="size-3.5 text-slate-400" /> Live Sidebar Preview
-              </div>
-              <p className="mt-1 text-xs text-slate-500">
-                Here is an example of how your brand appears on the left/right rails:
-              </p>
-
-              {/* Mock Ad Card */}
-              <div className="mt-4 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-                <div className="flex items-center justify-between">
-                  <Badge variant="secondary" className="text-[10px] font-medium text-slate-500">
-                    Sponsored
-                  </Badge>
-                  <span className="text-[11px] text-slate-400">devstacks.io/ad</span>
-                </div>
-                <div className="mt-3 flex items-start gap-3">
-                  <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-indigo-100 font-bold text-indigo-700 text-sm">
-                    🚀
-                  </div>
-                  <div>
-                    <h5 className="text-xs font-bold text-slate-900">Your Developer Tool</h5>
-                    <p className="mt-0.5 text-[11px] leading-relaxed text-slate-500">
-                      The fastest way to deploy, monitor, and scale your backend APIs.
-                    </p>
-                  </div>
-                </div>
-                <div className="mt-3.5 flex items-center justify-between border-t border-slate-100 pt-3">
-                  <span className="text-[11px] font-medium text-indigo-600">
-                    Try for free →
-                  </span>
-                  <div className="flex items-center gap-1 text-[10px] text-slate-400">
-                    <MousePointerClick className="size-3" /> High CTR
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-6 rounded-lg border border-slate-200 bg-white p-4">
-              <div className="flex items-center gap-2 text-xs font-bold text-slate-900">
-                <ShieldCheck className="size-4 text-emerald-600" /> Free Submissions
-              </div>
-              <p className="mt-1 text-xs text-slate-500">
-                Listing your developer tool or product on DevStacks is completely free with no hidden fees or tier barriers.
-              </p>
-            </div>
-          </div>
         </div>
 
         {/* FAQ Section */}
-        <div className="flex flex-col bg-white p-6 md:p-10">
+        <div className="flex flex-col bg-white px-6 py-10 md:px-10 md:py-16">
           <div className="flex items-center gap-2 text-sm font-bold text-slate-900">
             <HelpCircle className="size-4 text-indigo-600" /> Frequently Asked
             Questions
@@ -286,4 +246,3 @@ const PricingPage = () => {
 }
 
 export default PricingPage
-
