@@ -16,6 +16,7 @@ export const AI_PROMPTS = {
   products: `What developer tools and software products are listed in the directory on ${SITE_CONFIG.name}?`,
   submit: `How can I submit my developer tool, API, or software product to ${SITE_CONFIG.name}, and what are the discoverability, SEO, and AI engine benefits?`,
   showcase: `How do developer build showcases and 'Built With' tech-stack breakdowns work on ${SITE_CONFIG.name}?`,
+  faq: `What is ${SITE_CONFIG.name} (${SITE_CONFIG.domain})? How does directory submission, community ranking, and AI answer engine discoverability work for developer tools and products?`,
   product: (productName: string, tagline?: string) =>
     `Tell me about ${productName}${tagline ? ` (${tagline})` : ""} featured on ${SITE_CONFIG.name}. What problem does it solve, what are its key features, tech stack compatibility, and alternatives?`,
   tool: (toolName: string, tagline?: string) =>

@@ -45,8 +45,9 @@ export const generateMetadata = async (props: {
     ? `Browse developer-built products and software in the ${category} category on ${SITE_CONFIG.name}. Explore built-with tech stacks, likes, and community reviews.`
     : `Browse the complete directory of developer products, software, and tools on ${SITE_CONFIG.name}.`
 
-  const canonicalUrl = category
-    ? `${SITE_CONFIG.url}/products?category=${encodeURIComponent(category)}`
+  const cleanCategory = category?.trim()
+  const canonicalUrl = cleanCategory
+    ? `${SITE_CONFIG.url}/products?category=${encodeURIComponent(cleanCategory)}`
     : `${SITE_CONFIG.url}/products`
 
   return {

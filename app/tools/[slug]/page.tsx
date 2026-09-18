@@ -27,6 +27,7 @@ import { getToolFaqs } from "@/db/queries/faqs/get-faqs"
 import { MakerProfileCard } from "@/components/shared/maker-profile-card"
 import { SITE_CONFIG } from "@/constants/site"
 import { ROUTES } from "@/constants/routes"
+import { getSocialCardImage } from "@/lib/seo/social-image"
 import { AI_PROVIDERS } from "@/constants/ai-providers"
 import { AI_PROMPTS } from "@/lib/prompts"
 import { getTools } from "@/db/queries/tools/list"
@@ -110,6 +111,8 @@ export const generateMetadata = async ({
         SITE_CONFIG.name,
       ]
 
+  const socialImage = getSocialCardImage(tool.logoUrl, tool.images)
+
   return {
     title,
     description,
@@ -125,7 +128,7 @@ export const generateMetadata = async ({
       type: "website",
       images: [
         {
-          url: tool.logoUrl ?? `${SITE_CONFIG.url}/opengraph-image`,
+          url: socialImage,
           width: 1200,
           height: 630,
           alt: `${tool.name} on ${SITE_CONFIG.name}`,
@@ -136,7 +139,7 @@ export const generateMetadata = async ({
       card: "summary_large_image",
       title: `${title} | ${SITE_CONFIG.name}`,
       description,
-      images: [tool.logoUrl ?? `${SITE_CONFIG.url}/twitter-image`],
+      images: [socialImage],
     },
   }
 }

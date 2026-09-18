@@ -1,7 +1,6 @@
 import type { Metadata } from "next"
 import { MainContent } from "@/components/home/main-content"
 import {
-  organizationSchema,
   collectionPageSchema,
 } from "@/lib/seo/schema"
 import { SITE_CONFIG } from "@/constants/site"
@@ -55,7 +54,6 @@ export const metadata: Metadata = {
 }
 
 const Page = async () => {
-  const orgJsonLd = organizationSchema()
   const { year, week } = getCurrentWeek()
 
   const [todaysLaunches, weeklyLaunches, popularBuildingBlocks] =
@@ -84,10 +82,6 @@ const Page = async () => {
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
-      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionJsonLd) }}

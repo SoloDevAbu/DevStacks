@@ -113,7 +113,7 @@ const FaqPage = () => {
                 {AI_PROVIDERS.map((ai) => (
                   <div key={ai.id} className="group/btn relative inline-flex">
                     <a
-                      href={`${ai.url}${encodeURIComponent(AI_PROMPTS.home)}`}
+                      href={`${ai.url}${encodeURIComponent(AI_PROMPTS.faq)}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className={footerAiButton}

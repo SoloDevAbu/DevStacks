@@ -106,6 +106,21 @@ const McpPage = () => {
                 desc: "Fetch top community-upvoted developer tools or trending products.",
                 args: "type ('tools' | 'products'), limit (number, optional)",
               },
+              {
+                name: "get_maker_profile",
+                desc: "Fetch developer bio, location, maker FAQs, and submitted tools and products by username.",
+                args: "username (string, required)",
+              },
+              {
+                name: "get_daily_launches",
+                desc: "Fetch developer tools and products launching today, ranked by community votes.",
+                args: "limit (number, optional, default 20)",
+              },
+              {
+                name: "get_weekly_launches",
+                desc: "Fetch developer tools and products launched this week, ranked by community votes.",
+                args: "limit (number, optional, default 20)",
+              },
             ].map((tool) => (
               <div key={tool.name} className="rounded-lg border border-dashed border-border p-4 bg-slate-50/50">
                 <div className="flex items-center justify-between">
