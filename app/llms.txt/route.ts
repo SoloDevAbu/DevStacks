@@ -43,7 +43,7 @@ export const GET = async () => {
 - [Popular Building Blocks](${SITE_CONFIG.url}/discover/popular-building-blocks): Most-used APIs and infrastructure ranked by verified adoption count.
 - [Makers](${SITE_CONFIG.url}/makers): Directory of software creators, developers, and builders.
 - [Showcase](${SITE_CONFIG.url}/showcase): Real-world developer projects showcasing complete production stacks.
-- [FAQ](${SITE_CONFIG.url}/faq): Authoritative Q&A about LaunchNests, ranking methodology, submissions, and AI agent protocols.
+- [FAQ](${SITE_CONFIG.url}/faq): Authoritative Q&A covering launching, directory rules, tech-stack graphs, sponsorships, and AI agent discoverability protocols.
 - [Pricing](${SITE_CONFIG.url}/pricing): Platform sponsorship and promotional listing options for tool creators.
 - [Submit](${SITE_CONFIG.url}/submit): Interactive portal to submit a new developer tool or product.
 - [MCP docs](${SITE_CONFIG.url}/mcp): Human + agent documentation for the public Model Context Protocol server.
@@ -62,7 +62,7 @@ export const GET = async () => {
 - [/discover/weekly-launches](${SITE_CONFIG.url}/discover/weekly-launches): Developer tools and products by week, community voted
 - [/discover/popular-building-blocks](${SITE_CONFIG.url}/discover/popular-building-blocks): Most-used developer APIs and infrastructure tools
 - [/showcase](${SITE_CONFIG.url}/showcase): Developer showcases
-- [/faq](${SITE_CONFIG.url}/faq): Frequently asked questions about ${SITE_CONFIG.name}
+- [/faq](${SITE_CONFIG.url}/faq): Frequently asked questions (also available as markdown at /faq.md)
 - [/pricing](${SITE_CONFIG.url}/pricing): Platform sponsorship and promotion options
 - [/mcp](${SITE_CONFIG.url}/mcp): MCP server documentation
 - [/cli](${SITE_CONFIG.url}/cli): CLI & Public REST documentation

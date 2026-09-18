@@ -35,9 +35,9 @@ const SUBMISSION_BENEFITS = [
   },
   {
     icon: Cpu,
-    title: "Algorithmic Freshness Boost",
+    title: "Today's & Weekly Launches",
     description:
-      "Every new submission receives a 7-day boost in the 'New & Rising' feed for immediate early traction.",
+      "Every new submission features in Today's Launches and Weekly Launches on the homepage, ranked directly by community votes.",
   },
 ]
 
@@ -63,7 +63,9 @@ export const SubmitCrawlerView = () => {
                     {LAUNCH_PROMO.PROMO_TITLE}
                   </h3>
                   <p className="text-xs text-slate-600">
-                    Submit your tool today and receive an automatic upgrade to Verified Premium status ({LAUNCH_PROMO.VALUE_GIFTED} value) upon approval.
+                    Submit your tool today and receive an automatic upgrade to
+                    Verified Premium status ({LAUNCH_PROMO.VALUE_GIFTED} value)
+                    upon approval.
                   </p>
                 </div>
               </div>
@@ -115,18 +117,22 @@ export const SubmitCrawlerView = () => {
           <ul className="list-disc space-y-2.5 pl-5 text-xs leading-relaxed text-slate-600">
             <li>
               <strong>Required Information:</strong> Provide your product name,
-              catchy tagline, official website URL, full description, and pricing model.
+              catchy tagline, official website URL, full description, and
+              pricing model.
             </li>
             <li>
-              <strong>Product Showcase & Deep Dive (Optional):</strong> Detail the specific
-              problem your tool solves, architectural solution, unique advantages, target use cases,
-              categories, tags, supported platforms, media gallery, demo video, and social channels.
+              <strong>Product Showcase & Deep Dive (Optional):</strong> Detail
+              the specific problem your tool solves, architectural solution,
+              unique advantages, target use cases, categories, tags, supported
+              platforms, media gallery, demo video, and social channels.
             </li>
             <li>
-              <strong>SEO, GEO & AI Discoverability (Metadata Only):</strong> Specify search
-              keywords, target audience personas, geographical targeting (GEO), directory categories (ASO),
-              SERP meta tags, and an AI Context prompt for LLM answer engines (ChatGPT, Claude, Perplexity).
-              This data is machine-readable and not displayed on your public product page.
+              <strong>SEO, GEO & AI Discoverability (Metadata Only):</strong>{" "}
+              Specify search keywords, target audience personas, geographical
+              targeting (GEO), directory categories (ASO), SERP meta tags, and
+              an AI Context prompt for LLM answer engines (ChatGPT, Claude,
+              Perplexity). This data is machine-readable and not displayed on
+              your public product page.
             </li>
           </ul>
 

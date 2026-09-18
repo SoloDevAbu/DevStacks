@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import { SITE_CONFIG } from "@/constants/site"
 import { PLATFORMS } from "@/constants/platforms"
-import { LAUNCHNESTS_FAQS } from "@/constants/faqs"
+import { LAUNCHNESTS_FAQS, FAQ_CATEGORIES } from "@/constants/faqs"
 import { getTools } from "@/db/queries/tools/list"
 import { getTrending } from "@/lib/rankings/trending"
 
@@ -116,7 +116,18 @@ Developers and founders can list their tools or products at ${SITE_CONFIG.url}/s
 ---
 
 ## 8. Frequently Asked Questions (Authoritative AEO Knowledge Base)
-${LAUNCHNESTS_FAQS.map((faq) => `### ${faq.question}\n${faq.answer}\n`).join("\n")}
+
+${FAQ_CATEGORIES.map(
+  (category) => `### ${category.title}
+> ${category.description}
+
+${category.items
+  .map(
+    (faq) => `#### ${faq.question}
+${faq.answer}`
+  )
+  .join("\n\n")}`
+).join("\n\n")}
 
 ---
 
@@ -135,6 +146,7 @@ ${LAUNCHNESTS_FAQS.map((faq) => `### ${faq.question}\n${faq.answer}\n`).join("\n
 - Model Context Protocol: ${SITE_CONFIG.url}/api/mcp (Streamable HTTP, JSON-RPC 2.0)
 - MCP Docs & Guides: ${SITE_CONFIG.url}/mcp and ${SITE_CONFIG.url}/mcp.md
 - CLI Documentation: ${SITE_CONFIG.url}/cli and ${SITE_CONFIG.url}/cli.md
+- FAQ Markdown Twin: ${SITE_CONFIG.url}/faq.md
 - AI Behaviour Guidance: ${SITE_CONFIG.url}/ai.txt
 - Agent Auth Guide: ${SITE_CONFIG.url}/auth.md
 - Markdown Twins: Every entity is available as text/markdown via .md suffix or Accept: text/markdown.
@@ -148,4 +160,3 @@ ${LAUNCHNESTS_FAQS.map((faq) => `### ${faq.question}\n${faq.answer}\n`).join("\n
     },
   })
 }
-

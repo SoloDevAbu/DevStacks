@@ -47,8 +47,10 @@ export const getPageAiGuide = (pathname: string): PageAiGuide => {
   if (cleanPath === "/") {
     return {
       title: "Today's Launches & Live Feed",
-      whatItIs: "The real-time discovery feed of developer tools, APIs, and software products launched today and this week, ranked by live community upvotes.",
-      howToUse: "Toggle between Today and This Week tabs, upvote tools you love, click product cards to inspect verified tech stacks, or click tools to see live builds.",
+      whatItIs:
+        "The real-time discovery feed of developer tools, APIs, and software products launched today and this week, ranked by live community upvotes.",
+      howToUse:
+        "Toggle between Today and This Week tabs, upvote tools you love, click product cards to inspect verified tech stacks, or click tools to see live builds.",
       prompt: AI_PROMPTS.home,
       suggestedQuestions: [
         "What are the top 3 launches today?",
@@ -61,8 +63,10 @@ export const getPageAiGuide = (pathname: string): PageAiGuide => {
   if (cleanPath === "/trending") {
     return {
       title: "Trending Stacks & Momentum",
-      whatItIs: "The algorithmic leaderboard tracking developer tools and products with the highest momentum, upvote velocity, and community engagement.",
-      howToUse: "Select a timeframe (Today, Week, Month, All-Time), filter by category pills (AI, Database, Auth), and evaluate battle-tested technologies.",
+      whatItIs:
+        "The algorithmic leaderboard tracking developer tools and products with the highest momentum, upvote velocity, and community engagement.",
+      howToUse:
+        "Select a timeframe (Today, Week, Month, All-Time), filter by category pills (AI, Database, Auth), and evaluate battle-tested technologies.",
       prompt: AI_PROMPTS.trending,
       suggestedQuestions: [
         "Why are these tools trending right now?",
@@ -76,8 +80,10 @@ export const getPageAiGuide = (pathname: string): PageAiGuide => {
     const slug = cleanPath.replace("/tools/", "")
     return {
       title: `Tool Deep Dive (${slug})`,
-      whatItIs: "The canonical technical profile of this developer infrastructure tool, showing verified builds, pricing models, feature specs, and community upvotes.",
-      howToUse: "Upvote the tool, scroll down to see real-world products built with it, or click 'Showcase Your Build' to link your own project.",
+      whatItIs:
+        "The canonical technical profile of this developer infrastructure tool, showing verified builds, pricing models, feature specs, and community upvotes.",
+      howToUse:
+        "Upvote the tool, scroll down to see real-world products built with it, or click 'Showcase Your Build' to link your own project.",
       prompt: AI_PROMPTS.tool(slug),
       suggestedQuestions: [
         "What makes this tool unique vs competitors?",
@@ -90,8 +96,10 @@ export const getPageAiGuide = (pathname: string): PageAiGuide => {
   if (cleanPath === "/tools") {
     return {
       title: "Developer Tools Directory",
-      whatItIs: "The comprehensive database of developer infrastructure, APIs, SDKs, backend platforms, and building blocks cataloged on LaunchNests.",
-      howToUse: "Filter by category and pricing model (Free, Freemium, Open Source), sort by Most Builds or Most Upvotes, and click any tool to inspect real products using it.",
+      whatItIs:
+        "The comprehensive database of developer infrastructure, APIs, SDKs, backend platforms, and building blocks cataloged on LaunchNests.",
+      howToUse:
+        "Filter by category and pricing model (Free, Freemium, Open Source), sort by Most Builds or Most Upvotes, and click any tool to inspect real products using it.",
       prompt: AI_PROMPTS.tools,
       suggestedQuestions: [
         "Recommend the best open-source tools",
@@ -105,8 +113,10 @@ export const getPageAiGuide = (pathname: string): PageAiGuide => {
     const slug = cleanPath.replace("/products/", "")
     return {
       title: `Product Architecture (${slug})`,
-      whatItIs: "An in-depth case study and architectural profile of this software product, including verified 'Built With' tech stack, demo video, and creator profile.",
-      howToUse: "Click 'Like' to boost ranking, explore the tools chip list to inspect the product's underlying stack, or click the maker badge to view their other projects.",
+      whatItIs:
+        "An in-depth case study and architectural profile of this software product, including verified 'Built With' tech stack, demo video, and creator profile.",
+      howToUse:
+        "Click 'Like' to boost ranking, explore the tools chip list to inspect the product's underlying stack, or click the maker badge to view their other projects.",
       prompt: AI_PROMPTS.product(slug),
       suggestedQuestions: [
         "Explain how this product's tech stack works",
@@ -119,8 +129,10 @@ export const getPageAiGuide = (pathname: string): PageAiGuide => {
   if (cleanPath === "/products") {
     return {
       title: "Products Showcase Directory",
-      whatItIs: "The public showcase of developer-built applications, SaaS platforms, and production software, highlighting transparent 'Built With' tech stacks.",
-      howToUse: "Search for products by name or problem space, filter by category and pricing, and inspect tech stack badges on each card to discover what powers them.",
+      whatItIs:
+        "The public showcase of developer-built applications, SaaS platforms, and production software, highlighting transparent 'Built With' tech stacks.",
+      howToUse:
+        "Search for products by name or problem space, filter by category and pricing, and inspect tech stack badges on each card to discover what powers them.",
       prompt: AI_PROMPTS.products,
       suggestedQuestions: [
         "What are the most popular products on LaunchNests?",
@@ -134,8 +146,10 @@ export const getPageAiGuide = (pathname: string): PageAiGuide => {
     const username = cleanPath.replace("/makers/", "")
     return {
       title: `Maker Profile (@${username})`,
-      whatItIs: "The verified public portfolio of a developer or maker, showcasing their bio, location, social links, submitted tools, launched products, and custom FAQs.",
-      howToUse: "Explore all tools and products launched by this creator, inspect their development philosophy in their custom FAQs, and connect via their verified social links.",
+      whatItIs:
+        "The verified public portfolio of a developer or maker, showcasing their bio, location, social links, submitted tools, launched products, and custom FAQs.",
+      howToUse:
+        "Explore all tools and products launched by this creator, inspect their development philosophy in their custom FAQs, and connect via their verified social links.",
       prompt: AI_PROMPTS.maker(username, username),
       suggestedQuestions: [
         `What products has @${username} built?`,
@@ -148,8 +162,10 @@ export const getPageAiGuide = (pathname: string): PageAiGuide => {
   if (cleanPath === "/makers") {
     return {
       title: "Developers & Makers Directory",
-      whatItIs: "The community directory of engineers, founders, and indie hackers actively shipping software and developer infrastructure on LaunchNests.",
-      howToUse: "Browse makers by location and portfolio size, click any maker card to inspect their shipped tools and products, or submit your own projects to join.",
+      whatItIs:
+        "The community directory of engineers, founders, and indie hackers actively shipping software and developer infrastructure on LaunchNests.",
+      howToUse:
+        "Browse makers by location and portfolio size, click any maker card to inspect their shipped tools and products, or submit your own projects to join.",
       prompt: AI_PROMPTS.makers,
       suggestedQuestions: [
         "Who are the most active makers on LaunchNests?",
@@ -162,8 +178,10 @@ export const getPageAiGuide = (pathname: string): PageAiGuide => {
   if (cleanPath === "/showcase") {
     return {
       title: "Showcase a Build",
-      whatItIs: "The community build gallery where developers publish their production software and declare the exact developer tools and APIs used to build it.",
-      howToUse: "Enter your product details, website URL, and select the tools in your tech stack. Submitting creates verified cross-promotional backlinks on tool pages.",
+      whatItIs:
+        "The community build gallery where developers publish their production software and declare the exact developer tools and APIs used to build it.",
+      howToUse:
+        "Enter your product details, website URL, and select the tools in your tech stack. Submitting creates verified cross-promotional backlinks on tool pages.",
       prompt: AI_PROMPTS.showcase,
       suggestedQuestions: [
         "How does showcasing my build help SEO and backlinks?",
@@ -176,13 +194,15 @@ export const getPageAiGuide = (pathname: string): PageAiGuide => {
   if (cleanPath === "/submit") {
     return {
       title: "Submit a Tool or Product",
-      whatItIs: "The maker onboarding portal to catalog a new developer tool, API, or software product with structured metadata for SEO, GEO, and AI answer engines.",
-      howToUse: "Select Tool or Product, fill in name, problem statement, solution, unique value, and AI context to ensure instant indexing across search engines and AI models.",
+      whatItIs:
+        "The maker onboarding portal to catalog a new developer tool, API, or software product with structured metadata for SEO, GEO, and AI answer engines.",
+      howToUse:
+        "Select Tool or Product, fill in name, problem statement, solution, unique value, and AI context to ensure instant indexing across search engines and AI models.",
       prompt: AI_PROMPTS.submit,
       suggestedQuestions: [
         "What is the difference between a Tool and a Product?",
         "What should I write in the AI Context field?",
-        "How does the 7-day launch discovery window work?",
+        "How does community voting work on launches?",
       ],
     }
   }
@@ -190,8 +210,10 @@ export const getPageAiGuide = (pathname: string): PageAiGuide => {
   if (cleanPath === "/pricing") {
     return {
       title: "Sidebar Sponsorship & Pricing",
-      whatItIs: "Transparent details on directory submission (100% free forever) and premium sidebar sponsorship packages seen across all pages on LaunchNests.",
-      howToUse: "Review impressions, audience reach (50,000+ developers), and sponsorship packages. Direct message on X or reach out to reserve exclusive placement.",
+      whatItIs:
+        "Transparent details on directory submission (100% free forever) and premium sidebar sponsorship packages seen across all pages on LaunchNests.",
+      howToUse:
+        "Review impressions, audience reach (50,000+ developers), and sponsorship packages. Direct message on X or reach out to reserve exclusive placement.",
       prompt: AI_PROMPTS.pricing,
       suggestedQuestions: [
         "How much does directory submission cost?",
@@ -204,13 +226,16 @@ export const getPageAiGuide = (pathname: string): PageAiGuide => {
   if (cleanPath === "/faq") {
     return {
       title: "FAQ & Platform Knowledge Base",
-      whatItIs: "Answers to common questions about directory submissions, community voting, tech-stack linking, and AI answer engine discoverability.",
-      howToUse: "Expand questions by topic, check submission guidelines, and use the 1-click AI buttons to ask conversational questions about platform mechanics.",
+      whatItIs:
+        "Answers to common questions about directory submissions, community voting, tech-stack linking, sponsorships, and AI answer engine discoverability.",
+      howToUse:
+        "Explore the 4 categories (Launching, Sponsorship, SEO/AEO, and AI Agents) or use the 1-click AI buttons to ask conversational questions.",
       prompt: AI_PROMPTS.faq,
       suggestedQuestions: [
-        "How does directory ranking and voting work?",
-        "How does LaunchNests optimize products for AI engines?",
-        "How do I claim or update an existing tool listing?",
+        "How is LaunchNests different from Product Hunt?",
+        "What sponsorship and advertising options are available?",
+        "How does LaunchNests optimize tools for AI answer engines (AEO)?",
+        "Does LaunchNests have a public API and MCP server?",
       ],
     }
   }
@@ -218,8 +243,10 @@ export const getPageAiGuide = (pathname: string): PageAiGuide => {
   if (cleanPath === "/discover/weekly-launches") {
     return {
       title: "This Week's Launches",
-      whatItIs: "The weekly discovery feed of developer tools and products that launched over the past 7 days, ranked by community momentum.",
-      howToUse: "Review top performers from the current weekly cohort, check out their verified builds, and upvote tools that solve your workflow pain points.",
+      whatItIs:
+        "The weekly discovery feed of developer tools and products that launched over the past 7 days, ranked by community momentum.",
+      howToUse:
+        "Review top performers from the current weekly cohort, check out their verified builds, and upvote tools that solve your workflow pain points.",
       prompt: AI_PROMPTS.weeklyLaunches,
       suggestedQuestions: [
         "What was the most upvoted tool this week?",
@@ -232,8 +259,10 @@ export const getPageAiGuide = (pathname: string): PageAiGuide => {
   if (cleanPath === "/discover/popular-building-blocks") {
     return {
       title: "Popular Building Blocks",
-      whatItIs: "The essential foundational technologies, databases, auth providers, and cloud services most frequently utilized in verified developer builds.",
-      howToUse: "Inspect the core building blocks used by high-traction apps to make informed architectural decisions for your own tech stack.",
+      whatItIs:
+        "The essential foundational technologies, databases, auth providers, and cloud services most frequently utilized in verified developer builds.",
+      howToUse:
+        "Inspect the core building blocks used by high-traction apps to make informed architectural decisions for your own tech stack.",
       prompt: AI_PROMPTS.popularBuildingBlocks,
       suggestedQuestions: [
         "What are the top 5 building blocks used by developers?",
@@ -245,14 +274,16 @@ export const getPageAiGuide = (pathname: string): PageAiGuide => {
 
   if (cleanPath.startsWith("/discover")) {
     return {
-      title: "New & Rising Discoveries",
-      whatItIs: "Curated discovery hub featuring the freshest developer tools, APIs, and software products launched within the last 7 days.",
-      howToUse: "Use category and pricing filters, explore daily and weekly leaderboards, and discover tools that boost developer productivity.",
-      prompt: AI_PROMPTS.newRising,
+      title: "Developer Launches & Discovery",
+      whatItIs:
+        "Curated discovery hub featuring developer tools, APIs, and software products ranked by community upvotes and verified adoption.",
+      howToUse:
+        "Use category and pricing filters, explore daily and weekly leaderboards, and discover tools that boost developer productivity.",
+      prompt: AI_PROMPTS.discover,
       suggestedQuestions: [
-        "What are the best new developer tools launched this week?",
-        "Which new tools offer free tiers for developers?",
-        "How does the 7-day launch window work?",
+        "What are the best developer tools launched this week?",
+        "Which tools offer free tiers for developers?",
+        "How does community voting work on LaunchNests?",
       ],
     }
   }
@@ -260,8 +291,10 @@ export const getPageAiGuide = (pathname: string): PageAiGuide => {
   if (cleanPath === "/mcp") {
     return {
       title: "Model Context Protocol (MCP) Server",
-      whatItIs: "Documentation and connection guides for the public LaunchNests Model Context Protocol streamable HTTP server exposing 8 real-time developer tools.",
-      howToUse: "Connect Cursor, Windsurf, Claude Code, or custom AI agents by adding the streamable HTTP endpoint (POST /api/mcp) to your local mcp.json configuration.",
+      whatItIs:
+        "Documentation and connection guides for the public LaunchNests Model Context Protocol streamable HTTP server exposing 8 real-time developer tools.",
+      howToUse:
+        "Connect Cursor, Windsurf, Claude Code, or custom AI agents by adding the streamable HTTP endpoint (POST /api/mcp) to your local mcp.json configuration.",
       prompt: AI_PROMPTS.mcp,
       suggestedQuestions: [
         "What 8 MCP tools are available on LaunchNests?",
@@ -274,8 +307,10 @@ export const getPageAiGuide = (pathname: string): PageAiGuide => {
   if (cleanPath === "/cli") {
     return {
       title: "CLI & Public REST API (/v1)",
-      whatItIs: "Developer access guide for querying the LaunchNests catalog directly via terminal CLI commands, cURL, or the OpenAPI 3.1 REST API.",
-      howToUse: "Run CLI commands or make direct HTTP GET requests to /v1/tools, /v1/products, and /v1/search. No API key required for public read requests.",
+      whatItIs:
+        "Developer access guide for querying the LaunchNests catalog directly via terminal CLI commands, cURL, or the OpenAPI 3.1 REST API.",
+      howToUse:
+        "Run CLI commands or make direct HTTP GET requests to /v1/tools, /v1/products, and /v1/search. No API key required for public read requests.",
       prompt: AI_PROMPTS.cli,
       suggestedQuestions: [
         "How do I query developer tools using cURL or CLI?",
@@ -288,8 +323,10 @@ export const getPageAiGuide = (pathname: string): PageAiGuide => {
   if (cleanPath === "/terms") {
     return {
       title: "Terms of Service",
-      whatItIs: "The legal terms governing use of LaunchNests, directory submissions, community voting, account responsibilities, and promotional placements.",
-      howToUse: "Read user guidelines, maker submission requirements, community integrity policies, and intellectual property provisions.",
+      whatItIs:
+        "The legal terms governing use of LaunchNests, directory submissions, community voting, account responsibilities, and promotional placements.",
+      howToUse:
+        "Read user guidelines, maker submission requirements, community integrity policies, and intellectual property provisions.",
       prompt: AI_PROMPTS.terms,
       suggestedQuestions: [
         "What are the submission guidelines for developer tools?",
@@ -302,8 +339,10 @@ export const getPageAiGuide = (pathname: string): PageAiGuide => {
   if (cleanPath === "/privacy") {
     return {
       title: "Privacy Policy",
-      whatItIs: "Comprehensive explanation of how LaunchNests collects, uses, and safeguards user, maker, and visitor data.",
-      howToUse: "Review information collection practices, cookie policies, edge geolocation handling, and data deletion rights.",
+      whatItIs:
+        "Comprehensive explanation of how LaunchNests collects, uses, and safeguards user, maker, and visitor data.",
+      howToUse:
+        "Review information collection practices, cookie policies, edge geolocation handling, and data deletion rights.",
       prompt: AI_PROMPTS.privacy,
       suggestedQuestions: [
         "What data is collected when I create a maker account?",
@@ -316,8 +355,10 @@ export const getPageAiGuide = (pathname: string): PageAiGuide => {
   if (cleanPath === "/refund") {
     return {
       title: "Refund Policy",
-      whatItIs: "Clear terms and refund conditions for sidebar sponsorship placements, verified maker badges, and promotional packages.",
-      howToUse: "Check cancellation windows, scheduling adjustment terms, and customer support contact methods.",
+      whatItIs:
+        "Clear terms and refund conditions for sidebar sponsorship placements, verified maker badges, and promotional packages.",
+      howToUse:
+        "Check cancellation windows, scheduling adjustment terms, and customer support contact methods.",
       prompt: AI_PROMPTS.refund,
       suggestedQuestions: [
         "What is the refund policy for sidebar sponsorships?",
@@ -330,8 +371,10 @@ export const getPageAiGuide = (pathname: string): PageAiGuide => {
   if (cleanPath.startsWith("/dashboard")) {
     return {
       title: "Maker Dashboard",
-      whatItIs: "The creator control center to manage submitted tools, products, tech-stack backlinks, and monitor community upvote performance.",
-      howToUse: "Review submission statuses, edit tool descriptions and AI Context, view live upvote metrics, and link new builds.",
+      whatItIs:
+        "The creator control center to manage submitted tools, products, tech-stack backlinks, and monitor community upvote performance.",
+      howToUse:
+        "Review submission statuses, edit tool descriptions and AI Context, view live upvote metrics, and link new builds.",
       prompt: AI_PROMPTS.dashboard,
       suggestedQuestions: [
         "How do I edit my submitted tool or product?",
@@ -343,8 +386,10 @@ export const getPageAiGuide = (pathname: string): PageAiGuide => {
 
   return {
     title: "LaunchNests Ecosystem",
-    whatItIs: "The premier developer tools discovery directory, APIs database, and tech-stack ecosystem platform.",
-    howToUse: "Explore tools, discover software products, inspect verified tech stacks, and find trending technologies.",
+    whatItIs:
+      "The premier developer tools discovery directory, APIs database, and tech-stack ecosystem platform.",
+    howToUse:
+      "Explore tools, discover software products, inspect verified tech stacks, and find trending technologies.",
     prompt: AI_PROMPTS.notFound,
     suggestedQuestions: [
       "What is LaunchNests and what can I find here?",

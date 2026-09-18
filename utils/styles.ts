@@ -415,3 +415,34 @@ export const launchPromoCardList = "mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2"
 export const launchPromoCardItem =
   "flex items-center gap-2 text-xs font-medium text-slate-700"
 
+export const faqCategoryHeaders = {
+  launching:
+    "flex flex-col gap-1 border-b border-dashed border-border bg-linear-to-r from-rose-100/60 via-amber-50/50 to-white px-6 py-5 md:px-8",
+  sponsorship:
+    "flex flex-col gap-1 border-b border-dashed border-border bg-linear-to-r from-amber-100/60 via-orange-50/40 to-white px-6 py-5 md:px-8",
+  seo:
+    "flex flex-col gap-1 border-b border-dashed border-border bg-linear-to-r from-indigo-100/50 via-violet-50/40 to-white px-6 py-5 md:px-8",
+  agents:
+    "flex flex-col gap-1 border-b border-dashed border-border bg-linear-to-r from-emerald-100/50 via-teal-50/40 to-white px-6 py-5 md:px-8",
+} as const
+
+export const faqSectionTitle =
+  "font-mono text-xs sm:text-sm font-bold tracking-wider text-slate-900 uppercase"
+
+export const faqSectionSubtitle = "text-xs text-slate-500"
+
+export const faqRowItem =
+  "flex flex-col gap-2.5 border-b border-dashed border-border bg-white px-6 py-5.5 transition-colors hover:bg-slate-50/40 md:px-8"
+
+export const faqRowHeader = "flex items-start gap-2.5"
+
+export const faqRowIconBox =
+  "flex size-5 shrink-0 items-center justify-center rounded-md border border-indigo-100/80 bg-indigo-50 text-indigo-600 mt-0.5"
+
+export const faqRowQuestion =
+  "text-xs sm:text-sm font-bold tracking-wide text-slate-900 uppercase leading-snug"
+
+export const faqRowAnswer =
+  "pl-7.5 max-w-4xl text-xs sm:text-sm leading-relaxed whitespace-pre-line text-slate-600"
+
+
