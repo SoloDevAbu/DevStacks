@@ -7,10 +7,17 @@ import {
   ArrowLeft,
   Layers,
   Sparkles,
-  Target,
-  Zap,
   PlusCircle,
   Wrench,
+  Info,
+  Image as ImageIcon,
+  Video,
+  Target,
+  Sliders,
+  DollarSign,
+  FolderGit2,
+  Laptop,
+  HelpCircle,
 } from "lucide-react"
 import { resolveProduct } from "@/lib/products/resolve-product"
 import { resolveTool } from "@/lib/tools/resolve-tool"
@@ -28,15 +35,27 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { ProductActionButtons } from "@/components/products/product-action-buttons"
 import { HoverOutline } from "@/components/shared/hover-outline"
+import { DetailSectionHeader } from "@/components/shared/detail-section-header"
 import { cn } from "@/lib/utils"
 import {
   pricingBadgeColor,
-  sectionWrapper,
-  sectionHeadingTitle,
-  sectionHeadingSubtitle,
-  toolSpecsContainer,
+  sectionContentBox,
+  productSpecsContainer,
+  specItemBox,
+  specItemLabel,
+  specItemValue,
   toolDeepDiveContainer,
+  deepDiveItem,
+  deepDiveItemHeader,
+  deepDiveItemTitle,
+  deepDiveItemText,
+  faqContainer,
+  faqItem,
+  faqQuestionHeader,
+  faqQuestionText,
+  faqAnswerText,
   footerAiButton,
+  detailSectionText,
 } from "@/utils/styles"
 import type { Tier, Pricing } from "@/constants/plans"
 
@@ -262,9 +281,6 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
                       {tag}
                     </Badge>
                   ))}
-                  <span className="text-xs font-medium text-slate-400">
-                    {product.viewsCount.toLocaleString()} views
-                  </span>
                 </div>
 
                 {(product.submitterName || product.submitterUsername) && (
@@ -303,7 +319,7 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
             <div className="flex shrink-0 items-center gap-2">
               <Sparkles className="size-3.5 text-blue-600" />
               <span className="font-mono text-xs font-bold tracking-wider text-slate-700 uppercase">
-                ASK AI ABOUT {product.name.toUpperCase()}
+                ASK AI
               </span>
             </div>
 
@@ -336,25 +352,22 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
         </header>
 
         {/* Section 1: About */}
-        <section className={cn(sectionWrapper, "bg-white")}>
-          <div className="flex flex-col gap-3">
-            <h2 className={sectionHeadingTitle}>About {product.name}</h2>
-            <p className="max-w-4xl text-sm leading-relaxed text-slate-600">
-              {product.description}
-            </p>
+        <section className="border-b border-dashed border-border bg-white">
+          <DetailSectionHeader title="About" icon={Info} theme="blue" />
+          <div className={sectionContentBox}>
+            <p className={detailSectionText}>{product.description}</p>
           </div>
         </section>
 
         {/* Screenshots Gallery (if present) */}
         {product.images && product.images.length > 0 && (
-          <section className={cn(sectionWrapper, "bg-slate-50/30")}>
-            <div className="flex flex-col gap-4">
-              <div>
-                <h2 className={sectionHeadingTitle}>Screenshots & Gallery</h2>
-                <p className={sectionHeadingSubtitle}>
-                  Visual interface and user experience of {product.name}
-                </p>
-              </div>
+          <section className="border-b border-dashed border-border bg-white">
+            <DetailSectionHeader
+              title="Screenshots & Gallery"
+              icon={ImageIcon}
+              theme="sky"
+            />
+            <div className="bg-slate-50/20 p-6 md:p-8">
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
                 {product.images.slice(0, 5).map((imgUrl, i) => (
                   <div
@@ -376,14 +389,13 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
 
         {/* Demo Video (if present) */}
         {product.demoVideoUrl && (
-          <section className={cn(sectionWrapper, "bg-white")}>
-            <div className="flex flex-col gap-4">
-              <div>
-                <h2 className={sectionHeadingTitle}>Product Demo Video</h2>
-                <p className={sectionHeadingSubtitle}>
-                  Walkthrough and overview demonstration of {product.name}
-                </p>
-              </div>
+          <section className="border-b border-dashed border-border bg-white">
+            <DetailSectionHeader
+              title="Product Demo Video"
+              icon={Video}
+              theme="violet"
+            />
+            <div className="p-6 md:p-8">
               <div className="aspect-video max-w-3xl overflow-hidden rounded-xl border border-dashed border-border bg-black shadow-xs">
                 {product.demoVideoUrl.includes("youtube.com") ||
                 product.demoVideoUrl.includes("youtu.be") ? (
@@ -417,85 +429,58 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
 
         {/* Use Cases (if present) */}
         {product.useCases && (
-          <section className={cn(sectionWrapper, "bg-slate-50/40")}>
-            <div className="flex flex-col gap-2">
-              <h2 className={sectionHeadingTitle}>Target Use Cases</h2>
-              <p className="max-w-4xl text-sm leading-relaxed whitespace-pre-wrap text-slate-700">
-                {product.useCases}
-              </p>
+          <section className="border-b border-dashed border-border bg-white">
+            <DetailSectionHeader
+              title="Target Use Cases"
+              icon={Target}
+              theme="emerald"
+            />
+            <div className={sectionContentBox}>
+              <p className={detailSectionText}>{product.useCases}</p>
             </div>
           </section>
         )}
 
         {/* Section 2: Product Specifications */}
-        <section className={cn(sectionWrapper, "bg-slate-50/40")}>
-          <div className="flex flex-col gap-6">
-            <div className="flex flex-col gap-1">
-              <h2 className={sectionHeadingTitle}>Product Specifications</h2>
-              <p className={sectionHeadingSubtitle}>
-                Key metrics, tier status, and compatibility for {product.name}
-              </p>
+        <section className="border-b border-dashed border-border bg-white">
+          <DetailSectionHeader
+            title="Product Specifications"
+            icon={Sliders}
+            theme="slate"
+          />
+
+          <div className={productSpecsContainer}>
+            <div className={specItemBox}>
+              <span className={specItemLabel}>
+                <DollarSign className="size-3 text-slate-400" />
+                Pricing Model
+              </span>
+              <span className={specItemValue}>{product.pricing}</span>
             </div>
 
-            <div className={toolSpecsContainer}>
-              <div className="flex flex-col gap-1.5 p-4.5">
-                <span className="font-mono text-[10px] font-bold tracking-wider text-slate-400 uppercase">
-                  Pricing Model
-                </span>
-                <span className="text-xs font-bold text-slate-900">
-                  {product.pricing}
-                </span>
-              </div>
+            <div className={specItemBox}>
+              <span className={specItemLabel}>
+                <FolderGit2 className="size-3 text-slate-400" />
+                Category
+              </span>
+              <span className={specItemValue}>
+                {product.category ?? "Developer Tools"}
+              </span>
+            </div>
 
-              <div className="flex flex-col gap-1.5 p-4.5">
-                <span className="font-mono text-[10px] font-bold tracking-wider text-slate-400 uppercase">
-                  Tier Status
-                </span>
-                <span className="text-xs font-bold text-slate-900 capitalize">
-                  {product.tier}
-                </span>
-              </div>
-
-              <div className="flex flex-col gap-1.5 p-4.5">
-                <span className="font-mono text-[10px] font-bold tracking-wider text-slate-400 uppercase">
-                  Category
-                </span>
-                <span className="truncate text-xs font-bold text-slate-900">
-                  {product.category ?? "Developer Tools"}
-                </span>
-              </div>
-
-              <div className="flex flex-col gap-1.5 p-4.5">
-                <span className="font-mono text-[10px] font-bold tracking-wider text-slate-400 uppercase">
-                  Total Likes
-                </span>
-                <span className="text-xs font-bold text-pink-600">
-                  {product.likesCount.toLocaleString()}
-                </span>
-              </div>
-
-              <div className="flex flex-col gap-1.5 p-4.5">
-                <span className="font-mono text-[10px] font-bold tracking-wider text-slate-400 uppercase">
-                  Platforms
-                </span>
-                <span
-                  className="truncate text-xs font-bold text-slate-900"
-                  title={product.platforms?.join(", ")}
-                >
-                  {product.platforms && product.platforms.length > 0
-                    ? product.platforms.join(", ")
-                    : "Web / Cloud"}
-                </span>
-              </div>
-
-              <div className="flex flex-col gap-1.5 p-4.5">
-                <span className="font-mono text-[10px] font-bold tracking-wider text-slate-400 uppercase">
-                  Tools Integrated
-                </span>
-                <span className="text-xs font-bold text-indigo-600">
-                  {(product.builtWithTools ?? []).length} tools
-                </span>
-              </div>
+            <div className={specItemBox}>
+              <span className={specItemLabel}>
+                <Laptop className="size-3 text-slate-400" />
+                Platforms
+              </span>
+              <span
+                className={specItemValue}
+                title={product.platforms?.join(", ")}
+              >
+                {product.platforms && product.platforms.length > 0
+                  ? product.platforms.join(", ")
+                  : "Web / Cloud"}
+              </span>
             </div>
           </div>
         </section>
@@ -504,114 +489,84 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
         {(product.problemStatement ||
           product.solution ||
           product.uniqueValue) && (
-          <section className={cn(sectionWrapper, "bg-white")}>
-            <div className="flex flex-col gap-6">
-              <div className="flex flex-col gap-1">
-                <h2 className={sectionHeadingTitle}>
-                  Value Proposition & Deep Dive
-                </h2>
-                <p className={sectionHeadingSubtitle}>
-                  Core values, architectural insights, and developer pain points
-                  solved
-                </p>
-              </div>
+          <section className="border-b border-dashed border-border bg-white">
+            <DetailSectionHeader
+              title="Value Proposition & Deep Dive"
+              icon={Sparkles}
+              theme="amber"
+            />
 
-              <div className={toolDeepDiveContainer}>
-                {product.problemStatement && (
-                  <div className="flex w-full min-w-0 flex-col gap-3.5 bg-slate-50/20 p-6 transition-colors hover:bg-slate-50/50 md:p-8">
-                    <div className="flex items-center justify-between">
-                      <span className="font-mono text-[10px] font-bold tracking-widest text-rose-600 uppercase">
-                        01 / PROBLEM
-                      </span>
-                      <div className="flex size-7 items-center justify-center rounded-md border border-rose-200/80 bg-rose-50 text-rose-600">
-                        <Target className="size-3.5" />
-                      </div>
-                    </div>
-                    <h3 className="text-sm font-bold text-slate-900 sm:text-base">
-                      The Problem It Solves
-                    </h3>
-                    <p className="max-w-4xl text-xs leading-relaxed wrap-break-word whitespace-pre-line text-slate-600 sm:text-sm">
-                      {product.problemStatement}
-                    </p>
+            <div className={toolDeepDiveContainer}>
+              {product.problemStatement && (
+                <div className={deepDiveItem}>
+                  <div className={deepDiveItemHeader}>
+                    <span className="inline-flex size-5 shrink-0 items-center justify-center rounded-sm bg-rose-100 font-mono text-[10px] font-bold text-rose-700">
+                      01
+                    </span>
+                    <h3 className={deepDiveItemTitle}>The Problem It Solves</h3>
                   </div>
-                )}
+                  <p className={deepDiveItemText}>{product.problemStatement}</p>
+                </div>
+              )}
 
-                {product.solution && (
-                  <div className="flex w-full min-w-0 flex-col gap-3.5 bg-slate-50/20 p-6 transition-colors hover:bg-slate-50/50 md:p-8">
-                    <div className="flex items-center justify-between">
-                      <span className="font-mono text-[10px] font-bold tracking-widest text-emerald-600 uppercase">
-                        02 / ARCHITECTURE
-                      </span>
-                      <div className="flex size-7 items-center justify-center rounded-md border border-emerald-200/80 bg-emerald-50 text-emerald-600">
-                        <Zap className="size-3.5" />
-                      </div>
-                    </div>
-                    <h3 className="text-sm font-bold text-slate-900 sm:text-base">
-                      The Solution
-                    </h3>
-                    <p className="max-w-4xl text-xs leading-relaxed wrap-break-word whitespace-pre-line text-slate-600 sm:text-sm">
-                      {product.solution}
-                    </p>
+              {product.solution && (
+                <div className={deepDiveItem}>
+                  <div className={deepDiveItemHeader}>
+                    <span className="inline-flex size-5 shrink-0 items-center justify-center rounded-sm bg-emerald-100 font-mono text-[10px] font-bold text-emerald-700">
+                      02
+                    </span>
+                    <h3 className={deepDiveItemTitle}>The Solution</h3>
                   </div>
-                )}
+                  <p className={deepDiveItemText}>{product.solution}</p>
+                </div>
+              )}
 
-                {product.uniqueValue && (
-                  <div className="flex w-full min-w-0 flex-col gap-3.5 bg-slate-50/20 p-6 transition-colors hover:bg-slate-50/50 md:p-8">
-                    <div className="flex items-center justify-between">
-                      <span className="font-mono text-[10px] font-bold tracking-widest text-blue-600 uppercase">
-                        03 / ADVANTAGE & VALUES
-                      </span>
-                      <div className="flex size-7 items-center justify-center rounded-md border border-blue-200/80 bg-blue-50 text-blue-600">
-                        <Sparkles className="size-3.5" />
-                      </div>
-                    </div>
-                    <h3 className="text-sm font-bold text-slate-900 sm:text-base">
-                      What Makes It Unique
-                    </h3>
-                    <p className="max-w-4xl text-xs leading-relaxed wrap-break-word whitespace-pre-line text-slate-600 sm:text-sm">
-                      {product.uniqueValue}
-                    </p>
+              {product.uniqueValue && (
+                <div className={deepDiveItem}>
+                  <div className={deepDiveItemHeader}>
+                    <span className="inline-flex size-5 shrink-0 items-center justify-center rounded-sm bg-indigo-100 font-mono text-[10px] font-bold text-indigo-700">
+                      03
+                    </span>
+                    <h3 className={deepDiveItemTitle}>What Makes It Unique</h3>
                   </div>
-                )}
-              </div>
+                  <p className={deepDiveItemText}>{product.uniqueValue}</p>
+                </div>
+              )}
             </div>
           </section>
         )}
 
         {/* Section 5: Tech Stack & Tools Used */}
         {product.builtWithTools && product.builtWithTools.length > 0 && (
-          <section className={cn(sectionWrapper, "bg-white")}>
-            <div className="flex flex-col gap-6">
-              <div className="flex flex-col gap-1">
-                <h2 className={sectionHeadingTitle}>Tech Stack & Tools Used</h2>
-                <p className={sectionHeadingSubtitle}>
-                  Developer tools, APIs, and infrastructure powering{" "}
-                  {product.name}
-                </p>
-              </div>
+          <section className="border-b border-dashed border-border bg-white">
+            <DetailSectionHeader
+              title="Tech Stack & Tools Used"
+              subtitle={`Developer tools, APIs, and infrastructure powering ${product.name}`}
+              icon={Wrench}
+              theme="indigo"
+            />
 
-              <div className="flex flex-wrap gap-2.5">
-                {product.builtWithTools.map((t) =>
-                  t.toolSlug ? (
-                    <Link
-                      key={t.name}
-                      href={ROUTES.TOOL(t.toolSlug)}
-                      className="inline-flex items-center gap-2 rounded-lg border border-dashed border-border bg-slate-50/50 px-3.5 py-2 text-xs font-semibold text-slate-800 transition-all hover:border-indigo-300 hover:bg-indigo-50/60 hover:text-indigo-900"
-                    >
-                      <Wrench className="size-3.5 text-indigo-600" />
-                      <span>{t.name}</span>
-                    </Link>
-                  ) : (
-                    <div
-                      key={t.name}
-                      className="inline-flex items-center gap-2 rounded-lg border border-dashed border-border bg-slate-50/50 px-3.5 py-2 text-xs font-medium text-slate-700"
-                    >
-                      <Wrench className="size-3.5 text-slate-400" />
-                      <span>{t.name}</span>
-                    </div>
-                  )
-                )}
-              </div>
+            <div className="flex flex-wrap gap-2.5 p-6 md:p-8">
+              {product.builtWithTools.map((t) =>
+                t.toolSlug ? (
+                  <Link
+                    key={t.name}
+                    href={ROUTES.TOOL(t.toolSlug)}
+                    className="inline-flex items-center gap-2 rounded-lg border border-dashed border-border bg-slate-50/50 px-3.5 py-2 text-xs font-semibold text-slate-800 transition-all hover:border-indigo-300 hover:bg-indigo-50/60 hover:text-indigo-900"
+                  >
+                    <Wrench className="size-3.5 text-indigo-600" />
+                    <span>{t.name}</span>
+                  </Link>
+                ) : (
+                  <div
+                    key={t.name}
+                    className="inline-flex items-center gap-2 rounded-lg border border-dashed border-border bg-slate-50/50 px-3.5 py-2 text-xs font-medium text-slate-700"
+                  >
+                    <Wrench className="size-3.5 text-slate-400" />
+                    <span>{t.name}</span>
+                  </div>
+                )
+              )}
             </div>
           </section>
         )}
@@ -619,34 +574,26 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
         {/* Section 6: Frequently Asked Questions */}
         {productFaqs.length > 0 && (
           <section className="border-b border-dashed border-border bg-white">
-            <div className="flex flex-col gap-1 border-b border-dashed border-border bg-slate-50/40 px-6 py-6 md:px-8 md:py-8">
-              <h2 className={sectionHeadingTitle}>
-                Frequently Asked Questions
-              </h2>
-              <p className={sectionHeadingSubtitle}>
-                Common questions and developer answers about {product.name}
-              </p>
-            </div>
+            <DetailSectionHeader
+              title="Frequently Asked Questions"
+              subtitle={`Common questions and developer answers about ${product.name}`}
+              icon={HelpCircle}
+              theme="teal"
+            />
 
-            <div className="flex flex-col divide-y divide-dashed divide-border">
+            <div className={faqContainer}>
               {productFaqs.map((faq, idx) => (
                 <div
                   key={faq.id ?? `${faq.question}-${idx}`}
-                  className="flex flex-col gap-2 px-6 py-6 transition-colors hover:bg-slate-50/40 md:px-8"
+                  className={faqItem}
                 >
-                  <div className="flex items-start gap-3">
-                    <span className="shrink-0 pt-0.5 font-mono text-xs font-bold text-slate-400 select-none">
+                  <div className={faqQuestionHeader}>
+                    <span className="inline-flex size-5 shrink-0 items-center justify-center rounded-sm bg-teal-100 font-mono text-[10px] font-bold text-teal-800">
                       Q{idx + 1}
                     </span>
-                    <div className="flex min-w-0 flex-1 flex-col gap-1.5">
-                      <h3 className="text-sm font-bold wrap-break-word text-slate-900">
-                        {faq.question}
-                      </h3>
-                      <p className="max-w-4xl text-xs leading-relaxed wrap-break-word whitespace-pre-line text-slate-600 sm:text-sm">
-                        {faq.answer}
-                      </p>
-                    </div>
+                    <h3 className={faqQuestionText}>{faq.question}</h3>
                   </div>
+                  <p className={faqAnswerText}>{faq.answer}</p>
                 </div>
               ))}
             </div>

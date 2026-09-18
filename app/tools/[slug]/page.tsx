@@ -10,8 +10,17 @@ import {
   Package,
   PlusCircle,
   Sparkles,
+  Info,
+  Image as ImageIcon,
+  Video,
   Target,
-  Zap,
+  Sliders,
+  DollarSign,
+  Hammer,
+  FolderGit2,
+  Globe,
+  Laptop,
+  HelpCircle,
 } from "lucide-react"
 import { resolveTool, getProductsBuiltWithTool } from "@/lib/tools/resolve-tool"
 import { getToolFaqs } from "@/db/queries/faqs/get-faqs"
@@ -34,15 +43,27 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { ToolActionButtons } from "@/components/tools/tool-action-buttons"
 import { HoverOutline } from "@/components/shared/hover-outline"
+import { DetailSectionHeader } from "@/components/shared/detail-section-header"
 import { cn } from "@/lib/utils"
 import {
   pricingBadgeColor,
-  sectionWrapper,
-  sectionHeadingTitle,
-  sectionHeadingSubtitle,
+  sectionContentBox,
   toolSpecsContainer,
+  specItemBox,
+  specItemLabel,
+  specItemValue,
   toolDeepDiveContainer,
+  deepDiveItem,
+  deepDiveItemHeader,
+  deepDiveItemTitle,
+  deepDiveItemText,
+  faqContainer,
+  faqItem,
+  faqQuestionHeader,
+  faqQuestionText,
+  faqAnswerText,
   footerAiButton,
+  detailSectionText,
 } from "@/utils/styles"
 import type { Tier, Pricing } from "@/constants/plans"
 
@@ -288,9 +309,6 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
                       {tag}
                     </Badge>
                   ))}
-                  <span className="text-xs font-medium text-slate-400">
-                    {tool.viewsCount.toLocaleString()} views
-                  </span>
                   <span className="text-xs font-semibold text-blue-600">
                     {tool.buildsCount} builds
                   </span>
@@ -332,7 +350,7 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
             <div className="flex shrink-0 items-center gap-2">
               <Sparkles className="size-3.5 text-blue-600" />
               <span className="font-mono text-xs font-bold tracking-wider text-slate-700 uppercase">
-                ASK AI ABOUT {tool.name.toUpperCase()}
+                ASK AI
               </span>
             </div>
 
@@ -365,10 +383,10 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
         </header>
 
         {/* Section 1: About */}
-        <section className={cn(sectionWrapper, "bg-white")}>
-          <div className="flex flex-col gap-3">
-            <h2 className={sectionHeadingTitle}>About {tool.name}</h2>
-            <p className="max-w-4xl text-sm leading-relaxed text-slate-600">
+        <section className="border-b border-dashed border-border bg-white">
+          <DetailSectionHeader title="About" icon={Info} theme="blue" />
+          <div className={sectionContentBox}>
+            <p className={detailSectionText}>
               {tool.description}
             </p>
           </div>
@@ -376,14 +394,13 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
 
         {/* Screenshots Gallery (if present) */}
         {tool.images && tool.images.length > 0 && (
-          <section className={cn(sectionWrapper, "bg-slate-50/30")}>
-            <div className="flex flex-col gap-4">
-              <div>
-                <h2 className={sectionHeadingTitle}>Screenshots & Gallery</h2>
-                <p className={sectionHeadingSubtitle}>
-                  Visual interface and developer experience of {tool.name}
-                </p>
-              </div>
+          <section className="border-b border-dashed border-border bg-white">
+            <DetailSectionHeader
+              title="Screenshots & Gallery"
+              icon={ImageIcon}
+              theme="sky"
+            />
+            <div className="bg-slate-50/20 p-6 md:p-8">
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
                 {tool.images.slice(0, 5).map((imgUrl, i) => (
                   <div
@@ -405,14 +422,13 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
 
         {/* Demo Video (if present) */}
         {tool.demoVideoUrl && (
-          <section className={cn(sectionWrapper, "bg-white")}>
-            <div className="flex flex-col gap-4">
-              <div>
-                <h2 className={sectionHeadingTitle}>Product Demo Video</h2>
-                <p className={sectionHeadingSubtitle}>
-                  Walkthrough and overview demonstration of {tool.name}
-                </p>
-              </div>
+          <section className="border-b border-dashed border-border bg-white">
+            <DetailSectionHeader
+              title="Product Demo Video"
+              icon={Video}
+              theme="violet"
+            />
+            <div className="p-6 md:p-8">
               <div className="aspect-video max-w-3xl overflow-hidden rounded-xl border border-dashed border-border bg-black shadow-xs">
                 {tool.demoVideoUrl.includes("youtube.com") ||
                 tool.demoVideoUrl.includes("youtu.be") ? (
@@ -446,10 +462,14 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
 
         {/* Use Cases (if present) */}
         {tool.useCases && (
-          <section className={cn(sectionWrapper, "bg-slate-50/40")}>
-            <div className="flex flex-col gap-2">
-              <h2 className={sectionHeadingTitle}>Target Use Cases</h2>
-              <p className="max-w-4xl text-sm leading-relaxed whitespace-pre-wrap text-slate-700">
+          <section className="border-b border-dashed border-border bg-white">
+            <DetailSectionHeader
+              title="Target Use Cases"
+              icon={Target}
+              theme="emerald"
+            />
+            <div className={sectionContentBox}>
+              <p className={detailSectionText}>
                 {tool.useCases}
               </p>
             </div>
@@ -457,161 +477,126 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
         )}
 
         {/* Section 2: Tool Specifications */}
-        <section className={cn(sectionWrapper, "bg-slate-50/40")}>
-          <div className="flex flex-col gap-6">
-            <div className="flex flex-col gap-1">
-              <h2 className={sectionHeadingTitle}>Tool Specifications</h2>
-              <p className={sectionHeadingSubtitle}>
-                Key metrics, platform support, and technical compatibility for{" "}
-                {tool.name}
-              </p>
+        <section className="border-b border-dashed border-border bg-white">
+          <DetailSectionHeader
+            title="Tool Specifications"
+            icon={Sliders}
+            theme="slate"
+          />
+
+          <div className={toolSpecsContainer}>
+            <div className={specItemBox}>
+              <span className={specItemLabel}>
+                <DollarSign className="size-3 text-slate-400" />
+                Pricing Model
+              </span>
+              <span className={specItemValue}>{tool.pricing}</span>
             </div>
 
-            <div className={toolSpecsContainer}>
-              <div className="flex flex-col gap-1.5 p-4.5">
-                <span className="font-mono text-[10px] font-bold tracking-wider text-slate-400 uppercase">
-                  Pricing Model
-                </span>
-                <span className="text-xs font-bold text-slate-900">
-                  {tool.pricing}
-                </span>
-              </div>
+            <div className={specItemBox}>
+              <span className={specItemLabel}>
+                <Hammer className="size-3 text-slate-400" />
+                Ecosystem Builds
+              </span>
+              <span className="text-xs font-bold text-blue-600">
+                {tool.buildsCount.toLocaleString()} projects
+              </span>
+            </div>
 
-              <div className="flex flex-col gap-1.5 p-4.5">
-                <span className="font-mono text-[10px] font-bold tracking-wider text-slate-400 uppercase">
-                  Total Upvotes
-                </span>
-                <span className="text-xs font-bold text-slate-900">
-                  {tool.upvotesCount.toLocaleString()}
-                </span>
-              </div>
-
-              <div className="flex flex-col gap-1.5 p-4.5">
-                <span className="font-mono text-[10px] font-bold tracking-wider text-slate-400 uppercase">
-                  Ecosystem Builds
-                </span>
-                <span className="text-xs font-bold text-blue-600">
-                  {tool.buildsCount.toLocaleString()} projects
-                </span>
-              </div>
-
-              <div className="flex flex-col gap-1.5 p-4.5">
-                <span className="font-mono text-[10px] font-bold tracking-wider text-slate-400 uppercase">
-                  Category
-                </span>
-                <span className="truncate text-xs font-bold text-slate-900">
-                  {tool.category ?? "Developer Tool"}
-                </span>
-              </div>
-
-              <div className="flex flex-col gap-1.5 p-4.5">
-                <span className="font-mono text-[10px] font-bold tracking-wider text-slate-400 uppercase">
-                  Target Region
-                </span>
-                <span className="text-xs font-bold text-slate-900">
-                  {tool.geoTarget ?? "Global"}
-                </span>
-              </div>
-
-              <div className="flex flex-col gap-1.5 p-4.5">
-                <span className="font-mono text-[10px] font-bold tracking-wider text-slate-400 uppercase">
-                  Platforms
-                </span>
-                <span
-                  className="truncate text-xs font-bold text-slate-900"
-                  title={tool.platforms?.join(", ")}
-                >
-                  {tool.platforms && tool.platforms.length > 0
-                    ? tool.platforms.join(", ")
-                    : "Web / Cloud"}
-                </span>
-              </div>
+            <div className={specItemBox}>
+              <span className={specItemLabel}>
+                <FolderGit2 className="size-3 text-slate-400" />
+                Category
+              </span>
+              <span className={specItemValue}>
+                {tool.category ?? "Developer Tool"}
+              </span>
+            </div>
+            <div className={specItemBox}>
+              <span className={specItemLabel}>
+                <Laptop className="size-3 text-slate-400" />
+                Platforms
+              </span>
+              <span
+                className={specItemValue}
+                title={tool.platforms?.join(", ")}
+              >
+                {tool.platforms && tool.platforms.length > 0
+                  ? tool.platforms.join(", ")
+                  : "Web / Cloud"}
+              </span>
             </div>
           </div>
         </section>
 
-        {/* Section 3: Tool Deep Dive */}
+        {/* Section 3: Value Proposition & Deep Dive */}
         {(tool.problemStatement || tool.solution || tool.uniqueValue) && (
-          <section className={cn(sectionWrapper, "bg-white")}>
-            <div className="flex flex-col gap-6">
-              <div className="flex flex-col gap-1">
-                <h2 className={sectionHeadingTitle}>Tool Deep Dive</h2>
-                <p className={sectionHeadingSubtitle}>
-                  Architectural insights, developer pain points solved, and core
-                  value proposition
-                </p>
-              </div>
+          <section className="border-b border-dashed border-border bg-white">
+            <DetailSectionHeader
+              title="Value Proposition & Deep Dive"
+              icon={Sparkles}
+              theme="amber"
+            />
 
-              <div className={toolDeepDiveContainer}>
-                {tool.problemStatement && (
-                  <div className="flex w-full min-w-0 flex-col gap-3.5 bg-slate-50/20 p-6 transition-colors hover:bg-slate-50/50 md:p-8">
-                    <div className="flex items-center justify-between">
-                      <span className="font-mono text-[10px] font-bold tracking-widest text-rose-600 uppercase">
-                        01 / PROBLEM
-                      </span>
-                      <div className="flex size-7 items-center justify-center rounded-md border border-rose-200/80 bg-rose-50 text-rose-600">
-                        <Target className="size-3.5" />
-                      </div>
-                    </div>
-                    <h3 className="text-sm font-bold text-slate-900 sm:text-base">
+            <div className={toolDeepDiveContainer}>
+              {tool.problemStatement && (
+                <div className={deepDiveItem}>
+                  <div className={deepDiveItemHeader}>
+                    <span className="inline-flex size-5 shrink-0 items-center justify-center rounded-sm bg-rose-100 font-mono text-[10px] font-bold text-rose-700">
+                      01
+                    </span>
+                    <h3 className={deepDiveItemTitle}>
                       The Problem It Solves
                     </h3>
-                    <p className="max-w-4xl text-xs leading-relaxed wrap-break-word whitespace-pre-line text-slate-600 sm:text-sm">
-                      {tool.problemStatement}
-                    </p>
                   </div>
-                )}
+                  <p className={deepDiveItemText}>
+                    {tool.problemStatement}
+                  </p>
+                </div>
+              )}
 
-                {tool.solution && (
-                  <div className="flex w-full min-w-0 flex-col gap-3.5 bg-slate-50/20 p-6 transition-colors hover:bg-slate-50/50 md:p-8">
-                    <div className="flex items-center justify-between">
-                      <span className="font-mono text-[10px] font-bold tracking-widest text-emerald-600 uppercase">
-                        02 / ARCHITECTURE
-                      </span>
-                      <div className="flex size-7 items-center justify-center rounded-md border border-emerald-200/80 bg-emerald-50 text-emerald-600">
-                        <Zap className="size-3.5" />
-                      </div>
-                    </div>
-                    <h3 className="text-sm font-bold text-slate-900 sm:text-base">
+              {tool.solution && (
+                <div className={deepDiveItem}>
+                  <div className={deepDiveItemHeader}>
+                    <span className="inline-flex size-5 shrink-0 items-center justify-center rounded-sm bg-emerald-100 font-mono text-[10px] font-bold text-emerald-700">
+                      02
+                    </span>
+                    <h3 className={deepDiveItemTitle}>
                       The Solution
                     </h3>
-                    <p className="max-w-4xl text-xs leading-relaxed wrap-break-word whitespace-pre-line text-slate-600 sm:text-sm">
-                      {tool.solution}
-                    </p>
                   </div>
-                )}
+                  <p className={deepDiveItemText}>{tool.solution}</p>
+                </div>
+              )}
 
-                {tool.uniqueValue && (
-                  <div className="flex w-full min-w-0 flex-col gap-3.5 bg-slate-50/20 p-6 transition-colors hover:bg-slate-50/50 md:p-8">
-                    <div className="flex items-center justify-between">
-                      <span className="font-mono text-[10px] font-bold tracking-widest text-blue-600 uppercase">
-                        03 / ADVANTAGE
-                      </span>
-                      <div className="flex size-7 items-center justify-center rounded-md border border-blue-200/80 bg-blue-50 text-blue-600">
-                        <Sparkles className="size-3.5" />
-                      </div>
-                    </div>
-                    <h3 className="text-sm font-bold text-slate-900 sm:text-base">
+              {tool.uniqueValue && (
+                <div className={deepDiveItem}>
+                  <div className={deepDiveItemHeader}>
+                    <span className="inline-flex size-5 shrink-0 items-center justify-center rounded-sm bg-indigo-100 font-mono text-[10px] font-bold text-indigo-700">
+                      03
+                    </span>
+                    <h3 className={deepDiveItemTitle}>
                       What Makes It Unique
                     </h3>
-                    <p className="max-w-4xl text-xs leading-relaxed wrap-break-word whitespace-pre-line text-slate-600 sm:text-sm">
-                      {tool.uniqueValue}
-                    </p>
                   </div>
-                )}
-              </div>
+                  <p className={deepDiveItemText}>{tool.uniqueValue}</p>
+                </div>
+              )}
             </div>
           </section>
         )}
 
         {/* Section 4: AI Summary / Direct Answers (GEO / AEO) */}
         {tool.aiContext && (
-          <section className={cn(sectionWrapper, "bg-indigo-50/30")}>
-            <div className="flex flex-col gap-3">
-              <div className="flex items-center gap-2 text-xs font-bold tracking-wider text-indigo-700 uppercase">
-                <Cpu className="size-4" /> AI Overview & Direct Answers
-              </div>
-              <p className="max-w-4xl text-xs leading-relaxed text-slate-700">
+          <section className="border-b border-dashed border-border bg-white">
+            <DetailSectionHeader
+              title="AI Overview & Direct Answers"
+              subtitle="Machine-readable knowledge snapshot optimized for LLMs and developer search engines"
+              icon={Cpu}
+              theme="indigo"
+            />
+            <div className="bg-indigo-50/15 px-6 py-6 md:px-8">
+              <p className="max-w-4xl text-xs leading-relaxed whitespace-pre-line text-slate-700 sm:text-sm">
                 {tool.aiContext}
               </p>
             </div>
@@ -620,16 +605,12 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
 
         {/* Section 5: Products Built with this Tool */}
         <section className="border-b border-dashed border-border bg-white">
-          <div className="flex flex-col gap-3 border-b border-dashed border-border px-6 py-6 sm:flex-row sm:items-center sm:justify-between md:px-8 md:py-8">
-            <div>
-              <h2 className={sectionHeadingTitle}>
-                Products Built With {tool.name}
-              </h2>
-              <p className={sectionHeadingSubtitle}>
-                Discover projects and applications using {tool.name} in
-                production
-              </p>
-            </div>
+          <DetailSectionHeader
+            title={`Products Built With ${tool.name}`}
+            subtitle={`Discover projects and applications using ${tool.name} in production`}
+            icon={Package}
+            theme="blue"
+          >
             <Button
               variant="outline"
               size="sm"
@@ -639,7 +620,7 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
               <PlusCircle className="mr-1.5 size-3.5" />
               Submit Your Build
             </Button>
-          </div>
+          </DetailSectionHeader>
 
           {builtWithProducts.length > 0 ? (
             <div className="flex flex-col">
@@ -680,34 +661,26 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
         {/* Section 6: Q&A Section */}
         {toolFaqs.length > 0 && (
           <section className="border-b border-dashed border-border bg-white">
-            <div className="flex flex-col gap-1 border-b border-dashed border-border bg-slate-50/40 px-6 py-6 md:px-8 md:py-8">
-              <h2 className={sectionHeadingTitle}>
-                Frequently Asked Questions
-              </h2>
-              <p className={sectionHeadingSubtitle}>
-                Common questions and technical details about {tool.name}
-              </p>
-            </div>
+            <DetailSectionHeader
+              title="Frequently Asked Questions"
+              subtitle={`Common questions and technical details about ${tool.name}`}
+              icon={HelpCircle}
+              theme="teal"
+            />
 
-            <div className="flex flex-col divide-y divide-dashed divide-border">
+            <div className={faqContainer}>
               {toolFaqs.map((faq, idx) => (
                 <div
                   key={faq.id ?? `${faq.question}-${idx}`}
-                  className="flex flex-col gap-2 px-6 py-6 transition-colors hover:bg-slate-50/40 md:px-8"
+                  className={faqItem}
                 >
-                  <div className="flex items-start gap-3">
-                    <span className="shrink-0 pt-0.5 font-mono text-xs font-bold text-slate-400 select-none">
+                  <div className={faqQuestionHeader}>
+                    <span className="inline-flex size-5 shrink-0 items-center justify-center rounded-sm bg-teal-100 font-mono text-[10px] font-bold text-teal-800">
                       Q{idx + 1}
                     </span>
-                    <div className="flex min-w-0 flex-1 flex-col gap-1.5">
-                      <h3 className="text-sm font-bold wrap-break-word text-slate-900">
-                        {faq.question}
-                      </h3>
-                      <p className="max-w-4xl text-xs leading-relaxed wrap-break-word whitespace-pre-line text-slate-600 sm:text-sm">
-                        {faq.answer}
-                      </p>
-                    </div>
+                    <h3 className={faqQuestionText}>{faq.question}</h3>
                   </div>
+                  <p className={faqAnswerText}>{faq.answer}</p>
                 </div>
               ))}
             </div>

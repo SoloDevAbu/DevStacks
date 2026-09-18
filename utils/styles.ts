@@ -58,15 +58,154 @@ export const sectionGridWrapper =
 export const sectionWrapper =
   "border-b border-dashed border-border px-6 py-8 md:px-8 md:py-10"
 
-export const sectionHeadingTitle = "text-lg font-bold text-slate-900"
+export const DETAIL_SECTION_THEMES = {
+  blue: {
+    headerBg: "bg-linear-to-r from-blue-50/80 via-indigo-50/20 to-transparent",
+    titleColor: "text-blue-700",
+    subtitleColor: "text-blue-600/75",
+    iconColor: "text-blue-600",
+  },
+  emerald: {
+    headerBg: "bg-linear-to-r from-emerald-50/80 via-teal-50/20 to-transparent",
+    titleColor: "text-emerald-700",
+    subtitleColor: "text-emerald-600/75",
+    iconColor: "text-emerald-600",
+  },
+  amber: {
+    headerBg: "bg-linear-to-r from-amber-50/80 via-orange-50/20 to-transparent",
+    titleColor: "text-amber-800",
+    subtitleColor: "text-amber-700/75",
+    iconColor: "text-amber-600",
+  },
+  orange: {
+    headerBg: "bg-linear-to-r from-orange-50/80 via-amber-50/20 to-transparent",
+    titleColor: "text-orange-700",
+    subtitleColor: "text-orange-600/75",
+    iconColor: "text-orange-600",
+  },
+  sky: {
+    headerBg: "bg-linear-to-r from-sky-50/80 via-blue-50/20 to-transparent",
+    titleColor: "text-sky-700",
+    subtitleColor: "text-sky-600/75",
+    iconColor: "text-sky-600",
+  },
+  violet: {
+    headerBg: "bg-linear-to-r from-violet-50/80 via-purple-50/20 to-transparent",
+    titleColor: "text-violet-700",
+    subtitleColor: "text-violet-600/75",
+    iconColor: "text-violet-600",
+  },
+  indigo: {
+    headerBg: "bg-linear-to-r from-indigo-50/80 via-violet-50/20 to-transparent",
+    titleColor: "text-indigo-700",
+    subtitleColor: "text-indigo-600/75",
+    iconColor: "text-indigo-600",
+  },
+  teal: {
+    headerBg: "bg-linear-to-r from-teal-50/85 via-cyan-50/25 to-transparent",
+    titleColor: "text-teal-800",
+    subtitleColor: "text-teal-700/75",
+    iconColor: "text-teal-600",
+  },
+  cyan: {
+    headerBg: "bg-linear-to-r from-cyan-50/80 via-sky-50/20 to-transparent",
+    titleColor: "text-cyan-800",
+    subtitleColor: "text-cyan-700/75",
+    iconColor: "text-cyan-600",
+  },
+  purple: {
+    headerBg: "bg-linear-to-r from-purple-50/80 via-pink-50/20 to-transparent",
+    titleColor: "text-purple-700",
+    subtitleColor: "text-purple-600/75",
+    iconColor: "text-purple-600",
+  },
+  slate: {
+    headerBg: "bg-linear-to-r from-slate-100/90 via-slate-50/50 to-transparent",
+    titleColor: "text-slate-800",
+    subtitleColor: "text-slate-500",
+    iconColor: "text-slate-600",
+  },
+} as const
+
+export type DetailSectionThemeKey = keyof typeof DETAIL_SECTION_THEMES
+
+export const detailSectionHeaderBase =
+  "flex flex-col gap-1 border-b border-dashed border-border px-6 py-4 sm:flex-row sm:items-center sm:justify-between md:px-8"
+
+export const detailSectionHeading =
+  "flex items-center gap-2 font-mono text-xs font-bold tracking-wider uppercase sm:text-sm"
+
+export const detailSectionSubtitle = "text-xs font-medium"
+
+export const detailSectionContent = "px-6 py-6 md:px-8 bg-white"
+
+export const detailSectionText =
+  "max-w-4xl text-xs sm:text-sm leading-relaxed wrap-break-word whitespace-pre-line text-slate-700"
+
+export const sectionHeadingTitle =
+  "flex items-center gap-2 font-mono text-xs font-bold tracking-wider text-slate-900 uppercase sm:text-sm"
 
 export const sectionHeadingSubtitle = "text-xs text-slate-500"
 
+export const sectionHeaderBox =
+  "flex flex-col gap-1 border-b border-dashed border-border bg-slate-50/50 px-6 py-4.5 md:px-8"
+
+export const sectionContentBox = "px-6 py-6 md:px-8"
+
+export const productSpecsContainer =
+  "grid grid-cols-3 divide-x divide-dashed divide-border bg-white"
+
 export const toolSpecsContainer =
-  "grid grid-cols-2 border border-dashed border-border bg-white sm:grid-cols-3 lg:grid-cols-6 divide-y sm:divide-y-0 sm:divide-x divide-dashed divide-border"
+  "grid grid-cols-4 divide-x divide-dashed divide-border bg-white"
+
+export const specItemBox =
+  "flex flex-col gap-1.5 p-3.5 sm:p-4.5 min-w-0 transition-colors hover:bg-slate-50/50"
+
+export const specItemLabel =
+  "flex items-center gap-1.5 font-mono text-[10px] font-bold tracking-wider text-slate-400 uppercase truncate"
+
+export const specItemValue =
+  "truncate text-xs font-bold text-slate-900"
 
 export const toolDeepDiveContainer =
-  "flex flex-col divide-y divide-dashed divide-border border border-dashed border-border bg-white"
+  "flex flex-col divide-y divide-dashed divide-border bg-white"
+
+export const deepDiveSectionTitle = sectionHeadingTitle
+
+export const deepDiveItem =
+  "flex flex-col gap-2 px-6 py-5 transition-colors hover:bg-slate-50/30 md:px-8"
+
+export const deepDiveItemHeader =
+  "flex items-center gap-2.5"
+
+export const deepDiveItemTitle =
+  "flex items-center gap-2 font-mono text-xs font-bold tracking-wider text-slate-900 uppercase"
+
+export const deepDiveItemText = detailSectionText
+
+export const deepDiveSubSection = deepDiveItem
+export const deepDiveSubSectionHeader = deepDiveItemHeader
+export const deepDiveSubHeading = deepDiveItemTitle
+export const deepDiveSubSubtitle = "text-[11px] text-slate-500"
+export const deepDiveSubSectionBody = "bg-transparent"
+export const deepDiveSubSectionText = detailSectionText
+
+export const faqContainer =
+  "flex flex-col divide-y divide-dashed divide-border bg-white"
+
+export const faqItem =
+  "flex flex-col gap-2 px-6 py-5 transition-colors hover:bg-slate-50/30 md:px-8"
+
+export const faqQuestionHeader =
+  "flex items-center gap-2.5"
+
+export const faqQuestionText =
+  "text-xs sm:text-sm font-bold text-slate-900"
+
+export const faqAnswerBody = "bg-transparent"
+
+export const faqAnswerText =
+  "max-w-4xl text-xs sm:text-sm leading-relaxed wrap-break-word whitespace-pre-line text-slate-600"
 
 export const upvoteButtonActive =
   "relative z-10 h-8 gap-1.5 rounded-lg border-amber-300 bg-amber-50 px-3 text-sm font-bold text-amber-600 hover:bg-amber-100/80 transition-colors"
@@ -114,6 +253,9 @@ export const agentFooterDot = "text-slate-300 select-none"
 
 export const toolBuildsBadge =
   "inline-flex items-center gap-1 rounded-md border border-blue-200/80 bg-blue-50/80 px-2 py-0.5 text-xs font-semibold text-blue-700 hover:bg-blue-100/80 transition-colors"
+
+export const cardTagIcon = "size-3.5 shrink-0 text-slate-400"
+export const cardTagsGroup = "flex flex-wrap items-center gap-1.5"
 
 export const toolViewsPill =
   "inline-flex items-center gap-1 text-xs font-medium text-slate-400"

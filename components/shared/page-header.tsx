@@ -14,6 +14,8 @@ export type PageHeaderVariant =
   | "discover-recently-added"
   | "discover-rising-products"
   | "discover-rising-tools"
+  | "discover-daily-launches"
+  | "discover-weekly-launches"
   | "products"
   | "tools"
 
@@ -80,6 +82,18 @@ const VARIANT_CONFIGS = {
     mesh1: "bg-indigo-200/25",
     mesh2: "bg-cyan-200/20",
     aiLabel: "ASK AI ABOUT RISING TOOLS",
+  },
+  "discover-daily-launches": {
+    bg: "bg-linear-to-b from-rose-50/45 via-white to-slate-50/30",
+    mesh1: "bg-rose-200/30",
+    mesh2: "bg-amber-200/20",
+    aiLabel: "ASK AI ABOUT TODAY'S LAUNCHES",
+  },
+  "discover-weekly-launches": {
+    bg: "bg-linear-to-b from-indigo-50/40 via-white to-slate-50/30",
+    mesh1: "bg-indigo-200/25",
+    mesh2: "bg-violet-200/20",
+    aiLabel: "ASK AI ABOUT WEEKLY LAUNCHES",
   },
   products: {
     bg: "bg-linear-to-b from-violet-50/40 via-white to-slate-50/30",

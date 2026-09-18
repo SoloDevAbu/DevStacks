@@ -717,14 +717,7 @@ export const SubmitContent = () => {
                     htmlFor="github"
                     className="flex items-center gap-1.5 text-xs font-semibold text-slate-700"
                   >
-                    <Image
-                      src="/social-logo/github.png"
-                      alt="GitHub"
-                      width={16}
-                      height={16}
-                      className="size-4 rounded-xs object-contain"
-                    />
-                    GitHub Repository
+                    GitHub
                   </Label>
                   <div className="relative">
                     <div className="pointer-events-none absolute top-2.5 left-3 flex size-4 items-center justify-center">
@@ -752,13 +745,6 @@ export const SubmitContent = () => {
                     htmlFor="twitter"
                     className="flex items-center gap-1.5 text-xs font-semibold text-slate-700"
                   >
-                    <Image
-                      src="/social-logo/twitter.png"
-                      alt="X (Twitter)"
-                      width={16}
-                      height={16}
-                      className="size-4 rounded-xs object-contain"
-                    />
                     X (Twitter)
                   </Label>
                   <div className="relative">
@@ -787,13 +773,6 @@ export const SubmitContent = () => {
                     htmlFor="linkedin"
                     className="flex items-center gap-1.5 text-xs font-semibold text-slate-700"
                   >
-                    <Image
-                      src="/social-logo/linkedin.png"
-                      alt="LinkedIn"
-                      width={16}
-                      height={16}
-                      className="size-4 rounded-xs object-contain"
-                    />
                     LinkedIn
                   </Label>
                   <div className="relative">
@@ -822,13 +801,6 @@ export const SubmitContent = () => {
                     htmlFor="discord"
                     className="flex items-center gap-1.5 text-xs font-semibold text-slate-700"
                   >
-                    <Image
-                      src="/social-logo/discord.png"
-                      alt="Discord"
-                      width={16}
-                      height={16}
-                      className="size-4 rounded-xs object-contain"
-                    />
                     Discord Community
                   </Label>
                   <div className="relative">
@@ -857,13 +829,6 @@ export const SubmitContent = () => {
                     htmlFor="appStore"
                     className="flex items-center gap-1.5 text-xs font-semibold text-slate-700"
                   >
-                    <Image
-                      src="/social-logo/app-store.png"
-                      alt="App Store"
-                      width={16}
-                      height={16}
-                      className="size-4 rounded-xs object-contain"
-                    />
                     Apple App Store
                   </Label>
                   <div className="relative">
@@ -897,13 +862,6 @@ export const SubmitContent = () => {
                     htmlFor="playStore"
                     className="flex items-center gap-1.5 text-xs font-semibold text-slate-700"
                   >
-                    <Image
-                      src="/social-logo/playstore.png"
-                      alt="Google Play Store"
-                      width={16}
-                      height={16}
-                      className="size-4 rounded-xs object-contain"
-                    />
                     Google Play Store
                   </Label>
                   <div className="relative">
@@ -937,13 +895,6 @@ export const SubmitContent = () => {
                     htmlFor="chromeExtension"
                     className="flex items-center gap-1.5 text-xs font-semibold text-slate-700"
                   >
-                    <Image
-                      src="/social-logo/chrome.png"
-                      alt="Chrome Web Store"
-                      width={16}
-                      height={16}
-                      className="size-4 rounded-xs object-contain"
-                    />
                     Chrome Web Store Extension
                   </Label>
                   <div className="relative">

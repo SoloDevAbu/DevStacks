@@ -6,26 +6,33 @@ import {
 } from "@/lib/seo/schema"
 import { SITE_CONFIG } from "@/constants/site"
 import { HOMEPAGE_LIMITS } from "@/constants/rankings"
-import { getNewAndRisingProducts } from "@/lib/rankings/new-and-rising"
-import { getRisingTools } from "@/lib/rankings/rising-tools"
-import { getRisingProducts } from "@/lib/rankings/rising-products"
-import { getRecentlyAddedProducts } from "@/lib/rankings/recently-added"
+import { getTodaysLaunches } from "@/lib/launches/todays-launches"
+import { getWeeklyLaunches } from "@/lib/launches/weekly-launches"
 import { getPopularBuildingBlocks } from "@/lib/rankings/popular"
+import { getCurrentWeek } from "@/lib/launches/week-utils"
 import type { FeedItem } from "@/components/shared/feed-card"
-import type { DbTool, DbProduct } from "@/types/entities"
 
 export const revalidate = 60
 
 export const metadata: Metadata = {
-  title: `${SITE_CONFIG.name} — ${SITE_CONFIG.tagline}`,
-  description: SITE_CONFIG.description,
-  keywords: [...SITE_CONFIG.keywords],
+  title: `${SITE_CONFIG.name} — Today's Developer Launches`,
+  description:
+    "Discover the developer tools, APIs, and products launching today and this week on DevStacks. Ranked by community votes, updated every minute.",
+  keywords: [
+    ...SITE_CONFIG.keywords,
+    "daily developer launches",
+    "today's developer tools",
+    "product launches today",
+    "new software launches",
+    "community voted tools",
+  ],
   alternates: {
     canonical: SITE_CONFIG.url,
   },
   openGraph: {
-    title: `${SITE_CONFIG.name} — ${SITE_CONFIG.tagline}`,
-    description: SITE_CONFIG.description,
+    title: `${SITE_CONFIG.name} — Today's Developer Launches`,
+    description:
+      "Discover the developer tools, APIs, and products launching today on DevStacks, ranked by community votes.",
     type: "website",
     url: SITE_CONFIG.url,
     siteName: SITE_CONFIG.name,
@@ -34,44 +41,33 @@ export const metadata: Metadata = {
         url: `${SITE_CONFIG.url}/opengraph-image`,
         width: 1200,
         height: 630,
-        alt: `${SITE_CONFIG.name} — ${SITE_CONFIG.tagline}`,
+        alt: `${SITE_CONFIG.name} — Today's Developer Launches`,
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: `${SITE_CONFIG.name} — ${SITE_CONFIG.tagline}`,
-    description: SITE_CONFIG.description,
+    title: `${SITE_CONFIG.name} — Today's Developer Launches`,
+    description:
+      "Discover the developer tools, APIs, and products launching today on DevStacks, ranked by community votes.",
     images: [`${SITE_CONFIG.url}/twitter-image`],
   },
 }
 
 const Page = async () => {
   const orgJsonLd = organizationSchema()
+  const { year, week } = getCurrentWeek()
 
-  const [
-    newAndRising,
-    risingTools,
-    risingProducts,
-    recentlyAdded,
-    popularBuildingBlocks,
-  ] = await Promise.all([
-    getNewAndRisingProducts({ limit: HOMEPAGE_LIMITS.NEW_AND_RISING }).catch(
-      () => []
-    ),
-    getRisingTools({ limit: HOMEPAGE_LIMITS.RISING_TOOLS }).catch(() => []),
-    getRisingProducts({ limit: HOMEPAGE_LIMITS.DEVELOPER_BUILDS }).catch(
-      () => []
-    ),
-    getRecentlyAddedProducts({ limit: HOMEPAGE_LIMITS.RECENTLY_ADDED }).catch(
-      () => []
-    ),
-    getPopularBuildingBlocks({
-      limit: HOMEPAGE_LIMITS.POPULAR_BUILDING_BLOCKS,
-    }).catch(() => []),
-  ])
+  const [todaysLaunches, weeklyLaunches, popularBuildingBlocks] =
+    await Promise.all([
+      getTodaysLaunches({ limit: HOMEPAGE_LIMITS.TODAYS_LAUNCHES }).catch(() => []),
+      getWeeklyLaunches({ year, week, limit: HOMEPAGE_LIMITS.WEEKLY_LAUNCHES }).catch(() => []),
+      getPopularBuildingBlocks({
+        limit: HOMEPAGE_LIMITS.POPULAR_BUILDING_BLOCKS,
+      }).catch(() => []),
+    ])
 
-  const featuredItems = (newAndRising as FeedItem[])
+  const featuredItems = (todaysLaunches as FeedItem[])
     .slice(0, 10)
     .map((item) => ({
       name: item.name,
@@ -97,10 +93,8 @@ const Page = async () => {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionJsonLd) }}
       />
       <MainContent
-        newAndRising={newAndRising as FeedItem[]}
-        risingTools={risingTools as DbTool[]}
-        risingProducts={risingProducts as DbProduct[]}
-        recentlyAdded={recentlyAdded as FeedItem[]}
+        todaysLaunches={todaysLaunches as FeedItem[]}
+        weeklyLaunches={weeklyLaunches as FeedItem[]}
         popularBuildingBlocks={popularBuildingBlocks as FeedItem[]}
       />
     </>

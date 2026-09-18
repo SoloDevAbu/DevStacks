@@ -5,6 +5,8 @@ export const ROUTES = {
   DISCOVER_RISING_PRODUCTS: "/discover/rising-products",
   DISCOVER_RECENTLY_ADDED: "/discover/recently-added",
   DISCOVER_POPULAR_BUILDING_BLOCKS: "/discover/popular-building-blocks",
+  DISCOVER_WEEKLY_LAUNCHES: "/discover/weekly-launches",
+  DISCOVER_DAILY_LAUNCHES: "/discover/daily-launches",
   TRENDING: "/trending",
   PRICING: "/pricing",
   SUBMIT: "/submit",
