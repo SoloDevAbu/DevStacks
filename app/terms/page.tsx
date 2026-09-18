@@ -4,6 +4,8 @@ import { FileText, CheckCircle2, ShieldAlert, Cpu, Award, HelpCircle } from "luc
 import { SITE_CONFIG } from "@/constants/site"
 import { ROUTES } from "@/constants/routes"
 import { breadcrumbSchema } from "@/lib/seo/schema"
+import { AI_PROMPTS } from "@/lib/prompts"
+import { AskAiBar } from "@/components/shared/ask-ai-bar"
 
 export const metadata: Metadata = {
   title: "Terms of Service",
@@ -28,7 +30,7 @@ const TermsPage = () => {
       />
       <div className="mx-auto max-w-4xl px-6 py-10 md:px-8">
         {/* Header */}
-        <div className="flex flex-col gap-2 border-b border-dashed border-border pb-6">
+        <div className="flex flex-col gap-3 border-b border-dashed border-border pb-6">
           <div className="flex items-center gap-2">
             <span className="font-mono text-xs font-bold tracking-widest text-[#a06138] uppercase">
               LEGAL & COMPLIANCE
@@ -43,6 +45,18 @@ const TermsPage = () => {
           <p className="text-sm leading-relaxed text-slate-600">
             Please read these terms carefully before using {SITE_CONFIG.name}, submitting products, or accessing our developer APIs and machine-readable surfaces.
           </p>
+
+          <div className="mt-2 pt-2">
+            <AskAiBar
+              prompt={AI_PROMPTS.terms}
+              label="ASK AI ABOUT TERMS"
+              compact
+              questions={[
+                "What are the listing guidelines?",
+                "What are the rules on upvoting integrity?",
+              ]}
+            />
+          </div>
         </div>
 
         {/* Content */}

@@ -1,6 +1,8 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 import { SITE_CONFIG } from "@/constants/site"
+import { AI_PROMPTS } from "@/lib/prompts"
+import { AskAiBar } from "@/components/shared/ask-ai-bar"
 
 export const metadata: Metadata = {
   title: "MCP Server Documentation",
@@ -13,7 +15,7 @@ export const metadata: Metadata = {
 const McpPage = () => {
   return (
     <div className="mx-auto max-w-4xl px-6 py-10 md:px-8">
-      <div className="flex flex-col gap-2 border-b border-dashed border-border pb-6">
+      <div className="flex flex-col gap-3 border-b border-dashed border-border pb-6">
         <div className="flex items-center gap-2">
           <span className="font-mono text-xs font-bold tracking-widest text-[#a06138] uppercase">
             MODEL CONTEXT PROTOCOL
@@ -28,7 +30,7 @@ const McpPage = () => {
         <p className="text-sm text-slate-600 leading-relaxed">
           Public, read-only Model Context Protocol server exposing real-time developer tools, tech stacks, and community upvotes to AI coding assistants and agents.
         </p>
-        <div className="mt-2 flex flex-wrap items-center gap-3 font-mono text-xs text-slate-500">
+        <div className="mt-1 flex flex-wrap items-center gap-3 font-mono text-xs text-slate-500">
           <span>Transport: <code className="bg-slate-100 px-1 py-0.5 rounded text-slate-800">Streamable HTTP</code></span>
           <span>·</span>
           <span>Endpoint: <code className="bg-slate-100 px-1 py-0.5 rounded text-slate-800">POST /api/mcp</code></span>
@@ -36,6 +38,17 @@ const McpPage = () => {
           <Link href="/mcp.md" className="text-indigo-600 hover:underline">
             View as Markdown (.md)
           </Link>
+        </div>
+
+        <div className="mt-2 pt-2">
+          <AskAiBar
+            prompt={AI_PROMPTS.mcp}
+            label="ASK AI ABOUT LAUNCHNESTS MCP"
+            questions={[
+              "What 8 MCP tools are available?",
+              "How do I configure Cursor for LaunchNests MCP?",
+            ]}
+          />
         </div>
       </div>
 

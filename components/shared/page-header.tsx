@@ -1,6 +1,4 @@
-import Image from "next/image"
-import { HoverOutline } from "@/components/shared/hover-outline"
-import { AI_PROVIDERS } from "@/constants/ai-providers"
+import { AskAiBar } from "@/components/shared/ask-ai-bar"
 import { cn } from "@/lib/utils"
 
 export type PageHeaderVariant =
@@ -171,34 +169,11 @@ export const PageHeader = ({
       </div>
 
       <div className="relative z-10 flex w-full max-w-[320px] flex-col gap-3 lg:max-w-100 lg:items-end">
-        <p className="text-xs font-bold tracking-wider text-muted-foreground uppercase">
-          {askAiLabel ?? config.aiLabel}
-        </p>
-        <div className="flex flex-wrap items-center gap-3 lg:justify-end">
-          {AI_PROVIDERS.map((ai) => (
-            <div key={ai.id} className="group/btn relative inline-flex">
-              <a
-                href={`${ai.url}${encodeURIComponent(aiPrompt)}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="relative z-10 flex items-center justify-center gap-1.5 rounded-md border border-slate-200/80 bg-white/90 px-2.5 py-1 transition-all hover:bg-slate-50 hover:shadow-2xs"
-                title={`Ask ${ai.name}`}
-              >
-                <Image
-                  src={ai.icon}
-                  alt={ai.name}
-                  width={14}
-                  height={14}
-                  className="object-contain mix-blend-multiply"
-                />
-                <span className="text-xs font-medium text-slate-700 transition-colors group-hover/btn:text-slate-950">
-                  {ai.name}
-                </span>
-              </a>
-              <HoverOutline />
-            </div>
-          ))}
-        </div>
+        <AskAiBar
+          prompt={aiPrompt}
+          label={askAiLabel ?? config.aiLabel}
+          align="end"
+        />
       </div>
     </div>
   )

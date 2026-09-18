@@ -61,12 +61,15 @@ const MACHINE_AGENT_LINKS = [
 ] as const
 
 export const AgentFooter = () => (
-  <footer aria-label="Site and Agent Footer" className="flex flex-col border-t border-dashed border-border bg-white">
+  <footer
+    aria-label="Site and Agent Footer"
+    className="flex flex-col border-t border-dashed border-border bg-white"
+  >
     {/* --- TIER 1: Developer & Community Directory --- */}
     <div className={siteFooterWrapper}>
       {/* Ask AI Section inside Tier 1 */}
       <div className={footerAiSection}>
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex shrink-0 items-center gap-2">
           <Sparkles className="size-3.5 text-blue-600" />
           <span className={footerAiTrayLabel}>
             ASK AI ABOUT {SITE_CONFIG.name.toUpperCase()}
@@ -105,15 +108,15 @@ export const AgentFooter = () => (
         <div className="flex flex-col gap-3 sm:col-span-2 md:col-span-1 lg:col-span-2">
           <HeaderLogo />
           <p className="max-w-sm text-xs leading-relaxed text-slate-500">
-            The discovery engine for developer tools, APIs, and modern tech stacks.
-            Battle-tested by engineers, machine-readable for AI agents.
+            The discovery engine for developer tools, APIs, and modern tech
+            stacks. Battle-tested by engineers, machine-readable for AI agents.
           </p>
           <div className="mt-2 flex items-center gap-3 font-mono text-xs text-slate-500">
             <a
               href={SITE_CONFIG.socials.x}
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:text-slate-900 transition-colors"
+              className="transition-colors hover:text-slate-900"
             >
               X / Twitter
             </a>
@@ -122,7 +125,7 @@ export const AgentFooter = () => (
               href={SITE_CONFIG.socials.linkedin}
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:text-slate-900 transition-colors"
+              className="transition-colors hover:text-slate-900"
             >
               LinkedIn
             </a>
@@ -163,7 +166,11 @@ export const AgentFooter = () => (
           <ul className="flex flex-col gap-2">
             {PROTOCOL_LINKS.map((link) => (
               <li key={link.label}>
-                <Link href={link.href} className={siteFooterLink} prefetch={false}>
+                <Link
+                  href={link.href}
+                  className={siteFooterLink}
+                  prefetch={false}
+                >
                   {link.label}
                 </Link>
               </li>
@@ -175,10 +182,10 @@ export const AgentFooter = () => (
 
     {/* --- TIER 2: Dedicated Machine & Agent Protocol Tray --- */}
     <div className={agentProtocolTray}>
-      <div className="flex items-center gap-2 shrink-0 mr-1">
+      <div className="mr-1 flex shrink-0 items-center gap-2">
         <Bot className="size-3.5 text-amber-700" />
         <span className={agentFooterLabel}>FOR AI AGENTS</span>
-        <span className="rounded border border-amber-600/30 bg-amber-600/10 px-1 py-0.2 font-mono text-[9px] font-bold text-amber-800">
+        <span className="py-0.2 rounded border border-amber-600/30 bg-amber-600/10 px-1 font-mono text-[9px] font-bold text-amber-800">
           MCP READY
         </span>
       </div>
@@ -186,11 +193,7 @@ export const AgentFooter = () => (
       <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
         {MACHINE_AGENT_LINKS.map((link, idx) => (
           <span key={link.href} className="inline-flex items-center gap-2">
-            <Link
-              href={link.href}
-              className={agentFooterLink}
-              prefetch={false}
-            >
+            <Link href={link.href} className={agentFooterLink} prefetch={false}>
               {link.label}
             </Link>
             {idx < MACHINE_AGENT_LINKS.length - 1 && (
@@ -205,7 +208,7 @@ export const AgentFooter = () => (
 
     {/* --- TIER 3: Copyright & Status Strip --- */}
     <div className={siteFooterBottomStrip}>
-      <div className="flex items-center gap-1.5 whitespace-nowrap text-[11px] text-slate-500">
+      <div className="flex items-center gap-1.5 text-[11px] whitespace-nowrap text-slate-500">
         <span className="font-semibold text-slate-700">
           © {new Date().getFullYear()} {SITE_CONFIG.name}.
         </span>
@@ -213,31 +216,31 @@ export const AgentFooter = () => (
           Built for developers & autonomous agents.
         </span>
       </div>
-      <div className="flex items-center gap-x-2.5 whitespace-nowrap font-mono text-[11px] sm:gap-x-3.5 sm:text-xs">
+      <div className="flex items-center gap-x-2.5 font-mono text-[11px] whitespace-nowrap sm:gap-x-3.5 sm:text-xs">
         <Link
           href={ROUTES.FAQ}
-          className="text-slate-500 transition-colors hover:text-slate-900 underline-offset-4 hover:underline"
+          className="text-slate-500 underline-offset-4 transition-colors hover:text-slate-900 hover:underline"
         >
           FAQs
         </Link>
         <span className="text-slate-300 select-none">·</span>
         <Link
           href={ROUTES.PRIVACY}
-          className="text-slate-500 transition-colors hover:text-slate-900 underline-offset-4 hover:underline"
+          className="text-slate-500 underline-offset-4 transition-colors hover:text-slate-900 hover:underline"
         >
           Privacy Policy
         </Link>
         <span className="text-slate-300 select-none">·</span>
         <Link
           href={ROUTES.TERMS}
-          className="text-slate-500 transition-colors hover:text-slate-900 underline-offset-4 hover:underline"
+          className="text-slate-500 underline-offset-4 transition-colors hover:text-slate-900 hover:underline"
         >
           Terms of Service
         </Link>
         <span className="text-slate-300 select-none">·</span>
         <Link
           href={ROUTES.REFUND}
-          className="text-slate-500 transition-colors hover:text-slate-900 underline-offset-4 hover:underline"
+          className="text-slate-500 underline-offset-4 transition-colors hover:text-slate-900 hover:underline"
         >
           Refund Policy
         </Link>
@@ -245,4 +248,3 @@ export const AgentFooter = () => (
     </div>
   </footer>
 )
-

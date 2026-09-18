@@ -1,6 +1,8 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 import { SITE_CONFIG } from "@/constants/site"
+import { AI_PROMPTS } from "@/lib/prompts"
+import { AskAiBar } from "@/components/shared/ask-ai-bar"
 
 export const metadata: Metadata = {
   title: "CLI and Public REST API",
@@ -13,7 +15,7 @@ export const metadata: Metadata = {
 const CliPage = () => {
   return (
     <div className="mx-auto max-w-4xl px-6 py-10 md:px-8">
-      <div className="flex flex-col gap-2 border-b border-dashed border-border pb-6">
+      <div className="flex flex-col gap-3 border-b border-dashed border-border pb-6">
         <div className="flex items-center gap-2">
           <span className="font-mono text-xs font-bold tracking-widest text-[#a06138] uppercase">
             DEVELOPER ACCESS
@@ -30,7 +32,7 @@ const CliPage = () => {
           directly from your terminal, scripts, or AI agent pipelines. No API
           key required for reads.
         </p>
-        <div className="mt-2 flex flex-wrap items-center gap-3 font-mono text-xs text-slate-500">
+        <div className="mt-1 flex flex-wrap items-center gap-3 font-mono text-xs text-slate-500">
           <span>
             Contract:{" "}
             <Link
@@ -51,6 +53,17 @@ const CliPage = () => {
           <Link href="/cli.md" className="text-indigo-600 hover:underline">
             View as Markdown (.md)
           </Link>
+        </div>
+
+        <div className="mt-2 pt-2">
+          <AskAiBar
+            prompt={AI_PROMPTS.cli}
+            label="ASK AI ABOUT CLI & REST API"
+            questions={[
+              "How do I query tools via cURL or CLI?",
+              "What REST endpoints are exposed under /v1?",
+            ]}
+          />
         </div>
       </div>
 

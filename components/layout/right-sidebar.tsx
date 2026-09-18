@@ -4,11 +4,15 @@ import { Button } from "@/components/ui/button"
 import { ROUTES } from "@/constants/routes"
 import { SITE_CONFIG } from "@/constants/site"
 import { sidebarHeading, sponsorCard } from "@/utils/styles"
+import { PageAiCopilot } from "@/components/shared/page-ai-copilot"
 
 export const RightSidebar = () => {
   return (
-    <div className="flex h-full flex-col justify-between p-6 xl:p-7">
-      {/* 1. Sponsor / Promote Banner */}
+    <div className="flex h-full flex-col justify-between gap-6 p-6 xl:p-7">
+      {/* 1. Interactive AI Page Copilot */}
+      <PageAiCopilot />
+
+      {/* 2. Sponsor / Promote Banner */}
       <div className="flex flex-col gap-2.5">
         <div className={sponsorCard}>
           <div className="flex items-center justify-between">
