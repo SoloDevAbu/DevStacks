@@ -33,7 +33,7 @@ import { AI_PROVIDERS } from "@/constants/ai-providers"
 import { AI_PROMPTS } from "@/lib/prompts"
 import { getTools } from "@/db/queries/tools/list"
 import {
-  productSchema,
+  toolSchema,
   breadcrumbSchema,
   faqSchema,
   itemListSchema,
@@ -166,7 +166,7 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
 
   const customFaqs = await getToolFaqs(tool.id)
 
-  const prodJsonLd = productSchema({
+  const prodJsonLd = toolSchema({
     name: tool.name,
     description: tool.description,
     url: toolUrl,
@@ -178,7 +178,7 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
     asoCategory: tool.asoCategory,
     category: tool.category,
     platforms: tool.platforms,
-    likesCount: tool.upvotesCount,
+    upvotesCount: tool.upvotesCount,
     createdAt: tool.createdAt,
     problemStatement: tool.problemStatement,
     solution: tool.solution,
@@ -187,9 +187,6 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
     twitterUrl: tool.twitterUrl,
     linkedinUrl: tool.linkedinUrl,
     discordUrl: tool.discordUrl,
-    appStoreUrl: tool.appStoreUrl,
-    playStoreUrl: tool.playStoreUrl,
-    chromeExtensionUrl: tool.chromeExtensionUrl,
     websiteUrl: tool.websiteUrl,
     countryOfOrigin: tool.submitterCountry,
     spatialCoverage: tool.geoTarget,
@@ -203,11 +200,6 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
         }
       : undefined,
     screenshots: tool.images,
-    videoUrl: tool.demoVideoUrl,
-    isRelatedTo: builtWithProducts.map((p) => ({
-      name: p.name,
-      url: `${siteUrl}${ROUTES.PRODUCT(p.slug)}`,
-    })),
   })
 
   const breadcrumbJsonLd = breadcrumbSchema([
@@ -394,9 +386,7 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
         <section className="border-b border-dashed border-border bg-white">
           <DetailSectionHeader title="About" icon={Info} theme="blue" />
           <div className={sectionContentBox}>
-            <p className={detailSectionText}>
-              {tool.description}
-            </p>
+            <p className={detailSectionText}>{tool.description}</p>
           </div>
         </section>
 
@@ -477,9 +467,7 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
               theme="emerald"
             />
             <div className={sectionContentBox}>
-              <p className={detailSectionText}>
-                {tool.useCases}
-              </p>
+              <p className={detailSectionText}>{tool.useCases}</p>
             </div>
           </section>
         )}
@@ -553,13 +541,9 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
                     <span className="inline-flex size-5 shrink-0 items-center justify-center rounded-sm bg-rose-100 font-mono text-[10px] font-bold text-rose-700">
                       01
                     </span>
-                    <h3 className={deepDiveItemTitle}>
-                      The Problem It Solves
-                    </h3>
+                    <h3 className={deepDiveItemTitle}>The Problem It Solves</h3>
                   </div>
-                  <p className={deepDiveItemText}>
-                    {tool.problemStatement}
-                  </p>
+                  <p className={deepDiveItemText}>{tool.problemStatement}</p>
                 </div>
               )}
 
@@ -569,9 +553,7 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
                     <span className="inline-flex size-5 shrink-0 items-center justify-center rounded-sm bg-emerald-100 font-mono text-[10px] font-bold text-emerald-700">
                       02
                     </span>
-                    <h3 className={deepDiveItemTitle}>
-                      The Solution
-                    </h3>
+                    <h3 className={deepDiveItemTitle}>The Solution</h3>
                   </div>
                   <p className={deepDiveItemText}>{tool.solution}</p>
                 </div>
@@ -583,9 +565,7 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
                     <span className="inline-flex size-5 shrink-0 items-center justify-center rounded-sm bg-indigo-100 font-mono text-[10px] font-bold text-indigo-700">
                       03
                     </span>
-                    <h3 className={deepDiveItemTitle}>
-                      What Makes It Unique
-                    </h3>
+                    <h3 className={deepDiveItemTitle}>What Makes It Unique</h3>
                   </div>
                   <p className={deepDiveItemText}>{tool.uniqueValue}</p>
                 </div>

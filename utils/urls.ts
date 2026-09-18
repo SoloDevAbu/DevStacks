@@ -2,7 +2,7 @@ import { TIER, type Tier } from "@/constants/plans"
 
 export const getOutboundUrl = (
   rawUrl?: string | null,
-  source = "devstack"
+  source = "launchnests"
 ): string => {
   if (!rawUrl) return "#"
   try {

@@ -47,43 +47,13 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
       priority: 0.9,
     },
     {
-      url: `${siteUrl}${ROUTES.DISCOVER_NEW_RISING}`,
-      lastModified: new Date(),
-      changeFrequency: "daily",
-      priority: 0.85,
-    },
-    {
-      url: `${siteUrl}${ROUTES.DISCOVER_RISING_TOOLS}`,
-      lastModified: new Date(),
-      changeFrequency: "daily",
-      priority: 0.85,
-    },
-    {
-      url: `${siteUrl}${ROUTES.DISCOVER_RISING_PRODUCTS}`,
-      lastModified: new Date(),
-      changeFrequency: "daily",
-      priority: 0.85,
-    },
-    {
       url: `${siteUrl}${ROUTES.DISCOVER_POPULAR_BUILDING_BLOCKS}`,
       lastModified: new Date(),
       changeFrequency: "daily",
       priority: 0.85,
     },
     {
-      url: `${siteUrl}${ROUTES.DISCOVER_RECENTLY_ADDED}`,
-      lastModified: new Date(),
-      changeFrequency: "daily",
-      priority: 0.85,
-    },
-    {
       url: `${siteUrl}${ROUTES.MAKERS}`,
-      lastModified: new Date(),
-      changeFrequency: "daily",
-      priority: 0.85,
-    },
-    {
-      url: `${siteUrl}${ROUTES.DISCOVER_DAILY_LAUNCHES}`,
       lastModified: new Date(),
       changeFrequency: "daily",
       priority: 0.85,
@@ -148,34 +118,8 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
       changeFrequency: "weekly",
       priority: 0.7,
     },
-    {
-      url: `${siteUrl}/llms.txt`,
-      lastModified: new Date(),
-      changeFrequency: "daily",
-      priority: 0.85,
-    },
-    {
-      url: `${siteUrl}/llms-full.txt`,
-      lastModified: new Date(),
-      changeFrequency: "daily",
-      priority: 0.85,
-    },
   ]
 
-  const fallbackCategoryRoutes: MetadataRoute.Sitemap = [
-    ...FALLBACK_CATEGORIES.map((cat) => ({
-      url: `${siteUrl}${ROUTES.PRODUCTS}?category=${encodeURIComponent(cat)}`,
-      lastModified: new Date(),
-      changeFrequency: "daily" as const,
-      priority: 0.8,
-    })),
-    ...FALLBACK_CATEGORIES.map((cat) => ({
-      url: `${siteUrl}${ROUTES.TOOLS}?category=${encodeURIComponent(cat)}`,
-      lastModified: new Date(),
-      changeFrequency: "daily" as const,
-      priority: 0.8,
-    })),
-  ]
 
   try {
     const [dbProducts, dbTools, dbMakers, toolCategories, productCategories] =
@@ -196,21 +140,6 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
       productCategories && productCategories.length > 0
         ? productCategories.map((c) => c.name)
         : FALLBACK_CATEGORIES
-
-    const categoryRoutes: MetadataRoute.Sitemap = [
-      ...prodCats.map((cat) => ({
-        url: `${siteUrl}${ROUTES.PRODUCTS}?category=${encodeURIComponent(cat)}`,
-        lastModified: new Date(),
-        changeFrequency: "daily" as const,
-        priority: 0.8,
-      })),
-      ...toolCats.map((cat) => ({
-        url: `${siteUrl}${ROUTES.TOOLS}?category=${encodeURIComponent(cat)}`,
-        lastModified: new Date(),
-        changeFrequency: "daily" as const,
-        priority: 0.8,
-      })),
-    ]
 
     const dynamicRoutes: MetadataRoute.Sitemap = []
 
@@ -249,12 +178,12 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
       )
     }
 
-    return [...staticRoutes, ...categoryRoutes, ...dynamicRoutes]
+    return [...staticRoutes, ...dynamicRoutes]
   } catch {
     // Return static routes if DB is temporarily unreachable
   }
 
-  return [...staticRoutes, ...fallbackCategoryRoutes]
+  return [...staticRoutes]
 }
 
 export default sitemap

@@ -4,7 +4,16 @@ import { useState } from "react"
 import Link from "next/link"
 import { ArrowRight, CalendarDays, Zap } from "lucide-react"
 import { FeedCard, type FeedItem } from "@/components/shared/feed-card"
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination"
 import { ROUTES } from "@/constants/routes"
+import { HOMEPAGE_LIMITS } from "@/constants/rankings"
 import { cn } from "@/lib/utils"
 
 const TAB_TODAY = "today"
@@ -29,11 +38,18 @@ export const LaunchesTabsSection = ({
   weeklyLaunches,
 }: LaunchesTabsSectionProps) => {
   const [active, setActive] = useState<Tab>(TAB_TODAY)
+  const [todayPage, setTodayPage] = useState(1)
 
   const isToday = active === TAB_TODAY
-  const items = isToday ? todaysLaunches : weeklyLaunches
-  const ctaHref = isToday ? ROUTES.DISCOVER_DAILY_LAUNCHES : ROUTES.DISCOVER_WEEKLY_LAUNCHES
-  const ctaLabel = isToday ? "View all today's launches" : "Browse all weekly launches"
+  const pageSize = HOMEPAGE_LIMITS.TODAYS_LAUNCHES
+  const totalTodayPages = Math.max(1, Math.ceil(todaysLaunches.length / pageSize))
+
+  const paginatedTodayLaunches = todaysLaunches.slice(
+    (todayPage - 1) * pageSize,
+    todayPage * pageSize
+  )
+
+  const items = isToday ? paginatedTodayLaunches : weeklyLaunches
   const emptyMsg = isToday
     ? ["No launches today yet.", "Be the first to launch something!"]
     : ["No launches this week yet.", "Be the first to launch something!"]
@@ -120,27 +136,88 @@ export const LaunchesTabsSection = ({
       <div className="flex flex-col">
         {items.length === 0
           ? emptyState(emptyMsg[0], emptyMsg[1])
-          : items.map((item, index) => (
-              <FeedCard
-                key={item.id}
-                item={item}
-                index={index}
-                showMedals={true}
-                showFreshnessBadge={isToday}
-              />
-            ))}
+          : items.map((item, index) => {
+              const itemIndex = isToday
+                ? (todayPage - 1) * pageSize + index
+                : index
+
+              return (
+                <FeedCard
+                  key={item.id}
+                  item={item}
+                  index={itemIndex}
+                  showMedals={true}
+                  showFreshnessBadge={isToday}
+                />
+              )
+            })}
       </div>
 
-      {/* CTA at the bottom */}
-      <div className="flex items-center justify-center border-b border-t border-dashed border-border bg-white px-6 py-4">
-        <Link
-          href={ctaHref}
-          className="flex items-center gap-1.5 text-xs font-semibold text-slate-600 transition-colors hover:text-slate-900"
-        >
-          {ctaLabel}
-          <ArrowRight className="size-3.5 text-slate-400 transition-colors group-hover:text-slate-600" />
-        </Link>
-      </div>
+      {/* Bottom Actions: Pagination for Today (if > 1 page), CTA for Week */}
+      {isToday && totalTodayPages > 1 && (
+        <div className="flex items-center justify-center border-b border-t border-dashed border-border bg-white px-6 py-4">
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  href="#tab-today"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    if (todayPage > 1) {
+                      setTodayPage((p) => p - 1)
+                      document.getElementById("tab-today")?.scrollIntoView({ behavior: "smooth" })
+                    }
+                  }}
+                  className={cn(todayPage === 1 && "pointer-events-none opacity-40")}
+                />
+              </PaginationItem>
+              {Array.from({ length: totalTodayPages }).map((_, i) => {
+                const pageNum = i + 1
+                return (
+                  <PaginationItem key={pageNum}>
+                    <PaginationLink
+                      href="#tab-today"
+                      isActive={todayPage === pageNum}
+                      onClick={(e) => {
+                        e.preventDefault()
+                        setTodayPage(pageNum)
+                        document.getElementById("tab-today")?.scrollIntoView({ behavior: "smooth" })
+                      }}
+                    >
+                      {pageNum}
+                    </PaginationLink>
+                  </PaginationItem>
+                )
+              })}
+              <PaginationItem>
+                <PaginationNext
+                  href="#tab-today"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    if (todayPage < totalTodayPages) {
+                      setTodayPage((p) => p + 1)
+                      document.getElementById("tab-today")?.scrollIntoView({ behavior: "smooth" })
+                    }
+                  }}
+                  className={cn(todayPage === totalTodayPages && "pointer-events-none opacity-40")}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        </div>
+      )}
+
+      {!isToday && (
+        <div className="flex items-center justify-center border-b border-t border-dashed border-border bg-white px-6 py-4">
+          <Link
+            href={ROUTES.DISCOVER_WEEKLY_LAUNCHES}
+            className="flex items-center gap-1.5 text-xs font-semibold text-slate-600 transition-colors hover:text-slate-900"
+          >
+            Browse all weekly launches
+            <ArrowRight className="size-3.5 text-slate-400 transition-colors group-hover:text-slate-600" />
+          </Link>
+        </div>
+      )}
     </section>
   )
 }

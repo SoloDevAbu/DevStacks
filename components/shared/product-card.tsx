@@ -82,7 +82,7 @@ export const ProductCard = ({
     bookmarkMutation.isPending &&
     bookmarkMutation.variables?.slug === product.slug
 
-  const outboundUrl = getOutboundUrl(product.websiteUrl ?? "", "devstack")
+  const outboundUrl = getOutboundUrl(product.websiteUrl ?? "", "launchnests")
   const linkRel = getLinkRel(product.tier)
 
   const handleCardClick = (e: React.MouseEvent) => {

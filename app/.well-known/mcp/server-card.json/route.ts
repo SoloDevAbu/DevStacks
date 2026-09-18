@@ -5,12 +5,13 @@ export const revalidate = 86400
 
 export const GET = () => {
   const serverCard = {
-    $schema: "https://static.modelcontextprotocol.io/schemas/mcp-server-card/v1.json",
+    $schema:
+      "https://static.modelcontextprotocol.io/schemas/mcp-server-card/v1.json",
     version: "1.0",
     protocolVersion: "2024-11-05",
     schemaVersion: "2024-11-05",
     serverInfo: {
-      name: "devstacks",
+      name: "LaunchNests",
       title: `${SITE_CONFIG.name} MCP Server`,
       version: "1.0.0",
       vendor: SITE_CONFIG.name,
@@ -49,7 +50,8 @@ export const GET = () => {
           properties: {
             query: {
               type: "string",
-              description: "Free-text search term across tool name, category, and tagline",
+              description:
+                "Free-text search term across tool name, category, and tagline",
             },
             limit: {
               type: "integer",
@@ -69,7 +71,8 @@ export const GET = () => {
           properties: {
             query: {
               type: "string",
-              description: "Free-text search term across product name, tagline, and tags",
+              description:
+                "Free-text search term across product name, tagline, and tags",
             },
             limit: {
               type: "integer",

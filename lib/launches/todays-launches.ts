@@ -36,7 +36,7 @@ const attachBuiltWithTools = async (items: RankedItem[]): Promise<void> => {
   }
 }
 
-export const getTodaysLaunches = async ({ limit = 10 }: { limit?: number } = {}): Promise<RankedItem[]> => {
+export const getTodaysLaunches = async ({ limit = 30 }: { limit?: number } = {}): Promise<RankedItem[]> => {
   const now = new Date()
   const startOfDay = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0, 0))
   const endOfDay = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 23, 59, 59, 999))

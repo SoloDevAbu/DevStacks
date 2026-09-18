@@ -14,7 +14,7 @@ export const RisingToolsSection = ({ tools }: RisingToolsSectionProps) => {
         title="Rising Tools"
         subtitle="Developer tools gaining momentum right now"
         viewAllText="View all tools"
-        viewAllHref={ROUTES.DISCOVER_RISING_TOOLS}
+        viewAllHref={ROUTES.TOOLS}
       />
       <div className="-mt-px flex flex-col">
         {tools.length === 0 ? (

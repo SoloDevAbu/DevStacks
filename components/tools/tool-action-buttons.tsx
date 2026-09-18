@@ -86,7 +86,7 @@ export const ToolActionButtons = ({
     )
   }
 
-  const outboundUrl = getOutboundUrl(websiteUrl, "devstack")
+  const outboundUrl = getOutboundUrl(websiteUrl, "launchnests")
   const linkRel = getLinkRel(tier)
 
   return (

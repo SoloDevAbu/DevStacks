@@ -13,7 +13,7 @@ export const NewAndRisingSection = ({ items }: NewAndRisingSectionProps) => {
         title="New & Rising"
         subtitle="Recently added tools and products gaining attention"
         viewAllText="View all"
-        viewAllHref={ROUTES.DISCOVER_NEW_RISING}
+        viewAllHref={ROUTES.TRENDING}
       />
       <div className="-mt-px flex flex-col">
         {items.length === 0 ? (

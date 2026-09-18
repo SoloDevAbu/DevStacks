@@ -16,7 +16,7 @@ export const DeveloperBuildsSection = ({
         title="See what developers are building"
         subtitle="Real products built with the tools developers love"
         viewAllText="View all products"
-        viewAllHref={ROUTES.DISCOVER_RISING_PRODUCTS}
+        viewAllHref={ROUTES.PRODUCTS}
       />
       <div className="-mt-px flex flex-col">
         {products.length === 0 ? (

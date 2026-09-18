@@ -38,9 +38,12 @@ export const GET = async () => {
 - [Tools](${SITE_CONFIG.url}/tools): Complete developer tools and APIs directory, filterable by category and pricing model.
 - [Products](${SITE_CONFIG.url}/products): Live developer software directory with declared tech stacks.
 - [Trending](${SITE_CONFIG.url}/trending): Community-upvoted leaderboard with algorithmic freshness and momentum ranking.
+- [Weekly Launches](${SITE_CONFIG.url}/discover/weekly-launches): Developer tools and products sorted by week, community-voted.
+- [Popular Building Blocks](${SITE_CONFIG.url}/discover/popular-building-blocks): Most-used APIs and infrastructure ranked by verified adoption count.
 - [Makers](${SITE_CONFIG.url}/makers): Directory of software creators, developers, and builders.
 - [Showcase](${SITE_CONFIG.url}/showcase): Real-world developer projects showcasing complete production stacks.
-- [Pricing](${SITE_CONFIG.url}/pricing): Platform plans and promotional listing boost options for tool creators.
+- [FAQ](${SITE_CONFIG.url}/faq): Authoritative Q&A about LaunchNests, ranking methodology, submissions, and AI agent protocols.
+- [Pricing](${SITE_CONFIG.url}/pricing): Platform sponsorship and promotional listing options for tool creators.
 - [Submit](${SITE_CONFIG.url}/submit): Interactive portal to submit a new developer tool or product.
 - [MCP docs](${SITE_CONFIG.url}/mcp): Human + agent documentation for the public Model Context Protocol server.
 - [CLI and Public API](${SITE_CONFIG.url}/cli): Official CLI usage plus OpenAPI 3.1 REST API documentation at /v1.
@@ -52,18 +55,22 @@ export const GET = async () => {
 - [/tools/{slug}](${SITE_CONFIG.url}/tools/<param>): Single developer tool detail (tagline, categories, pricing, verified builds, upvotes)
 - [/products](${SITE_CONFIG.url}/products): Developer products directory
 - [/products/{slug}](${SITE_CONFIG.url}/products/<param>): Single product detail (problem, solution, unique value, tech stack)
+- [/makers](${SITE_CONFIG.url}/makers): Makers and developers directory
 - [/makers/{username}](${SITE_CONFIG.url}/makers/<param>): Maker & developer profile (bio, country, maker FAQs, submitted tools & products)
 - [/trending](${SITE_CONFIG.url}/trending): Trending rankings leaderboard
+- [/discover/weekly-launches](${SITE_CONFIG.url}/discover/weekly-launches): Developer tools and products by week, community voted
+- [/discover/popular-building-blocks](${SITE_CONFIG.url}/discover/popular-building-blocks): Most-used developer APIs and infrastructure tools
 - [/showcase](${SITE_CONFIG.url}/showcase): Developer showcases
-- [/pricing](${SITE_CONFIG.url}/pricing): Platform plans
+- [/faq](${SITE_CONFIG.url}/faq): Frequently asked questions about ${SITE_CONFIG.name}
+- [/pricing](${SITE_CONFIG.url}/pricing): Platform sponsorship and promotion options
 - [/mcp](${SITE_CONFIG.url}/mcp): MCP server documentation
 - [/cli](${SITE_CONFIG.url}/cli): CLI & Public REST documentation
 - [/auth.md](${SITE_CONFIG.url}/auth.md): Agent authentication and user handoff flow
 
 ## Discovery
 
+- [llms-full.txt](${SITE_CONFIG.url}/llms-full.txt): **Full-content mirror** — single-fetch complete corpus for LLM indexing. Prefer this over scraping HTML.
 - [ai.txt](${SITE_CONFIG.url}/ai.txt): Behavioural guidance for AI answer engines — permissions, restrictions, and attribution rules.
-- [llms-full.txt](${SITE_CONFIG.url}/llms-full.txt): Full-content mirror of cataloged tools and products in one fetch.
 - [AI discovery snapshot](${SITE_CONFIG.url}/api/ai): Bounded JSON snapshot — trending tools + products + platform stats.
 - [MCP docs](${SITE_CONFIG.url}/mcp): How to connect Cursor, Claude Code, Windsurf, or custom agents to ${SITE_CONFIG.name}.
 - [Markdown catalog](${SITE_CONFIG.url}/api/md/_catalog): Index of every markdown-addressable route on the site.
@@ -119,9 +126,9 @@ Every markdown response carries:
 
   return new NextResponse(content, {
     headers: {
-      "Content-Type": "text/plain; charset=utf-8",
+      "Content-Type": "text/markdown; charset=utf-8",
       "Cache-Control": "public, max-age=86400, s-maxage=86400",
-      "X-Robots-Tag": "index, follow",
+      "X-Robots-Tag": "noindex, follow",
     },
   })
 }

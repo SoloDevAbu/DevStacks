@@ -15,7 +15,7 @@ export const TodaysLaunchesSection = ({
         title="Today's Launches"
         subtitle="Tools and products launched today, ranked by community votes"
         viewAllText="View all today's launches"
-        viewAllHref={ROUTES.DISCOVER_DAILY_LAUNCHES}
+        viewAllHref={ROUTES.HOME}
       />
       <div className="-mt-px flex flex-col">
         {items.length === 0 ? (

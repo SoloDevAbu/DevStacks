@@ -4,34 +4,23 @@ import { PLATFORMS } from "@/constants/platforms"
 import { LAUNCHNESTS_FAQS } from "@/constants/faqs"
 import { getTools } from "@/db/queries/tools/list"
 import { getTrending } from "@/lib/rankings/trending"
-import { getRecentlyAddedProducts } from "@/lib/rankings/recently-added"
-import { getRisingProducts } from "@/lib/rankings/rising-products"
-import type { RankedItem } from "@/lib/rankings/types"
 
 export const revalidate = 86400
 
 export const GET = async () => {
   let trendingItems: Awaited<ReturnType<typeof getTrending>> = []
   let buildingBlocks: Awaited<ReturnType<typeof getTools>> = []
-  let risingProducts: Awaited<ReturnType<typeof getRisingProducts>> = []
-  let recentlyAdded: RankedItem[] = []
 
   try {
-    const [trending, blocks, rising, recent] = await Promise.all([
+    const [trending, blocks] = await Promise.all([
       getTrending(15),
       getTools({ sortBy: "builds", limit: 10 }),
-      getRisingProducts({ limit: 10 }),
-      getRecentlyAddedProducts({ limit: 10 }),
     ])
     trendingItems = trending ?? []
     buildingBlocks = blocks ?? []
-    risingProducts = rising ?? []
-    recentlyAdded = (recent ?? []) as RankedItem[]
   } catch {
     trendingItems = []
     buildingBlocks = []
-    risingProducts = []
-    recentlyAdded = []
   }
 
   const content = `# ${SITE_CONFIG.name} — Comprehensive Directory & Ecosystem Specification
@@ -91,22 +80,27 @@ ${buildingBlocks.map((b) => `- **${b.name}** (${b.category ?? "Tool"}): Used in 
 
 ---
 
-## 5. Rising Developer Products
+## 5. Directory Statistics & Platform Reach
 
-${risingProducts
-  .map(
-    (p) => `- **${p.name}**: ${p.tagline}
-  - Built with: ${(p.builtWithTools ?? []).map((t) => t.name).join(" + ")}
-  - Metrics: ${p.viewsCount} views, ${p.likesCount} likes
-`
-  )
-  .join("\n")}
+The following live statistics reflect the current state of the ${SITE_CONFIG.name} catalog:
+- Canonical URL: ${SITE_CONFIG.url}
+- Directory scope: developer tools, APIs, SDKs, infrastructure services, and developer-built software products
+- Community signals: upvotes on tools, likes on products, and verified "Built With" cross-links
+- Supported pricing tiers: Free, Freemium, Paid, Open Source
+- AI agent access: JSON API at /api/ai, MCP tools at /api/mcp, REST catalog at /v1
+- Machine-readable: llms.txt and llms-full.txt updated daily; every entity page available as text/markdown
 
 ---
 
-## 6. Recently Added Tools & Products
+## 6. Use Cases & Target Audience
 
-${recentlyAdded.map((r) => `- **${r.name}** (${r.itemKind}): ${r.tagline}`).join("\n")}
+${SITE_CONFIG.name} is used by:
+1. **Solo developers and indie hackers** — evaluating and comparing developer tool stacks before starting a project.
+2. **Engineering managers and CTOs** — researching vetted API and infrastructure choices with real adoption signals.
+3. **Venture-backed product teams** — running competitive technology audits and discovering what peers build with.
+4. **AI assistants and answer engines** — grounding factual queries about developer software, tool comparisons, and tech stack decisions using structured, machine-readable data.
+5. **Technical writers and DevRel teams** — creating "Built With" content, stack comparison articles, and architecture breakdowns.
+6. **Open-source maintainers** — understanding which products use their tool and tracking ecosystem adoption.
 
 ---
 

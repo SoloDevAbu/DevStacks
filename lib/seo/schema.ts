@@ -78,16 +78,16 @@ export const organizationSchema = () => ({
   name: SITE_CONFIG.name,
   alternateName: [...SITE_CONFIG.alternateNames],
   url: SITE_CONFIG.url,
-  logo: `${SITE_CONFIG.url}/icon.png`,
+  logo: `${SITE_CONFIG.url}/favicon.png`,
   description: SITE_CONFIG.description,
   disambiguatingDescription:
     "The premier developer tools discovery directory, APIs database, and tech-stack ecosystem platform.",
-  sameAs: [
-    SITE_CONFIG.socials.x,
-    SITE_CONFIG.socials.linkedin,
-  ],
+  foundingDate: "2026",
+  email: "support@launchnests.com",
+  sameAs: [SITE_CONFIG.socials.x, SITE_CONFIG.socials.linkedin],
   contactPoint: {
     "@type": "ContactPoint",
+    email: "support@launchnests.com",
     contactType: "technical support",
     url: `${SITE_CONFIG.url}/submit`,
   },
@@ -107,9 +107,11 @@ export const organizationSchema = () => ({
 
 export const productSchema = (product: ProductSchemaInput) => {
   const count = product.likesCount ?? product.upvotesCount ?? 0
-  const ratingValue =
-    count > 0 ? Math.min(5, Math.max(4.2, 4 + count / 1000)).toFixed(1) : "4.8"
-  const ratingCount = Math.max(1, count > 0 ? count : 12)
+  const hasRating = count > 5
+  const ratingValue = hasRating
+    ? Math.min(5, Math.max(4.2, 4 + count / 1000)).toFixed(1)
+    : null
+  const ratingCount = hasRating ? count : null
 
   const featureList: string[] = []
   if (product.problemStatement)
@@ -163,13 +165,15 @@ export const productSchema = (product: ProductSchemaInput) => {
           ? downloadUrls[0]
           : downloadUrls
         : undefined,
-    aggregateRating: {
-      "@type": "AggregateRating",
-      ratingValue,
-      ratingCount,
-      bestRating: "5",
-      worstRating: "1",
-    },
+    aggregateRating: hasRating
+      ? {
+          "@type": "AggregateRating",
+          ratingValue,
+          ratingCount,
+          bestRating: "5",
+          worstRating: "1",
+        }
+      : undefined,
     offers: {
       "@type": "Offer",
       price:
@@ -194,7 +198,9 @@ export const productSchema = (product: ProductSchemaInput) => {
           nationality: product.author.country
             ? {
                 "@type": "Country",
-                name: countryCodeToName(product.author.country) || product.author.country,
+                name:
+                  countryCodeToName(product.author.country) ||
+                  product.author.country,
               }
             : undefined,
         }
@@ -202,7 +208,9 @@ export const productSchema = (product: ProductSchemaInput) => {
     countryOfOrigin: product.countryOfOrigin
       ? {
           "@type": "Country",
-          name: countryCodeToName(product.countryOfOrigin) || product.countryOfOrigin,
+          name:
+            countryCodeToName(product.countryOfOrigin) ||
+            product.countryOfOrigin,
         }
       : undefined,
     spatialCoverage: product.spatialCoverage ?? undefined,
@@ -214,8 +222,18 @@ export const productSchema = (product: ProductSchemaInput) => {
       ? {
           "@type": "VideoObject",
           name: `${product.name} Demo Video`,
+          description: product.description ?? `Demo video for ${product.name}`,
           contentUrl: product.videoUrl,
-          thumbnailUrl: product.logoUrl ?? `${SITE_CONFIG.url}/opengraph-image`,
+          embedUrl:
+            product.videoUrl.includes("youtube.com") ||
+            product.videoUrl.includes("youtu.be")
+              ? product.videoUrl
+                  .replace("watch?v=", "embed/")
+                  .replace("youtu.be/", "youtube.com/embed/")
+              : product.videoUrl.includes("loom.com")
+                ? product.videoUrl.replace("share/", "embed/")
+                : undefined,
+          thumbnailUrl: product.logoUrl ?? `${SITE_CONFIG.url}/favicon.png`,
           uploadDate:
             product.createdAt?.toISOString() ?? new Date().toISOString(),
         }
@@ -332,3 +350,103 @@ export const faqSchema = (
     },
   })),
 })
+
+export type ToolSchemaInput = Omit<
+  ProductSchemaInput,
+  "likesCount" | "appStoreUrl" | "playStoreUrl" | "chromeExtensionUrl"
+> & {
+  upvotesCount?: number
+  buildsCount?: number
+  websiteUrl?: string | null
+}
+
+export const toolSchema = (tool: ToolSchemaInput) => {
+  const count = tool.upvotesCount ?? 0
+  const hasRating = count > 5
+  const ratingValue = hasRating
+    ? Math.min(5, Math.max(4.2, 4 + count / 1000)).toFixed(1)
+    : null
+  const ratingCount = hasRating ? count : null
+
+  const featureList: string[] = []
+  if (tool.problemStatement)
+    featureList.push(`Problem: ${tool.problemStatement}`)
+  if (tool.solution) featureList.push(`Solution: ${tool.solution}`)
+  if (tool.uniqueValue) featureList.push(`Unique Value: ${tool.uniqueValue}`)
+
+  const sameAs: string[] = []
+  if (tool.githubUrl) sameAs.push(tool.githubUrl)
+  if (tool.twitterUrl) sameAs.push(tool.twitterUrl)
+  if (tool.linkedinUrl) sameAs.push(tool.linkedinUrl)
+  if (tool.discordUrl) sameAs.push(tool.discordUrl)
+  if (tool.websiteUrl && tool.websiteUrl !== tool.url)
+    sameAs.push(tool.websiteUrl)
+
+  return {
+    "@context": "https://schema.org",
+    "@type": ["SoftwareApplication", "WebAPI"],
+    name: tool.name,
+    description: tool.description,
+    url: tool.url,
+    image: tool.logoUrl ?? `${SITE_CONFIG.url}/favicon.png`,
+    applicationCategory:
+      tool.asoCategory ?? tool.category ?? "DeveloperApplication",
+    applicationSubCategory: tool.category ?? undefined,
+    operatingSystem:
+      tool.platforms && tool.platforms.length > 0
+        ? tool.platforms.join(", ")
+        : "Web, Cloud, Cross-Platform",
+    keywords: tool.keywords ?? undefined,
+    featureList: featureList.length > 0 ? featureList : undefined,
+    sameAs: sameAs.length > 0 ? sameAs : undefined,
+    aggregateRating: hasRating
+      ? {
+          "@type": "AggregateRating",
+          ratingValue,
+          ratingCount,
+          bestRating: "5",
+          worstRating: "1",
+        }
+      : undefined,
+    offers: {
+      "@type": "Offer",
+      price:
+        tool.pricing === "Free" || tool.pricing === "Open Source"
+          ? "0"
+          : undefined,
+      priceCurrency: "USD",
+      availability: "https://schema.org/InStock",
+      category: tool.pricing ?? "Free",
+    },
+    datePublished: tool.createdAt?.toISOString(),
+    publisher: {
+      "@type": "Organization",
+      name: SITE_CONFIG.name,
+      url: SITE_CONFIG.url,
+    },
+    author: tool.author
+      ? {
+          "@type": "Person",
+          name: tool.author.name,
+          url: tool.author.url,
+          nationality: tool.author.country
+            ? {
+                "@type": "Country",
+                name:
+                  countryCodeToName(tool.author.country) || tool.author.country,
+              }
+            : undefined,
+        }
+      : undefined,
+    countryOfOrigin: tool.countryOfOrigin
+      ? {
+          "@type": "Country",
+          name: countryCodeToName(tool.countryOfOrigin) || tool.countryOfOrigin,
+        }
+      : undefined,
+    screenshot:
+      tool.screenshots && tool.screenshots.length > 0
+        ? tool.screenshots
+        : undefined,
+  }
+}

@@ -13,7 +13,7 @@ export const RecentlyAddedSection = ({ items }: RecentlyAddedSectionProps) => {
         title="Recently Added"
         subtitle="Latest products and tools added by the community"
         viewAllText="View all"
-        viewAllHref={ROUTES.DISCOVER_RECENTLY_ADDED}
+        viewAllHref={ROUTES.PRODUCTS}
       />
       <div className="-mt-px flex flex-col">
         {items.length === 0 ? (

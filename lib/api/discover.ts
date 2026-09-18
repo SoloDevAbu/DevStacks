@@ -6,37 +6,11 @@ export type RankingQueryParams = {
   page?: number
 }
 
-export const fetchNewAndRising = async (params: RankingQueryParams = {}) => {
-  const { data } = await apiClient.get("/discover/new-and-rising", { params })
-  return data.data
-}
-
-export const fetchRisingTools = async (params: RankingQueryParams = {}) => {
-  const { data } = await apiClient.get("/discover/rising-tools", { params })
-  return data.data
-}
-
-export const fetchRisingProducts = async (params: RankingQueryParams = {}) => {
-  const { data } = await apiClient.get("/discover/rising-products", { params })
-  return data.data
-}
-
 export const fetchPopularBuildingBlocks = async (
   params: RankingQueryParams = {}
 ) => {
   const { data } = await apiClient.get("/discover/popular-building-blocks", {
     params,
-  })
-  return data.data
-}
-
-export const fetchRecentlyAdded = async (
-  params: RankingQueryParams | number = 6
-) => {
-  const queryParams =
-    typeof params === "number" ? { limit: params, page: 1 } : params
-  const { data } = await apiClient.get("/discover/recently-added", {
-    params: queryParams,
   })
   return data.data
 }

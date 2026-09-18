@@ -215,20 +215,6 @@ export const getPageAiGuide = (pathname: string): PageAiGuide => {
     }
   }
 
-  if (cleanPath === "/discover/daily-launches") {
-    return {
-      title: "Today's Daily Launches",
-      whatItIs: "The dedicated archive of developer tools and products launched today, ranked by live community upvotes in real-time.",
-      howToUse: "Upvote your favorite daily tools, view product cards, and inspect tech stack components used in today's newest projects.",
-      prompt: AI_PROMPTS.dailyLaunches,
-      suggestedQuestions: [
-        "What tools launched today on LaunchNests?",
-        "Which product has the highest upvotes today?",
-        "How do I submit my launch to appear today?",
-      ],
-    }
-  }
-
   if (cleanPath === "/discover/weekly-launches") {
     return {
       title: "This Week's Launches",
@@ -239,48 +225,6 @@ export const getPageAiGuide = (pathname: string): PageAiGuide => {
         "What was the most upvoted tool this week?",
         "Summarize the best developer products launched this week",
         "How does the weekly leaderboard reset?",
-      ],
-    }
-  }
-
-  if (cleanPath === "/discover/rising-tools") {
-    return {
-      title: "Rising Developer Tools",
-      whatItIs: "Algorithmic momentum feed surfacing fast-growing APIs, developer libraries, and infrastructure tools gaining rapid community adoption.",
-      howToUse: "Discover emerging technologies before they become mainstream, inspect their verified developer build counts, and test them in your projects.",
-      prompt: AI_PROMPTS.risingTools,
-      suggestedQuestions: [
-        "What developer tools are gaining momentum fast?",
-        "Compare rising tools in backend infrastructure",
-        "Which rising tools have open-source licenses?",
-      ],
-    }
-  }
-
-  if (cleanPath === "/discover/rising-products") {
-    return {
-      title: "Rising Software Products",
-      whatItIs: "Feed highlighting developer-built apps, SaaS tools, and indie products with the highest recent like velocity and user interest.",
-      howToUse: "Explore trending software, examine the transparent 'Built With' stacks powering them, and get inspired for your next software build.",
-      prompt: AI_PROMPTS.risingProducts,
-      suggestedQuestions: [
-        "What SaaS products are gaining traction right now?",
-        "What tech stacks are most common in rising products?",
-        "How is the rising velocity score computed?",
-      ],
-    }
-  }
-
-  if (cleanPath === "/discover/recently-added") {
-    return {
-      title: "Recently Added Catalog",
-      whatItIs: "Reverse chronological stream of newly approved developer tools and products added to the LaunchNests ecosystem.",
-      howToUse: "Keep an eye on the newest entries to discover cutting-edge tools hot off the press, and be among the first to upvote or link your builds.",
-      prompt: AI_PROMPTS.recentlyAdded,
-      suggestedQuestions: [
-        "What tools were added to LaunchNests most recently?",
-        "Show the newest developer utilities and APIs",
-        "How quickly do submitted tools get approved and added?",
       ],
     }
   }

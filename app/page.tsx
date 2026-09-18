@@ -58,7 +58,7 @@ const Page = async () => {
 
   const [todaysLaunches, weeklyLaunches, popularBuildingBlocks] =
     await Promise.all([
-      getTodaysLaunches({ limit: HOMEPAGE_LIMITS.TODAYS_LAUNCHES }).catch(() => []),
+      getTodaysLaunches({ limit: HOMEPAGE_LIMITS.TODAYS_LAUNCHES_MAX }).catch(() => []),
       getWeeklyLaunches({ year, week, limit: HOMEPAGE_LIMITS.WEEKLY_LAUNCHES }).catch(() => []),
       getPopularBuildingBlocks({
         limit: HOMEPAGE_LIMITS.POPULAR_BUILDING_BLOCKS,

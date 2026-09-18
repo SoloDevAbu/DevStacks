@@ -83,7 +83,7 @@ export const ToolCard = ({
   const isBookmarking =
     bookmarkMutation.isPending && bookmarkMutation.variables?.slug === tool.slug
 
-  const outboundUrl = getOutboundUrl(tool.websiteUrl ?? "", "devstack")
+  const outboundUrl = getOutboundUrl(tool.websiteUrl ?? "", "launchnests")
   const linkRel = getLinkRel(tool.tier)
 
   const handleCardClick = (e: React.MouseEvent) => {
