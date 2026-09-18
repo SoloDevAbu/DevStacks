@@ -4,7 +4,7 @@ import { auth } from "@/lib/auth"
 import { ShowcaseContent } from "@/components/showcase/showcase-content"
 import { ShowcaseCrawlerView } from "@/components/showcase/showcase-crawler-view"
 import { SITE_CONFIG } from "@/constants/site"
-import { breadcrumbSchema, faqSchema } from "@/lib/seo/schema"
+import { breadcrumbSchema, faqSchema, collectionPageSchema } from "@/lib/seo/schema"
 import { getToolBySlugOrName } from "@/db/queries/tools/get"
 import type { BuiltWithToolItem } from "@/components/shared/built-with-tools-input"
 
@@ -28,6 +28,7 @@ export const metadata: Metadata = {
       "Share what you have built with developer tools and APIs. Inspire the developer ecosystem.",
     type: "website",
     url: `${SITE_CONFIG.url}/showcase`,
+    siteName: SITE_CONFIG.name,
     images: [
       {
         url: `${SITE_CONFIG.url}/opengraph-image`,
@@ -40,7 +41,8 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: `Showcase Your Build | ${SITE_CONFIG.name}`,
-    description: "Share what you have built with developer tools and APIs.",
+    description:
+      "Share what you have built with developer tools and APIs. Inspire the developer ecosystem.",
     images: [`${SITE_CONFIG.url}/twitter-image`],
   },
   robots: {
@@ -101,6 +103,21 @@ const ShowcasePage = async (props: ShowcasePageProps) => {
 
   const faqs = faqSchema(SHOWCASE_FAQS)
 
+  const collectionJsonLd = collectionPageSchema({
+    name: "Developer Build Showcases",
+    description:
+      "Real-world developer projects and architecture breakdowns showcasing complete production tech stacks.",
+    url: `${SITE_CONFIG.url}/showcase`,
+    items: [
+      {
+        name: "Developer Tech Stacks",
+        url: `${SITE_CONFIG.url}/showcase`,
+        description:
+          "Explore developer architectures, API integrations, and built-with relationships.",
+      },
+    ],
+  })
+
   return (
     <>
       <script
@@ -110,6 +127,10 @@ const ShowcasePage = async (props: ShowcasePageProps) => {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqs) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionJsonLd) }}
       />
       {session?.user ? (
         <ShowcaseContent initialTool={initialTool} />

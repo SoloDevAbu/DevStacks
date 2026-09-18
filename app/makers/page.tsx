@@ -37,6 +37,7 @@ export const metadata: Metadata = {
     description: `Discover developers, software engineers, and indie makers building tools, APIs, and products on ${SITE_CONFIG.name}.`,
     type: "website",
     url: `${SITE_CONFIG.url}/makers`,
+    siteName: SITE_CONFIG.name,
     images: [
       {
         url: `${SITE_CONFIG.url}/opengraph-image`,

@@ -48,7 +48,7 @@ export const SIDEBAR_NAV: NavSection[] = [
     label: "Community",
     items: [
       {
-        name: "Showcase a Build",
+        name: "Launch Product",
         icon: PlusCircle,
         href: ROUTES.SHOWCASE,
         badge: { text: "NEW", variant: "new" },

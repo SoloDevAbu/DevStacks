@@ -32,6 +32,7 @@ export const metadata: Metadata = {
       "Browse developer tools and products launched each week, ranked by community votes.",
     type: "website",
     url: `${SITE_CONFIG.url}/discover/weekly-launches`,
+    siteName: SITE_CONFIG.name,
     images: [
       {
         url: `${SITE_CONFIG.url}/opengraph-image`,

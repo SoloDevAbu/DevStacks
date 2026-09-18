@@ -26,6 +26,7 @@ export const metadata: Metadata = {
     description: `List your developer tool or API on ${SITE_CONFIG.name} to reach thousands of builders.`,
     type: "website",
     url: `${SITE_CONFIG.url}/submit`,
+    siteName: SITE_CONFIG.name,
     images: [
       {
         url: `${SITE_CONFIG.url}/opengraph-image`,

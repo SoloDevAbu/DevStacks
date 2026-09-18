@@ -17,6 +17,15 @@ import { footerAiButton, footerAiTrayLabel } from "@/utils/styles"
 export const metadata: Metadata = {
   title: `Frequently Asked Questions — ${SITE_CONFIG.name}`,
   description: `Answers to common questions about ${SITE_CONFIG.name}, developer tool rankings, the tech stack directory, submissions, and autonomous AI search indexing.`,
+  keywords: [
+    "FAQ",
+    "frequently asked questions",
+    "developer tools FAQ",
+    "how LaunchNests works",
+    "tech stack directory FAQ",
+    "AI agent discoverability",
+    ...SITE_CONFIG.keywords,
+  ],
   alternates: {
     canonical: `${SITE_CONFIG.url}${ROUTES.FAQ}`,
   },

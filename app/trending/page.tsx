@@ -55,6 +55,7 @@ export const generateMetadata = async (props: {
       description,
       type: "website",
       url: canonicalUrl,
+      siteName: SITE_CONFIG.name,
       images: [
         {
           url: `${SITE_CONFIG.url}/opengraph-image`,

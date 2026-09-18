@@ -51,6 +51,12 @@ const nextConfig: NextConfig = {
         },
       ],
     },
+    {
+      source: "/(llms.txt|llms-full.txt|openapi.json)",
+      headers: [
+        { key: "X-Robots-Tag", value: "noindex, follow" },
+      ],
+    },
   ],
 }
 

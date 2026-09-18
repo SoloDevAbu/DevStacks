@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import { MainContent } from "@/components/home/main-content"
 import {
   collectionPageSchema,
+  breadcrumbSchema,
 } from "@/lib/seo/schema"
 import { SITE_CONFIG } from "@/constants/site"
 import { HOMEPAGE_LIMITS } from "@/constants/rankings"
@@ -14,7 +15,9 @@ import type { FeedItem } from "@/components/shared/feed-card"
 export const revalidate = 60
 
 export const metadata: Metadata = {
-  title: `${SITE_CONFIG.name} — Today's Developer Launches`,
+  title: {
+    absolute: `${SITE_CONFIG.name} — Today's Developer Launches`,
+  },
   description:
     `Discover the developer tools, APIs, and products launching today and this week on ${SITE_CONFIG.name}. Ranked by community votes, updated every minute.`,
   keywords: [
@@ -73,6 +76,10 @@ const Page = async () => {
       description: item.tagline,
     }))
 
+  const breadcrumbs = breadcrumbSchema([
+    { name: "Home", url: SITE_CONFIG.url },
+  ])
+
   const collectionJsonLd = collectionPageSchema({
     name: `${SITE_CONFIG.name} — Developer Tools & Products`,
     description: SITE_CONFIG.description,
@@ -82,6 +89,10 @@ const Page = async () => {
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }}
+      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionJsonLd) }}

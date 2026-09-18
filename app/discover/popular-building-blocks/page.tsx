@@ -27,9 +27,10 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: `Popular Building Blocks | ${SITE_CONFIG.name}`,
-    description: "The tools developers are building with.",
+    description: `Explore the most-used developer tools, APIs, and infrastructure layers on ${SITE_CONFIG.name}, ranked by verified developer builds.`,
     type: "website",
     url: `${SITE_CONFIG.url}/discover/popular-building-blocks`,
+    siteName: SITE_CONFIG.name,
     images: [
       {
         url: `${SITE_CONFIG.url}/opengraph-image`,
@@ -42,7 +43,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: `Popular Building Blocks | ${SITE_CONFIG.name}`,
-    description: "The tools developers are building with.",
+    description: `Explore the most-used developer tools, APIs, and infrastructure layers on ${SITE_CONFIG.name}, ranked by verified developer builds.`,
     images: [`${SITE_CONFIG.url}/twitter-image`],
   },
 }

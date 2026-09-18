@@ -4,10 +4,11 @@ import { SITE_CONFIG } from "@/constants/site"
 export const revalidate = 86400
 
 export const GET = () => {
+  const today = new Date().toISOString().split("T")[0]
   const content = `# ai.txt for ${SITE_CONFIG.name}
 # ${SITE_CONFIG.url}/ai.txt
 # Spec: https://www.ai-visibility.org.uk/specifications/ai-txt/ (v1.1.1)
-# Last updated: 2026-09-08
+# Last updated: ${today}
 
 [identity]
 name: ${SITE_CONFIG.name}

@@ -28,6 +28,15 @@ import { AI_PROMPTS } from "@/lib/prompts"
 export const metadata: Metadata = {
   title: `Sidebar Sponsorship & Advertising — ${SITE_CONFIG.name}`,
   description: `Promote your developer tool, API, or infrastructure with dedicated sidebar ad placements reaching thousands of engineers on ${SITE_CONFIG.name}.`,
+  keywords: [
+    "developer advertising",
+    "sponsor dev tools",
+    "promote developer tool",
+    "software sponsorship",
+    "LaunchNests pricing",
+    "tech advertising",
+    ...SITE_CONFIG.keywords,
+  ],
   alternates: {
     canonical: `${SITE_CONFIG.url}/pricing`,
   },
@@ -36,6 +45,7 @@ export const metadata: Metadata = {
     description: `Promote your developer tool or API with high-visibility sidebar ad placements across ${SITE_CONFIG.name}.`,
     type: "website",
     url: `${SITE_CONFIG.url}/pricing`,
+    siteName: SITE_CONFIG.name,
     images: [
       {
         url: `${SITE_CONFIG.url}/opengraph-image`,
@@ -78,7 +88,7 @@ const FAQ_ITEMS = [
 const PricingPage = () => {
   const breadcrumbs = breadcrumbSchema([
     { name: "Home", url: SITE_CONFIG.url },
-    { name: "Advertising", url: `${SITE_CONFIG.url}/pricing` },
+    { name: "Pricing", url: `${SITE_CONFIG.url}/pricing` },
   ])
 
   const faqJsonLd = faqSchema(FAQ_ITEMS)

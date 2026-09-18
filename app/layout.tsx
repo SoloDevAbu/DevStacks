@@ -1,5 +1,5 @@
 import { Geist, Geist_Mono } from "next/font/google"
-import type { Metadata } from "next"
+import type { Metadata, Viewport } from "next"
 import { HeaderLogo } from "@/components/layout/header-logo"
 import { HeaderNav } from "@/components/layout/header-nav"
 import { HeaderActions } from "@/components/layout/header-actions"
@@ -18,6 +18,10 @@ import { cn } from "@/lib/utils"
 
 import { Analytics } from "@vercel/analytics/next"
 
+export const viewport: Viewport = {
+  themeColor: SITE_CONFIG.themeColor,
+}
+
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_CONFIG.url),
   title: {
@@ -32,9 +36,12 @@ export const metadata: Metadata = {
   category: "technology",
   applicationName: SITE_CONFIG.name,
   icons: {
-    icon: "/favicon.ico",
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/favicon.png", type: "image/png" },
+    ],
     shortcut: "/favicon.ico",
-    apple: "/favicon.ico",
+    apple: "/favicon.png",
   },
   robots: {
     index: true,
@@ -76,6 +83,9 @@ export const metadata: Metadata = {
     languages: {
       "x-default": SITE_CONFIG.url,
       "en-US": SITE_CONFIG.url,
+      en: SITE_CONFIG.url,
+      "en-GB": SITE_CONFIG.url,
+      "en-IN": SITE_CONFIG.url,
     },
   },
   other: {
@@ -111,6 +121,10 @@ const RootLayout = ({
         geistMono.variable
       )}
     >
+      <head>
+        <link rel="me" href={SITE_CONFIG.socials.x} />
+        <link rel="me" href={SITE_CONFIG.socials.linkedin} />
+      </head>
       <body>
         <script
           type="application/ld+json"

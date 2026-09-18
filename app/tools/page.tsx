@@ -68,6 +68,7 @@ export const generateMetadata = async (props: {
       title,
       description,
       url: canonicalUrl,
+      siteName: SITE_CONFIG.name,
       type: "website",
       images: [
         {

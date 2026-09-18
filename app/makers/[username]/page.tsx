@@ -65,6 +65,15 @@ export const generateMetadata = async ({
   return {
     title,
     description,
+    keywords: [
+      displayName,
+      maker.username,
+      "software developer",
+      "indie maker",
+      "developer profile",
+      "tech stack",
+      ...SITE_CONFIG.keywords,
+    ],
     alternates: {
       canonical: profileUrl,
     },
@@ -74,6 +83,7 @@ export const generateMetadata = async ({
       description,
       type: "profile",
       url: profileUrl,
+      siteName: SITE_CONFIG.name,
       images: [
         {
           url: maker.avatarUrl || `${SITE_CONFIG.url}/opengraph-image`,
