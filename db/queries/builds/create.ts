@@ -46,7 +46,8 @@ export const createBuild = async (
       appStoreUrl: data.appStoreUrl || null,
       playStoreUrl: data.playStoreUrl || null,
       chromeExtensionUrl: data.chromeExtensionUrl || null,
-      status: "approved",
+      tier: "premium",
+      status: "pending",
       tags: [],
       platforms: [],
     })

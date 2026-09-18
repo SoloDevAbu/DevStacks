@@ -8,6 +8,7 @@ import { MobileNav } from "@/components/layout/mobile-nav"
 import { LeftSidebar } from "@/components/shared/left-sidebar"
 import { RightSidebar } from "@/components/layout/right-sidebar"
 import { AgentFooter } from "@/components/layout/agent-footer"
+import { LaunchPromoBanner } from "@/components/layout/launch-promo-banner"
 import { Providers } from "@/app/providers"
 
 import { SITE_CONFIG } from "@/constants/site"
@@ -136,6 +137,7 @@ const RootLayout = ({
         />
         <Providers>
           <div className="flex min-h-dvh flex-col bg-slate-50/30">
+            <LaunchPromoBanner />
             {/* --- TOP ROW (Navbar) --- */}
             <header className="sticky top-0 z-50 grid h-16 shrink-0 grid-cols-1 border-b border-dashed border-border bg-white lg:grid-cols-[320px_1fr] xl:grid-cols-[320px_1fr_380px]">
               {/* Top Left */}

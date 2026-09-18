@@ -1,5 +1,7 @@
 import { SITE_CONFIG } from "@/constants/site"
 import { countryCodeToName } from "@/utils/country"
+import { LAUNCH_PROMO } from "@/constants/promo"
+import { TIER } from "@/constants/plans"
 
 export type ProductSchemaInput = {
   name: string
@@ -183,7 +185,38 @@ export const productSchema = (product: ProductSchemaInput) => {
       priceCurrency: "USD",
       availability: "https://schema.org/InStock",
       category: product.pricing ?? "Free",
+      description:
+        product.tier === TIER.PREMIUM || product.tier === TIER.PREMIUM_PLUS
+          ? LAUNCH_PROMO.SEO_OFFER_DESCRIPTION
+          : undefined,
     },
+    award:
+      product.tier === TIER.PREMIUM || product.tier === TIER.PREMIUM_PLUS
+        ? LAUNCH_PROMO.SEO_AWARD
+        : undefined,
+    additionalProperty:
+      product.tier === TIER.PREMIUM || product.tier === TIER.PREMIUM_PLUS
+        ? [
+            {
+              "@type": "PropertyValue",
+              name: "ListingTier",
+              value:
+                product.tier === TIER.PREMIUM_PLUS
+                  ? "Premium+ Partner"
+                  : "Premium Verified",
+            },
+            {
+              "@type": "PropertyValue",
+              name: "LaunchBatch",
+              value: "First 100 Launches",
+            },
+            {
+              "@type": "PropertyValue",
+              name: "BacklinkType",
+              value: "Permanent Do-Follow",
+            },
+          ]
+        : undefined,
     datePublished: product.createdAt?.toISOString(),
     publisher: {
       "@type": "Organization",
@@ -417,7 +450,38 @@ export const toolSchema = (tool: ToolSchemaInput) => {
       priceCurrency: "USD",
       availability: "https://schema.org/InStock",
       category: tool.pricing ?? "Free",
+      description:
+        tool.tier === TIER.PREMIUM || tool.tier === TIER.PREMIUM_PLUS
+          ? LAUNCH_PROMO.SEO_OFFER_DESCRIPTION
+          : undefined,
     },
+    award:
+      tool.tier === TIER.PREMIUM || tool.tier === TIER.PREMIUM_PLUS
+        ? LAUNCH_PROMO.SEO_AWARD
+        : undefined,
+    additionalProperty:
+      tool.tier === TIER.PREMIUM || tool.tier === TIER.PREMIUM_PLUS
+        ? [
+            {
+              "@type": "PropertyValue",
+              name: "ListingTier",
+              value:
+                tool.tier === TIER.PREMIUM_PLUS
+                  ? "Premium+ Partner"
+                  : "Premium Verified",
+            },
+            {
+              "@type": "PropertyValue",
+              name: "LaunchBatch",
+              value: "First 100 Launches",
+            },
+            {
+              "@type": "PropertyValue",
+              name: "BacklinkType",
+              value: "Permanent Do-Follow",
+            },
+          ]
+        : undefined,
     datePublished: tool.createdAt?.toISOString(),
     publisher: {
       "@type": "Organization",

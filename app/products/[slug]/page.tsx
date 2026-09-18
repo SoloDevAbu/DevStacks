@@ -34,6 +34,7 @@ import { productSchema, breadcrumbSchema, faqSchema } from "@/lib/seo/schema"
 import { ProductLogo } from "@/components/shared/product-logo"
 import { getFaviconUrl } from "@/utils/urls"
 import { VerifiedBadge } from "@/components/shared/verified-badge"
+import { LaunchBadge } from "@/components/shared/launch-badge"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { ProductActionButtons } from "@/components/products/product-action-buttons"
@@ -92,7 +93,7 @@ export const generateMetadata = async ({
   const description =
     product.metaDescription ??
     product.description ??
-    `Learn about ${product.name} on ${SITE_CONFIG.name}. Features, pricing, community likes, and developer insights.`
+    `Explore ${product.name} — ${product.tagline} on ${SITE_CONFIG.name}. Verified Premium launch featuring architecture breakdown, live demo, and maker insights.`
   const canonicalUrl = `${SITE_CONFIG.url}/products/${product.slug}`
   const keywords = product.keywords
     ? product.keywords.split(",").map((k) => k.trim())
@@ -100,6 +101,8 @@ export const generateMetadata = async ({
         product.name,
         ...(product.tags ?? []),
         "developer product",
+        "verified developer launch",
+        "First 100 Launches",
         "software",
         SITE_CONFIG.name,
       ]
@@ -274,6 +277,7 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
                     {product.name}
                   </h1>
                   <VerifiedBadge tier={product.tier as Tier} />
+                  <LaunchBadge />
                   <Badge
                     variant="outline"
                     className={pricingBadgeColor(product.pricing as Pricing)}

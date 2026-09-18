@@ -141,7 +141,7 @@ export const tools = pgTable(
     tier: tierEnum("tier").notNull().default("free"),
 
     // Moderation
-    status: statusEnum("status").notNull().default("approved"),
+    status: statusEnum("status").notNull().default("pending"),
 
     // Denormalised counters
     upvotesCount: integer("upvotes_count").notNull().default(0),
@@ -224,7 +224,7 @@ export const products = pgTable(
     tier: tierEnum("tier").notNull().default("free"),
 
     // Moderation
-    status: statusEnum("status").notNull().default("approved"),
+    status: statusEnum("status").notNull().default("pending"),
 
     // Denormalised counters (NO upvotesCount, NO buildsCount)
     likesCount: integer("likes_count").notNull().default(0),

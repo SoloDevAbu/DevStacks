@@ -60,10 +60,11 @@ export const createProduct = async (data: CreateProductInput) => {
     .insert(products)
     .values({
       ...rest,
+      tier: "premium",
       logoUrl,
       categoryId,
       slug,
-      status: "approved",
+      status: "pending",
     })
     .returning()
 

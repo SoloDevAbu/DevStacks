@@ -41,6 +41,7 @@ import {
 import { ProductLogo } from "@/components/shared/product-logo"
 import { getFaviconUrl } from "@/utils/urls"
 import { VerifiedBadge } from "@/components/shared/verified-badge"
+import { LaunchBadge } from "@/components/shared/launch-badge"
 import { ProductCard } from "@/components/shared/product-card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -100,7 +101,7 @@ export const generateMetadata = async ({
   const description =
     tool.metaDescription ??
     tool.description ??
-    `Learn about ${tool.name} on ${SITE_CONFIG.name}. Features, pricing, community upvotes, and developer builds.`
+    `Explore ${tool.name} — ${tool.tagline} on ${SITE_CONFIG.name}. Verified Premium developer tool listing with features, pricing, and battle-tested builds.`
   const canonicalUrl = `${SITE_CONFIG.url}/tools/${tool.slug}`
   const keywords = tool.keywords
     ? tool.keywords.split(",").map((k) => k.trim())
@@ -108,6 +109,8 @@ export const generateMetadata = async ({
         tool.name,
         ...(tool.tags ?? []),
         "developer tool",
+        "verified developer launch",
+        "First 100 Launches",
         "API",
         "infrastructure",
         SITE_CONFIG.name,
@@ -294,6 +297,7 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
                     {tool.name}
                   </h1>
                   <VerifiedBadge tier={tool.tier as Tier} />
+                  <LaunchBadge />
                   <Badge
                     variant="outline"
                     className={pricingBadgeColor(tool.pricing as Pricing)}

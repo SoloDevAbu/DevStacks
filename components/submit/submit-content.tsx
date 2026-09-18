@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
+import Link from "next/link"
 import Image from "next/image"
 import { PageHeader } from "@/components/shared/page-header"
 import { SITE_CONFIG } from "@/constants/site"
@@ -20,6 +21,7 @@ import {
   Video,
   Plus,
   Trash2,
+  Sparkles,
 } from "lucide-react"
 import { Spinner } from "@/components/ui/spinner"
 import {
@@ -39,7 +41,13 @@ import {
   submitSectionHeaderRequired,
   submitSectionHeaderOptional,
   submitSectionHeaderDiscoverability,
+  launchPromoCard,
+  launchPromoCardList,
+  launchPromoCardItem,
+  launchPromoBadge,
 } from "@/utils/styles"
+import { LAUNCH_PROMO } from "@/constants/promo"
+import { ROUTES } from "@/constants/routes"
 import {
   FaqBuilder,
   type FaqBuilderItem,
@@ -203,14 +211,29 @@ export const SubmitContent = () => {
     return (
       <div className="relative flex min-h-full flex-col items-center justify-center gap-6 bg-slate-50/50 p-12 text-center">
         <CheckCircle2 className="size-16 text-emerald-500" />
-        <div>
-          <h2 className="text-2xl font-bold text-slate-900">Tool Submitted!</h2>
-          <p className="mt-2 text-slate-500">
-            Your tool is now live on {SITE_CONFIG.name} and discoverable by developers
-            and AI engines.
+        <div className="max-w-md">
+          <h2 className="text-2xl font-bold text-slate-900">Submission Received!</h2>
+          <p className="mt-2 text-sm text-slate-600">
+            Your tool has been submitted for review. As part of our launch celebration, your listing has been automatically upgraded to{" "}
+            <strong className="text-slate-900">
+              Premium for free ({LAUNCH_PROMO.VALUE_GIFTED} value)
+            </strong>{" "}
+            with a permanent Do-Follow SEO backlink.
+          </p>
+          <p className="mt-2 text-xs text-slate-500">
+            Our moderation team will review and approve it shortly. You can monitor its status from your Dashboard.
           </p>
         </div>
-        <Button onClick={() => setSubmitted(false)}>Submit Another Tool</Button>
+        <div className="flex flex-wrap items-center justify-center gap-3">
+          <Button onClick={() => setSubmitted(false)}>Submit Another Tool</Button>
+          <Button
+            variant="outline"
+            nativeButton={false}
+            render={<Link href={ROUTES.DASHBOARD} />}
+          >
+            Go to Dashboard
+          </Button>
+        </div>
       </div>
     )
   }
@@ -242,6 +265,40 @@ export const SubmitContent = () => {
           </span>
         </div>
       </div>
+
+      {/* Launch Promo Card */}
+      {LAUNCH_PROMO.IS_ACTIVE && (
+        <div className="border-b border-dashed border-border bg-amber-50/20 px-6 py-6 md:px-8">
+          <div className={launchPromoCard}>
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div className="flex items-center gap-2.5">
+                <span className="flex size-7 items-center justify-center rounded-lg bg-amber-500/20 text-amber-700">
+                  <Sparkles className="size-4" />
+                </span>
+                <div>
+                  <h3 className="text-sm font-bold text-slate-900">
+                    {LAUNCH_PROMO.PROMO_TITLE}
+                  </h3>
+                  <p className="text-xs text-slate-600">
+                    Submit your tool today and receive an automatic upgrade to Verified Premium status ({LAUNCH_PROMO.VALUE_GIFTED} value) upon approval.
+                  </p>
+                </div>
+              </div>
+              <Badge variant="outline" className={launchPromoBadge}>
+                {LAUNCH_PROMO.BADGE_LABEL}
+              </Badge>
+            </div>
+            <div className={launchPromoCardList}>
+              {LAUNCH_PROMO.PERKS.map((perk, i) => (
+                <div key={i} className={launchPromoCardItem}>
+                  <CheckCircle2 className="size-3.5 shrink-0 text-emerald-600" />
+                  <span>{perk}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="flex w-full flex-1 flex-col bg-white">
         <form onSubmit={handleSubmit} className="flex flex-col">

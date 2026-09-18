@@ -401,3 +401,17 @@ export const dashboardMetricCell =
 export const dashboardRow =
   "flex flex-col gap-4 border-b border-dashed border-border bg-white px-6 py-5 transition-colors hover:bg-slate-50/30 md:px-8"
 
+export const launchPromoBannerWrapper =
+  "relative z-50 flex w-full items-center justify-between border-b border-amber-200/80 bg-linear-to-r from-amber-500/10 via-yellow-500/10 to-amber-500/10 px-4 py-2 text-xs text-amber-950 transition-colors"
+
+export const launchPromoBadge =
+  "inline-flex items-center gap-1 rounded-md border border-amber-300/80 bg-amber-100/60 px-2 py-0.5 text-[11px] font-semibold text-amber-900 shadow-2xs"
+
+export const launchPromoCard =
+  "relative overflow-hidden rounded-xl border border-dashed border-amber-300/80 bg-linear-to-br from-amber-50/70 via-white to-yellow-50/50 p-5 shadow-xs"
+
+export const launchPromoCardList = "mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2"
+
+export const launchPromoCardItem =
+  "flex items-center gap-2 text-xs font-medium text-slate-700"
+

@@ -52,10 +52,11 @@ export const createTool = async (data: CreateToolInput) => {
     .insert(tools)
     .values({
       ...rest,
+      tier: "premium",
       logoUrl,
       categoryId,
       slug,
-      status: "approved",
+      status: "pending",
     })
     .returning()
 

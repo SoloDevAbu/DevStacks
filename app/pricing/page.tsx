@@ -22,6 +22,12 @@ import { Badge } from "@/components/ui/badge"
 import { HoverOutline } from "@/components/shared/hover-outline"
 import { SITE_CONFIG, CREATOR_SOCIALS } from "@/constants/site"
 import { ROUTES } from "@/constants/routes"
+import { LAUNCH_PROMO } from "@/constants/promo"
+import {
+  launchPromoCard,
+  launchPromoCardList,
+  launchPromoCardItem,
+} from "@/utils/styles"
 import { breadcrumbSchema, faqSchema } from "@/lib/seo/schema"
 import { AI_PROMPTS } from "@/lib/prompts"
 
@@ -110,6 +116,47 @@ const PricingPage = () => {
           aiPrompt={AI_PROMPTS.pricing}
           variant="pricing"
         />
+
+        {/* Launch Promo Card */}
+        {LAUNCH_PROMO.IS_ACTIVE && (
+          <div className="border-b border-dashed border-border bg-amber-50/20 px-6 py-8 md:px-10">
+            <div className="mx-auto max-w-3xl">
+              <div className={launchPromoCard}>
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div className="flex items-center gap-2.5">
+                    <span className="flex size-7 items-center justify-center rounded-lg bg-amber-500/20 text-amber-700">
+                      <Sparkles className="size-4" />
+                    </span>
+                    <div>
+                      <h3 className="text-sm font-bold text-slate-900">
+                        {LAUNCH_PROMO.PROMO_TITLE}
+                      </h3>
+                      <p className="text-xs text-slate-600">
+                        All directory submissions are currently receiving free Lifetime Premium upgrades ({LAUNCH_PROMO.VALUE_GIFTED} value) with permanent Do-Follow SEO backlinks.
+                      </p>
+                    </div>
+                  </div>
+                  <Button
+                    size="sm"
+                    className="rounded-lg bg-amber-600 text-xs font-semibold text-white hover:bg-amber-700"
+                    nativeButton={false}
+                    render={<Link href={ROUTES.SUBMIT} />}
+                  >
+                    Claim Free Listing
+                  </Button>
+                </div>
+                <div className={launchPromoCardList}>
+                  {LAUNCH_PROMO.PERKS.map((perk, i) => (
+                    <div key={i} className={launchPromoCardItem}>
+                      <Check className="size-3.5 shrink-0 text-emerald-600" />
+                      <span>{perk}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Sponsorship Card */}
         <div className="border-b border-dashed border-border bg-white px-6 py-10 md:px-10 md:py-16">
