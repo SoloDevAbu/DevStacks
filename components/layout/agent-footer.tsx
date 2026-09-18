@@ -110,30 +110,21 @@ export const AgentFooter = () => (
           </p>
           <div className="mt-2 flex items-center gap-3 font-mono text-xs text-slate-500">
             <a
-              href={SITE_CONFIG.socials.github}
+              href={SITE_CONFIG.socials.x}
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-slate-900 transition-colors"
             >
-              GitHub
+              X / Twitter
             </a>
             <span>·</span>
             <a
-              href={SITE_CONFIG.socials.twitter}
+              href={SITE_CONFIG.socials.linkedin}
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-slate-900 transition-colors"
             >
-              X/Twitter
-            </a>
-            <span>·</span>
-            <a
-              href={SITE_CONFIG.socials.discord}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-slate-900 transition-colors"
-            >
-              Discord
+              LinkedIn
             </a>
           </div>
         </div>

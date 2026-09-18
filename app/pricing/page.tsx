@@ -26,7 +26,7 @@ import { breadcrumbSchema, faqSchema } from "@/lib/seo/schema"
 import { AI_PROMPTS } from "@/lib/prompts"
 
 export const metadata: Metadata = {
-  title: "Sidebar Sponsorship & Advertising — DevStacks",
+  title: `Sidebar Sponsorship & Advertising — ${SITE_CONFIG.name}`,
   description: `Promote your developer tool, API, or infrastructure with dedicated sidebar ad placements reaching thousands of engineers on ${SITE_CONFIG.name}.`,
   alternates: {
     canonical: `${SITE_CONFIG.url}/pricing`,
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: `Sidebar Sponsorship & Advertising | ${SITE_CONFIG.name}`,
     description:
-      "Promote your developer tool or API with high-visibility sidebar ad placements across DevStacks.",
+      `Promote your developer tool or API with high-visibility sidebar ad placements across ${SITE_CONFIG.name}.`,
     type: "website",
     url: `${SITE_CONFIG.url}/pricing`,
     images: [
@@ -42,7 +42,7 @@ export const metadata: Metadata = {
         url: `${SITE_CONFIG.url}/opengraph-image`,
         width: 1200,
         height: 630,
-        alt: "Sidebar Advertising | DevStacks",
+        alt: `Sidebar Advertising | ${SITE_CONFIG.name}`,
       },
     ],
   },
@@ -50,7 +50,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: `Sidebar Sponsorship & Advertising | ${SITE_CONFIG.name}`,
     description:
-      "Promote your developer tool or API with high-visibility sidebar ad placements across DevStacks.",
+      `Promote your developer tool or API with high-visibility sidebar ad placements across ${SITE_CONFIG.name}.`,
     images: [`${SITE_CONFIG.url}/twitter-image`],
   },
 }
@@ -59,7 +59,7 @@ const FAQ_ITEMS = [
   {
     question: "How much does directory submission cost?",
     answer:
-      "Submitting developer tools and products to DevStacks is 100% free. Every approved submission is indexed in our public directory with full searchability.",
+      `Submitting developer tools and products to ${SITE_CONFIG.name} is 100% free. Every approved submission is indexed in our public directory with full searchability.`,
   },
   {
     question: "Where do sidebar ads appear?",

@@ -1,20 +1,20 @@
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://devstacks.io"
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://launchnests.com"
 
 export const SITE_CONFIG = {
-  name: "DevStacks",
-  shortName: "DevStacks",
+  name: "LaunchNests",
+  shortName: "LaunchNests",
   alternateNames: [
-    "DevStacks Directory",
-    "DevStacks Ecosystem",
-    "DevStacks IO",
+    "LaunchNests Directory",
+    "LaunchNests Ecosystem",
+    "LaunchNests Platform",
   ],
   tagline: "Discover Developer Tools, APIs & Products",
   description:
     "Discover developer tools, APIs, and infrastructure products. Explore what developers are building, community upvotes, and battle-tested tech stacks.",
   url: siteUrl,
-  domain: "devstacks.io",
-  creator: "DevStacks Team",
-  publisher: "DevStacks",
+  domain: "launchnests.com",
+  creator: "Abu Bakkar Siddique",
+  publisher: "LaunchNests",
   keywords: [
     "developer tools",
     "devtools directory",
@@ -26,7 +26,7 @@ export const SITE_CONFIG = {
     "tech stack showcase",
     "built with developer tools",
     "trending dev tools",
-    "what is DevStacks",
+    "what is LaunchNests",
     "tech stack database",
     "developer ecosystem",
     "indie hacker tools",
@@ -36,9 +36,8 @@ export const SITE_CONFIG = {
     "product tech stacks",
   ],
   socials: {
-    twitter: "https://x.com/devstacks",
-    github: "https://github.com/devstacks",
-    discord: "https://discord.gg/devstacks",
+    x: "https://x.com/AbuBakkar2502",
+    linkedin: "https://www.linkedin.com/in/abu-bakkar-siddique-546112205/",
   },
   themeColor: "#0f172a",
 } as const
@@ -48,4 +47,5 @@ export const CREATOR_SOCIALS = {
   x: "https://x.com/AbuBakkar2502",
   linkedin: "https://www.linkedin.com/in/abu-bakkar-siddique-546112205/",
 } as const
+
 

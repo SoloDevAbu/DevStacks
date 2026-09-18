@@ -13,7 +13,7 @@ info:
   contact:
     name: ${SITE_CONFIG.name}
     url: ${SITE_CONFIG.url}/cli
-    email: support@devstacks.io
+    email: support@launchnests.com
 servers:
   - url: ${SITE_CONFIG.url}
     description: Production

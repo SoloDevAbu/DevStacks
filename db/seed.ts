@@ -651,9 +651,9 @@ export const seedDatabase = async () => {
     const [newUser] = await db
       .insert(users)
       .values({
-        id: "system-admin-devstacks",
-        name: "DevStacks Team",
-        email: "team@devstacks.io",
+        id: "system-admin-launchnests",
+        name: "LaunchNests Team",
+        email: "team@launchnests.com",
         emailVerified: true,
       })
       .returning()

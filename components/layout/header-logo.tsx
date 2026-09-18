@@ -1,6 +1,7 @@
 import { Blocks } from "lucide-react"
 import Link from "next/link"
 import { ROUTES } from "@/constants/routes"
+import { SITE_CONFIG } from "@/constants/site"
 
 export const HeaderLogo = () => {
   return (
@@ -12,7 +13,7 @@ export const HeaderLogo = () => {
         <Blocks className="size-4.5 text-indigo-300" />
       </div>
       <span className="flex items-center gap-1.5">
-        <span>DevStacks</span>
+        <span>{SITE_CONFIG.name}</span>
       </span>
     </Link>
   )

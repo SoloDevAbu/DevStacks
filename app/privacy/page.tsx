@@ -127,7 +127,7 @@ const PrivacyPage = () => {
               If you have any questions or concerns regarding our privacy practices or wish to submit a data removal request, contact our team directly at:
             </p>
             <div className="font-mono text-xs text-slate-800">
-              <p>Email: <a href="mailto:support@devstacks.io" className="text-blue-600 hover:underline">support@devstacks.io</a></p>
+              <p>Email: <a href="mailto:support@launchnests.com" className="text-blue-600 hover:underline">support@launchnests.com</a></p>
               <p>Platform: {SITE_CONFIG.domain}</p>
             </div>
           </section>

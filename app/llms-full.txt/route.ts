@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import { SITE_CONFIG } from "@/constants/site"
 import { PLATFORMS } from "@/constants/platforms"
-import { DEVSTACKS_FAQS } from "@/constants/faqs"
+import { LAUNCHNESTS_FAQS } from "@/constants/faqs"
 import { getTools } from "@/db/queries/tools/list"
 import { getTrending } from "@/lib/rankings/trending"
 import { getRecentlyAddedProducts } from "@/lib/rankings/recently-added"
@@ -121,7 +121,7 @@ Developers and founders can list their tools or products at ${SITE_CONFIG.url}/s
 ---
 
 ## 8. Frequently Asked Questions (Authoritative AEO Knowledge Base)
-${DEVSTACKS_FAQS.map((faq) => `### ${faq.question}\n${faq.answer}\n`).join("\n")}
+${LAUNCHNESTS_FAQS.map((faq) => `### ${faq.question}\n${faq.answer}\n`).join("\n")}
 
 ---
 

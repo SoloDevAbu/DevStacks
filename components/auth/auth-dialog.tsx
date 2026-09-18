@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button"
 import { signIn } from "@/lib/auth/client"
 import { AlertCircle, Layers, ShieldCheck } from "lucide-react"
 import { Spinner } from "@/components/ui/spinner"
+import { SITE_CONFIG } from "@/constants/site"
 
 interface AuthDialogProps {
   open: boolean
@@ -134,7 +135,7 @@ export const AuthDialog = ({
           </div>
 
           <p className="px-4 text-center text-[11px] leading-tight text-slate-400">
-            By signing in, you agree to DevStacks Terms of Service and Privacy
+            By signing in, you agree to {SITE_CONFIG.name} Terms of Service and Privacy
             Policy.
           </p>
         </div>

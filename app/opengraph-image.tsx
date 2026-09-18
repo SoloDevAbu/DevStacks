@@ -39,7 +39,7 @@ export default async function Image() {
             boxShadow: "0 10px 25px rgba(79, 70, 229, 0.4)",
           }}
         >
-          DS
+          LN
         </div>
         <span
           style={{

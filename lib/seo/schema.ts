@@ -80,9 +80,8 @@ export const organizationSchema = () => ({
   disambiguatingDescription:
     "The premier developer tools discovery directory, APIs database, and tech-stack ecosystem platform.",
   sameAs: [
-    SITE_CONFIG.socials.twitter,
-    SITE_CONFIG.socials.github,
-    SITE_CONFIG.socials.discord,
+    SITE_CONFIG.socials.x,
+    SITE_CONFIG.socials.linkedin,
   ],
   contactPoint: {
     "@type": "ContactPoint",

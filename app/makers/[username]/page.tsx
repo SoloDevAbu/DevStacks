@@ -42,7 +42,7 @@ export const generateMetadata = async ({
 
   if (!maker) {
     return {
-      title: "Maker Not Found — DevStacks",
+      title: `Maker Not Found — ${SITE_CONFIG.name}`,
     }
   }
 
@@ -170,7 +170,12 @@ export default async function MakerPage({ params }: MakerPageProps) {
             Home
           </Link>
           <span>/</span>
-          <span className="text-slate-400">Makers</span>
+          <Link
+            href={ROUTES.MAKERS}
+            className="transition-colors hover:text-slate-900"
+          >
+            Makers
+          </Link>
           <span>/</span>
           <span className="font-semibold text-slate-900">
             @{maker.username}

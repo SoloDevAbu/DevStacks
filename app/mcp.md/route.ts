@@ -42,7 +42,7 @@ tools: 5
 \`\`\`json
 {
   "mcpServers": {
-    "devstacks": {
+    "launchnests": {
       "url": "${SITE_CONFIG.url}/api/mcp",
       "transport": "streamable-http"
     }
@@ -55,7 +55,7 @@ tools: 5
 \`\`\`json
 {
   "mcpServers": {
-    "devstacks": {
+    "launchnests": {
       "command": "npx",
       "args": ["-y", "@modelcontextprotocol/server-fetch", "${SITE_CONFIG.url}/api/mcp"]
     }

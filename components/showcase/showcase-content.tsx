@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
 import { PageHeader } from "@/components/shared/page-header"
+import { SITE_CONFIG } from "@/constants/site"
 import { AI_PROMPTS } from "@/lib/prompts"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -543,7 +544,7 @@ export const ShowcaseContent = ({ initialTool }: ShowcaseContentProps = {}) => {
                   Tech Stack & Built With
                 </h3>
                 <p className="text-xs text-slate-500">
-                  Link your build to developer tools in DevStacks, or add custom
+                  Link your build to developer tools in {SITE_CONFIG.name}, or add custom
                   unlinked tools.
                 </p>
               </div>

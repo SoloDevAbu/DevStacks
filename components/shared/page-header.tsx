@@ -18,6 +18,7 @@ export type PageHeaderVariant =
   | "discover-weekly-launches"
   | "products"
   | "tools"
+  | "makers"
 
 interface PageHeaderProps {
   heading: string
@@ -33,7 +34,7 @@ const VARIANT_CONFIGS = {
     bg: "bg-linear-to-b from-sky-50/40 via-white to-slate-50/30",
     mesh1: "bg-sky-200/25",
     mesh2: "bg-indigo-200/20",
-    aiLabel: "ASK AI ABOUT DEVSTACKS",
+    aiLabel: "ASK AI ABOUT LAUNCHNESTS",
   },
   trending: {
     bg: "bg-linear-to-b from-amber-50/45 via-white to-slate-50/30",
@@ -106,6 +107,12 @@ const VARIANT_CONFIGS = {
     mesh1: "bg-indigo-200/25",
     mesh2: "bg-emerald-200/20",
     aiLabel: "ASK AI ABOUT TOOLS",
+  },
+  makers: {
+    bg: "bg-linear-to-b from-indigo-50/40 via-white to-slate-50/30",
+    mesh1: "bg-indigo-200/25",
+    mesh2: "bg-sky-200/20",
+    aiLabel: "ASK AI ABOUT MAKERS",
   },
   default: {
     bg: "bg-linear-to-b from-slate-50/60 via-white to-slate-50/30",

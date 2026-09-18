@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
 import { getProductBySlug } from "@/db/queries/products/get"
+import { SITE_CONFIG } from "@/constants/site"
 
 export const revalidate = 60
 
@@ -13,7 +14,7 @@ export const GET = async (
   if (!product) {
     return NextResponse.json(
       {
-        type: "https://devstacks.io/errors/not-found",
+        type: `${SITE_CONFIG.url}/errors/not-found`,
         title: "Product Not Found",
         status: 404,
         detail: `Product '${slug}' was not found in the catalog.`,

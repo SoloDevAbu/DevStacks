@@ -122,7 +122,7 @@ const RefundPage = () => {
               Send refund requests and billing questions to:
             </p>
             <div className="font-mono text-xs text-slate-800">
-              <p>Email: <a href="mailto:support@devstacks.io" className="text-blue-600 hover:underline">support@devstacks.io</a></p>
+              <p>Email: <a href="mailto:support@launchnests.com" className="text-blue-600 hover:underline">support@launchnests.com</a></p>
               <p>Response Time: Typically within 24–48 business hours</p>
             </div>
           </section>

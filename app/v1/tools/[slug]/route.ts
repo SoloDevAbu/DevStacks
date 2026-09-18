@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
 import { getToolBySlug } from "@/db/queries/tools/get"
+import { SITE_CONFIG } from "@/constants/site"
 
 export const revalidate = 60
 
@@ -13,7 +14,7 @@ export const GET = async (
   if (!tool) {
     return NextResponse.json(
       {
-        type: "https://devstacks.io/errors/not-found",
+        type: `${SITE_CONFIG.url}/errors/not-found`,
         title: "Tool Not Found",
         status: 404,
         detail: `Developer tool '${slug}' was not found in the catalog.`,

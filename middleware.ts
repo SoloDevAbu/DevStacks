@@ -87,7 +87,15 @@ export const middleware = (request: NextRequest) => {
     )
   }
 
-  // Content negotiation for text/markdown on tools, products, and root
+  // Support .md suffix on makers: /makers/alice.md -> /api/md/makers/alice
+  const makerMdMatch = pathname.match(/^\/makers\/([^/]+)\.md$/)
+  if (makerMdMatch && makerMdMatch[1]) {
+    return NextResponse.rewrite(
+      new URL(`/api/md/makers/${makerMdMatch[1]}`, request.url)
+    )
+  }
+
+  // Content negotiation for text/markdown on tools, products, makers, and root
   if (acceptHeader.includes("text/markdown") || acceptHeader.includes("text/x-markdown")) {
     const toolMatch = pathname.match(/^\/tools\/([^/]+)$/)
     if (toolMatch && toolMatch[1]) {
@@ -100,6 +108,13 @@ export const middleware = (request: NextRequest) => {
     if (productMatch && productMatch[1]) {
       return NextResponse.rewrite(
         new URL(`/api/md/products/${productMatch[1]}`, request.url)
+      )
+    }
+
+    const makerMatch = pathname.match(/^\/makers\/([^/]+)$/)
+    if (makerMatch && makerMatch[1]) {
+      return NextResponse.rewrite(
+        new URL(`/api/md/makers/${makerMatch[1]}`, request.url)
       )
     }
 
@@ -117,6 +132,7 @@ export const config = {
     "/.well-known/mcp",
     "/tools/:path*",
     "/products/:path*",
+    "/makers/:path*",
     "/",
   ],
 }

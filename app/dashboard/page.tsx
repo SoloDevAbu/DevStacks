@@ -7,9 +7,10 @@ import { getCurrentUserProfile } from "@/db/queries/users/get-profile"
 import { DashboardNav } from "@/components/dashboard/dashboard-nav"
 import { DashboardContent } from "@/components/dashboard/dashboard-content"
 import { ROUTES } from "@/constants/routes"
+import { SITE_CONFIG } from "@/constants/site"
 
 export const metadata: Metadata = {
-  title: "Maker Dashboard — DevStacks",
+  title: `Maker Dashboard — ${SITE_CONFIG.name}`,
   description:
     "Track your published developer tools, products, upvotes, comments, views, and submission statuses.",
   robots: {

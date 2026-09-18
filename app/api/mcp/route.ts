@@ -121,7 +121,7 @@ export const POST = async (request: NextRequest) => {
           tools: { listChanged: false },
         },
         serverInfo: {
-          name: "devstacks",
+          name: "launchnests",
           version: "1.0.0",
         },
       },

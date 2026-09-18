@@ -49,7 +49,7 @@ const McpPage = () => {
           <pre className="overflow-x-auto rounded-lg border border-border bg-slate-900 p-4 font-mono text-xs text-slate-100">
 {`{
   "mcpServers": {
-    "devstacks": {
+    "launchnests": {
       "url": "${SITE_CONFIG.url}/api/mcp",
       "transport": "streamable-http"
     }
@@ -67,7 +67,7 @@ const McpPage = () => {
           <pre className="overflow-x-auto rounded-lg border border-border bg-slate-900 p-4 font-mono text-xs text-slate-100">
 {`{
   "mcpServers": {
-    "devstacks": {
+    "launchnests": {
       "command": "npx",
       "args": ["-y", "@modelcontextprotocol/server-fetch", "${SITE_CONFIG.url}/api/mcp"]
     }

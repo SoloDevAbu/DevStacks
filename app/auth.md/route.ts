@@ -49,7 +49,7 @@ ${SITE_CONFIG.name} supports interactive sign-in with OAuth-verified identities:
 
 ## Contact
 
-- Agent integration inquiries: support@devstacks.io
+- Agent integration inquiries: support@launchnests.com
 `
 
   return new NextResponse(content, {

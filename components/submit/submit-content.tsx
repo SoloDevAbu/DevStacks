@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
 import { PageHeader } from "@/components/shared/page-header"
+import { SITE_CONFIG } from "@/constants/site"
 import { AI_PROMPTS } from "@/lib/prompts"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -189,7 +190,7 @@ export const SubmitContent = () => {
         <div>
           <h2 className="text-2xl font-bold text-slate-900">Tool Submitted!</h2>
           <p className="mt-2 text-slate-500">
-            Your tool is now live on DevStacks and discoverable by developers
+            Your tool is now live on {SITE_CONFIG.name} and discoverable by developers
             and AI engines.
           </p>
         </div>

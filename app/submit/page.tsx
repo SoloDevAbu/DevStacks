@@ -1,12 +1,10 @@
 import type { Metadata } from "next"
 import { headers } from "next/headers"
-import { redirect } from "next/navigation"
 import { auth } from "@/lib/auth"
 import { SubmitContent } from "@/components/submit/submit-content"
 import { SubmitCrawlerView } from "@/components/submit/submit-crawler-view"
 import { SITE_CONFIG } from "@/constants/site"
 import { breadcrumbSchema, faqSchema } from "@/lib/seo/schema"
-import { isCrawler } from "@/lib/seo/crawlers"
 
 export const metadata: Metadata = {
   title: "Submit a Developer Tool — Get Discovered by Engineers & AI",
@@ -66,21 +64,13 @@ const SUBMISSION_FAQS = [
 
 const SubmitPage = async () => {
   let session = null
-  let userAgent = ""
   try {
     const headerList = await headers()
-    userAgent = headerList.get("user-agent") ?? ""
     session = await auth.api.getSession({
       headers: headerList,
     })
   } catch {
     session = null
-  }
-
-  const isBot = isCrawler(userAgent)
-
-  if (!session?.user && !isBot) {
-    redirect("/?redirect=/submit")
   }
 
   const breadcrumbs = breadcrumbSchema([
