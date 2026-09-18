@@ -157,6 +157,14 @@ export const middleware = (request: NextRequest) => {
       return rewriteWithHeaders("/terms.md")
     }
 
+    if (pathname === "/privacy") {
+      return rewriteWithHeaders("/privacy.md")
+    }
+
+    if (pathname === "/refund") {
+      return rewriteWithHeaders("/refund.md")
+    }
+
     if (pathname === "/") {
       return rewriteWithHeaders("/api/md/_catalog")
     }
@@ -176,6 +184,8 @@ export const config = {
     "/trending/:path*",
     "/faq",
     "/terms",
+    "/privacy",
+    "/refund",
     "/",
   ],
 }

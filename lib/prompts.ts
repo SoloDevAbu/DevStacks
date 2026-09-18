@@ -346,9 +346,10 @@ export const getPageAiGuide = (pathname: string): PageAiGuide => {
         "Review information collection practices, cookie policies, edge geolocation handling, and data deletion rights.",
       prompt: AI_PROMPTS.privacy,
       suggestedQuestions: [
-        "What data is collected when I create a maker account?",
-        "How does LaunchNests handle edge IP geolocation?",
-        "How can I request deletion of my data or listing?",
+        "What personal and technical data does LaunchNests collect?",
+        "How is maker content indexed by AI answer engines and crawlers?",
+        "What are my rights under GDPR and the DPDP Act?",
+        "How do I request account and listing data deletion?",
       ],
     }
   }
@@ -362,9 +363,10 @@ export const getPageAiGuide = (pathname: string): PageAiGuide => {
         "Check cancellation windows, scheduling adjustment terms, and customer support contact methods.",
       prompt: AI_PROMPTS.refund,
       suggestedQuestions: [
-        "What is the refund policy for sidebar sponsorships?",
-        "Can I reschedule a reserved promotional placement?",
-        "Who do I contact for billing support?",
+        "Are developer tool and product listings free on LaunchNests?",
+        "What is the cancellation policy for sidebar sponsorships?",
+        "What happens if my listing is rejected after purchasing promotion?",
+        "How do I submit a refund request to billing support?",
       ],
     }
   }

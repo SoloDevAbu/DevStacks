@@ -45,6 +45,8 @@ export const GET = async () => {
 - [Showcase](${SITE_CONFIG.url}/showcase): Real-world developer projects showcasing complete production stacks.
 - [FAQ](${SITE_CONFIG.url}/faq): Authoritative Q&A covering launching, directory rules, tech-stack graphs, sponsorships, and AI agent discoverability protocols.
 - [Terms of Service](${SITE_CONFIG.url}/terms): Platform terms of service, listing guidelines, backlink rules, and legal compliance.
+- [Privacy Policy](${SITE_CONFIG.url}/privacy): Developer data handling, GDPR/DPDP rights, and crawler policies.
+- [Refund Policy](${SITE_CONFIG.url}/refund): Cancellation and refund rules for sponsorships and promotional units.
 - [Pricing](${SITE_CONFIG.url}/pricing): Platform sponsorship and promotional listing options for tool creators.
 - [Submit](${SITE_CONFIG.url}/submit): Interactive portal to submit a new developer tool or product.
 - [MCP docs](${SITE_CONFIG.url}/mcp): Human + agent documentation for the public Model Context Protocol server.
@@ -65,6 +67,8 @@ export const GET = async () => {
 - [/showcase](${SITE_CONFIG.url}/showcase): Developer showcases
 - [/faq](${SITE_CONFIG.url}/faq): Frequently asked questions (also available as markdown at /faq.md)
 - [/terms](${SITE_CONFIG.url}/terms): Terms of service & platform governance (also available as markdown at /terms.md)
+- [/privacy](${SITE_CONFIG.url}/privacy): Privacy policy & data protection (also available as markdown at /privacy.md)
+- [/refund](${SITE_CONFIG.url}/refund): Refund & cancellation policy (also available as markdown at /refund.md)
 - [/pricing](${SITE_CONFIG.url}/pricing): Platform sponsorship and promotion options
 - [/mcp](${SITE_CONFIG.url}/mcp): MCP server documentation
 - [/cli](${SITE_CONFIG.url}/cli): CLI & Public REST documentation
