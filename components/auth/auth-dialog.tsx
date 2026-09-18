@@ -87,7 +87,7 @@ export const AuthDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="p-6 sm:max-w-[400px]">
+      <DialogContent className="p-6 sm:max-w-100">
         <DialogHeader className="flex flex-col items-center gap-1.5 pb-2 text-center">
           <div className="mb-1 flex size-10 items-center justify-center rounded-md bg-slate-900 text-white shadow-sm">
             <Layers className="size-5" />
@@ -135,8 +135,8 @@ export const AuthDialog = ({
           </div>
 
           <p className="px-4 text-center text-[11px] leading-tight text-slate-400">
-            By signing in, you agree to {SITE_CONFIG.name} Terms of Service and Privacy
-            Policy.
+            By signing in, you agree to {SITE_CONFIG.name} Terms of Service and
+            Privacy Policy.
           </p>
         </div>
       </DialogContent>

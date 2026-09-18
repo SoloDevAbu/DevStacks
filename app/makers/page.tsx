@@ -10,7 +10,10 @@ import { SITE_CONFIG } from "@/constants/site"
 import { ROUTES } from "@/constants/routes"
 import { AI_PROMPTS } from "@/lib/prompts"
 import { heroStatPill } from "@/utils/styles"
-import { getMakersDirectory, type MakerDirectoryItem } from "@/db/queries/users/get-profile"
+import {
+  getMakersDirectory,
+  type MakerDirectoryItem,
+} from "@/db/queries/users/get-profile"
 import { countryCodeToFlag, formatLocation } from "@/utils/country"
 
 export const revalidate = 60
@@ -52,7 +55,9 @@ export const metadata: Metadata = {
 }
 
 const MakersPage = async () => {
-  const makers = await getMakersDirectory(120).catch(() => [] as MakerDirectoryItem[])
+  const makers = await getMakersDirectory(120).catch(
+    () => [] as MakerDirectoryItem[]
+  )
 
   const breadcrumbs = breadcrumbSchema([
     { name: "Home", url: SITE_CONFIG.url },
@@ -66,7 +71,8 @@ const MakersPage = async () => {
     items: makers.map((maker) => ({
       name: maker.name || `@${maker.username}`,
       url: `${SITE_CONFIG.url}/makers/${maker.username}`,
-      description: maker.bio || maker.description || `Maker on ${SITE_CONFIG.name}`,
+      description:
+        maker.bio || maker.description || `Maker on ${SITE_CONFIG.name}`,
     })),
   })
 
@@ -135,11 +141,11 @@ const MakersPage = async () => {
                     className="group block focus-visible:outline-none"
                   >
                     <Card className="h-full border border-dashed border-border bg-white transition-all duration-200 hover:-translate-y-0.5 hover:border-indigo-200 hover:shadow-md">
-                      <CardContent className="flex flex-col justify-between h-full p-5">
+                      <CardContent className="flex h-full flex-col justify-between p-5">
                         <div>
                           <div className="flex items-start justify-between gap-3">
-                            <div className="flex items-center gap-3 min-w-0">
-                              <Avatar className="size-11 border border-border/80 shrink-0">
+                            <div className="flex min-w-0 items-center gap-3">
+                              <Avatar className="size-11 shrink-0 border border-border/80">
                                 {maker.avatarUrl && (
                                   <AvatarImage
                                     src={maker.avatarUrl}
@@ -153,12 +159,12 @@ const MakersPage = async () => {
 
                               <div className="min-w-0 flex-1">
                                 <div className="flex items-center gap-1.5">
-                                  <span className="truncate font-bold text-slate-900 transition-colors group-hover:text-indigo-600 text-sm">
+                                  <span className="truncate text-sm font-bold text-slate-900 transition-colors group-hover:text-indigo-600">
                                     {displayName}
                                   </span>
                                   {flag && (
                                     <span
-                                      className="text-xs select-none shrink-0"
+                                      className="shrink-0 text-xs select-none"
                                       title={location}
                                     >
                                       {flag}
@@ -194,21 +200,24 @@ const MakersPage = async () => {
                               <span className="flex items-center gap-1 font-medium text-slate-700">
                                 <Package className="size-3 text-emerald-500" />
                                 {maker.productsCount}{" "}
-                                {maker.productsCount === 1 ? "product" : "products"}
+                                {maker.productsCount === 1
+                                  ? "product"
+                                  : "products"}
                               </span>
                             )}
-                            {maker.toolsCount === 0 && maker.productsCount === 0 && (
-                              <Badge
-                                variant="secondary"
-                                className="h-5 px-1.5 text-[10px] font-normal"
-                              >
-                                Maker
-                              </Badge>
-                            )}
+                            {maker.toolsCount === 0 &&
+                              maker.productsCount === 0 && (
+                                <Badge
+                                  variant="secondary"
+                                  className="h-5 px-1.5 text-[10px] font-normal"
+                                >
+                                  Maker
+                                </Badge>
+                              )}
                           </div>
 
                           {location && (
-                            <span className="truncate max-w-[120px] text-slate-400">
+                            <span className="max-w-30 truncate text-slate-400">
                               {location}
                             </span>
                           )}
