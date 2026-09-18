@@ -329,9 +329,10 @@ export const getPageAiGuide = (pathname: string): PageAiGuide => {
         "Read user guidelines, maker submission requirements, community integrity policies, and intellectual property provisions.",
       prompt: AI_PROMPTS.terms,
       suggestedQuestions: [
-        "What are the submission guidelines for developer tools?",
-        "What are the rules regarding community upvoting and integrity?",
-        "How does LaunchNests handle maker attribution?",
+        "How does directory listing and launch voting work?",
+        "What are the sponsorship and Do-Follow backlink rules?",
+        "What are the protocols for AI agents and MCP tools?",
+        "What are the rules on upvote manipulation and acceptable use?",
       ],
     }
   }

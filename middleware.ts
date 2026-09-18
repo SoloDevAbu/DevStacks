@@ -153,6 +153,10 @@ export const middleware = (request: NextRequest) => {
       return rewriteWithHeaders("/faq.md")
     }
 
+    if (pathname === "/terms") {
+      return rewriteWithHeaders("/terms.md")
+    }
+
     if (pathname === "/") {
       return rewriteWithHeaders("/api/md/_catalog")
     }
@@ -171,6 +175,7 @@ export const config = {
     "/categories/:path*",
     "/trending/:path*",
     "/faq",
+    "/terms",
     "/",
   ],
 }

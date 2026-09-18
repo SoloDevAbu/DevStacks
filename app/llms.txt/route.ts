@@ -44,6 +44,7 @@ export const GET = async () => {
 - [Makers](${SITE_CONFIG.url}/makers): Directory of software creators, developers, and builders.
 - [Showcase](${SITE_CONFIG.url}/showcase): Real-world developer projects showcasing complete production stacks.
 - [FAQ](${SITE_CONFIG.url}/faq): Authoritative Q&A covering launching, directory rules, tech-stack graphs, sponsorships, and AI agent discoverability protocols.
+- [Terms of Service](${SITE_CONFIG.url}/terms): Platform terms of service, listing guidelines, backlink rules, and legal compliance.
 - [Pricing](${SITE_CONFIG.url}/pricing): Platform sponsorship and promotional listing options for tool creators.
 - [Submit](${SITE_CONFIG.url}/submit): Interactive portal to submit a new developer tool or product.
 - [MCP docs](${SITE_CONFIG.url}/mcp): Human + agent documentation for the public Model Context Protocol server.
@@ -63,6 +64,7 @@ export const GET = async () => {
 - [/discover/popular-building-blocks](${SITE_CONFIG.url}/discover/popular-building-blocks): Most-used developer APIs and infrastructure tools
 - [/showcase](${SITE_CONFIG.url}/showcase): Developer showcases
 - [/faq](${SITE_CONFIG.url}/faq): Frequently asked questions (also available as markdown at /faq.md)
+- [/terms](${SITE_CONFIG.url}/terms): Terms of service & platform governance (also available as markdown at /terms.md)
 - [/pricing](${SITE_CONFIG.url}/pricing): Platform sponsorship and promotion options
 - [/mcp](${SITE_CONFIG.url}/mcp): MCP server documentation
 - [/cli](${SITE_CONFIG.url}/cli): CLI & Public REST documentation

@@ -147,6 +147,7 @@ ${faq.answer}`
 - MCP Docs & Guides: ${SITE_CONFIG.url}/mcp and ${SITE_CONFIG.url}/mcp.md
 - CLI Documentation: ${SITE_CONFIG.url}/cli and ${SITE_CONFIG.url}/cli.md
 - FAQ Markdown Twin: ${SITE_CONFIG.url}/faq.md
+- Terms Markdown Twin: ${SITE_CONFIG.url}/terms.md
 - AI Behaviour Guidance: ${SITE_CONFIG.url}/ai.txt
 - Agent Auth Guide: ${SITE_CONFIG.url}/auth.md
 - Markdown Twins: Every entity is available as text/markdown via .md suffix or Accept: text/markdown.

@@ -445,4 +445,31 @@ export const faqRowQuestion =
 export const faqRowAnswer =
   "pl-7.5 max-w-4xl text-xs sm:text-sm leading-relaxed whitespace-pre-line text-slate-600"
 
+export const termsCategoryHeaders = {
+  core: "flex flex-col gap-1 border-b border-dashed border-border bg-linear-to-r from-blue-100/60 via-sky-50/40 to-white px-6 py-5 md:px-8",
+  directory:
+    "flex flex-col gap-1 border-b border-dashed border-border bg-linear-to-r from-amber-100/60 via-orange-50/40 to-white px-6 py-5 md:px-8",
+  protocols:
+    "flex flex-col gap-1 border-b border-dashed border-border bg-linear-to-r from-indigo-100/50 via-violet-50/40 to-white px-6 py-5 md:px-8",
+  legal:
+    "flex flex-col gap-1 border-b border-dashed border-border bg-linear-to-r from-emerald-100/50 via-teal-50/40 to-white px-6 py-5 md:px-8",
+} as const
+
+export const termsRowItem =
+  "flex flex-col gap-2.5 border-b border-dashed border-border bg-white px-6 py-5.5 transition-colors hover:bg-slate-50/40 md:px-8"
+
+export const termsRowHeader = "flex items-start gap-2.5"
+
+export const termsRowIconBox =
+  "flex size-5 shrink-0 items-center justify-center rounded-md border border-slate-200 bg-slate-50 text-slate-700 mt-0.5"
+
+export const termsRowTitle =
+  "text-xs sm:text-sm font-bold tracking-wide text-slate-900 uppercase leading-snug"
+
+export const termsRowBody =
+  "pl-7.5 max-w-4xl text-xs sm:text-sm leading-relaxed whitespace-pre-line text-slate-600"
+
+export const termsBulletList =
+  "mt-2 list-inside list-disc space-y-1.5 pl-1 text-xs sm:text-sm text-slate-600 leading-relaxed"
+
 

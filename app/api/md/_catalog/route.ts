@@ -49,6 +49,7 @@ Every markdown twin returns:
 - \`/pricing\` — Platform plans and promotional listing boosts
 - \`/submit\` — Developer tool & product submission portal
 - \`/faq\` — Frequently asked questions & developer knowledge base (twin at /faq.md)
+- \`/terms\` — Terms of Service & platform governance (twin at /terms.md)
 - \`/mcp\` — MCP documentation for agents (JSON-RPC tools)
 - \`/cli\` — CLI and Public REST API documentation
 - \`/auth.md\` — Agent authentication guidance
