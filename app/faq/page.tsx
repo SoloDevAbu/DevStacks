@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { HoverOutline } from "@/components/shared/hover-outline"
-import { DEVSTACKS_FAQS } from "@/constants/faqs"
+import { LAUNCHNESTS_FAQS } from "@/constants/faqs"
 import { SITE_CONFIG } from "@/constants/site"
 import { ROUTES } from "@/constants/routes"
 import { AI_PROVIDERS } from "@/constants/ai-providers"
@@ -49,7 +49,7 @@ const FaqPage = () => {
     { name: "Home", url: siteUrl },
     { name: "FAQs", url: `${siteUrl}${ROUTES.FAQ}` },
   ])
-  const faqJsonLd = faqSchema(DEVSTACKS_FAQS)
+  const faqJsonLd = faqSchema(LAUNCHNESTS_FAQS)
 
   return (
     <>
@@ -113,7 +113,7 @@ const FaqPage = () => {
                 {AI_PROVIDERS.map((ai) => (
                   <div key={ai.id} className="group/btn relative inline-flex">
                     <a
-                      href={`${ai.url}${encodeURIComponent(AI_PROMPTS.home)}`}
+                      href={`${ai.url}${encodeURIComponent(AI_PROMPTS.faq)}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className={footerAiButton}
@@ -141,14 +141,14 @@ const FaqPage = () => {
         {/* FAQ Cards Grid */}
         <div className="mx-auto w-full max-w-4xl px-6 py-10 md:px-8 md:py-14">
           <div className="flex flex-col gap-5">
-            {DEVSTACKS_FAQS.map((faq, index) => (
+            {LAUNCHNESTS_FAQS.map((faq, index) => (
               <Card
                 key={faq.question}
-                className="group relative rounded-none border-dashed border-border bg-white transition-all hover:border-slate-400/80 hover:shadow-xs"
+                className="overflow-hidden border border-dashed border-border bg-white transition-all hover:border-slate-300"
               >
-                <CardHeader className="pb-3">
+                <CardHeader className="p-5 pb-3">
                   <div className="flex items-start gap-3">
-                    <span className="flex size-6 shrink-0 items-center justify-center rounded-md border border-slate-200 bg-slate-50 font-mono text-xs font-bold text-slate-500 group-hover:border-indigo-200 group-hover:bg-indigo-50 group-hover:text-indigo-600">
+                    <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-slate-100 font-mono text-[11px] font-bold text-slate-600">
                       {String(index + 1).padStart(2, "0")}
                     </span>
                     <CardTitle className="text-base font-bold text-slate-900 leading-snug">
@@ -156,26 +156,20 @@ const FaqPage = () => {
                     </CardTitle>
                   </div>
                 </CardHeader>
-                <CardContent className="pt-0 pl-12 text-sm leading-relaxed text-slate-600">
-                  <p>{faq.answer}</p>
+                <CardContent className="px-5 pb-5 pt-0 pl-14 text-sm leading-relaxed text-slate-600">
+                  {faq.answer}
                 </CardContent>
               </Card>
             ))}
           </div>
 
-          {/* Bottom Help & Submissions Card */}
-          <Card className="mt-12 rounded-none border-dashed border-border bg-linear-to-r from-slate-900 to-slate-800 text-white shadow-sm">
-            <CardContent className="flex flex-col items-start justify-between gap-6 p-6 sm:flex-row sm:items-center sm:p-8">
-              <div className="flex flex-col gap-1.5">
-                <div className="flex items-center gap-2 text-xs font-bold tracking-wider text-slate-400 uppercase">
-                  <MessageCircleQuestion className="size-4 text-emerald-400" />
-                  Have another question?
-                </div>
-                <h3 className="text-lg font-bold text-white sm:text-xl">
-                  Ready to showcase your tool or product?
-                </h3>
-                <p className="max-w-xl text-xs text-slate-300 sm:text-sm">
-                  Join thousands of developers discovery-ready tools and verified applications. Get indexed by developers and AI agents alike.
+          {/* Bottom Help CTA */}
+          <Card className="mt-12 border border-dashed border-border bg-slate-900 text-white">
+            <CardContent className="flex flex-col items-center justify-between gap-6 p-6 sm:flex-row sm:p-8">
+              <div className="space-y-1 text-center sm:text-left">
+                <h3 className="text-base font-bold">Still have questions?</h3>
+                <p className="text-xs text-slate-400">
+                  Can&apos;t find what you&apos;re looking for? Reach out to our team or list your tool directly.
                 </p>
               </div>
 
@@ -190,7 +184,7 @@ const FaqPage = () => {
                 <Button
                   variant="outline"
                   className="cursor-pointer border-slate-700 bg-transparent text-xs font-medium text-slate-200 hover:bg-slate-800 hover:text-white"
-                  render={<a href="mailto:support@devstacks.io" />}
+                  render={<a href="mailto:support@launchnests.com" />}
                 >
                   <Mail className="mr-1.5 size-3.5 text-slate-400" />
                   Contact Us

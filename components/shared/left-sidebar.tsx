@@ -18,8 +18,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
-import { useSession } from "@/lib/auth/client"
-import { useAuthModal } from "@/hooks/auth/use-auth-modal"
 import {
   sidebarHeading,
   sidebarNavItem,
@@ -46,8 +44,6 @@ const renderBadge = (badge?: NavItemBadge) => {
 
 export const LeftSidebar = () => {
   const pathname = usePathname()
-  const { data: session } = useSession()
-  const { openAuthModal } = useAuthModal()
 
   return (
     <div className="flex h-full flex-col justify-between p-6 xl:p-7">
@@ -60,43 +56,6 @@ export const LeftSidebar = () => {
                 const isActive =
                   pathname === item.href ||
                   (item.href !== ROUTES.HOME && pathname.startsWith(item.href))
-
-                const requiresAuth = item.href === ROUTES.SHOWCASE
-
-                if (requiresAuth && !session?.user) {
-                  return (
-                    <button
-                      key={item.name}
-                      type="button"
-                      onClick={() =>
-                        openAuthModal({
-                          defaultTab: "signup",
-                          redirectTo: item.href,
-                          title: "Sign in with Google",
-                          description:
-                            "Sign in with your Google account to showcase your projects to the developer community.",
-                        })
-                      }
-                      className={cn(
-                        sidebarNavItem,
-                        isActive ? sidebarNavItemActive : sidebarNavItemInactive
-                      )}
-                    >
-                      <span className="flex items-center gap-2.5">
-                        <item.icon
-                          className={cn(
-                            "size-4 shrink-0 transition-colors",
-                            isActive
-                              ? "text-slate-900"
-                              : "text-slate-400 group-hover:text-slate-700"
-                          )}
-                        />
-                        <span>{item.name}</span>
-                      </span>
-                      {renderBadge(item.badge)}
-                    </button>
-                  )
-                }
 
                 return (
                   <Link

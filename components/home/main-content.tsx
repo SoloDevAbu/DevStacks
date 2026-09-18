@@ -4,6 +4,7 @@ import { TodaysLaunchesSection } from "@/components/home/todays-launches-section
 import { WeeklyLaunchesSection } from "@/components/home/weekly-launches-section"
 import { PopularBuildingBlocksSection } from "@/components/home/popular-building-blocks-section"
 import { AI_PROMPTS } from "@/lib/prompts"
+import { SITE_CONFIG } from "@/constants/site"
 import { heroStatPill } from "@/utils/styles"
 import type { FeedItem } from "@/components/shared/feed-card"
 
@@ -29,7 +30,7 @@ export const MainContent = ({
     <div className="relative flex min-h-full flex-col bg-slate-50/50">
       <PageHeader
         heading="What's launching"
-        description="Discover developer tools, APIs, and products launching on DevStacks — ranked by community votes, updated every minute."
+        description={`Discover developer tools, APIs, and products launching on ${SITE_CONFIG.name} — ranked by community votes, updated every minute.`}
         aiPrompt={AI_PROMPTS.home}
         variant="home"
         askAiLabel="ASK AI"

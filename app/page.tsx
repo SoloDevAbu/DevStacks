@@ -1,7 +1,6 @@
 import type { Metadata } from "next"
 import { MainContent } from "@/components/home/main-content"
 import {
-  organizationSchema,
   collectionPageSchema,
 } from "@/lib/seo/schema"
 import { SITE_CONFIG } from "@/constants/site"
@@ -17,7 +16,7 @@ export const revalidate = 60
 export const metadata: Metadata = {
   title: `${SITE_CONFIG.name} — Today's Developer Launches`,
   description:
-    "Discover the developer tools, APIs, and products launching today and this week on DevStacks. Ranked by community votes, updated every minute.",
+    `Discover the developer tools, APIs, and products launching today and this week on ${SITE_CONFIG.name}. Ranked by community votes, updated every minute.`,
   keywords: [
     ...SITE_CONFIG.keywords,
     "daily developer launches",
@@ -32,7 +31,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: `${SITE_CONFIG.name} — Today's Developer Launches`,
     description:
-      "Discover the developer tools, APIs, and products launching today on DevStacks, ranked by community votes.",
+      `Discover the developer tools, APIs, and products launching today on ${SITE_CONFIG.name}, ranked by community votes.`,
     type: "website",
     url: SITE_CONFIG.url,
     siteName: SITE_CONFIG.name,
@@ -49,13 +48,12 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: `${SITE_CONFIG.name} — Today's Developer Launches`,
     description:
-      "Discover the developer tools, APIs, and products launching today on DevStacks, ranked by community votes.",
+      `Discover the developer tools, APIs, and products launching today on ${SITE_CONFIG.name}, ranked by community votes.`,
     images: [`${SITE_CONFIG.url}/twitter-image`],
   },
 }
 
 const Page = async () => {
-  const orgJsonLd = organizationSchema()
   const { year, week } = getCurrentWeek()
 
   const [todaysLaunches, weeklyLaunches, popularBuildingBlocks] =
@@ -84,10 +82,6 @@ const Page = async () => {
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
-      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionJsonLd) }}

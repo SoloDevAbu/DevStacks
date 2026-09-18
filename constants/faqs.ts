@@ -1,6 +1,6 @@
 import { SITE_CONFIG } from "@/constants/site"
 
-export const DEVSTACKS_FAQS = [
+export const LAUNCHNESTS_FAQS = [
   {
     question: `What is ${SITE_CONFIG.name} and what does it do?`,
     answer: `${SITE_CONFIG.name} (${SITE_CONFIG.domain}) is a curated discovery directory and tech-stack database for developer tools, APIs, infrastructure services, and developer-built products. It enables software engineers, engineering leads, and technical founders to discover production-ready tools, inspect real-world tech stacks ("Built With"), and track trending developer products through verified community rankings.`,

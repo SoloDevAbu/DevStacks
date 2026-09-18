@@ -13,7 +13,7 @@ url: "${SITE_CONFIG.url}/cli"
 openapi: "${SITE_CONFIG.url}/openapi.json"
 openapi_yaml: "${SITE_CONFIG.url}/api/openapi.yaml"
 rest: "${SITE_CONFIG.url}/v1"
-cli: npx @devstacks/cli
+cli: npx @launchnests/cli
 auth: none - public read-only GET
 \`\`\`
 
@@ -22,11 +22,11 @@ auth: none - public read-only GET
 Run without installing:
 
 \`\`\`bash
-npx @devstacks/cli --help
-npx @devstacks/cli search "postgres" --json
-npx @devstacks/cli leaderboard --limit 10
-npx @devstacks/cli tool supabase
-npx @devstacks/cli product decispher
+npx @launchnests/cli --help
+npx @launchnests/cli search "postgres" --json
+npx @launchnests/cli leaderboard --limit 10
+npx @launchnests/cli tool supabase
+npx @launchnests/cli product decispher
 \`\`\`
 
 ## Public REST Endpoints

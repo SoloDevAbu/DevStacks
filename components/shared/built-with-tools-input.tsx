@@ -10,6 +10,7 @@ import { Spinner } from "@/components/ui/spinner"
 import { HoverOutline } from "@/components/shared/hover-outline"
 import { Wrench, Link2, Plus, X, Search, Check } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { SITE_CONFIG } from "@/constants/site"
 import type { DbTool } from "@/types/entities"
 
 export interface BuiltWithToolItem {
@@ -29,9 +30,9 @@ interface BuiltWithToolsInputProps {
 export const BuiltWithToolsInput = ({
   value = [],
   onChange,
-  placeholder = "Search DevStacks tools to link, or type custom tool name...",
+  placeholder = `Search ${SITE_CONFIG.name} tools to link, or type custom tool name...`,
   label = "Built With Tools & Tech Stack",
-  description = "Link tools from DevStacks to cross-feature your product on tool pages, or add unlinked custom technologies.",
+  description = `Link tools from ${SITE_CONFIG.name} to cross-feature your product on tool pages, or add unlinked custom technologies.`,
 }: BuiltWithToolsInputProps) => {
   const [query, setQuery] = useState("")
   const [isOpen, setIsOpen] = useState(false)
@@ -86,7 +87,7 @@ export const BuiltWithToolsInput = ({
     (item) => item.name.toLowerCase() === lowerQuery
   )
 
-  const exactDevStacksMatch = matchingTools.find(
+  const exactMatch = matchingTools.find(
     (tool: DbTool) => tool.name.toLowerCase() === lowerQuery
   )
 
@@ -150,8 +151,8 @@ export const BuiltWithToolsInput = ({
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       e.preventDefault()
-      if (exactDevStacksMatch) {
-        addLinkedTool(exactDevStacksMatch)
+      if (exactMatch) {
+        addLinkedTool(exactMatch)
       } else if (matchingTools.length > 0 && trimmedQuery) {
         addLinkedTool(matchingTools[0])
       } else if (trimmedQuery) {
@@ -255,15 +256,15 @@ export const BuiltWithToolsInput = ({
                 {isDebouncingOrSearching && (
                   <div className="flex items-center gap-2 px-2.5 py-2 text-xs text-slate-500">
                     <Spinner className="size-3.5 text-indigo-600" />
-                    <span>Searching DevStacks tools...</span>
+                    <span>Searching {SITE_CONFIG.name} tools...</span>
                   </div>
                 )}
 
-                {/* Matching DevStacks Tools */}
+                {/* Matching Tools */}
                 {matchingTools.length > 0 && (
                   <div className="flex flex-col gap-1">
                     <div className="px-2 py-1 font-mono text-[10px] font-bold tracking-wider text-indigo-600 uppercase">
-                      DevStacks Tools (Linked)
+                      {SITE_CONFIG.name} Tools (Linked)
                     </div>
                     {matchingTools.slice(0, 6).map((tool: DbTool) => {
                       const selected = value.some(
@@ -318,7 +319,7 @@ export const BuiltWithToolsInput = ({
 
                 {!isDebouncingOrSearching && matchingTools.length === 0 && (
                   <div className="px-2.5 py-2 text-xs text-slate-400">
-                    No matching DevStacks tool found for &quot;{trimmedQuery}
+                    No matching {SITE_CONFIG.name} tool found for &quot;{trimmedQuery}
                     &quot;.
                   </div>
                 )}
@@ -344,7 +345,7 @@ export const BuiltWithToolsInput = ({
               <div className="flex flex-col gap-2 p-1">
                 <div className="flex items-center justify-between">
                   <span className="font-mono text-[10px] font-bold tracking-wider text-slate-400 uppercase">
-                    Popular DevStacks Tools
+                    Popular {SITE_CONFIG.name} Tools
                   </span>
                   <span className="text-[10px] text-slate-400">
                     Click to link

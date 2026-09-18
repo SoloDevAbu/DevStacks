@@ -26,15 +26,14 @@ import { breadcrumbSchema, faqSchema } from "@/lib/seo/schema"
 import { AI_PROMPTS } from "@/lib/prompts"
 
 export const metadata: Metadata = {
-  title: "Sidebar Sponsorship & Advertising — DevStacks",
+  title: `Sidebar Sponsorship & Advertising — ${SITE_CONFIG.name}`,
   description: `Promote your developer tool, API, or infrastructure with dedicated sidebar ad placements reaching thousands of engineers on ${SITE_CONFIG.name}.`,
   alternates: {
     canonical: `${SITE_CONFIG.url}/pricing`,
   },
   openGraph: {
     title: `Sidebar Sponsorship & Advertising | ${SITE_CONFIG.name}`,
-    description:
-      "Promote your developer tool or API with high-visibility sidebar ad placements across DevStacks.",
+    description: `Promote your developer tool or API with high-visibility sidebar ad placements across ${SITE_CONFIG.name}.`,
     type: "website",
     url: `${SITE_CONFIG.url}/pricing`,
     images: [
@@ -42,15 +41,14 @@ export const metadata: Metadata = {
         url: `${SITE_CONFIG.url}/opengraph-image`,
         width: 1200,
         height: 630,
-        alt: "Sidebar Advertising | DevStacks",
+        alt: `Sidebar Advertising | ${SITE_CONFIG.name}`,
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
     title: `Sidebar Sponsorship & Advertising | ${SITE_CONFIG.name}`,
-    description:
-      "Promote your developer tool or API with high-visibility sidebar ad placements across DevStacks.",
+    description: `Promote your developer tool or API with high-visibility sidebar ad placements across ${SITE_CONFIG.name}.`,
     images: [`${SITE_CONFIG.url}/twitter-image`],
   },
 }
@@ -58,8 +56,7 @@ export const metadata: Metadata = {
 const FAQ_ITEMS = [
   {
     question: "How much does directory submission cost?",
-    answer:
-      "Submitting developer tools and products to DevStacks is 100% free. Every approved submission is indexed in our public directory with full searchability.",
+    answer: `Submitting developer tools and products to ${SITE_CONFIG.name} is 100% free. Every approved submission is indexed in our public directory with full searchability.`,
   },
   {
     question: "Where do sidebar ads appear?",
@@ -107,7 +104,7 @@ const PricingPage = () => {
         {/* Sponsorship Card */}
         <div className="border-b border-dashed border-border bg-white px-6 py-10 md:px-10 md:py-16">
           <div className="group relative mx-auto flex max-w-3xl">
-            <Card className="flex w-full flex-col justify-between rounded-xl border border-indigo-200 bg-gradient-to-b from-indigo-50/30 via-white to-white p-6 shadow-sm md:p-8">
+            <Card className="flex w-full flex-col justify-between rounded-xl border border-indigo-200 bg-linear-to-b from-indigo-50/30 via-white to-white p-6 shadow-sm md:p-8">
               <CardHeader className="p-0">
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <div className="flex items-center gap-2">
@@ -193,7 +190,8 @@ const PricingPage = () => {
                     />
                   }
                 >
-                  <XIcon className="mr-2 size-3.5 shrink-0" /> DM on X for Placement
+                  <XIcon className="mr-2 size-3.5 shrink-0" /> DM on X for
+                  Placement
                 </Button>
                 <Button
                   variant="outline"
@@ -201,7 +199,8 @@ const PricingPage = () => {
                   nativeButton={false}
                   render={<Link href={ROUTES.SHOWCASE} />}
                 >
-                  Add Product Free <ArrowRight className="ml-1 size-3.5 shrink-0" />
+                  Add Product Free{" "}
+                  <ArrowRight className="ml-1 size-3.5 shrink-0" />
                 </Button>
                 <Button
                   variant="outline"
@@ -209,7 +208,8 @@ const PricingPage = () => {
                   nativeButton={false}
                   render={<Link href={ROUTES.SUBMIT} />}
                 >
-                  Add Tool Free <ArrowRight className="ml-1 size-3.5 shrink-0" />
+                  Add Tool Free{" "}
+                  <ArrowRight className="ml-1 size-3.5 shrink-0" />
                 </Button>
               </CardFooter>
             </Card>

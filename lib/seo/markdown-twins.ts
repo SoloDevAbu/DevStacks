@@ -68,7 +68,7 @@ export const generateToolMarkdown = (
 
   return `# ${tool.name} — ${tool.tagline ?? "Developer Infrastructure & API"}
 
-> ${tool.tagline ?? tool.description ?? "Developer tool cataloged on DevStacks"}
+> ${tool.tagline ?? tool.description ?? `Developer tool cataloged on ${SITE_CONFIG.name}`}
 
 \`\`\`yaml
 url: "${canonical}"
@@ -92,7 +92,7 @@ ${tool.description ?? `${tool.name} is a developer tool and software building bl
 
 ## Integration & Official Links
 - **Website**: ${tool.websiteUrl ?? canonical}
-${tool.appStoreUrl ? `- **iOS App Store**: ${tool.appStoreUrl}\n` : ""}${tool.playStoreUrl ? `- **Google Play Store**: ${tool.playStoreUrl}\n` : ""}${tool.chromeExtensionUrl ? `- **Chrome Extension**: ${tool.chromeExtensionUrl}\n` : ""}- **DevStacks Profile**: ${canonical}
+${tool.appStoreUrl ? `- **iOS App Store**: ${tool.appStoreUrl}\n` : ""}${tool.playStoreUrl ? `- **Google Play Store**: ${tool.playStoreUrl}\n` : ""}${tool.chromeExtensionUrl ? `- **Chrome Extension**: ${tool.chromeExtensionUrl}\n` : ""}- **${SITE_CONFIG.name} Profile**: ${canonical}
 - **Machine Discovery**: ${SITE_CONFIG.url}/api/md/tools/${tool.slug}
 ${
   tool.faqs && tool.faqs.length > 0
@@ -115,7 +115,7 @@ export const generateProductMarkdown = (product: ProductTwinInput): string => {
 
   return `# ${product.name} — ${product.tagline ?? "Developer Product"}
 
-> ${product.tagline ?? product.description ?? "Developer product on DevStacks"}
+> ${product.tagline ?? product.description ?? `Developer product on ${SITE_CONFIG.name}`}
 
 \`\`\`yaml
 url: "${canonical}"

@@ -4,6 +4,8 @@ import { ShieldCheck, Lock, Eye, Server, RefreshCw, Mail } from "lucide-react"
 import { SITE_CONFIG } from "@/constants/site"
 import { ROUTES } from "@/constants/routes"
 import { breadcrumbSchema } from "@/lib/seo/schema"
+import { AI_PROMPTS } from "@/lib/prompts"
+import { AskAiBar } from "@/components/shared/ask-ai-bar"
 
 export const metadata: Metadata = {
   title: "Privacy Policy",
@@ -28,7 +30,7 @@ const PrivacyPage = () => {
       />
       <div className="mx-auto max-w-4xl px-6 py-10 md:px-8">
         {/* Header */}
-        <div className="flex flex-col gap-2 border-b border-dashed border-border pb-6">
+        <div className="flex flex-col gap-3 border-b border-dashed border-border pb-6">
           <div className="flex items-center gap-2">
             <span className="font-mono text-xs font-bold tracking-widest text-[#a06138] uppercase">
               LEGAL & COMPLIANCE
@@ -43,6 +45,18 @@ const PrivacyPage = () => {
           <p className="text-sm leading-relaxed text-slate-600">
             {SITE_CONFIG.name} is dedicated to respecting your privacy and protecting the data of developers, founders, and autonomous agents visiting our platform.
           </p>
+
+          <div className="mt-2 pt-2">
+            <AskAiBar
+              prompt={AI_PROMPTS.privacy}
+              label="ASK AI ABOUT PRIVACY"
+              compact
+              questions={[
+                "What user data is collected?",
+                "How is edge geolocation handled?",
+              ]}
+            />
+          </div>
         </div>
 
         {/* Content */}
@@ -127,7 +141,7 @@ const PrivacyPage = () => {
               If you have any questions or concerns regarding our privacy practices or wish to submit a data removal request, contact our team directly at:
             </p>
             <div className="font-mono text-xs text-slate-800">
-              <p>Email: <a href="mailto:support@devstacks.io" className="text-blue-600 hover:underline">support@devstacks.io</a></p>
+              <p>Email: <a href="mailto:support@launchnests.com" className="text-blue-600 hover:underline">support@launchnests.com</a></p>
               <p>Platform: {SITE_CONFIG.domain}</p>
             </div>
           </section>

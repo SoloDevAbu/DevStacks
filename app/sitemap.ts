@@ -77,6 +77,36 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
       priority: 0.85,
     },
     {
+      url: `${siteUrl}${ROUTES.MAKERS}`,
+      lastModified: new Date(),
+      changeFrequency: "daily",
+      priority: 0.85,
+    },
+    {
+      url: `${siteUrl}${ROUTES.DISCOVER_DAILY_LAUNCHES}`,
+      lastModified: new Date(),
+      changeFrequency: "daily",
+      priority: 0.85,
+    },
+    {
+      url: `${siteUrl}${ROUTES.DISCOVER_WEEKLY_LAUNCHES}`,
+      lastModified: new Date(),
+      changeFrequency: "daily",
+      priority: 0.85,
+    },
+    {
+      url: `${siteUrl}/mcp`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.8,
+    },
+    {
+      url: `${siteUrl}/cli`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.8,
+    },
+    {
       url: `${siteUrl}${ROUTES.PRICING}`,
       lastModified: new Date(),
       changeFrequency: "weekly",

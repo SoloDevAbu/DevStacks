@@ -1,6 +1,6 @@
 import { db } from "@/db"
 import { users, makerFaqs, tools, products, categories } from "@/db/schema"
-import { eq, desc, asc, and, isNotNull, sql } from "drizzle-orm"
+import { eq, desc, asc, and, isNotNull, sql, inArray } from "drizzle-orm"
 import type { MakerProfile, DbTool, DbProduct } from "@/types/entities"
 
 export const generateUniqueUsername = async (
@@ -237,3 +237,95 @@ export const getAllMakers = async (limit = 5000) => {
     .where(isNotNull(users.username))
     .limit(limit)
 }
+
+export interface MakerDirectoryItem {
+  id: string
+  name: string
+  username: string | null
+  avatarUrl: string | null
+  image: string | null
+  bio: string | null
+  description: string | null
+  country: string | null
+  state: string | null
+  websiteUrl: string | null
+  twitterUrl: string | null
+  githubUrl: string | null
+  linkedinUrl: string | null
+  createdAt: Date
+  toolsCount: number
+  productsCount: number
+}
+
+export const getMakersDirectory = async (
+  limit = 100
+): Promise<MakerDirectoryItem[]> => {
+  const makers = await db
+    .select({
+      id: users.id,
+      name: users.name,
+      username: users.username,
+      avatarUrl: users.avatarUrl,
+      image: users.image,
+      bio: users.bio,
+      description: users.description,
+      country: users.country,
+      state: users.state,
+      websiteUrl: users.websiteUrl,
+      twitterUrl: users.twitterUrl,
+      githubUrl: users.githubUrl,
+      linkedinUrl: users.linkedinUrl,
+      createdAt: users.createdAt,
+    })
+    .from(users)
+    .where(isNotNull(users.username))
+    .orderBy(desc(users.createdAt))
+    .limit(limit)
+
+  const makerIds = makers.map((m) => m.id)
+  if (makerIds.length === 0) return []
+
+  const [toolCounts, productCounts] = await Promise.all([
+    db
+      .select({
+        submitterId: tools.submitterId,
+        count: sql<number>`count(*)::int`,
+      })
+      .from(tools)
+      .where(
+        and(eq(tools.status, "approved"), inArray(tools.submitterId, makerIds))
+      )
+      .groupBy(tools.submitterId),
+    db
+      .select({
+        submitterId: products.submitterId,
+        count: sql<number>`count(*)::int`,
+      })
+      .from(products)
+      .where(
+        and(
+          eq(products.status, "approved"),
+          inArray(products.submitterId, makerIds)
+        )
+      )
+      .groupBy(products.submitterId),
+  ])
+
+  const toolCountMap = new Map<string, number>(
+    toolCounts
+      .filter((tc) => tc.submitterId !== null)
+      .map((tc) => [tc.submitterId!, Number(tc.count)])
+  )
+  const productCountMap = new Map<string, number>(
+    productCounts
+      .filter((pc) => pc.submitterId !== null)
+      .map((pc) => [pc.submitterId!, Number(pc.count)])
+  )
+
+  return makers.map((maker) => ({
+    ...maker,
+    toolsCount: toolCountMap.get(maker.id) ?? 0,
+    productsCount: productCountMap.get(maker.id) ?? 0,
+  }))
+}
+

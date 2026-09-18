@@ -68,15 +68,20 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: `${SITE_CONFIG.name} — ${SITE_CONFIG.tagline}`,
     description: SITE_CONFIG.description,
-    creator: "@devstacks",
+    creator: "@AbuBakkar2502",
     images: [`${SITE_CONFIG.url}/twitter-image`],
   },
   alternates: {
     canonical: SITE_CONFIG.url,
+    languages: {
+      "x-default": SITE_CONFIG.url,
+      "en-US": SITE_CONFIG.url,
+    },
   },
   other: {
-    "ai-agent": "DevStacks - The Developer Tools & Tech Stack Discovery Engine",
+    "ai-agent": "LaunchNests - The Developer Tools & Tech Stack Discovery Engine",
     "application-type": "developer directory",
+    "DC.Coverage": "World",
   },
 }
 

@@ -34,6 +34,9 @@ tools: 5
 3. \`get_tool\` — Fetch specifications and verified builds count for a tool by slug. Args: \`slug\` (required).
 4. \`get_product\` — Fetch problem, solution, unique value, and tech stack for a product by slug. Args: \`slug\` (required).
 5. \`get_leaderboard\` — Fetch community-upvoted developer tools or trending products. Args: \`type\` ('tools' | 'products'), \`limit\` (default 20).
+6. \`get_maker_profile\` — Fetch developer bio, location, maker FAQs, and submitted tools/products by username. Args: \`username\` (required).
+7. \`get_daily_launches\` — Fetch developer tools and products launching today, ranked by community votes. Args: \`limit\` (default 20).
+8. \`get_weekly_launches\` — Fetch developer tools and products launched this week, ranked by community votes. Args: \`limit\` (default 20).
 
 ## How to Connect
 
@@ -42,7 +45,7 @@ tools: 5
 \`\`\`json
 {
   "mcpServers": {
-    "devstacks": {
+    "launchnests": {
       "url": "${SITE_CONFIG.url}/api/mcp",
       "transport": "streamable-http"
     }
@@ -55,7 +58,7 @@ tools: 5
 \`\`\`json
 {
   "mcpServers": {
-    "devstacks": {
+    "launchnests": {
       "command": "npx",
       "args": ["-y", "@modelcontextprotocol/server-fetch", "${SITE_CONFIG.url}/api/mcp"]
     }

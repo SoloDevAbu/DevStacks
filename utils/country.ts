@@ -32,3 +32,22 @@ export const formatLocation = (
   }
   return parts.join(", ")
 }
+
+export const formatGeoMetaTags = (
+  country?: string | null,
+  state?: string | null
+): Record<string, string> => {
+  const meta: Record<string, string> = {}
+  if (country?.trim()) {
+    const code = country.trim().toUpperCase()
+    const cleanState = state?.trim()
+    meta["geo.region"] = cleanState ? `${code}-${cleanState}` : code
+    const countryName = countryCodeToName(code)
+    meta["geo.placename"] = cleanState
+      ? `${cleanState}, ${countryName}`
+      : countryName
+    meta["DC.Coverage"] = countryName
+  }
+  return meta
+}
+

@@ -1,6 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { HelpCircle } from "lucide-react"
-import { DEVSTACKS_FAQS } from "@/constants/faqs"
+import { LAUNCHNESTS_FAQS } from "@/constants/faqs"
 import { SITE_CONFIG } from "@/constants/site"
 
 export const FaqSection = () => {
@@ -22,7 +22,7 @@ export const FaqSection = () => {
       </div>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        {DEVSTACKS_FAQS.map((faq) => (
+        {LAUNCHNESTS_FAQS.map((faq) => (
           <Card
             key={faq.question}
             className="rounded-none border-dashed bg-white"

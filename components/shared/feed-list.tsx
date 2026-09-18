@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 import { ROUTES } from "@/constants/routes"
+import { SITE_CONFIG } from "@/constants/site"
 import { FeedCard, type FeedItem } from "@/components/shared/feed-card"
 
 export interface FeedListProps {
@@ -32,7 +33,7 @@ export const FeedList = ({
   emptyTitle = "No items found",
   emptyDescription = "No tools or products found in this section. List yours to be discovered by builders!",
   emptyActionHref = ROUTES.SUBMIT,
-  emptyActionLabel = "Submit to DevStacks",
+  emptyActionLabel = `Submit to ${SITE_CONFIG.name}`,
   className,
 }: FeedListProps) => {
   if (isLoading) {

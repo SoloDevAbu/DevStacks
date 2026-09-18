@@ -12,6 +12,8 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { SITE_CONFIG } from "@/constants/site"
 import { ROUTES } from "@/constants/routes"
+import { AI_PROMPTS } from "@/lib/prompts"
+import { AskAiBar } from "@/components/shared/ask-ai-bar"
 
 export const metadata: Metadata = {
   title: `Page Not Found | ${SITE_CONFIG.name}`,
@@ -108,6 +110,19 @@ const NotFound = () => {
             <Package className="size-4 text-slate-600" />
             Explore Products
           </Button>
+        </div>
+
+        {/* Ask AI Recovery */}
+        <div className="mt-8 flex justify-center">
+          <AskAiBar
+            prompt={AI_PROMPTS.notFound}
+            label="ASK AI TO FIND DEVELOPER TOOLS"
+            align="center"
+            questions={[
+              "What developer tools can I find on LaunchNests?",
+              "Show me the trending tech stacks",
+            ]}
+          />
         </div>
       </section>
 

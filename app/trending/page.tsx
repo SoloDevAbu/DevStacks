@@ -27,11 +27,7 @@ export const generateMetadata = async (props: {
     ? `Discover the most popular ${category} developer tools and software products gaining traction right now on ${SITE_CONFIG.name}. Ranked by community upvotes, views, and active builds.`
     : `Discover the most popular developer tools and products gaining traction right now on ${SITE_CONFIG.name}. Ranked by community upvotes, views, and active developer builds.`
 
-  const params = new URLSearchParams()
-  if (category) params.set("category", category)
-  if (timeframe && timeframe !== "today") params.set("timeframe", timeframe)
-  const qs = params.toString()
-  const canonicalUrl = qs ? `${SITE_CONFIG.url}/trending?${qs}` : `${SITE_CONFIG.url}/trending`
+  const canonicalUrl = `${SITE_CONFIG.url}/trending`
 
   return {
     title,

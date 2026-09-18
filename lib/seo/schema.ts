@@ -1,4 +1,5 @@
 import { SITE_CONFIG } from "@/constants/site"
+import { countryCodeToName } from "@/utils/country"
 
 export type ProductSchemaInput = {
   name: string
@@ -31,6 +32,8 @@ export type ProductSchemaInput = {
     url?: string
     country?: string | null
   }
+  countryOfOrigin?: string | null
+  spatialCoverage?: string | null
   screenshots?: string[]
   videoUrl?: string | null
   isRelatedTo?: ReadonlyArray<{ readonly name: string; readonly url: string }>
@@ -80,9 +83,8 @@ export const organizationSchema = () => ({
   disambiguatingDescription:
     "The premier developer tools discovery directory, APIs database, and tech-stack ecosystem platform.",
   sameAs: [
-    SITE_CONFIG.socials.twitter,
-    SITE_CONFIG.socials.github,
-    SITE_CONFIG.socials.discord,
+    SITE_CONFIG.socials.x,
+    SITE_CONFIG.socials.linkedin,
   ],
   contactPoint: {
     "@type": "ContactPoint",
@@ -192,11 +194,18 @@ export const productSchema = (product: ProductSchemaInput) => {
           nationality: product.author.country
             ? {
                 "@type": "Country",
-                name: product.author.country,
+                name: countryCodeToName(product.author.country) || product.author.country,
               }
             : undefined,
         }
       : undefined,
+    countryOfOrigin: product.countryOfOrigin
+      ? {
+          "@type": "Country",
+          name: countryCodeToName(product.countryOfOrigin) || product.countryOfOrigin,
+        }
+      : undefined,
+    spatialCoverage: product.spatialCoverage ?? undefined,
     screenshot:
       product.screenshots && product.screenshots.length > 0
         ? product.screenshots
@@ -233,7 +242,7 @@ export const personSchema = (person: PersonSchemaInput) => ({
   nationality: person.country
     ? {
         "@type": "Country",
-        name: person.country,
+        name: countryCodeToName(person.country) || person.country,
       }
     : undefined,
   sameAs: person.sameAs && person.sameAs.length > 0 ? person.sameAs : undefined,

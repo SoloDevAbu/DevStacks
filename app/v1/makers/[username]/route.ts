@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
 import { getMakerProfile } from "@/db/queries/users/get-profile"
+import { SITE_CONFIG } from "@/constants/site"
 
 export const revalidate = 60
 
@@ -13,7 +14,7 @@ export const GET = async (
   if (!maker) {
     return NextResponse.json(
       {
-        type: "https://devstacks.io/errors/not-found",
+        type: `${SITE_CONFIG.url}/errors/not-found`,
         title: "Maker Not Found",
         status: 404,
         detail: `Maker '${username}' was not found.`,

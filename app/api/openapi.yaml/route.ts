@@ -13,7 +13,7 @@ info:
   contact:
     name: ${SITE_CONFIG.name}
     url: ${SITE_CONFIG.url}/cli
-    email: support@devstacks.io
+    email: support@launchnests.com
 servers:
   - url: ${SITE_CONFIG.url}
     description: Production
@@ -114,6 +114,20 @@ paths:
       responses:
         '200':
           description: Ranked items
+  /v1/makers/{username}:
+    get:
+      summary: Get maker profile and portfolio
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Maker profile and submitted tools and products
+        '404':
+          description: Maker not found
 `
 
   return new NextResponse(yaml, {

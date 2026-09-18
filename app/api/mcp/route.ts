@@ -4,7 +4,11 @@ import { getTools } from "@/db/queries/tools/list"
 import { getToolBySlug } from "@/db/queries/tools/get"
 import { getProducts } from "@/db/queries/products/list"
 import { getProductBySlug } from "@/db/queries/products/get"
+import { getMakerProfile } from "@/db/queries/users/get-profile"
 import { getTrending } from "@/lib/rankings/trending"
+import { getTodaysLaunches } from "@/lib/launches/todays-launches"
+import { getWeeklyLaunches } from "@/lib/launches/weekly-launches"
+import { getCurrentWeek } from "@/lib/launches/week-utils"
 
 export const revalidate = 0
 
@@ -66,6 +70,37 @@ const MCP_TOOLS = [
       },
     },
   },
+  {
+    name: "get_maker_profile",
+    description: `Fetch public maker and developer profile on ${SITE_CONFIG.name}, including bio, location, maker FAQs, submitted tools, and products.`,
+    inputSchema: {
+      type: "object",
+      properties: {
+        username: { type: "string", description: "Maker username, e.g. 'alice'" },
+      },
+      required: ["username"],
+    },
+  },
+  {
+    name: "get_daily_launches",
+    description: `Fetch developer tools and products launching today on ${SITE_CONFIG.name}, ranked by community upvotes.`,
+    inputSchema: {
+      type: "object",
+      properties: {
+        limit: { type: "integer", default: 20, minimum: 1, maximum: 50 },
+      },
+    },
+  },
+  {
+    name: "get_weekly_launches",
+    description: `Fetch developer tools and products launched during the current week on ${SITE_CONFIG.name}, ranked by community votes.`,
+    inputSchema: {
+      type: "object",
+      properties: {
+        limit: { type: "integer", default: 20, minimum: 1, maximum: 50 },
+      },
+    },
+  },
 ]
 
 export const GET = () => {
@@ -121,7 +156,7 @@ export const POST = async (request: NextRequest) => {
           tools: { listChanged: false },
         },
         serverInfo: {
-          name: "devstacks",
+          name: "launchnests",
           version: "1.0.0",
         },
       },
@@ -210,6 +245,43 @@ export const POST = async (request: NextRequest) => {
           id,
           result: {
             content: [{ type: "text", text: JSON.stringify(items) }],
+          },
+        })
+      }
+
+      if (toolName === "get_maker_profile") {
+        const username = String(toolArgs.username ?? "")
+        const maker = await getMakerProfile(username)
+        return NextResponse.json({
+          jsonrpc: "2.0",
+          id,
+          result: {
+            content: [{ type: "text", text: JSON.stringify(maker ?? { error: "Maker not found" }) }],
+          },
+        })
+      }
+
+      if (toolName === "get_daily_launches") {
+        const limit = Number(toolArgs.limit ?? 20)
+        const launches = await getTodaysLaunches({ limit })
+        return NextResponse.json({
+          jsonrpc: "2.0",
+          id,
+          result: {
+            content: [{ type: "text", text: JSON.stringify(launches) }],
+          },
+        })
+      }
+
+      if (toolName === "get_weekly_launches") {
+        const limit = Number(toolArgs.limit ?? 20)
+        const { year, week } = getCurrentWeek()
+        const launches = await getWeeklyLaunches({ year, week, limit })
+        return NextResponse.json({
+          jsonrpc: "2.0",
+          id,
+          result: {
+            content: [{ type: "text", text: JSON.stringify(launches) }],
           },
         })
       }

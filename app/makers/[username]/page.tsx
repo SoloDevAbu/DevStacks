@@ -18,7 +18,11 @@ import { ProductCard } from "@/components/shared/product-card"
 import { XIcon, LinkedInIcon, GithubIcon } from "@/components/shared/icons"
 import { HoverOutline } from "@/components/shared/hover-outline"
 import { getMakerProfile } from "@/db/queries/users/get-profile"
-import { countryCodeToFlag, formatLocation } from "@/utils/country"
+import {
+  countryCodeToFlag,
+  formatLocation,
+  formatGeoMetaTags,
+} from "@/utils/country"
 import { SITE_CONFIG } from "@/constants/site"
 import { ROUTES } from "@/constants/routes"
 import { AI_PROVIDERS } from "@/constants/ai-providers"
@@ -42,7 +46,7 @@ export const generateMetadata = async ({
 
   if (!maker) {
     return {
-      title: "Maker Not Found — DevStacks",
+      title: `Maker Not Found — ${SITE_CONFIG.name}`,
     }
   }
 
@@ -56,6 +60,7 @@ export const generateMetadata = async ({
     `Explore developer tools and applications built by ${displayName} on ${SITE_CONFIG.name}.`
 
   const profileUrl = `${SITE_CONFIG.url}/makers/${maker.username}`
+  const geoTags = formatGeoMetaTags(maker.country, maker.state)
 
   return {
     title,
@@ -63,6 +68,7 @@ export const generateMetadata = async ({
     alternates: {
       canonical: profileUrl,
     },
+    other: Object.keys(geoTags).length > 0 ? geoTags : undefined,
     openGraph: {
       title,
       description,
@@ -170,7 +176,12 @@ export default async function MakerPage({ params }: MakerPageProps) {
             Home
           </Link>
           <span>/</span>
-          <span className="text-slate-400">Makers</span>
+          <Link
+            href={ROUTES.MAKERS}
+            className="transition-colors hover:text-slate-900"
+          >
+            Makers
+          </Link>
           <span>/</span>
           <span className="font-semibold text-slate-900">
             @{maker.username}
@@ -398,7 +409,7 @@ export default async function MakerPage({ params }: MakerPageProps) {
               </p>
             </div>
 
-            <div className="flex flex-col divide-y divide-dashed divide-border border border-dashed border-border bg-white">
+            <div className="flex flex-col divide-y border border-dashed border-border bg-white">
               {maker.faqs.map((faq, idx) => (
                 <div
                   key={faq.id || idx}
@@ -442,7 +453,7 @@ export default async function MakerPage({ params }: MakerPageProps) {
           </div>
 
           {maker.tools.length > 0 ? (
-            <div className="flex flex-col divide-y divide-dashed divide-border border border-dashed border-border bg-white">
+            <div className="flex flex-col divide-y border border-dashed border-border bg-white">
               {maker.tools.map((tool) => (
                 <ToolCard key={tool.id} tool={tool} />
               ))}
@@ -477,7 +488,7 @@ export default async function MakerPage({ params }: MakerPageProps) {
           </div>
 
           {maker.products.length > 0 ? (
-            <div className="flex flex-col divide-y divide-dashed divide-border border border-dashed border-border bg-white">
+            <div className="flex flex-col divide-y border border-dashed border-border bg-white">
               {maker.products.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}

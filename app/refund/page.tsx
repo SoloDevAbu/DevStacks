@@ -4,6 +4,8 @@ import { BadgeHelp, CheckCircle, Clock, AlertCircle, CreditCard, Mail } from "lu
 import { SITE_CONFIG } from "@/constants/site"
 import { ROUTES } from "@/constants/routes"
 import { breadcrumbSchema } from "@/lib/seo/schema"
+import { AI_PROMPTS } from "@/lib/prompts"
+import { AskAiBar } from "@/components/shared/ask-ai-bar"
 
 export const metadata: Metadata = {
   title: "Refund Policy",
@@ -28,7 +30,7 @@ const RefundPage = () => {
       />
       <div className="mx-auto max-w-4xl px-6 py-10 md:px-8">
         {/* Header */}
-        <div className="flex flex-col gap-2 border-b border-dashed border-border pb-6">
+        <div className="flex flex-col gap-3 border-b border-dashed border-border pb-6">
           <div className="flex items-center gap-2">
             <span className="font-mono text-xs font-bold tracking-widest text-[#a06138] uppercase">
               LEGAL & COMPLIANCE
@@ -43,6 +45,18 @@ const RefundPage = () => {
           <p className="text-sm leading-relaxed text-slate-600">
             Transparent refund and cancellation terms for developer tool submissions, verified check badges, and promotional boosts on {SITE_CONFIG.name}.
           </p>
+
+          <div className="mt-2 pt-2">
+            <AskAiBar
+              prompt={AI_PROMPTS.refund}
+              label="ASK AI ABOUT REFUNDS"
+              compact
+              questions={[
+                "What is the refund policy for sponsorships?",
+                "Who do I contact for billing inquiries?",
+              ]}
+            />
+          </div>
         </div>
 
         {/* Content */}
@@ -122,7 +136,7 @@ const RefundPage = () => {
               Send refund requests and billing questions to:
             </p>
             <div className="font-mono text-xs text-slate-800">
-              <p>Email: <a href="mailto:support@devstacks.io" className="text-blue-600 hover:underline">support@devstacks.io</a></p>
+              <p>Email: <a href="mailto:support@launchnests.com" className="text-blue-600 hover:underline">support@launchnests.com</a></p>
               <p>Response Time: Typically within 24–48 business hours</p>
             </div>
           </section>

@@ -1,12 +1,10 @@
 import type { Metadata } from "next"
 import { headers } from "next/headers"
-import { redirect } from "next/navigation"
 import { auth } from "@/lib/auth"
 import { ShowcaseContent } from "@/components/showcase/showcase-content"
 import { ShowcaseCrawlerView } from "@/components/showcase/showcase-crawler-view"
 import { SITE_CONFIG } from "@/constants/site"
 import { breadcrumbSchema, faqSchema } from "@/lib/seo/schema"
-import { isCrawler } from "@/lib/seo/crawlers"
 import { getToolBySlugOrName } from "@/db/queries/tools/get"
 import type { BuiltWithToolItem } from "@/components/shared/built-with-tools-input"
 
@@ -71,24 +69,13 @@ const ShowcasePage = async (props: ShowcasePageProps) => {
   const toolSlugOrName = searchParams?.tool ?? searchParams?.toolSlug
 
   let session = null
-  let userAgent = ""
   try {
     const headerList = await headers()
-    userAgent = headerList.get("user-agent") ?? ""
     session = await auth.api.getSession({
       headers: headerList,
     })
   } catch {
     session = null
-  }
-
-  const isBot = isCrawler(userAgent)
-
-  if (!session?.user && !isBot) {
-    const redirectTarget = toolSlugOrName
-      ? `/showcase?tool=${encodeURIComponent(toolSlugOrName)}`
-      : "/showcase"
-    redirect(`/?redirect=${encodeURIComponent(redirectTarget)}`)
   }
 
   let initialTool: BuiltWithToolItem | null = null

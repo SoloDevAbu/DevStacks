@@ -23,6 +23,8 @@ import { resolveProduct } from "@/lib/products/resolve-product"
 import { resolveTool } from "@/lib/tools/resolve-tool"
 import { SITE_CONFIG } from "@/constants/site"
 import { ROUTES } from "@/constants/routes"
+import { getSocialCardImage } from "@/lib/seo/social-image"
+import { formatGeoMetaTags } from "@/utils/country"
 import { AI_PROVIDERS } from "@/constants/ai-providers"
 import { AI_PROMPTS } from "@/lib/prompts"
 import { getProducts } from "@/db/queries/products/list"
@@ -101,6 +103,9 @@ export const generateMetadata = async ({
         SITE_CONFIG.name,
       ]
 
+  const socialImage = getSocialCardImage(product.logoUrl, product.images)
+  const geoTags = formatGeoMetaTags(product.submitterCountry, product.submitterState)
+
   return {
     title,
     description,
@@ -108,6 +113,7 @@ export const generateMetadata = async ({
     alternates: {
       canonical: canonicalUrl,
     },
+    ...(Object.keys(geoTags).length > 0 ? { other: geoTags } : {}),
     openGraph: {
       title: `${title} | ${SITE_CONFIG.name}`,
       description,
@@ -116,7 +122,7 @@ export const generateMetadata = async ({
       type: "website",
       images: [
         {
-          url: product.logoUrl ?? `${SITE_CONFIG.url}/opengraph-image`,
+          url: socialImage,
           width: 1200,
           height: 630,
           alt: `${product.name} on ${SITE_CONFIG.name}`,
@@ -127,7 +133,7 @@ export const generateMetadata = async ({
       card: "summary_large_image",
       title: `${title} | ${SITE_CONFIG.name}`,
       description,
-      images: [product.logoUrl ?? `${SITE_CONFIG.url}/twitter-image`],
+      images: [socialImage],
     },
   }
 }
@@ -174,6 +180,8 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
     playStoreUrl: product.playStoreUrl,
     chromeExtensionUrl: product.chromeExtensionUrl,
     websiteUrl: product.websiteUrl,
+    countryOfOrigin: product.submitterCountry,
+    spatialCoverage: product.geoTarget,
     author: product.submitterName
       ? {
           name: product.submitterName,

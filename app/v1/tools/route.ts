@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { getTools } from "@/db/queries/tools/list"
+import { SITE_CONFIG } from "@/constants/site"
 
 export const revalidate = 60
 
@@ -43,7 +44,7 @@ export const GET = async (request: NextRequest) => {
   } catch (error) {
     return NextResponse.json(
       {
-        type: "https://devstacks.io/errors/server-error",
+        type: `${SITE_CONFIG.url}/errors/server-error`,
         title: "Database Error",
         status: 500,
         detail: error instanceof Error ? error.message : "Failed to fetch tools",

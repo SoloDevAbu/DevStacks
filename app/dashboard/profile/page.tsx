@@ -7,9 +7,10 @@ import { DashboardNav } from "@/components/dashboard/dashboard-nav"
 import { ProfileForm } from "@/components/dashboard/profile-form"
 import { ROUTES } from "@/constants/routes"
 import type { MakerProfile } from "@/types/entities"
+import { SITE_CONFIG } from "@/constants/site"
 
 export const metadata: Metadata = {
-  title: "Maker Profile Settings — DevStacks",
+  title: `Maker Profile Settings — ${SITE_CONFIG.name}`,
   description:
     "Manage your public maker identity, bio, social links, and maker FAQs.",
   robots: {

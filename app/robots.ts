@@ -7,7 +7,7 @@ const robots = (): MetadataRoute.Robots => {
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/api/users", "/api/auth/", "/admin/"],
+        disallow: ["/api/users", "/api/auth/", "/admin/", "/dashboard/"],
       },
       {
         userAgent: [
@@ -19,7 +19,7 @@ const robots = (): MetadataRoute.Robots => {
           "YandexBot",
         ],
         allow: "/",
-        disallow: ["/api/users", "/api/auth/", "/admin/"],
+        disallow: ["/api/users", "/api/auth/", "/admin/", "/dashboard/"],
       },
       // AI Crawlers, Answer Engines & LLM Agents
       {
@@ -48,7 +48,7 @@ const robots = (): MetadataRoute.Robots => {
           "MistralAI-Crawler",
         ],
         allow: "/",
-        disallow: ["/api/users", "/api/auth/", "/admin/"],
+        disallow: ["/api/users", "/api/auth/", "/admin/", "/dashboard/"],
       },
     ],
     sitemap: `${SITE_CONFIG.url}/sitemap.xml`,
