@@ -28,6 +28,7 @@ import { MakerProfileCard } from "@/components/shared/maker-profile-card"
 import { SITE_CONFIG } from "@/constants/site"
 import { ROUTES } from "@/constants/routes"
 import { getSocialCardImage } from "@/lib/seo/social-image"
+import { formatGeoMetaTags } from "@/utils/country"
 import { AI_PROVIDERS } from "@/constants/ai-providers"
 import { AI_PROMPTS } from "@/lib/prompts"
 import { getTools } from "@/db/queries/tools/list"
@@ -112,6 +113,7 @@ export const generateMetadata = async ({
       ]
 
   const socialImage = getSocialCardImage(tool.logoUrl, tool.images)
+  const geoTags = formatGeoMetaTags(tool.submitterCountry, tool.submitterState)
 
   return {
     title,
@@ -120,6 +122,7 @@ export const generateMetadata = async ({
     alternates: {
       canonical: canonicalUrl,
     },
+    ...(Object.keys(geoTags).length > 0 ? { other: geoTags } : {}),
     openGraph: {
       title: `${title} | ${SITE_CONFIG.name}`,
       description,
@@ -188,6 +191,8 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
     playStoreUrl: tool.playStoreUrl,
     chromeExtensionUrl: tool.chromeExtensionUrl,
     websiteUrl: tool.websiteUrl,
+    countryOfOrigin: tool.submitterCountry,
+    spatialCoverage: tool.geoTarget,
     author: tool.submitterName
       ? {
           name: tool.submitterName,

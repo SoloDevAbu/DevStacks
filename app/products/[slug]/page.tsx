@@ -24,6 +24,7 @@ import { resolveTool } from "@/lib/tools/resolve-tool"
 import { SITE_CONFIG } from "@/constants/site"
 import { ROUTES } from "@/constants/routes"
 import { getSocialCardImage } from "@/lib/seo/social-image"
+import { formatGeoMetaTags } from "@/utils/country"
 import { AI_PROVIDERS } from "@/constants/ai-providers"
 import { AI_PROMPTS } from "@/lib/prompts"
 import { getProducts } from "@/db/queries/products/list"
@@ -103,6 +104,7 @@ export const generateMetadata = async ({
       ]
 
   const socialImage = getSocialCardImage(product.logoUrl, product.images)
+  const geoTags = formatGeoMetaTags(product.submitterCountry, product.submitterState)
 
   return {
     title,
@@ -111,6 +113,7 @@ export const generateMetadata = async ({
     alternates: {
       canonical: canonicalUrl,
     },
+    ...(Object.keys(geoTags).length > 0 ? { other: geoTags } : {}),
     openGraph: {
       title: `${title} | ${SITE_CONFIG.name}`,
       description,
@@ -177,6 +180,8 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
     playStoreUrl: product.playStoreUrl,
     chromeExtensionUrl: product.chromeExtensionUrl,
     websiteUrl: product.websiteUrl,
+    countryOfOrigin: product.submitterCountry,
+    spatialCoverage: product.geoTarget,
     author: product.submitterName
       ? {
           name: product.submitterName,

@@ -73,10 +73,15 @@ export const metadata: Metadata = {
   },
   alternates: {
     canonical: SITE_CONFIG.url,
+    languages: {
+      "x-default": SITE_CONFIG.url,
+      "en-US": SITE_CONFIG.url,
+    },
   },
   other: {
     "ai-agent": "LaunchNests - The Developer Tools & Tech Stack Discovery Engine",
     "application-type": "developer directory",
+    "DC.Coverage": "World",
   },
 }
 

@@ -11,6 +11,46 @@ export const middleware = (request: NextRequest) => {
   const { pathname } = request.nextUrl
   const acceptHeader = request.headers.get("accept") ?? ""
 
+  // Edge geolocation headers extraction
+  const userCountry =
+    request.headers.get("x-vercel-ip-country") ||
+    request.headers.get("cf-ipcountry") ||
+    ""
+  const userRegion =
+    request.headers.get("x-vercel-ip-country-region") ||
+    request.headers.get("cf-region-code") ||
+    ""
+
+  const requestHeaders = new Headers(request.headers)
+  if (userCountry) {
+    requestHeaders.set("x-user-country", userCountry)
+  }
+  if (userRegion) {
+    requestHeaders.set("x-user-region", userRegion)
+  }
+
+  const nextWithHeaders = () => {
+    const res = NextResponse.next({
+      request: {
+        headers: requestHeaders,
+      },
+    })
+    if (userCountry) res.headers.set("x-user-country", userCountry)
+    if (userRegion) res.headers.set("x-user-region", userRegion)
+    return res
+  }
+
+  const rewriteWithHeaders = (destinationUrl: string) => {
+    const res = NextResponse.rewrite(new URL(destinationUrl, request.url), {
+      request: {
+        headers: requestHeaders,
+      },
+    })
+    if (userCountry) res.headers.set("x-user-country", userCountry)
+    if (userRegion) res.headers.set("x-user-region", userRegion)
+    return res
+  }
+
   // Rate limiting for API routes
   if (pathname.startsWith("/api/")) {
     const isAuthRoute = pathname.startsWith("/api/auth/")
@@ -58,7 +98,7 @@ export const middleware = (request: NextRequest) => {
         )
       }
 
-      const response = NextResponse.next()
+      const response = nextWithHeaders()
       response.headers.set("X-RateLimit-Limit", String(rateCheck.limit))
       response.headers.set("X-RateLimit-Remaining", String(rateCheck.remaining))
       response.headers.set("X-RateLimit-Reset", String(rateCheck.reset))
@@ -68,62 +108,50 @@ export const middleware = (request: NextRequest) => {
 
   // MCP alias rewrite: /.well-known/mcp -> /.well-known/mcp.json
   if (pathname === "/.well-known/mcp") {
-    return NextResponse.rewrite(new URL("/.well-known/mcp.json", request.url))
+    return rewriteWithHeaders("/.well-known/mcp.json")
   }
 
   // Support .md suffix on tools: /tools/supabase.md -> /api/md/tools/supabase
   const toolMdMatch = pathname.match(/^\/tools\/([^/]+)\.md$/)
   if (toolMdMatch && toolMdMatch[1]) {
-    return NextResponse.rewrite(
-      new URL(`/api/md/tools/${toolMdMatch[1]}`, request.url)
-    )
+    return rewriteWithHeaders(`/api/md/tools/${toolMdMatch[1]}`)
   }
 
   // Support .md suffix on products: /products/decispher.md -> /api/md/products/decispher
   const productMdMatch = pathname.match(/^\/products\/([^/]+)\.md$/)
   if (productMdMatch && productMdMatch[1]) {
-    return NextResponse.rewrite(
-      new URL(`/api/md/products/${productMdMatch[1]}`, request.url)
-    )
+    return rewriteWithHeaders(`/api/md/products/${productMdMatch[1]}`)
   }
 
   // Support .md suffix on makers: /makers/alice.md -> /api/md/makers/alice
   const makerMdMatch = pathname.match(/^\/makers\/([^/]+)\.md$/)
   if (makerMdMatch && makerMdMatch[1]) {
-    return NextResponse.rewrite(
-      new URL(`/api/md/makers/${makerMdMatch[1]}`, request.url)
-    )
+    return rewriteWithHeaders(`/api/md/makers/${makerMdMatch[1]}`)
   }
 
   // Content negotiation for text/markdown on tools, products, makers, and root
   if (acceptHeader.includes("text/markdown") || acceptHeader.includes("text/x-markdown")) {
     const toolMatch = pathname.match(/^\/tools\/([^/]+)$/)
     if (toolMatch && toolMatch[1]) {
-      return NextResponse.rewrite(
-        new URL(`/api/md/tools/${toolMatch[1]}`, request.url)
-      )
+      return rewriteWithHeaders(`/api/md/tools/${toolMatch[1]}`)
     }
 
     const productMatch = pathname.match(/^\/products\/([^/]+)$/)
     if (productMatch && productMatch[1]) {
-      return NextResponse.rewrite(
-        new URL(`/api/md/products/${productMatch[1]}`, request.url)
-      )
+      return rewriteWithHeaders(`/api/md/products/${productMatch[1]}`)
     }
 
     const makerMatch = pathname.match(/^\/makers\/([^/]+)$/)
     if (makerMatch && makerMatch[1]) {
-      return NextResponse.rewrite(
-        new URL(`/api/md/makers/${makerMatch[1]}`, request.url)
-      )
+      return rewriteWithHeaders(`/api/md/makers/${makerMatch[1]}`)
     }
 
     if (pathname === "/") {
-      return NextResponse.rewrite(new URL("/api/md/_catalog", request.url))
+      return rewriteWithHeaders("/api/md/_catalog")
     }
   }
 
-  return NextResponse.next()
+  return nextWithHeaders()
 }
 
 export const config = {
@@ -133,6 +161,8 @@ export const config = {
     "/tools/:path*",
     "/products/:path*",
     "/makers/:path*",
+    "/categories/:path*",
+    "/trending/:path*",
     "/",
   ],
 }
