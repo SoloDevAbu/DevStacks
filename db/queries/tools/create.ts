@@ -2,6 +2,7 @@ import { db } from "@/db"
 import { tools, toolFaqs } from "@/db/schema"
 import type { NewTool } from "@/db/schema"
 import { getOrCreateCategory } from "@/db/queries/categories/list"
+import { getFaviconUrl } from "@/utils/urls"
 
 import { randomBytes } from "crypto"
 
@@ -45,10 +46,13 @@ export const createTool = async (data: CreateToolInput) => {
   const baseSlug = slugify(rest.name)
   const slug = `${baseSlug}-${nanoid()}`
 
+  const logoUrl = rest.logoUrl?.trim() || getFaviconUrl(rest.websiteUrl)
+
   const [tool] = await db
     .insert(tools)
     .values({
       ...rest,
+      logoUrl,
       categoryId,
       slug,
       status: "approved",

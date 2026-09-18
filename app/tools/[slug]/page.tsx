@@ -39,6 +39,7 @@ import {
   itemListSchema,
 } from "@/lib/seo/schema"
 import { ProductLogo } from "@/components/shared/product-logo"
+import { getFaviconUrl } from "@/utils/urls"
 import { VerifiedBadge } from "@/components/shared/verified-badge"
 import { ProductCard } from "@/components/shared/product-card"
 import { Badge } from "@/components/ui/badge"
@@ -278,7 +279,11 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
             <div className="flex items-start gap-4 md:gap-5">
               <ProductLogo
                 text={tool.name.slice(0, 2).toUpperCase()}
-                imageUrl={tool.logoUrl}
+                imageUrl={
+                  tool.logoUrl?.trim() || getFaviconUrl(tool.websiteUrl)
+                }
+                websiteUrl={tool.websiteUrl}
+                alt={tool.name}
                 bgColor="bg-slate-900"
                 textColor="text-white"
                 className="size-16 shrink-0 rounded-2xl border border-slate-200 text-2xl shadow-sm md:size-20 md:text-3xl"

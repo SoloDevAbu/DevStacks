@@ -1,8 +1,20 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Image from "next/image"
 import { cn } from "@/lib/utils"
+import { getFaviconUrl, getDuckDuckGoFaviconUrl } from "@/utils/urls"
+
+export interface ProductLogoProps {
+  text: string
+  bgColor?: string
+  textColor?: string
+  borderColor?: string
+  className?: string
+  imageUrl?: string | null
+  websiteUrl?: string | null
+  alt?: string
+}
 
 export const ProductLogo = ({
   text,
@@ -11,19 +23,32 @@ export const ProductLogo = ({
   borderColor,
   className,
   imageUrl,
+  websiteUrl,
   alt,
-}: {
-  text: string
-  bgColor?: string
-  textColor?: string
-  borderColor?: string
-  className?: string
-  imageUrl?: string | null
-  alt?: string
-}) => {
-  const [imageFailed, setImageFailed] = useState(false)
+}: ProductLogoProps) => {
+  const primarySrc =
+    imageUrl?.trim() || (websiteUrl ? getFaviconUrl(websiteUrl) : null)
 
-  if (imageUrl && !imageFailed) {
+  const [currentSrc, setCurrentSrc] = useState<string | null>(primarySrc)
+  const [hasFailed, setHasFailed] = useState(false)
+
+  useEffect(() => {
+    setCurrentSrc(primarySrc)
+    setHasFailed(false)
+  }, [primarySrc])
+
+  const handleError = () => {
+    if (websiteUrl && currentSrc && !currentSrc.includes("duckduckgo.com")) {
+      const ddgUrl = getDuckDuckGoFaviconUrl(websiteUrl)
+      if (ddgUrl && ddgUrl !== currentSrc) {
+        setCurrentSrc(ddgUrl)
+        return
+      }
+    }
+    setHasFailed(true)
+  }
+
+  if (currentSrc && !hasFailed) {
     return (
       <div
         className={cn(
@@ -33,12 +58,12 @@ export const ProductLogo = ({
         )}
       >
         <Image
-          src={imageUrl}
+          src={currentSrc}
           alt={alt ?? text}
           fill
           unoptimized
           className="object-contain p-2 transition-transform duration-200 group-hover:scale-105"
-          onError={() => setImageFailed(true)}
+          onError={handleError}
         />
       </div>
     )

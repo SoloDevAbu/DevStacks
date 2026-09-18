@@ -13,6 +13,7 @@ export const getToolBySlugOrName = async (identifier: string) => {
       name: tools.name,
       tagline: tools.tagline,
       logoUrl: tools.logoUrl,
+      websiteUrl: tools.websiteUrl,
     })
     .from(tools)
     .where(

@@ -28,16 +28,35 @@ export const getLinkRel = (tier?: string | Tier | null): string => {
   return "noopener noreferrer nofollow"
 }
 
-export const getFaviconUrl = (websiteUrl?: string | null): string | null => {
+export const getCleanDomain = (websiteUrl?: string | null): string | null => {
   if (!websiteUrl) return null
   try {
-    const raw = websiteUrl.startsWith("http") ? websiteUrl : `https://${websiteUrl}`
+    const trimmed = websiteUrl.trim()
+    if (!trimmed) return null
+    const raw =
+      trimmed.startsWith("http://") || trimmed.startsWith("https://")
+        ? trimmed
+        : `https://${trimmed}`
     const parsed = new URL(raw)
-    const hostname = parsed.hostname.replace(/^www\./, "")
-    if (!hostname) return null
-    return `https://www.google.com/s2/favicons?domain=${hostname}&sz=128`
+    const hostname = parsed.hostname.replace(/^www\./, "").toLowerCase()
+    if (!hostname || !hostname.includes(".")) return null
+    return hostname
   } catch {
     return null
   }
+}
+
+export const getFaviconUrl = (websiteUrl?: string | null): string | null => {
+  const domain = getCleanDomain(websiteUrl)
+  if (!domain) return null
+  return `https://www.google.com/s2/favicons?domain=${domain}&sz=128`
+}
+
+export const getDuckDuckGoFaviconUrl = (
+  websiteUrl?: string | null
+): string | null => {
+  const domain = getCleanDomain(websiteUrl)
+  if (!domain) return null
+  return `https://icons.duckduckgo.com/ip3/${domain}.ico`
 }
 

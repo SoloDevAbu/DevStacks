@@ -138,7 +138,7 @@ export const ToolCard = ({
     )
   }
 
-  const logoUrl = tool.logoUrl ?? getFaviconUrl(tool.websiteUrl)
+  const logoUrl = tool.logoUrl?.trim() || getFaviconUrl(tool.websiteUrl)
 
   return (
     <Card
@@ -182,6 +182,7 @@ export const ToolCard = ({
             bgColor="bg-slate-900"
             textColor="text-white"
             imageUrl={logoUrl}
+            websiteUrl={tool.websiteUrl}
             alt={tool.name}
             className="size-14 overflow-hidden rounded-xl border border-slate-200 text-xl"
           />

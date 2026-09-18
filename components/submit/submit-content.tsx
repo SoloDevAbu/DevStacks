@@ -45,6 +45,7 @@ import {
   type FaqBuilderItem,
 } from "@/components/shared/faq-builder"
 import { toast } from "@/components/ui/toast"
+import { getFaviconUrl, getDuckDuckGoFaviconUrl } from "@/utils/urls"
 
 const emptyForm = {
   name: "",
@@ -81,7 +82,7 @@ const emptyForm = {
 
 export const SubmitContent = () => {
   const [form, setForm] = useState(emptyForm)
-  const [screenshotInput, setScreenshotInput] = useState("")
+  // const [screenshotInput, setScreenshotInput] = useState("")
   const [errors, setErrors] = useState<Record<string, string[]>>({})
   const [submitted, setSubmitted] = useState(false)
 
@@ -113,6 +114,17 @@ export const SubmitContent = () => {
       setErrors((prev) => ({ ...prev, [key]: [] }))
     }
 
+  const handleWebsiteUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value
+    const favicon = getFaviconUrl(val)
+    setForm((prev) => ({
+      ...prev,
+      websiteUrl: val,
+      logoUrl: favicon ?? prev.logoUrl,
+    }))
+    setErrors((prev) => ({ ...prev, websiteUrl: [] }))
+  }
+
   const togglePlatform = (platform: string) => {
     setForm((prev) => ({
       ...prev,
@@ -122,6 +134,7 @@ export const SubmitContent = () => {
     }))
   }
 
+  /* Screenshots helpers temporarily commented out
   const addScreenshot = (customUrl?: string) => {
     const url = customUrl || screenshotInput
     if (!url.trim() || form.images.length >= 5) return
@@ -140,6 +153,7 @@ export const SubmitContent = () => {
       images: prev.images.filter((_, i) => i !== index),
     }))
   }
+  */
 
   const executeSubmit = () => {
     const nonBlankFaqs = form.faqs
@@ -158,8 +172,10 @@ export const SubmitContent = () => {
       return
     }
 
+    const faviconUrl = getFaviconUrl(form.websiteUrl)
     const payload = {
       ...form,
+      logoUrl: form.logoUrl?.trim() || faviconUrl || "",
       faqs: nonBlankFaqs,
     }
 
@@ -301,7 +317,7 @@ export const SubmitContent = () => {
                       id="websiteUrl"
                       type="url"
                       value={form.websiteUrl}
-                      onChange={set("websiteUrl")}
+                      onChange={handleWebsiteUrlChange}
                       placeholder="https://example.com"
                       className="pl-9"
                     />
@@ -310,6 +326,26 @@ export const SubmitContent = () => {
                     Primary landing page or documentation (must include
                     https://).
                   </span>
+                  {getFaviconUrl(form.websiteUrl) && (
+                    <div className="mt-1 flex items-center gap-2 rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600">
+                      <div className="relative flex size-5 shrink-0 items-center justify-center overflow-hidden rounded border border-slate-200 bg-white">
+                        <img
+                          src={getFaviconUrl(form.websiteUrl)!}
+                          alt="Favicon preview"
+                          className="size-3.5 object-contain"
+                          onError={(e) => {
+                            const ddg = getDuckDuckGoFaviconUrl(form.websiteUrl)
+                            if (ddg && e.currentTarget.src !== ddg) {
+                              e.currentTarget.src = ddg
+                            }
+                          }}
+                        />
+                      </div>
+                      <span className="text-[11px] font-medium text-slate-600">
+                        Site favicon detected automatically
+                      </span>
+                    </div>
+                  )}
                   {errors.websiteUrl && (
                     <p className="text-xs text-red-500">
                       {errors.websiteUrl[0]}
@@ -574,58 +610,59 @@ export const SubmitContent = () => {
                   Media & Visual Showcase
                 </h3>
                 <p className="text-xs text-slate-500">
-                  Tool brand logo, screenshot gallery, and walkthrough videos.
+                  Tool demo video and visual walkthrough. Brand favicon is automatically fetched from your website URL.
                 </p>
               </div>
 
               <div className="flex flex-col gap-4">
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                  <div className="grid gap-2">
-                    <div className="flex items-center justify-between">
-                      <Label htmlFor="logo">Logo URL</Label>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        onClick={() =>
-                          setForm((prev) => ({
-                            ...prev,
-                            logoUrl:
-                              "https://api.dicebear.com/7.x/shapes/svg?seed=" +
-                              (form.name || "logo"),
-                          }))
-                        }
-                        className="h-6 gap-1 px-2 text-[11px] font-semibold text-indigo-600 hover:text-indigo-700"
-                      >
-                        <Upload className="size-3" />
-                        Mock Upload Demo
-                      </Button>
-                    </div>
-                    <Input
-                      id="logo"
-                      type="url"
-                      value={form.logoUrl}
-                      onChange={set("logoUrl")}
-                      placeholder="https://example.com/logo.png"
-                    />
+                {/* Logo upload temporarily disabled - brand favicon is automatically fetched from website URL.
+                <div className="grid gap-2">
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="logo">Logo URL</Label>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() =>
+                        setForm((prev) => ({
+                          ...prev,
+                          logoUrl:
+                            "https://api.dicebear.com/7.x/shapes/svg?seed=" +
+                            (form.name || "logo"),
+                        }))
+                      }
+                      className="h-6 gap-1 px-2 text-[11px] font-semibold text-indigo-600 hover:text-indigo-700"
+                    >
+                      <Upload className="size-3" />
+                      Mock Upload Demo
+                    </Button>
                   </div>
+                  <Input
+                    id="logo"
+                    type="url"
+                    value={form.logoUrl}
+                    onChange={set("logoUrl")}
+                    placeholder="https://example.com/logo.png"
+                  />
+                </div>
+                */}
 
-                  <div className="grid gap-2">
-                    <Label htmlFor="video">Tool Demo Video URL</Label>
-                    <div className="relative">
-                      <Video className="absolute top-2.5 left-3 size-4 text-slate-400" />
-                      <Input
-                        id="video"
-                        type="url"
-                        value={form.demoVideoUrl}
-                        onChange={set("demoVideoUrl")}
-                        placeholder="https://youtube.com/watch?v=... or Loom"
-                        className="pl-9"
-                      />
-                    </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="video">Tool Demo Video URL</Label>
+                  <div className="relative">
+                    <Video className="absolute top-2.5 left-3 size-4 text-slate-400" />
+                    <Input
+                      id="video"
+                      type="url"
+                      value={form.demoVideoUrl}
+                      onChange={set("demoVideoUrl")}
+                      placeholder="https://youtube.com/watch?v=... or Loom"
+                      className="pl-9"
+                    />
                   </div>
                 </div>
 
+                {/* Screenshot gallery upload temporarily disabled.
                 <div className="grid gap-2">
                   <div className="flex items-center justify-between">
                     <Label htmlFor="screenshots">
@@ -697,6 +734,7 @@ export const SubmitContent = () => {
                     </div>
                   )}
                 </div>
+                */}
               </div>
             </div>
 

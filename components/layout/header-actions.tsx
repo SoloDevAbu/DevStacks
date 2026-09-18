@@ -149,7 +149,7 @@ export const HeaderActions = () => {
                 render={<Link href={ROUTES.SUBMIT} />}
               >
                 <PlusCircle className="mr-2 size-3.5" />
-                Add a Tool
+                Submit a Tool
               </DropdownMenuItem>
               <DropdownMenuItem
                 className="cursor-pointer text-xs"

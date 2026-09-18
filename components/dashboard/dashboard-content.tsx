@@ -22,6 +22,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { ProductLogo } from "@/components/shared/product-logo"
 import { ROUTES } from "@/constants/routes"
 import {
   pricingBadgeColor,
@@ -46,8 +47,12 @@ export const DashboardContent = ({ data }: DashboardContentProps) => {
     "all" | "tools" | "products" | "comments"
   >("all")
   const [searchQuery, setSearchQuery] = useState("")
-  const [statusFilter, setStatusFilter] = useState<"all" | "approved" | "pending">("all")
-  const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({})
+  const [statusFilter, setStatusFilter] = useState<
+    "all" | "approved" | "pending"
+  >("all")
+  const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>(
+    {}
+  )
 
   const toggleExpand = (id: string) => {
     setExpandedItems((prev) => ({ ...prev, [id]: !prev[id] }))
@@ -61,7 +66,10 @@ export const DashboardContent = ({ data }: DashboardContentProps) => {
         !searchQuery ||
         tool.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         tool.tagline.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (tool.tags && tool.tags.some((t) => t.toLowerCase().includes(searchQuery.toLowerCase())))
+        (tool.tags &&
+          tool.tags.some((t) =>
+            t.toLowerCase().includes(searchQuery.toLowerCase())
+          ))
 
       const matchesStatus =
         statusFilter === "all" ||
@@ -77,7 +85,10 @@ export const DashboardContent = ({ data }: DashboardContentProps) => {
         !searchQuery ||
         product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         product.tagline.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (product.tags && product.tags.some((t) => t.toLowerCase().includes(searchQuery.toLowerCase())))
+        (product.tags &&
+          product.tags.some((t) =>
+            t.toLowerCase().includes(searchQuery.toLowerCase())
+          ))
 
       const matchesStatus =
         statusFilter === "all" ||
@@ -105,7 +116,7 @@ export const DashboardContent = ({ data }: DashboardContentProps) => {
             <span className="font-mono text-[10px] font-bold tracking-wider text-slate-400 uppercase">
               Total Likes
             </span>
-            <Heart className="size-3.5 text-rose-500 fill-rose-500/20" />
+            <Heart className="size-3.5 fill-rose-500/20 text-rose-500" />
           </div>
           <div className="flex flex-col">
             <span className="text-xl font-black text-slate-900 md:text-2xl">
@@ -262,7 +273,7 @@ export const DashboardContent = ({ data }: DashboardContentProps) => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Filter submissions..."
-                className="h-8 pl-8 text-xs border border-dashed border-slate-200 bg-slate-50/60 focus-visible:bg-white"
+                className="h-8 border border-dashed border-slate-200 pl-8 text-xs focus-visible:bg-white"
               />
             </div>
 
@@ -272,7 +283,7 @@ export const DashboardContent = ({ data }: DashboardContentProps) => {
                 className={cn(
                   "cursor-pointer rounded-md px-2.5 py-1 font-medium transition-colors",
                   statusFilter === "all"
-                    ? "bg-slate-900 text-white font-semibold"
+                    ? "bg-slate-900 font-semibold text-white"
                     : "text-slate-600 hover:text-slate-900"
                 )}
               >
@@ -283,7 +294,7 @@ export const DashboardContent = ({ data }: DashboardContentProps) => {
                 className={cn(
                   "cursor-pointer rounded-md px-2.5 py-1 font-medium transition-colors",
                   statusFilter === "approved"
-                    ? "bg-emerald-600 text-white font-semibold"
+                    ? "bg-emerald-600 font-semibold text-white"
                     : "text-slate-600 hover:text-slate-900"
                 )}
               >
@@ -294,7 +305,7 @@ export const DashboardContent = ({ data }: DashboardContentProps) => {
                 className={cn(
                   "cursor-pointer rounded-md px-2.5 py-1 font-medium transition-colors",
                   statusFilter === "pending"
-                    ? "bg-amber-600 text-white font-semibold"
+                    ? "bg-amber-600 font-semibold text-white"
                     : "text-slate-600 hover:text-slate-900"
                 )}
               >
@@ -317,11 +328,12 @@ export const DashboardContent = ({ data }: DashboardContentProps) => {
                 No comments received yet
               </h3>
               <p className="mt-1 max-w-sm text-xs text-slate-500">
-                When developers leave feedback or ask questions on your tools and products, they will appear here.
+                When developers leave feedback or ask questions on your tools
+                and products, they will appear here.
               </p>
             </div>
           ) : (
-            <div className="flex flex-col divide-y divide-dashed divide-border border-b border-dashed border-border bg-white">
+            <div className="flex flex-col divide-y border-b border-dashed border-border bg-white">
               {comments.map((comment) => (
                 <div
                   key={comment.id}
@@ -337,7 +349,9 @@ export const DashboardContent = ({ data }: DashboardContentProps) => {
                           />
                         )}
                         <AvatarFallback className="bg-slate-900 text-[10px] text-white">
-                          {(comment.authorName || "U").slice(0, 2).toUpperCase()}
+                          {(comment.authorName || "U")
+                            .slice(0, 2)
+                            .toUpperCase()}
                         </AvatarFallback>
                       </Avatar>
                       <div className="flex flex-col">
@@ -537,26 +551,20 @@ const ToolDashboardRow = ({
       {/* Top Part: Logo, Metadata & Live Page CTA */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex items-start gap-3.5">
-          <div className="relative flex size-12 shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-slate-900 font-bold text-white shadow-2xs overflow-hidden">
-            {tool.logoUrl ? (
-              <Image
-                src={tool.logoUrl}
-                alt={tool.name}
-                width={48}
-                height={48}
-                className="size-full object-cover"
-              />
-            ) : (
-              <span>{tool.name.slice(0, 2).toUpperCase()}</span>
-            )}
-          </div>
+          <ProductLogo
+            text={tool.name.slice(0, 2).toUpperCase()}
+            imageUrl={tool.logoUrl}
+            websiteUrl={tool.websiteUrl}
+            alt={tool.name}
+            className="size-12 shrink-0 rounded-xl border border-slate-200 text-sm shadow-2xs"
+          />
 
           <div className="flex flex-col gap-1">
             <div className="flex flex-wrap items-center gap-2">
               <Link
                 href={ROUTES.TOOL(tool.slug)}
                 target="_blank"
-                className="text-base font-bold text-slate-900 hover:text-indigo-600 transition-colors"
+                className="text-base font-bold text-slate-900 transition-colors hover:text-indigo-600"
               >
                 {tool.name}
               </Link>
@@ -587,9 +595,7 @@ const ToolDashboardRow = ({
                 </Badge>
               )}
             </div>
-            <p className="text-xs font-medium text-slate-600">
-              {tool.tagline}
-            </p>
+            <p className="text-xs font-medium text-slate-600">{tool.tagline}</p>
           </div>
         </div>
 
@@ -601,13 +607,13 @@ const ToolDashboardRow = ({
             render={<Link href={ROUTES.TOOL(tool.slug)} target="_blank" />}
           >
             <span>Live Page</span>
-            <ExternalLink className="size-3 ml-1" />
+            <ExternalLink className="ml-1 size-3" />
           </Button>
         </div>
       </div>
 
       {/* Metrics Strip */}
-      <div className="grid grid-cols-2 divide-x divide-dashed divide-border rounded-lg border border-dashed border-border bg-slate-50/70 py-2 sm:grid-cols-4">
+      <div className="grid grid-cols-2 divide-x rounded-lg border border-dashed border-border bg-slate-50/70 py-2 sm:grid-cols-4">
         <div className="flex flex-col items-center px-3 py-1">
           <span className="font-mono text-[10px] font-bold text-slate-400 uppercase">
             Upvotes
@@ -650,7 +656,7 @@ const ToolDashboardRow = ({
               href={tool.websiteUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex size-6 items-center justify-center rounded-md border border-slate-200 bg-white hover:bg-slate-50 transition-colors"
+              className="flex size-6 items-center justify-center rounded-md border border-slate-200 bg-white transition-colors hover:bg-slate-50"
               title="Website"
             >
               <Image
@@ -667,7 +673,7 @@ const ToolDashboardRow = ({
               href={tool.githubUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex size-6 items-center justify-center rounded-md border border-slate-200 bg-white hover:bg-slate-50 transition-colors"
+              className="flex size-6 items-center justify-center rounded-md border border-slate-200 bg-white transition-colors hover:bg-slate-50"
               title="GitHub"
             >
               <Image
@@ -684,7 +690,7 @@ const ToolDashboardRow = ({
               href={tool.twitterUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex size-6 items-center justify-center rounded-md border border-slate-200 bg-white hover:bg-slate-50 transition-colors"
+              className="flex size-6 items-center justify-center rounded-md border border-slate-200 bg-white transition-colors hover:bg-slate-50"
               title="Twitter / X"
             >
               <Image
@@ -701,7 +707,7 @@ const ToolDashboardRow = ({
               href={tool.linkedinUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex size-6 items-center justify-center rounded-md border border-slate-200 bg-white hover:bg-slate-50 transition-colors"
+              className="flex size-6 items-center justify-center rounded-md border border-slate-200 bg-white transition-colors hover:bg-slate-50"
               title="LinkedIn"
             >
               <Image
@@ -718,7 +724,7 @@ const ToolDashboardRow = ({
               href={tool.discordUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex size-6 items-center justify-center rounded-md border border-slate-200 bg-white hover:bg-slate-50 transition-colors"
+              className="flex size-6 items-center justify-center rounded-md border border-slate-200 bg-white transition-colors hover:bg-slate-50"
               title="Discord"
             >
               <Image
@@ -759,9 +765,9 @@ const ToolDashboardRow = ({
             >
               <span>{isExpanded ? "Less info" : "Full info"}</span>
               {isExpanded ? (
-                <ChevronUp className="size-3 ml-0.5" />
+                <ChevronUp className="ml-0.5 size-3" />
               ) : (
-                <ChevronDown className="size-3 ml-0.5" />
+                <ChevronDown className="ml-0.5 size-3" />
               )}
             </Button>
           )}
@@ -776,7 +782,7 @@ const ToolDashboardRow = ({
               <span className="font-mono text-[10px] font-bold text-rose-600 uppercase">
                 Problem Solved
               </span>
-              <p className="mt-0.5 text-xs text-slate-700 leading-relaxed">
+              <p className="mt-0.5 text-xs leading-relaxed text-slate-700">
                 {tool.problemStatement}
               </p>
             </div>
@@ -786,7 +792,7 @@ const ToolDashboardRow = ({
               <span className="font-mono text-[10px] font-bold text-emerald-600 uppercase">
                 Solution & Architecture
               </span>
-              <p className="mt-0.5 text-xs text-slate-700 leading-relaxed">
+              <p className="mt-0.5 text-xs leading-relaxed text-slate-700">
                 {tool.solution}
               </p>
             </div>
@@ -796,14 +802,14 @@ const ToolDashboardRow = ({
               <span className="font-mono text-[10px] font-bold text-indigo-600 uppercase">
                 Unique Value Proposition
               </span>
-              <p className="mt-0.5 text-xs text-slate-700 leading-relaxed">
+              <p className="mt-0.5 text-xs leading-relaxed text-slate-700">
                 {tool.uniqueValue}
               </p>
             </div>
           )}
           {tool.tags && tool.tags.length > 0 && (
             <div className="flex flex-wrap items-center gap-1.5 pt-1">
-              <span className="font-mono text-[10px] font-bold text-slate-400 uppercase mr-1">
+              <span className="mr-1 font-mono text-[10px] font-bold text-slate-400 uppercase">
                 Tags:
               </span>
               {tool.tags.map((tag) => (
@@ -840,26 +846,20 @@ const ProductDashboardRow = ({
       {/* Top Part: Logo, Metadata & Live Page CTA */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex items-start gap-3.5">
-          <div className="relative flex size-12 shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-slate-900 font-bold text-white shadow-2xs overflow-hidden">
-            {product.logoUrl ? (
-              <Image
-                src={product.logoUrl}
-                alt={product.name}
-                width={48}
-                height={48}
-                className="size-full object-cover"
-              />
-            ) : (
-              <span>{product.name.slice(0, 2).toUpperCase()}</span>
-            )}
-          </div>
+          <ProductLogo
+            text={product.name.slice(0, 2).toUpperCase()}
+            imageUrl={product.logoUrl}
+            websiteUrl={product.websiteUrl}
+            alt={product.name}
+            className="size-12 shrink-0 rounded-xl border border-slate-200 text-sm shadow-2xs"
+          />
 
           <div className="flex flex-col gap-1">
             <div className="flex flex-wrap items-center gap-2">
               <Link
                 href={ROUTES.PRODUCT(product.slug)}
                 target="_blank"
-                className="text-base font-bold text-slate-900 hover:text-indigo-600 transition-colors"
+                className="text-base font-bold text-slate-900 transition-colors hover:text-indigo-600"
               >
                 {product.name}
               </Link>
@@ -901,16 +901,18 @@ const ProductDashboardRow = ({
             size="sm"
             variant="outline"
             className="h-7 text-xs font-semibold text-indigo-600 hover:text-indigo-700"
-            render={<Link href={ROUTES.PRODUCT(product.slug)} target="_blank" />}
+            render={
+              <Link href={ROUTES.PRODUCT(product.slug)} target="_blank" />
+            }
           >
             <span>Live Page</span>
-            <ExternalLink className="size-3 ml-1" />
+            <ExternalLink className="ml-1 size-3" />
           </Button>
         </div>
       </div>
 
       {/* Metrics Strip */}
-      <div className="grid grid-cols-2 divide-x divide-dashed divide-border rounded-lg border border-dashed border-border bg-slate-50/70 py-2 sm:grid-cols-3">
+      <div className="grid grid-cols-2 divide-x rounded-lg border border-dashed border-border bg-slate-50/70 py-2 sm:grid-cols-3">
         <div className="flex flex-col items-center px-3 py-1">
           <span className="font-mono text-[10px] font-bold text-slate-400 uppercase">
             Likes
@@ -945,7 +947,7 @@ const ProductDashboardRow = ({
               href={product.websiteUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex size-6 items-center justify-center rounded-md border border-slate-200 bg-white hover:bg-slate-50 transition-colors"
+              className="flex size-6 items-center justify-center rounded-md border border-slate-200 bg-white transition-colors hover:bg-slate-50"
               title="Website"
             >
               <Image
@@ -962,7 +964,7 @@ const ProductDashboardRow = ({
               href={product.githubUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex size-6 items-center justify-center rounded-md border border-slate-200 bg-white hover:bg-slate-50 transition-colors"
+              className="flex size-6 items-center justify-center rounded-md border border-slate-200 bg-white transition-colors hover:bg-slate-50"
               title="GitHub"
             >
               <Image
@@ -979,7 +981,7 @@ const ProductDashboardRow = ({
               href={product.twitterUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex size-6 items-center justify-center rounded-md border border-slate-200 bg-white hover:bg-slate-50 transition-colors"
+              className="flex size-6 items-center justify-center rounded-md border border-slate-200 bg-white transition-colors hover:bg-slate-50"
               title="Twitter / X"
             >
               <Image
@@ -996,7 +998,7 @@ const ProductDashboardRow = ({
               href={product.linkedinUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex size-6 items-center justify-center rounded-md border border-slate-200 bg-white hover:bg-slate-50 transition-colors"
+              className="flex size-6 items-center justify-center rounded-md border border-slate-200 bg-white transition-colors hover:bg-slate-50"
               title="LinkedIn"
             >
               <Image
@@ -1013,7 +1015,7 @@ const ProductDashboardRow = ({
               href={product.discordUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex size-6 items-center justify-center rounded-md border border-slate-200 bg-white hover:bg-slate-50 transition-colors"
+              className="flex size-6 items-center justify-center rounded-md border border-slate-200 bg-white transition-colors hover:bg-slate-50"
               title="Discord"
             >
               <Image
@@ -1045,7 +1047,9 @@ const ProductDashboardRow = ({
             <Calendar className="size-3" />
             Submitted {formatDate(product.createdAt)}
           </span>
-          {(product.problemStatement || product.solution || product.description) && (
+          {(product.problemStatement ||
+            product.solution ||
+            product.description) && (
             <Button
               variant="ghost"
               size="sm"
@@ -1054,9 +1058,9 @@ const ProductDashboardRow = ({
             >
               <span>{isExpanded ? "Less info" : "Full info"}</span>
               {isExpanded ? (
-                <ChevronUp className="size-3 ml-0.5" />
+                <ChevronUp className="ml-0.5 size-3" />
               ) : (
-                <ChevronDown className="size-3 ml-0.5" />
+                <ChevronDown className="ml-0.5 size-3" />
               )}
             </Button>
           )}
@@ -1071,7 +1075,7 @@ const ProductDashboardRow = ({
               <span className="font-mono text-[10px] font-bold text-rose-600 uppercase">
                 Problem Solved
               </span>
-              <p className="mt-0.5 text-xs text-slate-700 leading-relaxed">
+              <p className="mt-0.5 text-xs leading-relaxed text-slate-700">
                 {product.problemStatement}
               </p>
             </div>
@@ -1081,7 +1085,7 @@ const ProductDashboardRow = ({
               <span className="font-mono text-[10px] font-bold text-emerald-600 uppercase">
                 Solution & Architecture
               </span>
-              <p className="mt-0.5 text-xs text-slate-700 leading-relaxed">
+              <p className="mt-0.5 text-xs leading-relaxed text-slate-700">
                 {product.solution}
               </p>
             </div>
@@ -1091,14 +1095,14 @@ const ProductDashboardRow = ({
               <span className="font-mono text-[10px] font-bold text-indigo-600 uppercase">
                 Unique Value Proposition
               </span>
-              <p className="mt-0.5 text-xs text-slate-700 leading-relaxed">
+              <p className="mt-0.5 text-xs leading-relaxed text-slate-700">
                 {product.uniqueValue}
               </p>
             </div>
           )}
           {product.tags && product.tags.length > 0 && (
             <div className="flex flex-wrap items-center gap-1.5 pt-1">
-              <span className="font-mono text-[10px] font-bold text-slate-400 uppercase mr-1">
+              <span className="mr-1 font-mono text-[10px] font-bold text-slate-400 uppercase">
                 Tags:
               </span>
               {product.tags.map((tag) => (

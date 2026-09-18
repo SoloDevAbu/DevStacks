@@ -32,6 +32,7 @@ import { getProductFaqs } from "@/db/queries/faqs/get-faqs"
 import { MakerProfileCard } from "@/components/shared/maker-profile-card"
 import { productSchema, breadcrumbSchema, faqSchema } from "@/lib/seo/schema"
 import { ProductLogo } from "@/components/shared/product-logo"
+import { getFaviconUrl } from "@/utils/urls"
 import { VerifiedBadge } from "@/components/shared/verified-badge"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -258,7 +259,11 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
             <div className="flex items-start gap-4 md:gap-5">
               <ProductLogo
                 text={product.name.slice(0, 2).toUpperCase()}
-                imageUrl={product.logoUrl}
+                imageUrl={
+                  product.logoUrl?.trim() || getFaviconUrl(product.websiteUrl)
+                }
+                websiteUrl={product.websiteUrl}
+                alt={product.name}
                 bgColor="bg-slate-900"
                 textColor="text-white"
                 className="size-16 shrink-0 rounded-2xl border border-slate-200 text-2xl shadow-sm md:size-20 md:text-3xl"

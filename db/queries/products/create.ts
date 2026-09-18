@@ -2,6 +2,7 @@ import { db } from "@/db"
 import { products, productTools, tools, productFaqs } from "@/db/schema"
 import type { NewProduct } from "@/db/schema"
 import { getOrCreateCategory } from "@/db/queries/categories/list"
+import { getFaviconUrl } from "@/utils/urls"
 import { eq, ilike, or, sql } from "drizzle-orm"
 
 import { randomBytes } from "crypto"
@@ -53,10 +54,13 @@ export const createProduct = async (data: CreateProductInput) => {
   const baseSlug = slugify(rest.name)
   const slug = `${baseSlug}-${nanoid()}`
 
+  const logoUrl = rest.logoUrl?.trim() || getFaviconUrl(rest.websiteUrl)
+
   const [product] = await db
     .insert(products)
     .values({
       ...rest,
+      logoUrl,
       categoryId,
       slug,
       status: "approved",

@@ -30,7 +30,7 @@ export const MainContent = ({
     <div className="relative flex min-h-full flex-col bg-slate-50/50">
       <PageHeader
         heading="What's launching"
-        description={`Discover developer tools, APIs, and products launching on ${SITE_CONFIG.name} — ranked by community votes, updated every minute.`}
+        description={`Discover developer tools, APIs, and products launching on ${SITE_CONFIG.name} — ranked by community votes.`}
         aiPrompt={AI_PROMPTS.home}
         variant="home"
         askAiLabel="ASK AI"

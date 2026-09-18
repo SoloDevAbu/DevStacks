@@ -137,7 +137,7 @@ export const ProductCard = ({
     )
   }
 
-  const logoUrl = product.logoUrl ?? getFaviconUrl(product.websiteUrl)
+  const logoUrl = product.logoUrl?.trim() || getFaviconUrl(product.websiteUrl)
 
   return (
     <Card
@@ -181,6 +181,7 @@ export const ProductCard = ({
             bgColor="bg-indigo-900"
             textColor="text-white"
             imageUrl={logoUrl}
+            websiteUrl={product.websiteUrl}
             alt={product.name}
             className="size-14 overflow-hidden rounded-xl border border-slate-200 text-xl"
           />
