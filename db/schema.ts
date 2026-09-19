@@ -24,6 +24,30 @@ export const pricingEnum = pgEnum("pricing", [
 
 export const tierEnum = pgEnum("tier", ["free", "premium", "premium+"])
 
+export const adPlacementEnum = pgEnum("ad_placement", [
+  "sidebar",
+  "feed",
+  "banner",
+])
+
+export const adStatusEnum = pgEnum("ad_status", [
+  "pending_payment",
+  "active",
+  "paused",
+  "expired",
+  "rejected",
+])
+
+export const paymentStatusEnum = pgEnum("payment_status", [
+  "pending",
+  "succeeded",
+  "failed",
+  "refunded",
+  "cancelled",
+])
+
+export const paymentTypeEnum = pgEnum("payment_type", ["listing", "ad"])
+
 export const statusEnum = pgEnum("status", ["pending", "approved", "rejected"])
 
 export const platformEnum = pgEnum("platform", [
@@ -555,6 +579,99 @@ export const verifications = pgTable(
 )
 
 // ---------------------------------------------------------------------------
+// ads — sponsored ad campaigns (sidebar, feed, banner)
+// ---------------------------------------------------------------------------
+
+export const ads = pgTable(
+  "ads",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+
+    // Ad Content & Placement
+    placement: adPlacementEnum("placement").notNull().default("sidebar"),
+    title: text("title").notNull(),
+    description: text("description").notNull(),
+    badgeText: text("badge_text").notNull().default("PROMOTED"),
+    imageUrl: text("image_url"),
+    ctaText: text("cta_text").notNull().default("Learn More"),
+    ctaUrl: text("cta_url").notNull(),
+
+    // Scheduling & Status
+    status: adStatusEnum("status").notNull().default("pending_payment"),
+    durationDays: integer("duration_days").notNull().default(30),
+    startDate: timestamp("start_date", { withTimezone: true }),
+    endDate: timestamp("end_date", { withTimezone: true }),
+
+    // Performance Metrics
+    impressionsCount: integer("impressions_count").notNull().default(0),
+    clicksCount: integer("clicks_count").notNull().default(0),
+
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (t) => [
+    index("ads_placement_status_idx").on(t.placement, t.status),
+    index("ads_userId_idx").on(t.userId),
+    index("ads_endDate_idx").on(t.endDate),
+  ]
+)
+
+// ---------------------------------------------------------------------------
+// payments — Dodo Payments transaction ledger for ads and listing upgrades
+// ---------------------------------------------------------------------------
+
+export const payments = pgTable(
+  "payments",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+
+    // Payment Category & Associated Entities
+    paymentType: paymentTypeEnum("payment_type").notNull(),
+    tier: tierEnum("tier"),
+    adId: uuid("ad_id").references(() => ads.id, { onDelete: "set null" }),
+    toolId: uuid("tool_id").references(() => tools.id, { onDelete: "set null" }),
+    productId: uuid("product_id").references(() => products.id, {
+      onDelete: "set null",
+    }),
+
+    // Dodo Payments Gateway References
+    dodoPaymentId: text("dodo_payment_id").unique(),
+    dodoCheckoutSessionId: text("dodo_checkout_session_id"),
+    dodoCustomerId: text("dodo_customer_id"),
+
+    // Financial Details
+    amount: integer("amount").notNull(), // amount in cents (e.g. 1500 for $15.00)
+    currency: text("currency").notNull().default("USD"),
+    status: paymentStatusEnum("status").notNull().default("pending"),
+
+    // Metadata & Timestamps
+    metadata: text("metadata"),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (t) => [
+    index("payments_userId_idx").on(t.userId),
+    index("payments_dodoPaymentId_idx").on(t.dodoPaymentId),
+    index("payments_status_idx").on(t.status),
+    index("payments_paymentType_idx").on(t.paymentType),
+  ]
+)
+
+// ---------------------------------------------------------------------------
 // Relations (Drizzle ORM v1 API)
 // ---------------------------------------------------------------------------
 
@@ -576,6 +693,8 @@ export const relations = defineRelations(
     productFaqs,
     sessions,
     accounts,
+    ads,
+    payments,
   },
   (r) => ({
     users: {
@@ -590,6 +709,8 @@ export const relations = defineRelations(
       productComments: r.many.productComments(),
       sessions: r.many.sessions(),
       accounts: r.many.accounts(),
+      ads: r.many.ads(),
+      payments: r.many.payments(),
     },
     categories: {
       tools: r.many.tools(),
@@ -600,6 +721,19 @@ export const relations = defineRelations(
     },
     accounts: {
       user: r.one.users({ from: r.accounts.userId, to: r.users.id }),
+    },
+    ads: {
+      user: r.one.users({ from: r.ads.userId, to: r.users.id }),
+      payments: r.many.payments(),
+    },
+    payments: {
+      user: r.one.users({ from: r.payments.userId, to: r.users.id }),
+      ad: r.one.ads({ from: r.payments.adId, to: r.ads.id }),
+      tool: r.one.tools({ from: r.payments.toolId, to: r.tools.id }),
+      product: r.one.products({
+        from: r.payments.productId,
+        to: r.products.id,
+      }),
     },
     tools: {
       submitter: r.one.users({ from: r.tools.submitterId, to: r.users.id }),
@@ -612,6 +746,7 @@ export const relations = defineRelations(
       bookmarks: r.many.toolBookmarks(),
       comments: r.many.toolComments(),
       productTools: r.many.productTools(),
+      payments: r.many.payments(),
     },
     products: {
       submitter: r.one.users({ from: r.products.submitterId, to: r.users.id }),
@@ -624,6 +759,7 @@ export const relations = defineRelations(
       bookmarks: r.many.productBookmarks(),
       comments: r.many.productComments(),
       productTools: r.many.productTools(),
+      payments: r.many.payments(),
     },
     makerFaqs: {
       user: r.one.users({ from: r.makerFaqs.userId, to: r.users.id }),
@@ -734,3 +870,9 @@ export type NewToolFaq = typeof toolFaqs.$inferInsert
 
 export type ProductFaq = typeof productFaqs.$inferSelect
 export type NewProductFaq = typeof productFaqs.$inferInsert
+
+export type Ad = typeof ads.$inferSelect
+export type NewAd = typeof ads.$inferInsert
+
+export type Payment = typeof payments.$inferSelect
+export type NewPayment = typeof payments.$inferInsert

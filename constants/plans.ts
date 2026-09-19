@@ -63,6 +63,7 @@ export type PlanConfig = {
   id: Tier
   name: string
   price: string
+  priceInCents: number
   period: string
   tagline: string
   badgeLabel: string
@@ -72,6 +73,7 @@ export type PlanConfig = {
   ctaText: string
   ctaHref: string
   features: string[]
+  dodoProductId?: string
 }
 
 export const PLANS: Record<Tier, PlanConfig> = {
@@ -79,6 +81,7 @@ export const PLANS: Record<Tier, PlanConfig> = {
     id: TIER.FREE,
     name: "Community",
     price: "$0",
+    priceInCents: 0,
     period: "free forever",
     tagline: "Standard listing for independent builders and creators.",
     badgeLabel: "Community",
@@ -99,6 +102,7 @@ export const PLANS: Record<Tier, PlanConfig> = {
     id: TIER.PREMIUM,
     name: "Featured Builder",
     price: "$49",
+    priceInCents: 4900,
     period: "one-time verification",
     tagline: "Maximum visibility, high-authority backlink, and verified trust.",
     badgeLabel: "Verified",
@@ -107,6 +111,7 @@ export const PLANS: Record<Tier, PlanConfig> = {
     isDoFollow: true,
     ctaText: "Get Verified & Featured",
     ctaHref: ROUTES.SUBMIT,
+    dodoProductId: process.env.DODO_PRODUCT_PREMIUM_LISTING,
     features: [
       "Everything in Community",
       "Permanent Do-Follow SEO backlink",
@@ -120,6 +125,7 @@ export const PLANS: Record<Tier, PlanConfig> = {
     id: TIER.PREMIUM_PLUS,
     name: "Ecosystem Partner",
     price: "$149",
+    priceInCents: 14900,
     period: "quarterly sponsorship",
     tagline:
       "Dominant category branding, LLM agent indexing, and top banner spots.",
@@ -129,6 +135,7 @@ export const PLANS: Record<Tier, PlanConfig> = {
     isDoFollow: true,
     ctaText: "Become a Partner",
     ctaHref: ROUTES.SUBMIT,
+    dodoProductId: process.env.DODO_PRODUCT_PREMIUM_PLUS_LISTING,
     features: [
       "Everything in Featured Builder",
       "Top sticky placement across directory pages",
