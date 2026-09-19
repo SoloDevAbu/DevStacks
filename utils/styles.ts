@@ -415,3 +415,17 @@ export const launchPromoCardList = "mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2"
 export const launchPromoCardItem =
   "flex items-center gap-2 text-xs font-medium text-slate-700"
 
+export const activeSponsorCard =
+  "relative overflow-hidden rounded-xl border border-indigo-200/90 bg-linear-to-br from-indigo-50/60 via-white to-blue-50/40 p-4 transition-all hover:border-indigo-300 hover:shadow-xs"
+
+export const adDurationSelectorWrapper =
+  "grid grid-cols-1 gap-3 sm:grid-cols-2"
+
+export const adDurationOption = (selected: boolean) =>
+  cn(
+    "relative flex cursor-pointer flex-col justify-between rounded-xl border p-4 text-left transition-all",
+    selected
+      ? "border-indigo-600 bg-indigo-50/50 ring-2 ring-indigo-500/20 shadow-xs"
+      : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/60"
+  )
+
