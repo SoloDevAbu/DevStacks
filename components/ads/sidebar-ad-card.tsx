@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import Link from "next/link"
 import { ArrowUpRight, Globe } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useActiveAds } from "@/hooks/ads/use-active-ads"
@@ -13,10 +14,8 @@ export const SidebarAdCard = () => {
   const { data: ads = [], isLoading } = useActiveAds(AD_PLACEMENT.SIDEBAR)
   const [dialogOpen, setDialogOpen] = useState(false)
 
-  // Pick first active ad if available
   const activeAd = ads.length > 0 ? ads[0] : null
 
-  // Record impression once when ad is mounted
   useEffect(() => {
     if (activeAd?.id) {
       recordAdImpression(activeAd.id)
@@ -31,15 +30,19 @@ export const SidebarAdCard = () => {
     )
   }
 
-  // Active Sponsored Ad
   if (activeAd) {
+    const detailPath =
+      activeAd.type === "tool"
+        ? `/tools/${activeAd.slug}`
+        : `/products/${activeAd.slug}`
+
     return (
       <>
         <div className="flex flex-col gap-2.5">
           <div className={activeSponsorCard}>
             <div className="flex items-center justify-between">
               <span className="font-mono text-[10px] font-bold tracking-wider text-indigo-700 uppercase">
-                {activeAd.badgeText || "PROMOTED"}
+                PROMOTED
               </span>
               <span className="rounded bg-indigo-100/80 px-1.5 py-0.5 font-mono text-[10px] font-semibold text-indigo-800">
                 Sponsored
@@ -47,10 +50,10 @@ export const SidebarAdCard = () => {
             </div>
 
             <div className="mt-2.5 flex items-start gap-2.5">
-              {activeAd.imageUrl ? (
+              {activeAd.logoUrl ? (
                 <img
-                  src={activeAd.imageUrl}
-                  alt={activeAd.title}
+                  src={activeAd.logoUrl}
+                  alt={activeAd.name}
                   className="size-8 shrink-0 rounded-md border border-slate-200 object-contain bg-white p-0.5 shadow-2xs"
                   onError={(e) => {
                     ;(e.target as HTMLElement).style.display = "none"
@@ -64,10 +67,10 @@ export const SidebarAdCard = () => {
 
               <div className="min-w-0 flex-1">
                 <h4 className="text-xs font-bold text-slate-900 line-clamp-1">
-                  {activeAd.title}
+                  {activeAd.name}
                 </h4>
                 <p className="mt-1 text-[11px] leading-relaxed text-slate-600 line-clamp-2">
-                  {activeAd.description}
+                  {activeAd.tagline}
                 </p>
               </div>
             </div>
@@ -108,7 +111,6 @@ export const SidebarAdCard = () => {
     )
   }
 
-  // Fallback: Default Sponsor / Reserve Placement Card
   return (
     <>
       <div className="flex flex-col gap-2.5">

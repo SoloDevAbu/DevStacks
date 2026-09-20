@@ -1,13 +1,13 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { getActiveAds } from "@/db/queries/ads"
+import { getActiveAdsForCurrentWeek } from "@/db/queries/ads"
 import { AD_PLACEMENT, type AdPlacement } from "@/constants/ads"
 import { z } from "zod"
 
 const querySchema = z.object({
   placement: z
-    .enum([AD_PLACEMENT.SIDEBAR, AD_PLACEMENT.FEED, AD_PLACEMENT.BANNER])
+    .enum([AD_PLACEMENT.SIDEBAR, AD_PLACEMENT.FEED])
     .default(AD_PLACEMENT.SIDEBAR),
-  limit: z.coerce.number().int().min(1).max(20).default(5),
+  limit: z.coerce.number().int().min(1).max(10).default(3),
 })
 
 export const GET = async (req: NextRequest) => {
@@ -17,27 +17,31 @@ export const GET = async (req: NextRequest) => {
 
     if (!parsed.success) {
       return NextResponse.json(
-        { error: "Invalid placement query parameter" },
+        { error: "Invalid query parameters" },
         { status: 400 }
       )
     }
 
     const { placement, limit } = parsed.data
-    const activeAds = await getActiveAds({
+    const activeAds = await getActiveAdsForCurrentWeek({
       placement: placement as AdPlacement,
       limit,
     })
 
-    const safeAds = activeAds.map((ad) => ({
-      id: ad.id,
-      placement: ad.placement,
-      title: ad.title,
-      description: ad.description,
-      badgeText: ad.badgeText,
-      imageUrl: ad.imageUrl,
-      ctaText: ad.ctaText,
-      ctaUrl: ad.ctaUrl,
-    }))
+    const safeAds = activeAds.map((ad) => {
+      const source = ad.tool ?? ad.product
+      return {
+        id: ad.id,
+        placement: ad.placement,
+        name: source?.name ?? "Sponsored",
+        tagline: source?.tagline ?? "",
+        logoUrl: source?.logoUrl ?? null,
+        websiteUrl: source?.websiteUrl ?? "",
+        slug: source?.slug ?? "",
+        ctaText: ad.ctaText,
+        type: ad.tool ? "tool" : "product",
+      }
+    })
 
     return NextResponse.json(
       { data: safeAds },

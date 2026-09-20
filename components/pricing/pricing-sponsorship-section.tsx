@@ -10,6 +10,7 @@ import {
   Zap,
   Layers,
   BadgeCheck,
+  Gift,
 } from "lucide-react"
 import {
   Card,
@@ -25,8 +26,8 @@ import { HoverOutline } from "@/components/shared/hover-outline"
 import { CreateAdDialog } from "@/components/ads/create-ad-dialog"
 import {
   AD_PLACEMENT,
-  SIDEBAR_AD_TIERS,
-  FEED_AD_TIERS,
+  AD_PRICING,
+  AD_TIER_BONUS,
   type AdPlacement,
 } from "@/constants/ads"
 import { PLANS, TIER } from "@/constants/plans"
@@ -56,7 +57,8 @@ export const PricingSponsorshipSection = () => {
               High-Authority Sponsorship Slots
             </h2>
             <p className="mt-1 text-xs text-slate-500 sm:text-sm">
-              Instant self-serve activation powered by Dodo Payments.
+              Instant self-serve activation powered by Dodo Payments. Per-week
+              ISO scheduling with 3 slots per week.
             </p>
           </div>
 
@@ -83,17 +85,10 @@ export const PricingSponsorshipSection = () => {
 
                   <div className="mt-4 flex items-baseline gap-2 rounded-lg border border-indigo-100 bg-indigo-50/50 p-3">
                     <span className="text-2xl font-extrabold text-indigo-950">
-                      ${SIDEBAR_AD_TIERS.weekly.price}
+                      ${AD_PRICING.sidebar.pricePerWeek}
                     </span>
                     <span className="text-xs font-semibold text-indigo-700">
                       / week
-                    </span>
-                    <span className="text-slate-300">|</span>
-                    <span className="text-lg font-extrabold text-indigo-950">
-                      ${SIDEBAR_AD_TIERS.monthly.price}
-                    </span>
-                    <span className="text-xs font-semibold text-indigo-700">
-                      / month
                     </span>
                   </div>
                 </CardHeader>
@@ -119,6 +114,13 @@ export const PricingSponsorshipSection = () => {
                       <span>
                         <strong>Instant Dodo Checkout:</strong> Automated
                         activation immediately after payment approval.
+                      </span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <Gift className="size-3.5 shrink-0 text-amber-600 mt-0.5" />
+                      <span>
+                        Book {AD_TIER_BONUS.PREMIUM_THRESHOLD}+ weeks → <strong>Free Premium</strong> upgrade.
+                        Book {AD_TIER_BONUS.PREMIUM_PLUS_THRESHOLD} weeks → <strong>Free Premium+</strong> upgrade.
                       </span>
                     </li>
                   </ul>
@@ -159,17 +161,10 @@ export const PricingSponsorshipSection = () => {
 
                   <div className="mt-4 flex items-baseline gap-2 rounded-lg border border-slate-200 bg-slate-50/50 p-3">
                     <span className="text-2xl font-extrabold text-slate-900">
-                      ${FEED_AD_TIERS.weekly.price}
+                      ${AD_PRICING.feed.pricePerWeek}
                     </span>
                     <span className="text-xs font-semibold text-slate-600">
                       / week
-                    </span>
-                    <span className="text-slate-300">|</span>
-                    <span className="text-lg font-extrabold text-slate-900">
-                      ${FEED_AD_TIERS.monthly.price}
-                    </span>
-                    <span className="text-xs font-semibold text-slate-600">
-                      / month
                     </span>
                   </div>
                 </CardHeader>
@@ -195,6 +190,13 @@ export const PricingSponsorshipSection = () => {
                       <span>
                         <strong>High-Intent CTR:</strong> Catches engineers actively
                         exploring new developer stack solutions.
+                      </span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <Gift className="size-3.5 shrink-0 text-amber-600 mt-0.5" />
+                      <span>
+                        Book {AD_TIER_BONUS.PREMIUM_THRESHOLD}+ weeks → <strong>Free Premium</strong> upgrade.
+                        Book {AD_TIER_BONUS.PREMIUM_PLUS_THRESHOLD} weeks → <strong>Free Premium+</strong> upgrade.
                       </span>
                     </li>
                   </ul>
@@ -290,7 +292,7 @@ export const PricingSponsorshipSection = () => {
                 </div>
                 <div className="mt-3">
                   <span className="text-2xl font-extrabold text-blue-950">
-                    $49
+                    {PLANS[TIER.PREMIUM].price}
                   </span>
                   <span className="text-xs text-blue-700"> / one-time</span>
                 </div>
@@ -306,6 +308,13 @@ export const PricingSponsorshipSection = () => {
                     </li>
                   ))}
                 </ul>
+
+                <div className="mt-3 flex items-start gap-1.5 rounded-md border border-amber-200 bg-amber-50/50 p-2 text-[11px] text-amber-800">
+                  <Gift className="size-3.5 shrink-0 mt-0.5" />
+                  <span>
+                    Also earned <strong>free</strong> when booking {AD_TIER_BONUS.PREMIUM_THRESHOLD}+ weeks of ads
+                  </span>
+                </div>
               </div>
 
               <Button
@@ -313,7 +322,7 @@ export const PricingSponsorshipSection = () => {
                 nativeButton={false}
                 render={<Link href={ROUTES.SUBMIT} />}
               >
-                Get Verified ($49)
+                Get Verified ({PLANS[TIER.PREMIUM].price})
               </Button>
             </Card>
 
@@ -330,9 +339,9 @@ export const PricingSponsorshipSection = () => {
                 </div>
                 <div className="mt-3">
                   <span className="text-2xl font-extrabold text-amber-950">
-                    $149
+                    {PLANS[TIER.PREMIUM_PLUS].price}
                   </span>
-                  <span className="text-xs text-amber-700"> / quarterly</span>
+                  <span className="text-xs text-amber-700"> / one-time</span>
                 </div>
                 <p className="mt-1 text-[11px] text-slate-600">
                   {PLANS[TIER.PREMIUM_PLUS].tagline}
@@ -346,6 +355,13 @@ export const PricingSponsorshipSection = () => {
                     </li>
                   ))}
                 </ul>
+
+                <div className="mt-3 flex items-start gap-1.5 rounded-md border border-amber-200 bg-amber-50/50 p-2 text-[11px] text-amber-800">
+                  <Gift className="size-3.5 shrink-0 mt-0.5" />
+                  <span>
+                    Also earned <strong>free</strong> when booking {AD_TIER_BONUS.PREMIUM_PLUS_THRESHOLD} weeks of ads
+                  </span>
+                </div>
               </div>
 
               <Button
@@ -354,7 +370,7 @@ export const PricingSponsorshipSection = () => {
                 nativeButton={false}
                 render={<Link href={ROUTES.SUBMIT} />}
               >
-                Ecosystem Partner ($149)
+                Ecosystem Partner ({PLANS[TIER.PREMIUM_PLUS].price})
               </Button>
             </Card>
           </div>
