@@ -105,6 +105,8 @@ export const GET = async () => {
 
     links: {
       home: SITE_CONFIG.url,
+      faq: `${SITE_CONFIG.url}/faq`,
+      faqMd: `${SITE_CONFIG.url}/faq.md`,
       llmsTxt: `${SITE_CONFIG.url}/llms.txt`,
       llmsFullTxt: `${SITE_CONFIG.url}/llms-full.txt`,
       aiTxt: `${SITE_CONFIG.url}/ai.txt`,

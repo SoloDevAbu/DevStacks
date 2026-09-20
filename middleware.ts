@@ -130,7 +130,10 @@ export const middleware = (request: NextRequest) => {
   }
 
   // Content negotiation for text/markdown on tools, products, makers, and root
-  if (acceptHeader.includes("text/markdown") || acceptHeader.includes("text/x-markdown")) {
+  if (
+    acceptHeader.includes("text/markdown") ||
+    acceptHeader.includes("text/x-markdown")
+  ) {
     const toolMatch = pathname.match(/^\/tools\/([^/]+)$/)
     if (toolMatch && toolMatch[1]) {
       return rewriteWithHeaders(`/api/md/tools/${toolMatch[1]}`)
@@ -144,6 +147,22 @@ export const middleware = (request: NextRequest) => {
     const makerMatch = pathname.match(/^\/makers\/([^/]+)$/)
     if (makerMatch && makerMatch[1]) {
       return rewriteWithHeaders(`/api/md/makers/${makerMatch[1]}`)
+    }
+
+    if (pathname === "/faq") {
+      return rewriteWithHeaders("/faq.md")
+    }
+
+    if (pathname === "/terms") {
+      return rewriteWithHeaders("/terms.md")
+    }
+
+    if (pathname === "/privacy") {
+      return rewriteWithHeaders("/privacy.md")
+    }
+
+    if (pathname === "/refund") {
+      return rewriteWithHeaders("/refund.md")
     }
 
     if (pathname === "/") {
@@ -163,6 +182,10 @@ export const config = {
     "/makers/:path*",
     "/categories/:path*",
     "/trending/:path*",
+    "/faq",
+    "/terms",
+    "/privacy",
+    "/refund",
     "/",
   ],
 }

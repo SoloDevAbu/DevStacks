@@ -1,150 +1,259 @@
 import type { Metadata } from "next"
 import Link from "next/link"
-import { ShieldCheck, Lock, Eye, Server, RefreshCw, Mail } from "lucide-react"
+import {
+  ArrowLeft,
+  ChevronRight,
+  ShieldCheck,
+  Database,
+  Eye,
+  Scale,
+  Globe,
+  Server,
+  Share2,
+  Clock,
+  UserCheck,
+  Lock,
+  Cpu,
+  Users,
+  ShieldAlert,
+  History,
+  Mail,
+  HelpCircle,
+  type LucideIcon,
+} from "lucide-react"
 import { SITE_CONFIG } from "@/constants/site"
 import { ROUTES } from "@/constants/routes"
+import {
+  PRIVACY_CATEGORIES,
+  PRIVACY_LAST_UPDATED,
+} from "@/constants/privacy"
+import { PageHeader } from "@/components/shared/page-header"
+import { Button } from "@/components/ui/button"
 import { breadcrumbSchema } from "@/lib/seo/schema"
 import { AI_PROMPTS } from "@/lib/prompts"
-import { AskAiBar } from "@/components/shared/ask-ai-bar"
+import {
+  termsCategoryHeaders,
+  faqSectionTitle,
+  faqSectionSubtitle,
+  termsRowItem,
+  termsRowHeader,
+  termsRowIconBox,
+  termsRowTitle,
+  termsRowBody,
+  termsBulletList,
+} from "@/utils/styles"
 
 export const metadata: Metadata = {
-  title: "Privacy Policy",
-  description: `How ${SITE_CONFIG.name} collects, protects, and handles data for developers, creators, and autonomous AI agents.`,
+  title: `Privacy Policy | ${SITE_CONFIG.name}`,
+  description: `How ${SITE_CONFIG.name} collects, protects, and handles personal data for developers, creators, and autonomous AI agents. Compliant with GDPR and India's DPDP Act.`,
+  keywords: [
+    "privacy policy",
+    "developer data protection",
+    "GDPR compliance",
+    "DPDP compliance",
+    "AI agent privacy",
+    "data controller",
+    ...SITE_CONFIG.keywords,
+  ],
   alternates: {
-    canonical: `${SITE_CONFIG.url}/privacy`,
+    canonical: `${SITE_CONFIG.url}${ROUTES.PRIVACY}`,
+  },
+  openGraph: {
+    title: `Privacy Policy | ${SITE_CONFIG.name}`,
+    description: `How ${SITE_CONFIG.name} collects, protects, and handles data for developers and autonomous AI agents.`,
+    type: "website",
+    url: `${SITE_CONFIG.url}${ROUTES.PRIVACY}`,
+    siteName: SITE_CONFIG.name,
+    images: [
+      {
+        url: `${SITE_CONFIG.url}/opengraph-image`,
+        width: 1200,
+        height: 630,
+        alt: `Privacy Policy — ${SITE_CONFIG.name}`,
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `Privacy Policy | ${SITE_CONFIG.name}`,
+    description: `How ${SITE_CONFIG.name} collects and protects developer data.`,
+    images: [`${SITE_CONFIG.url}/twitter-image`],
+  },
+  robots: {
+    index: true,
+    follow: true,
   },
 }
 
+const PRIVACY_ICONS: Record<number, LucideIcon> = {
+  1: ShieldCheck,
+  2: Database,
+  3: Eye,
+  4: Scale,
+  5: Globe,
+  6: Server,
+  7: Share2,
+  8: Clock,
+  9: UserCheck,
+  10: Lock,
+  11: Cpu,
+  12: Users,
+  13: ShieldAlert,
+  14: History,
+  15: Mail,
+}
+
 const PrivacyPage = () => {
-  const siteUrl = SITE_CONFIG.url
-  const breadcrumbs = breadcrumbSchema([
-    { name: "Home", url: siteUrl },
-    { name: "Privacy Policy", url: `${siteUrl}${ROUTES.PRIVACY}` },
+  const breadcrumbsJsonLd = breadcrumbSchema([
+    { name: "Home", url: SITE_CONFIG.url },
+    { name: "Privacy Policy", url: `${SITE_CONFIG.url}${ROUTES.PRIVACY}` },
   ])
 
   return (
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbsJsonLd) }}
       />
-      <div className="mx-auto max-w-4xl px-6 py-10 md:px-8">
-        {/* Header */}
-        <div className="flex flex-col gap-3 border-b border-dashed border-border pb-6">
-          <div className="flex items-center gap-2">
-            <span className="font-mono text-xs font-bold tracking-widest text-[#a06138] uppercase">
-              LEGAL & COMPLIANCE
-            </span>
-            <span className="rounded border border-emerald-200 bg-emerald-50 px-2 py-0.5 font-mono text-[10px] font-bold text-emerald-700">
-              UPDATED MARCH 2026
-            </span>
+
+      <div className="relative flex min-h-full flex-col bg-slate-50/50">
+        {/* Top Breadcrumbs */}
+        <nav
+          aria-label="Breadcrumb"
+          className="flex items-center gap-2 border-b border-dashed border-border bg-white px-6 py-3 text-xs font-medium text-slate-500 md:px-8"
+        >
+          <Link
+            href={ROUTES.HOME}
+            className="flex items-center gap-1 transition-colors hover:text-slate-900"
+          >
+            <ArrowLeft className="size-3" />
+            Home
+          </Link>
+          <ChevronRight className="size-3 text-slate-400" />
+          <span className="font-semibold text-slate-900">Privacy Policy</span>
+        </nav>
+
+        {/* Page Header */}
+        <PageHeader
+          heading="Privacy Policy"
+          description={`How ${SITE_CONFIG.name} collects, uses, shares, and protects your personal data — and your rights under GDPR, India's DPDP Act, and international data protection laws.`}
+          aiPrompt={AI_PROMPTS.privacy}
+          askAiLabel="ASK AI ABOUT PRIVACY"
+          metrics={
+            <div className="flex items-center gap-2">
+              <span className="rounded border border-emerald-200 bg-emerald-50 px-2 py-0.5 font-mono text-[10px] font-bold text-emerald-700">
+                UPDATED {PRIVACY_LAST_UPDATED.toUpperCase()}
+              </span>
+            </div>
+          }
+        />
+
+        {/* Main Content Sections */}
+        <div className="flex w-full flex-1 flex-col bg-white">
+          {PRIVACY_CATEGORIES.map((category) => (
+            <section
+              key={category.id}
+              id={category.id}
+              className="flex flex-col"
+            >
+              {/* Category Header with Gradient and Dashed Border */}
+              <div className={termsCategoryHeaders[category.headerThemeKey]}>
+                <div className="flex items-center gap-2.5">
+                  <h2 className={faqSectionTitle}>{category.title}</h2>
+                </div>
+                <p className={faqSectionSubtitle}>{category.description}</p>
+              </div>
+
+              {/* Privacy Items */}
+              <div className="flex flex-col">
+                {category.items.map((item) => {
+                  const Icon = PRIVACY_ICONS[item.number] ?? ShieldCheck
+
+                  return (
+                    <div
+                      key={item.id}
+                      id={item.id}
+                      className={termsRowItem}
+                    >
+                      <div className={termsRowHeader}>
+                        <span className={termsRowIconBox}>
+                          <Icon className="size-3.5" />
+                        </span>
+                        <h3 className={termsRowTitle}>
+                          {item.number}. {item.title}
+                        </h3>
+                      </div>
+
+                      <div className={termsRowBody}>
+                        <p>{item.content}</p>
+
+                        {item.bulletPoints && item.bulletPoints.length > 0 && (
+                          <ul className={termsBulletList}>
+                            {item.bulletPoints.map((point) => (
+                              <li key={point}>{point}</li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            </section>
+          ))}
+
+          {/* Bottom Inquiries & Related Policies Bar */}
+          <div className="flex flex-col gap-4 border-b border-dashed border-border bg-slate-50/50 px-6 py-8 md:px-8">
+            <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+              <div>
+                <h3 className="text-sm font-bold text-slate-900">
+                  Data Protection & Privacy Inquiries
+                </h3>
+                <p className="mt-0.5 text-xs text-slate-500">
+                  Wish to submit a data deletion request, export your account data, or ask privacy questions?
+                </p>
+              </div>
+              <div className="flex shrink-0 flex-wrap items-center gap-2.5">
+                <Button
+                  size="sm"
+                  nativeButton={false}
+                  render={<a href="mailto:support@launchnests.com" />}
+                  className="text-xs"
+                >
+                  <Mail className="mr-1.5 size-3.5" />
+                  Email Data Team
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  nativeButton={false}
+                  render={<Link href={ROUTES.TERMS} />}
+                  className="text-xs"
+                >
+                  Terms of Service
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  nativeButton={false}
+                  render={<Link href={ROUTES.REFUND} />}
+                  className="text-xs"
+                >
+                  Refund Policy
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  nativeButton={false}
+                  render={<Link href={ROUTES.FAQ} />}
+                  className="text-xs"
+                >
+                  <HelpCircle className="mr-1.5 size-3.5" />
+                  View FAQs
+                </Button>
+              </div>
+            </div>
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900 md:text-3xl">
-            Privacy Policy
-          </h1>
-          <p className="text-sm leading-relaxed text-slate-600">
-            {SITE_CONFIG.name} is dedicated to respecting your privacy and protecting the data of developers, founders, and autonomous agents visiting our platform.
-          </p>
-
-          <div className="mt-2 pt-2">
-            <AskAiBar
-              prompt={AI_PROMPTS.privacy}
-              label="ASK AI ABOUT PRIVACY"
-              compact
-              questions={[
-                "What user data is collected?",
-                "How is edge geolocation handled?",
-              ]}
-            />
-          </div>
-        </div>
-
-        {/* Content */}
-        <div className="mt-8 space-y-8 text-sm text-slate-600">
-          <section className="space-y-3">
-            <div className="flex items-center gap-2 text-slate-900">
-              <ShieldCheck className="size-4 text-emerald-600" />
-              <h2 className="text-base font-bold sm:text-lg">1. Information We Collect</h2>
-            </div>
-            <p className="leading-relaxed">
-              We collect minimal information necessary to deliver a trustworthy developer ecosystem and public discovery directory:
-            </p>
-            <ul className="list-inside list-disc space-y-1.5 pl-2 leading-relaxed">
-              <li>
-                <strong className="text-slate-800">Account Credentials:</strong> When you sign in via Google OAuth, we receive your verified email address, public profile name, and avatar image. We do not receive or store your Google passwords.
-              </li>
-              <li>
-                <strong className="text-slate-800">Product & Tool Submissions:</strong> When submitting software to {SITE_CONFIG.name}, we store public metadata you provide (tool name, tagline, description, website URL, tech stack, and logo).
-              </li>
-              <li>
-                <strong className="text-slate-800">Community Engagement:</strong> Upvotes, likes, and bookmarks are tied to authenticated user IDs to protect against vote manipulation and maintain verified rankings.
-              </li>
-              <li>
-                <strong className="text-slate-800">Technical & Telemetry Data:</strong> IP addresses, request user-agents, and visited endpoints are processed for rate-limiting, DDoS prevention, and performance monitoring.
-              </li>
-            </ul>
-          </section>
-
-          <section className="space-y-3">
-            <div className="flex items-center gap-2 text-slate-900">
-              <Eye className="size-4 text-blue-600" />
-              <h2 className="text-base font-bold sm:text-lg">2. How We Use Your Data</h2>
-            </div>
-            <p className="leading-relaxed">
-              Data collected by {SITE_CONFIG.name} is utilized strictly for:
-            </p>
-            <ul className="list-inside list-disc space-y-1.5 pl-2 leading-relaxed">
-              <li>Publishing and indexing developer tools, software products, and verified tech stacks.</li>
-              <li>Calculating community momentum, leaderboard rankings, and freshness discovery windows.</li>
-              <li>Delivering verification checks and promotional sponsorship placements.</li>
-              <li>Serving machine-readable outputs to AI assistants, LLM pipelines, and Model Context Protocol (MCP) clients.</li>
-              <li>Enforcing security guidelines and preventing spam or fraudulent submissions.</li>
-            </ul>
-          </section>
-
-          <section className="space-y-3">
-            <div className="flex items-center gap-2 text-slate-900">
-              <Lock className="size-4 text-indigo-600" />
-              <h2 className="text-base font-bold sm:text-lg">3. Cookies & Local Storage</h2>
-            </div>
-            <p className="leading-relaxed">
-              We utilize essential session cookies strictly to keep you authenticated across browser sessions. We do not use third-party tracking cookies or sell your browsing history to advertising data brokers.
-            </p>
-          </section>
-
-          <section className="space-y-3">
-            <div className="flex items-center gap-2 text-slate-900">
-              <Server className="size-4 text-purple-600" />
-              <h2 className="text-base font-bold sm:text-lg">4. Data Sharing & Third-Party Infrastructure</h2>
-            </div>
-            <p className="leading-relaxed">
-              Public tool descriptions, tags, and tech stack details are intentionally accessible to the public, search engines, and AI agents. We share non-public data exclusively with trusted cloud infrastructure providers that comply with strict privacy standards (cloud hosting, database storage, and secure payment processing). We never sell your personal data.
-            </p>
-          </section>
-
-          <section className="space-y-3">
-            <div className="flex items-center gap-2 text-slate-900">
-              <RefreshCw className="size-4 text-amber-600" />
-              <h2 className="text-base font-bold sm:text-lg">5. Data Retention & Your Rights</h2>
-            </div>
-            <p className="leading-relaxed">
-              You retain full rights under GDPR and CCPA to request an export or complete deletion of your account and submitted data. To request data deletion or account removal, please reach out through our contact email below.
-            </p>
-          </section>
-
-          <section className="space-y-3 rounded-lg border border-dashed border-border bg-slate-50/50 p-5">
-            <div className="flex items-center gap-2 text-slate-900">
-              <Mail className="size-4 text-slate-700" />
-              <h2 className="text-base font-bold">6. Contact & Data Protection Officer</h2>
-            </div>
-            <p className="leading-relaxed">
-              If you have any questions or concerns regarding our privacy practices or wish to submit a data removal request, contact our team directly at:
-            </p>
-            <div className="font-mono text-xs text-slate-800">
-              <p>Email: <a href="mailto:support@launchnests.com" className="text-blue-600 hover:underline">support@launchnests.com</a></p>
-              <p>Platform: {SITE_CONFIG.domain}</p>
-            </div>
-          </section>
         </div>
       </div>
     </>
