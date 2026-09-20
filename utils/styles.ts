@@ -90,13 +90,15 @@ export const DETAIL_SECTION_THEMES = {
     iconColor: "text-sky-600",
   },
   violet: {
-    headerBg: "bg-linear-to-r from-violet-50/80 via-purple-50/20 to-transparent",
+    headerBg:
+      "bg-linear-to-r from-violet-50/80 via-purple-50/20 to-transparent",
     titleColor: "text-violet-700",
     subtitleColor: "text-violet-600/75",
     iconColor: "text-violet-600",
   },
   indigo: {
-    headerBg: "bg-linear-to-r from-indigo-50/80 via-violet-50/20 to-transparent",
+    headerBg:
+      "bg-linear-to-r from-indigo-50/80 via-violet-50/20 to-transparent",
     titleColor: "text-indigo-700",
     subtitleColor: "text-indigo-600/75",
     iconColor: "text-indigo-600",
@@ -164,8 +166,7 @@ export const specItemBox =
 export const specItemLabel =
   "flex items-center gap-1.5 font-mono text-[10px] font-bold tracking-wider text-slate-400 uppercase truncate"
 
-export const specItemValue =
-  "truncate text-xs font-bold text-slate-900"
+export const specItemValue = "truncate text-xs font-bold text-slate-900"
 
 export const toolDeepDiveContainer =
   "flex flex-col divide-y divide-dashed divide-border bg-white"
@@ -175,8 +176,7 @@ export const deepDiveSectionTitle = sectionHeadingTitle
 export const deepDiveItem =
   "flex flex-col gap-2 px-6 py-5 transition-colors hover:bg-slate-50/30 md:px-8"
 
-export const deepDiveItemHeader =
-  "flex items-center gap-2.5"
+export const deepDiveItemHeader = "flex items-center gap-2.5"
 
 export const deepDiveItemTitle =
   "flex items-center gap-2 font-mono text-xs font-bold tracking-wider text-slate-900 uppercase"
@@ -196,11 +196,9 @@ export const faqContainer =
 export const faqItem =
   "flex flex-col gap-2 px-6 py-5 transition-colors hover:bg-slate-50/30 md:px-8"
 
-export const faqQuestionHeader =
-  "flex items-center gap-2.5"
+export const faqQuestionHeader = "flex items-center gap-2.5"
 
-export const faqQuestionText =
-  "text-xs sm:text-sm font-bold text-slate-900"
+export const faqQuestionText = "text-xs sm:text-sm font-bold text-slate-900"
 
 export const faqAnswerBody = "bg-transparent"
 
@@ -410,6 +408,12 @@ export const launchPromoBadge =
 export const launchPromoCard =
   "relative overflow-hidden rounded-xl border border-dashed border-amber-300/80 bg-linear-to-br from-amber-50/70 via-white to-yellow-50/50 p-5 shadow-xs"
 
+export const launchPromoFullWidthSection =
+  "border-b border-dashed border-border bg-linear-to-r from-amber-50/50 via-amber-50/20 to-white px-6 py-6 md:px-8"
+
+export const launchPromoFullWidthPerksGrid =
+  "mt-5 grid grid-cols-1 gap-2.5 border-t border-dashed border-amber-200/80 pt-4 sm:grid-cols-2 lg:grid-cols-4"
+
 export const launchPromoCardList = "mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2"
 
 export const launchPromoCardItem =
@@ -418,30 +422,26 @@ export const launchPromoCardItem =
 export const activeSponsorCard =
   "relative overflow-hidden rounded-xl border border-indigo-200/90 bg-linear-to-br from-indigo-50/60 via-white to-blue-50/40 p-4 transition-all hover:border-indigo-300 hover:shadow-xs"
 
-export const adDurationSelectorWrapper =
-  "grid grid-cols-1 gap-3 sm:grid-cols-2"
+export const adDurationSelectorWrapper = "grid grid-cols-1 gap-3 sm:grid-cols-2"
 
 export const adDurationOption = (selected: boolean) =>
   cn(
     "relative flex cursor-pointer flex-col justify-between rounded-xl border p-4 text-left transition-all",
     selected
-      ? "border-indigo-600 bg-indigo-50/50 ring-2 ring-indigo-500/20 shadow-xs"
+      ? "border-indigo-600 bg-indigo-50/50 shadow-xs ring-2 ring-indigo-500/20"
       : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/60"
   )
 
 export const weekPickerGrid =
   "grid grid-cols-2 gap-2 sm:grid-cols-3 max-h-64 overflow-y-auto pr-1"
 
-export const weekPickerSlot = (
-  selected: boolean,
-  disabled: boolean
-) =>
+export const weekPickerSlot = (selected: boolean, disabled: boolean) =>
   cn(
     "relative flex cursor-pointer flex-col rounded-lg border p-2.5 text-left transition-all",
     disabled
       ? "cursor-not-allowed border-slate-100 bg-slate-50/50 opacity-50"
       : selected
-        ? "border-indigo-600 bg-indigo-50/60 ring-1 ring-indigo-500/20 shadow-xs"
+        ? "border-indigo-600 bg-indigo-50/60 shadow-xs ring-1 ring-indigo-500/20"
         : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/60"
   )
 
@@ -462,4 +462,40 @@ export const submissionSelectorItem = (selected: boolean) =>
       : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/60"
   )
 
+export const pricingSection = "border-b border-dashed border-border bg-white"
 
+export const pricingSectionHeader =
+  "flex flex-col gap-3 border-b border-dashed border-border bg-slate-50/50 px-6 py-6 sm:flex-row sm:items-center sm:justify-between md:px-8"
+
+export const pricingSectionTitle =
+  "text-xl font-extrabold text-slate-900 sm:text-2xl"
+
+export const pricingSectionSubtitle = "mt-1 text-xs text-slate-500 sm:text-sm"
+
+export const pricingSponsorshipGrid =
+  "relative grid grid-cols-1 divide-y divide-dashed divide-border bg-white md:grid-cols-2 md:divide-y-0 md:divide-x"
+
+export const pricingTiersGrid =
+  "relative grid grid-cols-1 divide-y divide-dashed divide-border bg-white md:grid-cols-3 md:divide-y-0 md:divide-x"
+
+export const pricingColumn =
+  "group/col relative flex flex-col justify-between p-6 transition-colors hover:bg-slate-50/30 md:p-8"
+
+export const pricingPriceBox = "mt-4 flex items-baseline gap-2 rounded-lg p-3"
+
+export const pricingFeatureList = "mt-4 space-y-2.5 text-xs text-slate-700"
+
+export const pricingBonusBox =
+  "mt-4 flex items-start gap-2 rounded-md border border-amber-200/80 bg-amber-50/60 p-2.5 text-[11px] text-amber-900"
+
+export const cornerBracketTL =
+  "absolute top-[-1px] left-[-1px] size-2.5 border-t-2 border-l-2 border-slate-900"
+
+export const cornerBracketTR =
+  "absolute top-[-1px] right-[-1px] size-2.5 border-t-2 border-r-2 border-slate-900"
+
+export const cornerBracketBL =
+  "absolute bottom-[-1px] left-[-1px] size-2.5 border-b-2 border-l-2 border-slate-900"
+
+export const cornerBracketBR =
+  "absolute right-[-1px] bottom-[-1px] size-2.5 border-r-2 border-b-2 border-slate-900"

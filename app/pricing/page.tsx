@@ -7,8 +7,8 @@ import { SITE_CONFIG } from "@/constants/site"
 import { ROUTES } from "@/constants/routes"
 import { LAUNCH_PROMO } from "@/constants/promo"
 import {
-  launchPromoCard,
-  launchPromoCardList,
+  launchPromoFullWidthSection,
+  launchPromoFullWidthPerksGrid,
   launchPromoCardItem,
 } from "@/utils/styles"
 import { breadcrumbSchema, faqSchema } from "@/lib/seo/schema"
@@ -101,45 +101,41 @@ const PricingPage = () => {
           variant="pricing"
         />
 
-        {/* Launch Promo Card */}
+        {/* Launch Promo Full Width Section */}
         {LAUNCH_PROMO.IS_ACTIVE && (
-          <div className="border-b border-dashed border-border bg-amber-50/20 px-6 py-8 md:px-10">
-            <div className="mx-auto max-w-3xl">
-              <div className={launchPromoCard}>
-                <div className="flex flex-wrap items-center justify-between gap-3">
-                  <div className="flex items-center gap-2.5">
-                    <span className="flex size-7 items-center justify-center rounded-lg bg-amber-500/20 text-amber-700">
-                      <Sparkles className="size-4" />
-                    </span>
-                    <div>
-                      <h3 className="text-sm font-bold text-slate-900">
-                        {LAUNCH_PROMO.PROMO_TITLE}
-                      </h3>
-                      <p className="text-xs text-slate-600">
-                        All directory submissions are currently receiving free Lifetime Premium upgrades ({LAUNCH_PROMO.VALUE_GIFTED} value) with permanent Do-Follow SEO backlinks.
-                      </p>
-                    </div>
-                  </div>
-                  <Button
-                    size="sm"
-                    className="rounded-lg bg-amber-600 text-xs font-semibold text-white hover:bg-amber-700"
-                    nativeButton={false}
-                    render={<Link href={ROUTES.SUBMIT} />}
-                  >
-                    Claim Free Listing
-                  </Button>
-                </div>
-                <div className={launchPromoCardList}>
-                  {LAUNCH_PROMO.PERKS.map((perk, i) => (
-                    <div key={i} className={launchPromoCardItem}>
-                      <Check className="size-3.5 shrink-0 text-emerald-600" />
-                      <span>{perk}</span>
-                    </div>
-                  ))}
+          <section className={launchPromoFullWidthSection}>
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-center gap-3">
+                <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-amber-500/20 text-amber-700">
+                  <Sparkles className="size-4" />
+                </span>
+                <div>
+                  <h3 className="text-sm font-bold text-slate-900 sm:text-base">
+                    {LAUNCH_PROMO.PROMO_TITLE}
+                  </h3>
+                  <p className="mt-0.5 text-xs text-slate-600">
+                    All directory submissions are currently receiving free Lifetime Premium upgrades ({LAUNCH_PROMO.VALUE_GIFTED} value) with permanent Do-Follow SEO backlinks.
+                  </p>
                 </div>
               </div>
+              <Button
+                size="sm"
+                className="self-start rounded-none bg-amber-600 text-xs font-semibold text-white shadow-xs hover:bg-amber-700 sm:self-auto"
+                nativeButton={false}
+                render={<Link href={ROUTES.SUBMIT} />}
+              >
+                Claim Free Listing
+              </Button>
             </div>
-          </div>
+            <div className={launchPromoFullWidthPerksGrid}>
+              {LAUNCH_PROMO.PERKS.map((perk, i) => (
+                <div key={i} className={launchPromoCardItem}>
+                  <Check className="size-3.5 shrink-0 text-emerald-600" />
+                  <span>{perk}</span>
+                </div>
+              ))}
+            </div>
+          </section>
         )}
 
         {/* Sponsorship & Listings Section */}
