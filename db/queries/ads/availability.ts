@@ -2,7 +2,7 @@ import { db } from "@/db"
 import { adWeeks } from "@/db/schema"
 import { and, eq, sql } from "drizzle-orm"
 import type { AdPlacement } from "@/constants/ads"
-import { AD_SLOTS_PER_WEEK } from "@/constants/ads"
+import { AD_SLOTS_PER_WEEK, AD_HOLD_DURATION_MINUTES } from "@/constants/ads"
 import { getRemainingWeeksOfYear, getISOWeekRange } from "@/utils/iso-weeks"
 
 export interface WeekAvailability {
@@ -31,7 +31,7 @@ export const getWeekAvailability = async (
     .where(
       and(
         eq(adWeeks.placement, placement),
-        sql`${adWeeks.status} NOT IN ('rejected', 'expired')`
+        sql`(${adWeeks.status} = 'active' OR (${adWeeks.status} = 'pending_payment' AND ${adWeeks.createdAt} > NOW() - (${AD_HOLD_DURATION_MINUTES} || ' minutes')::interval))`
       )
     )
     .groupBy(adWeeks.isoYear, adWeeks.isoWeek)

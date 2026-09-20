@@ -11,6 +11,24 @@ export interface CheckoutResponse {
 export const initiateCheckout = async (
   payload: CheckoutRequestInput
 ): Promise<CheckoutResponse> => {
-  const { data } = await apiClient.post<CheckoutResponse>("/checkout", payload)
+  const idempotencyKey =
+    payload.idempotencyKey ||
+    (typeof crypto !== "undefined" && crypto.randomUUID
+      ? crypto.randomUUID()
+      : undefined)
+
+  const finalPayload = idempotencyKey
+    ? { ...payload, idempotencyKey }
+    : payload
+
+  const headers = idempotencyKey
+    ? { "x-idempotency-key": idempotencyKey }
+    : undefined
+
+  const { data } = await apiClient.post<CheckoutResponse>(
+    "/checkout",
+    finalPayload,
+    { headers }
+  )
   return data
 }

@@ -1,7 +1,7 @@
 import { db } from "@/db"
 import { payments } from "@/db/schema"
 import type { Payment, NewPayment } from "@/db/schema"
-import { eq, desc } from "drizzle-orm"
+import { eq, desc, and } from "drizzle-orm"
 
 export type PaymentStatus =
   | "pending"
@@ -10,9 +10,52 @@ export type PaymentStatus =
   | "refunded"
   | "cancelled"
 
-export const createPayment = async (data: NewPayment): Promise<Payment> => {
-  const [payment] = await db.insert(payments).values(data).returning()
+export const createPayment = async (
+  data: NewPayment,
+  client: any = db
+): Promise<Payment> => {
+  const [payment] = await client.insert(payments).values(data).returning()
   return payment
+}
+
+export const getPaymentByIdempotencyKey = async (
+  idempotencyKey: string,
+  userId: string
+): Promise<Payment | null> => {
+  const [payment] = await db
+    .select()
+    .from(payments)
+    .where(
+      and(
+        eq(payments.idempotencyKey, idempotencyKey),
+        eq(payments.userId, userId)
+      )
+    )
+    .limit(1)
+
+  return payment ?? null
+}
+
+export const updatePaymentDodoSession = async ({
+  id,
+  dodoCheckoutSessionId,
+  checkoutUrl,
+}: {
+  id: string
+  dodoCheckoutSessionId: string
+  checkoutUrl: string
+}): Promise<Payment | null> => {
+  const [updated] = await db
+    .update(payments)
+    .set({
+      dodoCheckoutSessionId,
+      checkoutUrl,
+      updatedAt: new Date(),
+    })
+    .where(eq(payments.id, id))
+    .returning()
+
+  return updated ?? null
 }
 
 export const getPaymentById = async (id: string): Promise<Payment | null> => {

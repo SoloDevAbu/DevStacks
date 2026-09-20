@@ -2,7 +2,11 @@ import { db } from "@/db"
 import { ads, adWeeks, tools, products } from "@/db/schema"
 import type { Ad, NewAd, AdWeek, NewAdWeek } from "@/db/schema"
 import { eq, and, lte, gte, desc, sql, inArray } from "drizzle-orm"
-import type { AdPlacement, AdStatus } from "@/constants/ads"
+import {
+  AD_HOLD_DURATION_MINUTES,
+  type AdPlacement,
+  type AdStatus,
+} from "@/constants/ads"
 
 export const getActiveAdsForCurrentWeek = async ({
   placement = "sidebar",
@@ -121,13 +125,18 @@ export const getUserAds = async (userId: string): Promise<Ad[]> =>
     .where(eq(ads.userId, userId))
     .orderBy(desc(ads.createdAt))
 
-export const createAd = async (data: NewAd): Promise<Ad> => {
-  const [ad] = await db.insert(ads).values(data).returning()
+export const createAd = async (
+  data: NewAd,
+  client: any = db
+): Promise<Ad> => {
+  const [ad] = await client.insert(ads).values(data).returning()
   return ad
 }
 
-export const createAdWeeks = async (data: NewAdWeek[]): Promise<AdWeek[]> =>
-  db.insert(adWeeks).values(data).returning()
+export const createAdWeeks = async (
+  data: NewAdWeek[],
+  client: any = db
+): Promise<AdWeek[]> => client.insert(adWeeks).values(data).returning()
 
 export const updateAdStatus = async (
   id: string,
@@ -156,26 +165,29 @@ export const deactivateAdWeeks = async (adId: string): Promise<void> => {
     .where(eq(adWeeks.adId, adId))
 }
 
-export const getProductAdWeekCount = async ({
-  placement,
-  toolId,
-  productId,
-}: {
-  placement: AdPlacement
-  toolId?: string | null
-  productId?: string | null
-}): Promise<number> => {
+export const getProductAdWeekCount = async (
+  {
+    placement,
+    toolId,
+    productId,
+  }: {
+    placement: AdPlacement
+    toolId?: string | null
+    productId?: string | null
+  },
+  client: any = db
+): Promise<number> => {
   if (!toolId && !productId) return 0
 
   const conditions = [
     eq(ads.placement, placement),
-    sql`${adWeeks.status} NOT IN ('rejected', 'expired')`,
+    sql`(${adWeeks.status} = 'active' OR (${adWeeks.status} = 'pending_payment' AND ${adWeeks.createdAt} > NOW() - (${AD_HOLD_DURATION_MINUTES} || ' minutes')::interval))`,
   ]
 
   if (toolId) conditions.push(eq(ads.toolId, toolId))
   if (productId) conditions.push(eq(ads.productId, productId))
 
-  const result = await db
+  const result = await client
     .select({ count: sql<number>`count(${adWeeks.id})::int` })
     .from(adWeeks)
     .innerJoin(ads, eq(adWeeks.adId, ads.id))

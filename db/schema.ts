@@ -678,6 +678,8 @@ export const payments = pgTable(
     dodoPaymentId: text("dodo_payment_id").unique(),
     dodoCheckoutSessionId: text("dodo_checkout_session_id"),
     dodoCustomerId: text("dodo_customer_id"),
+    checkoutUrl: text("checkout_url"),
+    idempotencyKey: text("idempotency_key"),
 
     // Financial Details
     amount: integer("amount").notNull(), // amount in cents (e.g. 1500 for $15.00)
@@ -698,6 +700,7 @@ export const payments = pgTable(
     index("payments_dodoPaymentId_idx").on(t.dodoPaymentId),
     index("payments_status_idx").on(t.status),
     index("payments_paymentType_idx").on(t.paymentType),
+    uniqueIndex("payments_idempotency_key_idx").on(t.idempotencyKey),
   ]
 )
 

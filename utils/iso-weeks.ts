@@ -29,25 +29,36 @@ export const getISOWeekRange = (
   return { startDate: monday, endDate: sunday }
 }
 
-export const getRemainingWeeksOfYear = (fromDate?: Date): ISOWeekInfo[] => {
+export const getRemainingWeeksOfYear = (
+  fromDate?: Date,
+  minWeeks = 8
+): ISOWeekInfo[] => {
   const now = fromDate ?? new Date()
   const current = getISOWeek(now)
+  const currentRange = getISOWeekRange(current.isoYear, current.isoWeek)
+
   const weeks: ISOWeekInfo[] = []
+  let cursor = new Date(currentRange.startDate.getTime())
+  const currentIsoYear = current.isoYear
 
-  const lastWeekOfYear = getISOWeek(new Date(Date.UTC(now.getFullYear(), 11, 28)))
+  while (true) {
+    const weekInfo = getISOWeek(cursor)
+    const range = getISOWeekRange(weekInfo.isoYear, weekInfo.isoWeek)
 
-  for (let w = current.isoWeek; w <= lastWeekOfYear.isoWeek; w++) {
-    const { startDate, endDate } = getISOWeekRange(current.isoYear, w)
-    weeks.push({ isoYear: current.isoYear, isoWeek: w, startDate, endDate })
-  }
+    weeks.push({
+      isoYear: weekInfo.isoYear,
+      isoWeek: weekInfo.isoWeek,
+      startDate: range.startDate,
+      endDate: range.endDate,
+    })
 
-  if (weeks.length < 8) {
-    const nextYear = current.isoYear + 1
-    const needed = 8 - weeks.length
-    for (let w = 1; w <= needed; w++) {
-      const { startDate, endDate } = getISOWeekRange(nextYear, w)
-      weeks.push({ isoYear: nextYear, isoWeek: w, startDate, endDate })
+    cursor = new Date(cursor.getTime() + 7 * 24 * 60 * 60 * 1000)
+
+    const nextWeekInfo = getISOWeek(cursor)
+    if (nextWeekInfo.isoYear > currentIsoYear && weeks.length >= minWeeks) {
+      break
     }
+    if (weeks.length >= 54) break
   }
 
   return weeks
