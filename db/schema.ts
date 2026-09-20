@@ -27,7 +27,6 @@ export const tierEnum = pgEnum("tier", ["free", "premium", "premium+"])
 export const adPlacementEnum = pgEnum("ad_placement", [
   "sidebar",
   "feed",
-  "banner",
 ])
 
 export const adStatusEnum = pgEnum("ad_status", [
@@ -579,7 +578,7 @@ export const verifications = pgTable(
 )
 
 // ---------------------------------------------------------------------------
-// ads — sponsored ad campaigns (sidebar, feed, banner)
+// ads — sponsored ad campaigns linked to submitted tools/products
 // ---------------------------------------------------------------------------
 
 export const ads = pgTable(
@@ -590,20 +589,22 @@ export const ads = pgTable(
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
 
-    // Ad Content & Placement
-    placement: adPlacementEnum("placement").notNull().default("sidebar"),
-    title: text("title").notNull(),
-    description: text("description").notNull(),
-    badgeText: text("badge_text").notNull().default("PROMOTED"),
-    imageUrl: text("image_url"),
-    ctaText: text("cta_text").notNull().default("Learn More"),
-    ctaUrl: text("cta_url").notNull(),
+    // Linked submission (exactly one must be set)
+    toolId: uuid("tool_id").references(() => tools.id, { onDelete: "set null" }),
+    productId: uuid("product_id").references(() => products.id, {
+      onDelete: "set null",
+    }),
 
-    // Scheduling & Status
+    // Placement & CTA
+    placement: adPlacementEnum("placement").notNull().default("sidebar"),
+    ctaText: text("cta_text").notNull().default("Learn More"),
+
+    // Scheduling
     status: adStatusEnum("status").notNull().default("pending_payment"),
-    durationDays: integer("duration_days").notNull().default(30),
-    startDate: timestamp("start_date", { withTimezone: true }),
-    endDate: timestamp("end_date", { withTimezone: true }),
+    totalWeeks: integer("total_weeks").notNull().default(1),
+    totalAmount: integer("total_amount").notNull().default(0),
+    discountAmount: integer("discount_amount").notNull().default(0),
+    tierBonusApplied: tierEnum("tier_bonus_applied"),
 
     // Performance Metrics
     impressionsCount: integer("impressions_count").notNull().default(0),
@@ -619,7 +620,36 @@ export const ads = pgTable(
   (t) => [
     index("ads_placement_status_idx").on(t.placement, t.status),
     index("ads_userId_idx").on(t.userId),
-    index("ads_endDate_idx").on(t.endDate),
+    index("ads_toolId_idx").on(t.toolId),
+    index("ads_productId_idx").on(t.productId),
+  ]
+)
+
+// ---------------------------------------------------------------------------
+// ad_weeks — individual ISO week bookings for an ad campaign
+// ---------------------------------------------------------------------------
+
+export const adWeeks = pgTable(
+  "ad_weeks",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    adId: uuid("ad_id")
+      .notNull()
+      .references(() => ads.id, { onDelete: "cascade" }),
+    placement: adPlacementEnum("placement").notNull(),
+    isoYear: integer("iso_year").notNull(),
+    isoWeek: integer("iso_week").notNull(),
+    startDate: timestamp("start_date", { withTimezone: true }).notNull(),
+    endDate: timestamp("end_date", { withTimezone: true }).notNull(),
+    status: adStatusEnum("status").notNull().default("pending_payment"),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (t) => [
+    index("ad_weeks_ad_id_idx").on(t.adId),
+    index("ad_weeks_placement_week_idx").on(t.placement, t.isoYear, t.isoWeek),
+    uniqueIndex("ad_weeks_ad_year_week_idx").on(t.adId, t.isoYear, t.isoWeek),
   ]
 )
 
@@ -694,6 +724,7 @@ export const relations = defineRelations(
     sessions,
     accounts,
     ads,
+    adWeeks,
     payments,
   },
   (r) => ({
@@ -724,7 +755,13 @@ export const relations = defineRelations(
     },
     ads: {
       user: r.one.users({ from: r.ads.userId, to: r.users.id }),
+      tool: r.one.tools({ from: r.ads.toolId, to: r.tools.id }),
+      product: r.one.products({ from: r.ads.productId, to: r.products.id }),
+      weeks: r.many.adWeeks(),
       payments: r.many.payments(),
+    },
+    adWeeks: {
+      ad: r.one.ads({ from: r.adWeeks.adId, to: r.ads.id }),
     },
     payments: {
       user: r.one.users({ from: r.payments.userId, to: r.users.id }),
@@ -747,6 +784,7 @@ export const relations = defineRelations(
       comments: r.many.toolComments(),
       productTools: r.many.productTools(),
       payments: r.many.payments(),
+      ads: r.many.ads(),
     },
     products: {
       submitter: r.one.users({ from: r.products.submitterId, to: r.users.id }),
@@ -760,6 +798,7 @@ export const relations = defineRelations(
       comments: r.many.productComments(),
       productTools: r.many.productTools(),
       payments: r.many.payments(),
+      ads: r.many.ads(),
     },
     makerFaqs: {
       user: r.one.users({ from: r.makerFaqs.userId, to: r.users.id }),
@@ -873,6 +912,9 @@ export type NewProductFaq = typeof productFaqs.$inferInsert
 
 export type Ad = typeof ads.$inferSelect
 export type NewAd = typeof ads.$inferInsert
+
+export type AdWeek = typeof adWeeks.$inferSelect
+export type NewAdWeek = typeof adWeeks.$inferInsert
 
 export type Payment = typeof payments.$inferSelect
 export type NewPayment = typeof payments.$inferInsert
