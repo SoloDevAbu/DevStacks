@@ -1,9 +1,14 @@
+import Link from "next/link"
 import { Card, CardContent } from "@/components/ui/card"
-import { HelpCircle } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { HelpCircle, ArrowRight } from "lucide-react"
 import { LAUNCHNESTS_FAQS } from "@/constants/faqs"
 import { SITE_CONFIG } from "@/constants/site"
+import { ROUTES } from "@/constants/routes"
 
 export const FaqSection = () => {
+  const previewFaqs = LAUNCHNESTS_FAQS.slice(0, 6)
+
   return (
     <section className="-mt-px flex flex-col gap-6 border-t border-dashed border-border px-6 py-12 md:px-8">
       <div className="flex flex-col gap-2">
@@ -22,7 +27,7 @@ export const FaqSection = () => {
       </div>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        {LAUNCHNESTS_FAQS.map((faq) => (
+        {previewFaqs.map((faq) => (
           <Card
             key={faq.question}
             className="rounded-none border-dashed bg-white"
@@ -38,6 +43,20 @@ export const FaqSection = () => {
           </Card>
         ))}
       </div>
+
+      <div className="flex items-center justify-center pt-2">
+        <Button
+          variant="outline"
+          size="sm"
+          nativeButton={false}
+          render={<Link href={ROUTES.FAQ} />}
+          className="gap-2 text-xs"
+        >
+          View all {LAUNCHNESTS_FAQS.length} FAQs
+          <ArrowRight className="size-3.5" />
+        </Button>
+      </div>
     </section>
   )
 }
+

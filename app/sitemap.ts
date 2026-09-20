@@ -115,11 +115,10 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
     {
       url: `${siteUrl}${ROUTES.FAQ}`,
       lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.7,
+      changeFrequency: "daily",
+      priority: 0.85,
     },
   ]
-
 
   try {
     const [dbProducts, dbTools, dbMakers, toolCategories, productCategories] =

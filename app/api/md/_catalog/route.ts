@@ -48,6 +48,10 @@ Every markdown twin returns:
 - \`/showcase\` — Developer project showcases & complete software stacks
 - \`/pricing\` — Platform plans and promotional listing boosts
 - \`/submit\` — Developer tool & product submission portal
+- \`/faq\` — Frequently asked questions & developer knowledge base (twin at /faq.md)
+- \`/terms\` — Terms of Service & platform governance (twin at /terms.md)
+- \`/privacy\` — Privacy Policy & developer data protection (twin at /privacy.md)
+- \`/refund\` — Refund & cancellation policy (twin at /refund.md)
 - \`/mcp\` — MCP documentation for agents (JSON-RPC tools)
 - \`/cli\` — CLI and Public REST API documentation
 - \`/auth.md\` — Agent authentication guidance

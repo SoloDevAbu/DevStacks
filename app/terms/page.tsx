@@ -1,142 +1,269 @@
 import type { Metadata } from "next"
 import Link from "next/link"
-import { FileText, CheckCircle2, ShieldAlert, Cpu, Award, HelpCircle } from "lucide-react"
+import {
+  ArrowLeft,
+  ChevronRight,
+  FileText,
+  UserCheck,
+  ShieldAlert,
+  Sparkles,
+  Layers,
+  Network,
+  MessageSquare,
+  Award,
+  Globe,
+  Cpu,
+  ShieldCheck,
+  Server,
+  ExternalLink,
+  AlertTriangle,
+  Scale,
+  Shield,
+  UserX,
+  History,
+  Gavel,
+  Mail,
+  HelpCircle,
+  type LucideIcon,
+} from "lucide-react"
 import { SITE_CONFIG } from "@/constants/site"
 import { ROUTES } from "@/constants/routes"
+import {
+  TERMS_CATEGORIES,
+  TERMS_LAST_UPDATED,
+} from "@/constants/terms"
+import { PageHeader } from "@/components/shared/page-header"
+import { Button } from "@/components/ui/button"
 import { breadcrumbSchema } from "@/lib/seo/schema"
 import { AI_PROMPTS } from "@/lib/prompts"
-import { AskAiBar } from "@/components/shared/ask-ai-bar"
+import {
+  termsCategoryHeaders,
+  faqSectionTitle,
+  faqSectionSubtitle,
+  termsRowItem,
+  termsRowHeader,
+  termsRowIconBox,
+  termsRowTitle,
+  termsRowBody,
+  termsBulletList,
+} from "@/utils/styles"
 
 export const metadata: Metadata = {
-  title: "Terms of Service",
-  description: `Terms and conditions governing use of ${SITE_CONFIG.name}, directory submissions, community rankings, and promotional services.`,
+  title: `Terms of Service | ${SITE_CONFIG.name}`,
+  description: `Terms and conditions governing your use of ${SITE_CONFIG.name} — directory listings, live launch voting, 'Built With' graphs, sponsorships, and AI agent protocols.`,
+  keywords: [
+    "terms of service",
+    "directory terms",
+    "developer tools platform terms",
+    "submission guidelines",
+    "launch ranking rules",
+    "developer ecosystem terms",
+    ...SITE_CONFIG.keywords,
+  ],
   alternates: {
-    canonical: `${SITE_CONFIG.url}/terms`,
+    canonical: `${SITE_CONFIG.url}${ROUTES.TERMS}`,
+  },
+  openGraph: {
+    title: `Terms of Service | ${SITE_CONFIG.name}`,
+    description: `Terms and conditions governing the use of ${SITE_CONFIG.name} — directory listings, community rankings, and AI agent protocols.`,
+    type: "website",
+    url: `${SITE_CONFIG.url}${ROUTES.TERMS}`,
+    siteName: SITE_CONFIG.name,
+    images: [
+      {
+        url: `${SITE_CONFIG.url}/opengraph-image`,
+        width: 1200,
+        height: 630,
+        alt: `Terms of Service — ${SITE_CONFIG.name}`,
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `Terms of Service | ${SITE_CONFIG.name}`,
+    description: `Terms and conditions governing the use of ${SITE_CONFIG.name}.`,
+    images: [`${SITE_CONFIG.url}/twitter-image`],
+  },
+  robots: {
+    index: true,
+    follow: true,
   },
 }
 
+const TERM_ICONS: Record<number, LucideIcon> = {
+  1: FileText,
+  2: UserCheck,
+  3: ShieldAlert,
+  4: Sparkles,
+  5: Layers,
+  6: Network,
+  7: MessageSquare,
+  8: Award,
+  9: Globe,
+  10: Cpu,
+  11: ShieldCheck,
+  12: Server,
+  13: ExternalLink,
+  14: AlertTriangle,
+  15: Scale,
+  16: Shield,
+  17: UserX,
+  18: History,
+  19: Gavel,
+  20: Mail,
+}
+
 const TermsPage = () => {
-  const siteUrl = SITE_CONFIG.url
-  const breadcrumbs = breadcrumbSchema([
-    { name: "Home", url: siteUrl },
-    { name: "Terms of Service", url: `${siteUrl}${ROUTES.TERMS}` },
+  const breadcrumbsJsonLd = breadcrumbSchema([
+    { name: "Home", url: SITE_CONFIG.url },
+    { name: "Terms of Service", url: `${SITE_CONFIG.url}${ROUTES.TERMS}` },
   ])
 
   return (
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbsJsonLd) }}
       />
-      <div className="mx-auto max-w-4xl px-6 py-10 md:px-8">
-        {/* Header */}
-        <div className="flex flex-col gap-3 border-b border-dashed border-border pb-6">
-          <div className="flex items-center gap-2">
-            <span className="font-mono text-xs font-bold tracking-widest text-[#a06138] uppercase">
-              LEGAL & COMPLIANCE
-            </span>
-            <span className="rounded border border-blue-200 bg-blue-50 px-2 py-0.5 font-mono text-[10px] font-bold text-blue-700">
-              UPDATED MARCH 2026
-            </span>
+
+      <div className="relative flex min-h-full flex-col bg-slate-50/50">
+        {/* Top Breadcrumbs */}
+        <nav
+          aria-label="Breadcrumb"
+          className="flex items-center gap-2 border-b border-dashed border-border bg-white px-6 py-3 text-xs font-medium text-slate-500 md:px-8"
+        >
+          <Link
+            href={ROUTES.HOME}
+            className="flex items-center gap-1 transition-colors hover:text-slate-900"
+          >
+            <ArrowLeft className="size-3" />
+            Home
+          </Link>
+          <ChevronRight className="size-3 text-slate-400" />
+          <span className="font-semibold text-slate-900">Terms of Service</span>
+        </nav>
+
+        {/* Page Header */}
+        <PageHeader
+          heading="Terms of Service"
+          description={`The terms that govern your use of ${SITE_CONFIG.name} — directory listings, sponsorships, AI agent access, and all platform features.`}
+          aiPrompt={AI_PROMPTS.terms}
+          askAiLabel={`ASK AI ABOUT TERMS`}
+          metrics={
+            <div className="flex items-center gap-2">
+              <span className="rounded border border-blue-200 bg-blue-50 px-2 py-0.5 font-mono text-[10px] font-bold text-blue-700">
+                UPDATED {TERMS_LAST_UPDATED.toUpperCase()}
+              </span>
+            </div>
+          }
+        />
+
+        {/* Main Content Sections */}
+        <div className="flex w-full flex-1 flex-col bg-white">
+          {TERMS_CATEGORIES.map((category) => (
+            <section
+              key={category.id}
+              id={category.id}
+              className="flex flex-col"
+            >
+              {/* Category Header with Gradient and Dashed Border */}
+              <div className={termsCategoryHeaders[category.headerThemeKey]}>
+                <div className="flex items-center gap-2.5">
+                  <h2 className={faqSectionTitle}>{category.title}</h2>
+                </div>
+                <p className={faqSectionSubtitle}>{category.description}</p>
+              </div>
+
+              {/* Terms Items */}
+              <div className="flex flex-col">
+                {category.items.map((item) => {
+                  const Icon = TERM_ICONS[item.number] ?? FileText
+
+                  return (
+                    <div
+                      key={item.id}
+                      id={item.id}
+                      className={termsRowItem}
+                    >
+                      <div className={termsRowHeader}>
+                        <span className={termsRowIconBox}>
+                          <Icon className="size-3.5" />
+                        </span>
+                        <h3 className={termsRowTitle}>
+                          {item.number}. {item.title}
+                        </h3>
+                      </div>
+
+                      <div className={termsRowBody}>
+                        <p>{item.content}</p>
+
+                        {item.bulletPoints && item.bulletPoints.length > 0 && (
+                          <ul className={termsBulletList}>
+                            {item.bulletPoints.map((point) => (
+                              <li key={point}>{point}</li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            </section>
+          ))}
+
+          {/* Bottom Inquiries & Related Policies Bar */}
+          <div className="flex flex-col gap-4 border-b border-dashed border-border bg-slate-50/50 px-6 py-8 md:px-8">
+            <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+              <div>
+                <h3 className="text-sm font-bold text-slate-900">
+                  Questions about our Terms?
+                </h3>
+                <p className="mt-0.5 text-xs text-slate-500">
+                  Need clarification on directory guidelines, API access, or sponsorships? Contact our team.
+                </p>
+              </div>
+              <div className="flex shrink-0 flex-wrap items-center gap-2.5">
+                <Button
+                  size="sm"
+                  nativeButton={false}
+                  render={<a href="mailto:support@launchnests.com" />}
+                  className="text-xs"
+                >
+                  <Mail className="mr-1.5 size-3.5" />
+                  Email Support
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  nativeButton={false}
+                  render={<Link href={ROUTES.PRIVACY} />}
+                  className="text-xs"
+                >
+                  Privacy Policy
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  nativeButton={false}
+                  render={<Link href={ROUTES.REFUND} />}
+                  className="text-xs"
+                >
+                  Refund Policy
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  nativeButton={false}
+                  render={<Link href={ROUTES.FAQ} />}
+                  className="text-xs"
+                >
+                  <HelpCircle className="mr-1.5 size-3.5" />
+                  View FAQs
+                </Button>
+              </div>
+            </div>
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900 md:text-3xl">
-            Terms of Service
-          </h1>
-          <p className="text-sm leading-relaxed text-slate-600">
-            Please read these terms carefully before using {SITE_CONFIG.name}, submitting products, or accessing our developer APIs and machine-readable surfaces.
-          </p>
-
-          <div className="mt-2 pt-2">
-            <AskAiBar
-              prompt={AI_PROMPTS.terms}
-              label="ASK AI ABOUT TERMS"
-              compact
-              questions={[
-                "What are the listing guidelines?",
-                "What are the rules on upvoting integrity?",
-              ]}
-            />
-          </div>
-        </div>
-
-        {/* Content */}
-        <div className="mt-8 space-y-8 text-sm text-slate-600">
-          <section className="space-y-3">
-            <div className="flex items-center gap-2 text-slate-900">
-              <FileText className="size-4 text-blue-600" />
-              <h2 className="text-base font-bold sm:text-lg">1. Agreement to Terms</h2>
-            </div>
-            <p className="leading-relaxed">
-              By accessing or using {SITE_CONFIG.name} (including our website, REST API, Model Context Protocol server, and related feeds), you agree to be bound by these Terms of Service. If you do not agree to these terms, you may not access or use the platform.
-            </p>
-          </section>
-
-          <section className="space-y-3">
-            <div className="flex items-center gap-2 text-slate-900">
-              <CheckCircle2 className="size-4 text-emerald-600" />
-              <h2 className="text-base font-bold sm:text-lg">2. Submissions & Directory Listings</h2>
-            </div>
-            <p className="leading-relaxed">
-              When listing a developer tool, software product, or project on {SITE_CONFIG.name}:
-            </p>
-            <ul className="list-inside list-disc space-y-1.5 pl-2 leading-relaxed">
-              <li>You warrant that you own or are an authorized representative of the tool or product submitted.</li>
-              <li>You agree to provide factual, truthful descriptions, correct outbound links, and honest tech stack declarations.</li>
-              <li>Submissions containing malware, deceptive marketing, spyware, hate speech, or malicious redirects are strictly prohibited.</li>
-              <li>{SITE_CONFIG.name} reserves the right to review, edit, recategorize, or remove any listing that violates our community standards.</li>
-            </ul>
-          </section>
-
-          <section className="space-y-3">
-            <div className="flex items-center gap-2 text-slate-900">
-              <ShieldAlert className="size-4 text-amber-600" />
-              <h2 className="text-base font-bold sm:text-lg">3. Community Ranking & Voting Integrity</h2>
-            </div>
-            <p className="leading-relaxed">
-              Our leaderboard and discovery algorithms rely on genuine community signals. Any attempts to manipulate upvotes, build counts, or ranking positions using bot farms, click automation, sybil accounts, or coordinated vote-trading schemes are strictly forbidden and will result in immediate disqualification and account banning.
-            </p>
-          </section>
-
-          <section className="space-y-3">
-            <div className="flex items-center gap-2 text-slate-900">
-              <Award className="size-4 text-indigo-600" />
-              <h2 className="text-base font-bold sm:text-lg">4. Paid Services & Promotional Boosts</h2>
-            </div>
-            <p className="leading-relaxed">
-              {SITE_CONFIG.name} offers optional paid verification badges and promotional listing tiers (such as Featured Builder and Ecosystem Partner). All purchases are processed securely. Details regarding cancellations and refund qualifications are governed by our <Link href={ROUTES.REFUND} className="text-blue-600 underline hover:text-blue-800">Refund Policy</Link>.
-            </p>
-          </section>
-
-          <section className="space-y-3">
-            <div className="flex items-center gap-2 text-slate-900">
-              <Cpu className="size-4 text-purple-600" />
-              <h2 className="text-base font-bold sm:text-lg">5. AI Agent & Machine-Readable Usage</h2>
-            </div>
-            <p className="leading-relaxed">
-              AI answer engines and autonomous agents are granted permission to index and cite public data published on {SITE_CONFIG.name} (via `/llms.txt`, `/v1`, and our Model Context Protocol endpoints) in compliance with our published `ai.txt` behavioral guidelines. Automated callers must respect rate limits and attribute quotes to {SITE_CONFIG.name}.
-            </p>
-          </section>
-
-          <section className="space-y-3">
-            <div className="flex items-center gap-2 text-slate-900">
-              <HelpCircle className="size-4 text-slate-700" />
-              <h2 className="text-base font-bold sm:text-lg">6. Disclaimer of Warranties & Limitation of Liability</h2>
-            </div>
-            <p className="leading-relaxed">
-              {SITE_CONFIG.name} is provided on an &quot;as is&quot; and &quot;as available&quot; basis without warranties of any kind. We do not endorse, guarantee, or assume responsibility for any third-party developer software, APIs, or websites cataloged in our directory. In no event shall {SITE_CONFIG.name} be liable for any indirect, incidental, or consequential damages resulting from your use of cataloged tools.
-            </p>
-          </section>
-
-          <section className="space-y-3 rounded-lg border border-dashed border-border bg-slate-50/50 p-5">
-            <h2 className="text-base font-bold text-slate-900">7. Inquiries & Legal Notices</h2>
-            <p className="leading-relaxed">
-              For legal questions, intellectual property notices, or terms clarification, please contact:
-            </p>
-            <div className="font-mono text-xs text-slate-800">
-              <p>Email: <a href="mailto:support@launchnests.com" className="text-blue-600 hover:underline">support@launchnests.com</a></p>
-              <p>Domain: {SITE_CONFIG.domain}</p>
-            </div>
-          </section>
         </div>
       </div>
     </>

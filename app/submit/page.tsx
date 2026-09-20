@@ -55,7 +55,7 @@ const SUBMISSION_FAQS = [
   },
   {
     question: `What are the discoverability benefits of listing on ${SITE_CONFIG.name}?`,
-    answer: `Listings receive permanent directory indexing, inclusion in /llms.txt and /llms-full.txt for generative AI engines (ChatGPT, Claude, Perplexity), structured SoftwareApplication JSON-LD, and an algorithmic 7-day boost in the New & Rising feed.`,
+    answer: `Listings receive permanent directory indexing, inclusion in /llms.txt and /llms-full.txt for generative AI engines (ChatGPT, Claude, Perplexity), structured SoftwareApplication JSON-LD, and placement in Today's Launches and Weekly Launches on the homepage ranked by community votes.`,
   },
   {
     question: `What metadata is collected for AEO and GEO optimization?`,
