@@ -72,9 +72,7 @@ export const createDodoCheckoutSession = async ({
   if (!res.ok) {
     const errorBody = await res.text().catch(() => "")
     console.error("Dodo Payments checkout creation failed:", res.status, errorBody)
-    throw new Error(
-      `Failed to create Dodo Payments checkout session (${res.status}): ${errorBody}`
-    )
+    throw new Error("Failed to create checkout session. Please try again later.")
   }
 
   const data = (await res.json()) as DodoCheckoutSessionResponse

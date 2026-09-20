@@ -7,7 +7,13 @@ import {
   getPaymentByDodoPaymentId,
   updatePaymentStatus,
 } from "@/db/queries/payments"
-import { getAdById, updateAdStatus } from "@/db/queries/ads"
+import {
+  getAdById,
+  updateAdStatus,
+  activateAdWeeks,
+  deactivateAdWeeks,
+} from "@/db/queries/ads"
+import type { Tier } from "@/constants/plans"
 
 interface DodoWebhookData {
   payment_id?: string
@@ -28,8 +34,16 @@ interface DodoWebhookPayload {
   data?: DodoWebhookData
 }
 
+const getWebhookKey = () => {
+  const key = process.env.DODO_PAYMENTS_WEBHOOK_SECRET
+  if (!key) {
+    throw new Error("DODO_PAYMENTS_WEBHOOK_SECRET is not configured")
+  }
+  return key
+}
+
 export const POST = Webhooks({
-  webhookKey: process.env.DODO_PAYMENTS_WEBHOOK_SECRET || "",
+  webhookKey: getWebhookKey(),
 
   onPaymentSucceeded: async (rawPayload: unknown) => {
     const payload = rawPayload as DodoWebhookPayload
@@ -41,14 +55,36 @@ export const POST = Webhooks({
     const metadata = data.metadata || {}
     const paymentId = metadata.paymentId
 
-    // 1. Find internal payment record
     let payment = paymentId ? await getPaymentById(paymentId) : null
     if (!payment && dodoPaymentId) {
       payment = await getPaymentByDodoPaymentId(dodoPaymentId)
     }
 
     if (payment) {
-      // Mark payment as succeeded
+      // Guard: only process if still pending (prevents replayed webhooks)
+      if (payment.status !== "pending") {
+        console.warn(
+          `Webhook skipped: payment ${payment.id} already has status "${payment.status}"`
+        )
+        return
+      }
+
+      // Guard: verify the paid amount matches expected amount
+      if (
+        data.total_amount !== undefined &&
+        data.total_amount < payment.amount
+      ) {
+        console.error(
+          `Amount mismatch for payment ${payment.id}: expected ${payment.amount}, got ${data.total_amount}`
+        )
+        await updatePaymentStatus({
+          id: payment.id,
+          status: "failed",
+          dodoPaymentId,
+        })
+        return
+      }
+
       await updatePaymentStatus({
         id: payment.id,
         status: "succeeded",
@@ -56,25 +92,36 @@ export const POST = Webhooks({
         dodoCustomerId,
       })
 
-      // 2. Activate Ad if it is an ad payment
+      // Activate ad weeks if this is an ad payment
       const adId = payment.adId || metadata.adId
       if (adId) {
         const ad = await getAdById(adId)
         if (ad) {
-          const startDate = new Date()
-          const durationDays = ad.durationDays || 30
-          const endDate = new Date(
-            startDate.getTime() + durationDays * 24 * 60 * 60 * 1000
-          )
+          await activateAdWeeks(adId)
+          await updateAdStatus(adId, "active")
 
-          await updateAdStatus(ad.id, "active", {
-            startDate,
-            endDate,
-          })
+          // Apply tier bonus if applicable
+          if (ad.tierBonusApplied) {
+            const tierToApply = ad.tierBonusApplied as Tier
+
+            if (ad.toolId) {
+              await db
+                .update(tools)
+                .set({ tier: tierToApply, updatedAt: new Date() })
+                .where(eq(tools.id, ad.toolId))
+            }
+
+            if (ad.productId) {
+              await db
+                .update(products)
+                .set({ tier: tierToApply, updatedAt: new Date() })
+                .where(eq(products.id, ad.productId))
+            }
+          }
         }
       }
 
-      // 3. Upgrade Tool or Product tier if it is a listing payment
+      // Upgrade tool or product tier for listing payments
       if (payment.tier) {
         if (payment.toolId) {
           await db
@@ -140,6 +187,7 @@ export const POST = Webhooks({
       })
 
       if (payment.adId) {
+        await deactivateAdWeeks(payment.adId)
         await updateAdStatus(payment.adId, "paused")
       }
 

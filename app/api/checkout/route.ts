@@ -1,11 +1,27 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { checkoutRequestSchema } from "@/lib/validation/payment"
-import { getAdTierConfig } from "@/constants/ads"
-import { PLANS, type Tier } from "@/constants/plans"
-import { createAd } from "@/db/queries/ads"
+import {
+  AD_PRICING,
+  AD_SLOTS_PER_WEEK,
+  AD_MAX_WEEKS_PER_PRODUCT,
+  AD_TIER_BONUS,
+  AD_EXISTING_TIER_DISCOUNT,
+  type AdPlacement,
+} from "@/constants/ads"
+import { PLANS, TIER, type Tier } from "@/constants/plans"
+import {
+  createAd,
+  createAdWeeks,
+  getProductAdWeekCount,
+} from "@/db/queries/ads"
+import { getWeekAvailability } from "@/db/queries/ads/availability"
 import { createPayment, updatePaymentStatus } from "@/db/queries/payments"
 import { createDodoCheckoutSession } from "@/lib/payments/dodo"
+import { getISOWeekRange } from "@/utils/iso-weeks"
+import { db } from "@/db"
+import { tools, products } from "@/db/schema"
+import { eq } from "drizzle-orm"
 
 export const POST = async (req: NextRequest) => {
   try {
@@ -31,63 +47,181 @@ export const POST = async (req: NextRequest) => {
     const user = session.user
 
     if (parsed.data.paymentType === "ad") {
-      const {
-        placement,
-        duration,
-        title,
-        description,
-        badgeText,
-        imageUrl,
-        ctaText,
-        ctaUrl,
-      } = parsed.data
+      const { placement, toolId, productId, selectedWeeks, ctaText } =
+        parsed.data
 
-      const tierConfig = getAdTierConfig(placement, duration)
+      // Validate the linked submission belongs to the user
+      if (toolId) {
+        const [tool] = await db
+          .select({
+            id: tools.id,
+            submitterId: tools.submitterId,
+            tier: tools.tier,
+            status: tools.status,
+          })
+          .from(tools)
+          .where(eq(tools.id, toolId))
+          .limit(1)
 
-      // 1. Create ad in pending_payment status
-      const ad = await createAd({
-        userId: user.id,
-        placement,
-        title,
-        description,
-        badgeText: badgeText || "PROMOTED",
-        imageUrl: imageUrl || null,
-        ctaText: ctaText || "Learn More",
-        ctaUrl,
-        status: "pending_payment",
-        durationDays: tierConfig.days,
+        if (!tool || tool.submitterId !== user.id || tool.status !== "approved") {
+          return NextResponse.json(
+            { error: "Tool not found, not owned by you, or not yet approved" },
+            { status: 403 }
+          )
+        }
+      }
+
+      if (productId) {
+        const [product] = await db
+          .select({
+            id: products.id,
+            submitterId: products.submitterId,
+            tier: products.tier,
+            status: products.status,
+          })
+          .from(products)
+          .where(eq(products.id, productId))
+          .limit(1)
+
+        if (!product || product.submitterId !== user.id || product.status !== "approved") {
+          return NextResponse.json(
+            { error: "Product not found, not owned by you, or not yet approved" },
+            { status: 403 }
+          )
+        }
+      }
+
+      // Check 6-week cap per product+placement
+      const existingWeekCount = await getProductAdWeekCount({
+        placement: placement as AdPlacement,
+        toolId: toolId ?? null,
+        productId: productId ?? null,
       })
 
-      // 2. Create pending payment record
+      if (existingWeekCount + selectedWeeks.length > AD_MAX_WEEKS_PER_PRODUCT) {
+        return NextResponse.json(
+          {
+            error: `Maximum ${AD_MAX_WEEKS_PER_PRODUCT} weeks allowed per product per placement. You have ${existingWeekCount} weeks already booked.`,
+          },
+          { status: 400 }
+        )
+      }
+
+      // Validate slot availability for selected weeks
+      const availability = await getWeekAvailability(placement as AdPlacement)
+      const availabilityMap = new Map(
+        availability.map((w) => [`${w.isoYear}-${w.isoWeek}`, w])
+      )
+
+      for (const week of selectedWeeks) {
+        const key = `${week.isoYear}-${week.isoWeek}`
+        const weekInfo = availabilityMap.get(key)
+
+        if (!weekInfo || weekInfo.slotsRemaining <= 0) {
+          return NextResponse.json(
+            {
+              error: `Week ${week.isoWeek} of ${week.isoYear} has no available slots`,
+            },
+            { status: 400 }
+          )
+        }
+      }
+
+      // Calculate pricing
+      const pricing = AD_PRICING[placement as AdPlacement]
+      const weekCount = selectedWeeks.length
+      const subtotalInCents = weekCount * pricing.pricePerWeekInCents
+
+      // Determine tier bonus
+      let tierBonusApplied: Tier | null = null
+      if (weekCount >= AD_TIER_BONUS.PREMIUM_PLUS_THRESHOLD) {
+        tierBonusApplied = TIER.PREMIUM_PLUS
+      } else if (weekCount >= AD_TIER_BONUS.PREMIUM_THRESHOLD) {
+        tierBonusApplied = TIER.PREMIUM
+      }
+
+      // Calculate discount for existing tier holders
+      let discountInCents = 0
+      const itemTier = await getItemCurrentTier(toolId, productId)
+
+      if (tierBonusApplied && itemTier) {
+        if (itemTier === TIER.PREMIUM_PLUS) {
+          // Has Premium+ already — $19 discount for 6 weeks, $15 for 4+
+          discountInCents =
+            weekCount >= AD_TIER_BONUS.PREMIUM_PLUS_THRESHOLD
+              ? AD_EXISTING_TIER_DISCOUNT.PREMIUM_PLUS
+              : weekCount >= AD_TIER_BONUS.PREMIUM_THRESHOLD
+                ? AD_EXISTING_TIER_DISCOUNT.PREMIUM
+                : 0
+        } else if (itemTier === TIER.PREMIUM) {
+          // Has Premium already — $15 discount for 4+ weeks
+          discountInCents =
+            weekCount >= AD_TIER_BONUS.PREMIUM_THRESHOLD
+              ? AD_EXISTING_TIER_DISCOUNT.PREMIUM
+              : 0
+        }
+      }
+
+      const totalInCents = Math.max(0, subtotalInCents - discountInCents)
+
+      // Create ad record
+      const ad = await createAd({
+        userId: user.id,
+        toolId: toolId ?? null,
+        productId: productId ?? null,
+        placement: placement as AdPlacement,
+        ctaText: ctaText || "Learn More",
+        status: "pending_payment",
+        totalWeeks: weekCount,
+        totalAmount: totalInCents,
+        discountAmount: discountInCents,
+        tierBonusApplied: tierBonusApplied as Tier | undefined,
+      })
+
+      // Create ad_weeks records
+      const adWeekRecords = selectedWeeks.map((w) => {
+        const { startDate, endDate } = getISOWeekRange(w.isoYear, w.isoWeek)
+        return {
+          adId: ad.id,
+          placement: placement as AdPlacement,
+          isoYear: w.isoYear,
+          isoWeek: w.isoWeek,
+          startDate,
+          endDate,
+          status: "pending_payment" as const,
+        }
+      })
+
+      await createAdWeeks(adWeekRecords)
+
+      // Create payment record
       const payment = await createPayment({
         userId: user.id,
         paymentType: "ad",
         adId: ad.id,
-        amount: tierConfig.priceInCents,
+        toolId: toolId ?? null,
+        productId: productId ?? null,
+        amount: totalInCents,
         currency: "USD",
         status: "pending",
         metadata: JSON.stringify({
           placement,
-          duration,
+          weekCount,
+          selectedWeeks,
           adId: ad.id,
-          title,
+          tierBonusApplied,
+          discountInCents,
         }),
       })
 
-      // 3. Create Dodo Payments checkout session
-      const productCartItem = tierConfig.dodoProductId
-        ? {
-            product_id: tierConfig.dodoProductId,
-            quantity: 1,
-            amount: tierConfig.priceInCents,
-          }
-        : {
-            quantity: 1,
-            amount: tierConfig.priceInCents,
-          }
-
+      // Create Dodo checkout session
       const dodoSession = await createDodoCheckoutSession({
-        productCart: [productCartItem],
+        productCart: [
+          {
+            quantity: 1,
+            amount: totalInCents,
+          },
+        ],
         customer: {
           email: user.email,
           name: user.name,
@@ -98,15 +232,9 @@ export const POST = async (req: NextRequest) => {
           userId: user.id,
           paymentType: "ad",
           placement,
-          duration,
+          weekCount,
+          tierBonusApplied: tierBonusApplied ?? "",
         },
-      })
-
-      // 4. Record session id
-      await updatePaymentStatus({
-        id: payment.id,
-        status: "pending",
-        dodoCustomerId: undefined,
       })
 
       return NextResponse.json({
@@ -128,7 +256,43 @@ export const POST = async (req: NextRequest) => {
       )
     }
 
-    // 1. Create pending payment record
+    // Verify ownership and approval status of the item being upgraded
+    if (itemType === "tool") {
+      const [tool] = await db
+        .select({
+          id: tools.id,
+          submitterId: tools.submitterId,
+          status: tools.status,
+        })
+        .from(tools)
+        .where(eq(tools.id, itemId))
+        .limit(1)
+
+      if (!tool || tool.submitterId !== user.id || tool.status !== "approved") {
+        return NextResponse.json(
+          { error: "Tool not found, not owned by you, or not yet approved" },
+          { status: 403 }
+        )
+      }
+    } else {
+      const [product] = await db
+        .select({
+          id: products.id,
+          submitterId: products.submitterId,
+          status: products.status,
+        })
+        .from(products)
+        .where(eq(products.id, itemId))
+        .limit(1)
+
+      if (!product || product.submitterId !== user.id || product.status !== "approved") {
+        return NextResponse.json(
+          { error: "Product not found, not owned by you, or not yet approved" },
+          { status: 403 }
+        )
+      }
+    }
+
     const payment = await createPayment({
       userId: user.id,
       paymentType: "listing",
@@ -145,7 +309,6 @@ export const POST = async (req: NextRequest) => {
       }),
     })
 
-    // 2. Create Dodo Payments checkout session
     const productCartItem = plan.dodoProductId
       ? {
           product_id: plan.dodoProductId,
@@ -180,8 +343,32 @@ export const POST = async (req: NextRequest) => {
     })
   } catch (error) {
     console.error("Checkout creation error:", error)
-    const message =
-      error instanceof Error ? error.message : "Failed to initiate checkout"
-    return NextResponse.json({ error: message }, { status: 500 })
+    return NextResponse.json(
+      { error: "Something went wrong while creating your checkout session. Please try again." },
+      { status: 500 }
+    )
   }
+}
+
+const getItemCurrentTier = async (
+  toolId?: string,
+  productId?: string
+): Promise<Tier | null> => {
+  if (toolId) {
+    const [tool] = await db
+      .select({ tier: tools.tier })
+      .from(tools)
+      .where(eq(tools.id, toolId))
+      .limit(1)
+    return (tool?.tier as Tier) ?? null
+  }
+  if (productId) {
+    const [product] = await db
+      .select({ tier: products.tier })
+      .from(products)
+      .where(eq(products.id, productId))
+      .limit(1)
+    return (product?.tier as Tier) ?? null
+  }
+  return null
 }
