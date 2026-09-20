@@ -101,9 +101,9 @@ export const PLANS: Record<Tier, PlanConfig> = {
   [TIER.PREMIUM]: {
     id: TIER.PREMIUM,
     name: "Featured Builder",
-    price: "$49",
-    priceInCents: 4900,
-    period: "one-time verification",
+    price: "$15",
+    priceInCents: 1500,
+    period: "one-time",
     tagline: "Maximum visibility, high-authority backlink, and verified trust.",
     badgeLabel: "Verified",
     badgeClass: "bg-blue-100 text-blue-700 border-blue-200",
@@ -124,9 +124,9 @@ export const PLANS: Record<Tier, PlanConfig> = {
   [TIER.PREMIUM_PLUS]: {
     id: TIER.PREMIUM_PLUS,
     name: "Ecosystem Partner",
-    price: "$149",
-    priceInCents: 14900,
-    period: "quarterly sponsorship",
+    price: "$19",
+    priceInCents: 1900,
+    period: "one-time",
     tagline:
       "Dominant category branding, LLM agent indexing, and top banner spots.",
     badgeLabel: "Partner",

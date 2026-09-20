@@ -429,3 +429,37 @@ export const adDurationOption = (selected: boolean) =>
       : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/60"
   )
 
+export const weekPickerGrid =
+  "grid grid-cols-2 gap-2 sm:grid-cols-3 max-h-64 overflow-y-auto pr-1"
+
+export const weekPickerSlot = (
+  selected: boolean,
+  disabled: boolean
+) =>
+  cn(
+    "relative flex cursor-pointer flex-col rounded-lg border p-2.5 text-left transition-all",
+    disabled
+      ? "cursor-not-allowed border-slate-100 bg-slate-50/50 opacity-50"
+      : selected
+        ? "border-indigo-600 bg-indigo-50/60 ring-1 ring-indigo-500/20 shadow-xs"
+        : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/60"
+  )
+
+export const promoBanner =
+  "flex items-start gap-2.5 rounded-lg border border-amber-200 bg-amber-50/70 p-3 text-xs text-amber-900"
+
+export const promoBannerSuccess =
+  "flex items-start gap-2.5 rounded-lg border border-emerald-200 bg-emerald-50/70 p-3 text-xs text-emerald-900"
+
+export const noSubmissionsCard =
+  "flex flex-col items-center gap-3 rounded-xl border border-dashed border-amber-300 bg-amber-50/50 p-6 text-center"
+
+export const submissionSelectorItem = (selected: boolean) =>
+  cn(
+    "flex cursor-pointer items-center gap-3 rounded-lg border p-3 transition-all",
+    selected
+      ? "border-indigo-600 bg-indigo-50/60 ring-1 ring-indigo-500/20"
+      : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/60"
+  )
+
+
