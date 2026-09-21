@@ -53,35 +53,11 @@ export const metadata: Metadata = {
   },
 }
 
-const FAQ_ITEMS = [
-  {
-    question: "How much does directory submission cost?",
-    answer: `Submitting developer tools and products to ${SITE_CONFIG.name} is 100% free. Every approved submission is indexed in our public directory with full searchability.`,
-  },
-  {
-    question: "Where do sidebar ads appear?",
-    answer:
-      "Sidebar ads are displayed in prime view on navigation rails across all desktop and tablet pages, remaining sticky as users explore developer tools.",
-  },
-  {
-    question: "What creative formats are supported?",
-    answer:
-      "We support clean developer-centric banners, rich media cards with verified badges, and direct call-to-action buttons with custom UTM parameters.",
-  },
-  {
-    question: "How do I reserve a sponsorship slot?",
-    answer:
-      "Send a direct message on X to discuss available slots and placement details. Slots are allocated on a weekly or monthly basis with category exclusivity options.",
-  },
-]
-
 const PricingPage = () => {
   const breadcrumbs = breadcrumbSchema([
     { name: "Home", url: SITE_CONFIG.url },
     { name: "Pricing", url: `${SITE_CONFIG.url}/pricing` },
   ])
-
-  const faqJsonLd = faqSchema(FAQ_ITEMS)
 
   return (
     <>
@@ -89,13 +65,9 @@ const PricingPage = () => {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }}
       />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
-      />
       <div className="relative flex min-h-full flex-col bg-slate-50/50">
         <PageHeader
-          heading="📣 Sidebar Advertising & Sponsorship"
+          heading="Pricing for Advertising & Tiers"
           description="Directory submissions are completely free. Grow your developer mindshare with premium, high-visibility sidebar placements seen across all pages."
           aiPrompt={AI_PROMPTS.pricing}
           variant="pricing"
@@ -114,7 +86,9 @@ const PricingPage = () => {
                     {LAUNCH_PROMO.PROMO_TITLE}
                   </h3>
                   <p className="mt-0.5 text-xs text-slate-600">
-                    All directory submissions are currently receiving free Lifetime Premium upgrades ({LAUNCH_PROMO.VALUE_GIFTED} value) with permanent Do-Follow SEO backlinks.
+                    All directory submissions are currently receiving free
+                    Lifetime Premium upgrades ({LAUNCH_PROMO.VALUE_GIFTED}{" "}
+                    value) with permanent Do-Follow SEO backlinks.
                   </p>
                 </div>
               </div>
@@ -137,33 +111,7 @@ const PricingPage = () => {
             </div>
           </section>
         )}
-
-        {/* Sponsorship & Listings Section */}
         <PricingSponsorshipSection />
-
-        {/* FAQ Section */}
-        <div className="flex flex-col bg-white px-6 py-10 md:px-10 md:py-16">
-          <div className="flex items-center gap-2 text-sm font-bold text-slate-900">
-            <HelpCircle className="size-4 text-indigo-600" /> Frequently Asked
-            Questions
-          </div>
-
-          <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2">
-            {FAQ_ITEMS.map((item) => (
-              <div
-                key={item.question}
-                className="rounded-lg border border-dashed border-slate-200 bg-slate-50/50 p-4"
-              >
-                <h4 className="text-xs font-bold text-slate-900">
-                  {item.question}
-                </h4>
-                <p className="mt-1 text-xs leading-relaxed text-slate-500">
-                  {item.answer}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
       </div>
     </>
   )
