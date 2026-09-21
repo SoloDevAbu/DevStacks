@@ -29,33 +29,35 @@ export const MainContent = ({
   return (
     <div className="relative flex min-h-full flex-col bg-slate-50/50">
       <PageHeader
-        heading="What's launching"
-        description={`Discover developer tools, APIs, and products launching on ${SITE_CONFIG.name} — ranked by community votes.`}
+        heading="GET DISCOVERED BY HUMANS AND AI"
+        description={`Launch your product once on ${SITE_CONFIG.name}. Get discovered by developers,
+search engines, and AI systems looking for tools like yours.`}
         aiPrompt={AI_PROMPTS.home}
         variant="home"
         askAiLabel="ASK AI"
         metrics={
           <>
             <div className={heroStatPill}>
-              <span className="font-bold text-slate-900">Live Launches</span>
-              <span className="text-slate-500">Tools & Products</span>
+              <span className="text-slate-500">
+                Permanent product page · Search visibility · AI discovery
+              </span>
             </div>
           </>
         }
       />
 
       <div className="flex w-full flex-1 flex-col">
-        {/* ── VERSION A: Tabbed layout (active) ────────────────────────── */}
+        {/* ── VERSION A: Tabbed layout (commented out until daily launch volume ramps up) ── */}
+        {/*
         <LaunchesTabsSection
           todaysLaunches={todaysLaunches}
           weeklyLaunches={weeklyLaunches}
         />
-
-        {/* ── VERSION B: Stacked layout (swap in by uncommenting below) ── */}
-        {/*
-        <TodaysLaunchesSection items={todaysLaunches} />
-        <WeeklyLaunchesSection initialItems={weeklyLaunches} />
         */}
+
+        {/* ── Weekly Launches Only ─────────────────────────────────────── */}
+        {/* <TodaysLaunchesSection items={todaysLaunches} /> */}
+        <WeeklyLaunchesSection initialItems={weeklyLaunches} />
 
         <PopularBuildingBlocksSection items={popularBuildingBlocks} />
       </div>

@@ -23,7 +23,7 @@ export const GET = async () => {
 
   const content = `# ${SITE_CONFIG.name}
 
-> ${SITE_CONFIG.tagline}. Discover developer tools, APIs, and battle-tested tech stacks for software engineers and makers.
+> ${SITE_CONFIG.tagline}. Discover developer tools, APIs, and modern tech stacks for software engineers and makers.
 
 ## About
 

@@ -18,6 +18,7 @@ import "./globals.css"
 import { cn } from "@/lib/utils"
 
 import { Analytics } from "@vercel/analytics/next"
+import { GoogleAnalytics } from "@next/third-parties/google"
 
 export const viewport: Viewport = {
   themeColor: SITE_CONFIG.themeColor,
@@ -90,7 +91,8 @@ export const metadata: Metadata = {
     },
   },
   other: {
-    "ai-agent": "LaunchNests - The Developer Tools & Tech Stack Discovery Engine",
+    "ai-agent":
+      "LaunchNests - The Developer Tools & Tech Stack Discovery Engine",
     "application-type": "developer directory",
     "DC.Coverage": "World",
   },
@@ -169,7 +171,7 @@ const RootLayout = ({
             {/* --- BOTTOM ROW (Content) --- */}
             <div className="grid flex-1 grid-cols-1 lg:grid-cols-[320px_1fr] xl:grid-cols-[320px_1fr_380px]">
               {/* Bottom Left (Sidebar) */}
-              <aside className="sticky top-16 hidden h-[calc(100vh-64px)] flex-col overflow-y-auto scrollbar-thin border-r border-dashed border-border bg-white lg:flex">
+              <aside className="sticky top-16 hidden h-[calc(100vh-64px)] scrollbar-thin flex-col overflow-y-auto border-r border-dashed border-border bg-white lg:flex">
                 <LeftSidebar />
               </aside>
 
@@ -180,13 +182,14 @@ const RootLayout = ({
               </main>
 
               {/* Bottom Right (Sidebar) */}
-              <aside className="sticky top-16 hidden h-[calc(100vh-64px)] flex-col overflow-y-auto scrollbar-thin border-l border-dashed border-border bg-white xl:flex">
+              <aside className="sticky top-16 hidden h-[calc(100vh-64px)] scrollbar-thin flex-col overflow-y-auto border-l border-dashed border-border bg-white xl:flex">
                 <RightSidebar />
               </aside>
             </div>
           </div>
         </Providers>
         <Analytics />
+        <GoogleAnalytics gaId="G-YY1Z68R6FZ" />
       </body>
     </html>
   )

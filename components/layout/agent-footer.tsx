@@ -109,7 +109,7 @@ export const AgentFooter = () => (
           <HeaderLogo />
           <p className="max-w-sm text-xs leading-relaxed text-slate-500">
             The discovery engine for developer tools, APIs, and modern tech
-            stacks. Battle-tested by engineers, machine-readable for AI agents.
+            stacks. Built for engineers, machine-readable for AI agents.
           </p>
           <div className="mt-2 flex items-center gap-3 font-mono text-xs text-slate-500">
             <a

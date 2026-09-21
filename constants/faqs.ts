@@ -33,7 +33,7 @@ export const FAQ_CATEGORIES: FaqCategory[] = [
       },
       {
         question: `Who is ${SITE_CONFIG.name} built for?`,
-        answer: `${SITE_CONFIG.name} is built for software engineers, technical founders, devtools creators, and autonomous AI agents. Developers use the platform to evaluate battle-tested libraries, discover modern infrastructure, and explore architectural dependencies. Creators use it to launch their products, earn high-authority organic backlinks, and gain discoverability across both search engines and AI assistants.`,
+        answer: `${SITE_CONFIG.name} is built for software engineers, technical founders, devtools creators, and autonomous AI agents. Developers use the platform to evaluate curated libraries, discover modern infrastructure, and explore architectural dependencies. Creators use it to launch their products, earn high-authority organic backlinks, and gain discoverability across both search engines and AI assistants.`,
       },
       {
         question: `How is ${SITE_CONFIG.name} different from Product Hunt or other launch platforms?`,

@@ -82,7 +82,7 @@ export default async function Image() {
             margin: 0,
           }}
         >
-          Explore community upvotes, battle-tested tech stacks, and what
+          Explore community upvotes, modern tech stacks, and what
           builders are creating.
         </p>
       </div>

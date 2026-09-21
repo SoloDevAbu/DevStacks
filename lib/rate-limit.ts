@@ -1,3 +1,5 @@
+import type { NextRequest } from "next/server"
+
 type RateLimitRecord = {
   count: number
   resetAt: number
@@ -62,4 +64,23 @@ export const rateLimit = (
     reset: Math.ceil(resetAt / 1000),
     resetSeconds,
   }
+}
+
+export const getClientIp = (request: NextRequest): string =>
+  request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+  request.headers.get("x-real-ip")?.trim() ||
+  "127.0.0.1"
+
+export const isDeduplicated = (key: string, windowMs: number): boolean => {
+  const result = rateLimit(key, 1, windowMs)
+  return !result.success
+}
+
+export const isRateLimited = (
+  key: string,
+  windowMs: number,
+  maxRequests: number
+): boolean => {
+  const result = rateLimit(key, maxRequests, windowMs)
+  return !result.success
 }

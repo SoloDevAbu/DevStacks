@@ -10,7 +10,7 @@ export const SITE_CONFIG = {
   ],
   tagline: "Discover Developer Tools, APIs & Products",
   description:
-    "Discover developer tools, APIs, and infrastructure products. Explore what developers are building, community upvotes, and battle-tested tech stacks.",
+    "Discover developer tools, APIs, and infrastructure products. Explore what developers are building, community upvotes, and modern tech stacks.",
   url: siteUrl,
   domain: "launchnests.com",
   creator: "Abu Bakkar Siddique",

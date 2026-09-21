@@ -1,10 +1,19 @@
-import { neon } from "@neondatabase/serverless"
-import { drizzle } from "drizzle-orm/neon-http"
+import ws from "ws"
+import { Pool, neonConfig, neon } from "@neondatabase/serverless"
+import { drizzle } from "drizzle-orm/neon-serverless"
 import * as schema from "./schema"
 
 const sql = neon(process.env.DATABASE_URL!)
 
-export const db = drizzle({ client: sql })
+neonConfig.webSocketConstructor = ws
+
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL!,
+})
+
+export const db = drizzle({
+  client: pool,
+})
 
 sql`ALTER TABLE "accounts" ADD COLUMN IF NOT EXISTS "issuer" text NOT NULL DEFAULT 'google';`.catch(
   () => {}
