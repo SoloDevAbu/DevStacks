@@ -69,13 +69,18 @@ export const POST = Webhooks({
         return
       }
 
-      // Guard: verify the paid amount matches expected amount
+      // Guard: verify the paid amount matches expected amount only when currencies align
+      const paidCurrency = data.currency?.toUpperCase?.()
+      const expectedCurrency = payment.currency?.toUpperCase?.()
       if (
         data.total_amount !== undefined &&
+        paidCurrency &&
+        expectedCurrency &&
+        paidCurrency === expectedCurrency &&
         data.total_amount < payment.amount
       ) {
         console.error(
-          `Amount mismatch for payment ${payment.id}: expected ${payment.amount}, got ${data.total_amount}`
+          `Amount mismatch for payment ${payment.id}: expected ${payment.amount} ${expectedCurrency}, got ${data.total_amount} ${paidCurrency}`
         )
         await updatePaymentStatus({
           id: payment.id,
@@ -83,6 +88,15 @@ export const POST = Webhooks({
           dodoPaymentId,
         })
         return
+      } else if (
+        data.total_amount !== undefined &&
+        paidCurrency &&
+        expectedCurrency &&
+        paidCurrency !== expectedCurrency
+      ) {
+        console.warn(
+          `Skipping amount comparison for payment ${payment.id} due to currency mismatch: expected ${expectedCurrency}, got ${paidCurrency}`
+        )
       }
 
       await updatePaymentStatus({

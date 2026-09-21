@@ -43,7 +43,7 @@ export const updatePaymentDodoSession = async ({
 }: {
   id: string
   dodoCheckoutSessionId: string
-  checkoutUrl: string
+  checkoutUrl?: string | null
 }): Promise<Payment | null> => {
   const [updated] = await db
     .update(payments)

@@ -8,7 +8,8 @@ const getDodoBaseUrl = () =>
 export interface DodoProductCartItem {
   product_id: string
   quantity: number
-  amount?: number // in cents
+  // Only for pay-what-you-want one-time products; otherwise omit.
+  amount?: number // in smallest currency unit (e.g., cents)
 }
 
 export interface DodoCustomer {
@@ -17,15 +18,33 @@ export interface DodoCustomer {
   phone_number?: string
 }
 
+export interface DodoBillingAddress {
+  country: string // ISO 3166-1 alpha-2
+  city?: string | null
+  state?: string | null
+  street?: string | null
+  zipcode?: string | null
+}
+
+export interface DodoFeatureFlags {
+  // If customer is allowed to change currency, set true (default true in Dodo).
+  // For one-time fixed USD products, set false to avoid currency mismatch.
+  allow_currency_selection?: boolean
+}
+
 export interface CreateCheckoutSessionParams {
   productCart: DodoProductCartItem[]
   customer: DodoCustomer
   returnUrl?: string
+  cancelUrl?: string
+  billingCurrency?: string // e.g. "USD"
+  billingAddress?: DodoBillingAddress
+  featureFlags?: DodoFeatureFlags
   metadata?: Record<string, string | number | boolean | null | undefined>
 }
 
 export interface DodoCheckoutSessionResponse {
-  checkout_url: string
+  checkout_url: string | null
   session_id: string
 }
 
@@ -33,6 +52,10 @@ export const createDodoCheckoutSession = async ({
   productCart,
   customer,
   returnUrl,
+  cancelUrl,
+  billingCurrency,
+  billingAddress,
+  featureFlags,
   metadata = {},
 }: CreateCheckoutSessionParams): Promise<DodoCheckoutSessionResponse> => {
   const apiKey = process.env.DODO_PAYMENTS_API_KEY
@@ -49,6 +72,9 @@ export const createDodoCheckoutSession = async ({
         "Each item in productCart must specify a valid product_id."
       )
     }
+    if (!item.quantity || item.quantity <= 0) {
+      throw new Error("Each item in productCart must have quantity > 0.")
+    }
   }
 
   const configuredReturnUrl = process.env.DODO_PAYMENTS_RETURN_URL
@@ -58,11 +84,22 @@ export const createDodoCheckoutSession = async ({
       : `${configuredReturnUrl.replace(/\/$/, "")}/checkout/success`
     : `${SITE_CONFIG.url}/checkout/success`
 
-  const payload = {
-    product_cart: productCart,
+  // Build payload following official docs
+  const payload: Record<string, any> = {
+    product_cart: productCart.map((it) => {
+      const base: any = {
+        product_id: it.product_id,
+        quantity: it.quantity,
+      }
+      if (typeof it.amount === "number") {
+        base.amount = it.amount
+      }
+      return base
+    }),
     customer: {
       email: customer.email,
       name: customer.name || customer.email.split("@")[0],
+      ...(customer.phone_number ? { phone_number: customer.phone_number } : {}),
     },
     return_url: returnUrl || defaultReturnUrl,
     metadata: Object.fromEntries(
@@ -71,6 +108,11 @@ export const createDodoCheckoutSession = async ({
         .map(([k, v]) => [k, String(v)])
     ),
   }
+
+  if (cancelUrl) payload.cancel_url = cancelUrl
+  if (billingCurrency) payload.billing_currency = billingCurrency
+  if (billingAddress) payload.billing_address = billingAddress
+  if (featureFlags) payload.feature_flags = featureFlags
 
   const res = await fetch(`${getDodoBaseUrl()}/checkouts`, {
     method: "POST",

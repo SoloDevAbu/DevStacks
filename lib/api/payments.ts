@@ -2,7 +2,7 @@ import { apiClient } from "@/lib/api/axios-instance"
 import type { CheckoutRequestInput } from "@/lib/validation/payment"
 
 export interface CheckoutResponse {
-  checkoutUrl: string
+  checkoutUrl: string | null
   sessionId: string
   paymentId: string
   adId?: string

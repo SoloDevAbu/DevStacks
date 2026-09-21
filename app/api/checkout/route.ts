@@ -91,7 +91,10 @@ export const POST = async (req: NextRequest) => {
             { status: 400 }
           )
         }
-        if (existingPayment.checkoutUrl && existingPayment.dodoCheckoutSessionId) {
+        if (
+          existingPayment.checkoutUrl &&
+          existingPayment.dodoCheckoutSessionId
+        ) {
           return NextResponse.json({
             checkoutUrl: existingPayment.checkoutUrl,
             sessionId: existingPayment.dodoCheckoutSessionId,
@@ -118,7 +121,11 @@ export const POST = async (req: NextRequest) => {
           .where(eq(tools.id, toolId))
           .limit(1)
 
-        if (!tool || tool.submitterId !== user.id || tool.status !== "approved") {
+        if (
+          !tool ||
+          tool.submitterId !== user.id ||
+          tool.status !== "approved"
+        ) {
           return NextResponse.json(
             { error: "Tool not found, not owned by you, or not yet approved" },
             { status: 403 }
@@ -143,7 +150,9 @@ export const POST = async (req: NextRequest) => {
           product.status !== "approved"
         ) {
           return NextResponse.json(
-            { error: "Product not found, not owned by you, or not yet approved" },
+            {
+              error: "Product not found, not owned by you, or not yet approved",
+            },
             { status: 403 }
           )
         }
@@ -192,7 +201,10 @@ export const POST = async (req: NextRequest) => {
             tx
           )
 
-          if (existingWeekCount + selectedWeeks.length > AD_MAX_WEEKS_PER_PRODUCT) {
+          if (
+            existingWeekCount + selectedWeeks.length >
+            AD_MAX_WEEKS_PER_PRODUCT
+          ) {
             throw new Error(`PRODUCT_CAP_EXCEEDED:${existingWeekCount}`)
           }
 
@@ -319,7 +331,10 @@ export const POST = async (req: NextRequest) => {
 
         // Check if unique constraint on idempotency key caused error
         if (idempotencyKey && txError?.code === "23505") {
-          const existing = await getPaymentByIdempotencyKey(idempotencyKey, user.id)
+          const existing = await getPaymentByIdempotencyKey(
+            idempotencyKey,
+            user.id
+          )
           if (existing?.checkoutUrl && existing.dodoCheckoutSessionId) {
             return NextResponse.json({
               checkoutUrl: existing.checkoutUrl,
@@ -333,7 +348,8 @@ export const POST = async (req: NextRequest) => {
         throw txError
       }
 
-      const { ad, payment, totalInCents, weekCount, tierBonusApplied } = dbResult
+      const { ad, payment, totalInCents, weekCount, tierBonusApplied } =
+        dbResult
 
       const adProductId = getAdDodoProductId(placement as AdPlacement)
 
@@ -357,13 +373,16 @@ export const POST = async (req: NextRequest) => {
           productCart: [
             {
               product_id: adProductId,
-              quantity: 1,
-              amount: totalInCents,
+              quantity: weekCount,
             },
           ],
           customer: {
             email: user.email,
             name: user.name,
+          },
+          billingCurrency: "USD",
+          featureFlags: {
+            allow_currency_selection: false,
           },
           metadata: {
             paymentId: payment.id,
@@ -496,7 +515,10 @@ export const POST = async (req: NextRequest) => {
       })
     } catch (txError: any) {
       if (idempotencyKey && txError?.code === "23505") {
-        const existing = await getPaymentByIdempotencyKey(idempotencyKey, user.id)
+        const existing = await getPaymentByIdempotencyKey(
+          idempotencyKey,
+          user.id
+        )
         if (existing?.checkoutUrl && existing.dodoCheckoutSessionId) {
           return NextResponse.json({
             checkoutUrl: existing.checkoutUrl,
@@ -526,7 +548,6 @@ export const POST = async (req: NextRequest) => {
       const productCartItem = {
         product_id: listingProductId,
         quantity: 1,
-        amount: plan.priceInCents,
       }
 
       const dodoSession = await createDodoCheckoutSession({
@@ -534,6 +555,10 @@ export const POST = async (req: NextRequest) => {
         customer: {
           email: user.email,
           name: user.name,
+        },
+        billingCurrency: "USD",
+        featureFlags: {
+          allow_currency_selection: false,
         },
         metadata: {
           paymentId: payment.id,
