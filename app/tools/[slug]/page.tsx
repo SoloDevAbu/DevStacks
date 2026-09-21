@@ -101,7 +101,7 @@ export const generateMetadata = async ({
   const description =
     tool.metaDescription ??
     tool.description ??
-    `Explore ${tool.name} — ${tool.tagline} on ${SITE_CONFIG.name}. Verified Premium developer tool listing with features, pricing, and battle-tested builds.`
+    `Explore ${tool.name} — ${tool.tagline} on ${SITE_CONFIG.name}. Verified Premium developer tool listing with features, pricing, and developer builds.`
   const canonicalUrl = `${SITE_CONFIG.url}/tools/${tool.slug}`
   const keywords = tool.keywords
     ? tool.keywords.split(",").map((k) => k.trim())

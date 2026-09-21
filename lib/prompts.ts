@@ -66,7 +66,7 @@ export const getPageAiGuide = (pathname: string): PageAiGuide => {
       whatItIs:
         "The algorithmic leaderboard tracking developer tools and products with the highest momentum, upvote velocity, and community engagement.",
       howToUse:
-        "Select a timeframe (Today, Week, Month, All-Time), filter by category pills (AI, Database, Auth), and evaluate battle-tested technologies.",
+        "Select a timeframe (Today, Week, Month, All-Time), filter by category pills (AI, Database, Auth), and evaluate trending technologies.",
       prompt: AI_PROMPTS.trending,
       suggestedQuestions: [
         "Why are these tools trending right now?",

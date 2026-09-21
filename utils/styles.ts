@@ -303,7 +303,7 @@ export const spotlightCard =
   "group relative rounded-xl border border-dashed border-border bg-linear-to-b from-slate-50/60 via-white to-white p-4 transition-all hover:border-slate-300 hover:shadow-2xs"
 
 export const sponsorCard =
-  "relative overflow-hidden rounded-xl border border-dashed border-indigo-200/80 bg-linear-to-br from-indigo-50/50 via-white to-violet-50/40 p-4 transition-all hover:border-indigo-300 hover:shadow-2xs"
+  "group/sponsor relative rounded-none border border-dashed border-indigo-200/90 bg-linear-to-br from-indigo-50/60 via-white to-violet-50/40 p-4 transition-all hover:border-indigo-400 hover:shadow-xs"
 
 export const trendingDevtoolRow =
   "group flex items-center justify-between gap-3 rounded-lg border border-transparent p-2 transition-all hover:border-slate-200/80 hover:bg-slate-50"
@@ -476,7 +476,7 @@ export const termsBulletList =
   "mt-2 list-inside list-disc space-y-1.5 pl-1 text-xs sm:text-sm text-slate-600 leading-relaxed"
 
 export const activeSponsorCard =
-  "relative overflow-hidden rounded-xl border border-indigo-200/90 bg-linear-to-br from-indigo-50/60 via-white to-blue-50/40 p-4 transition-all hover:border-indigo-300 hover:shadow-xs"
+  "group/sponsor relative rounded-none border border-dashed border-indigo-300/90 bg-linear-to-br from-indigo-50/70 via-white to-blue-50/50 p-4 transition-all hover:border-indigo-400 hover:shadow-xs"
 
 export const adDurationSelectorWrapper = "grid grid-cols-1 gap-3 sm:grid-cols-2"
 

@@ -1,9 +1,9 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import Link from "next/link"
 import { ArrowUpRight, Globe } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { CornerBrackets } from "@/components/shared/corner-brackets"
 import { useActiveAds } from "@/hooks/ads/use-active-ads"
 import { recordAdImpression } from "@/lib/api/ads"
 import { sponsorCard, activeSponsorCard } from "@/utils/styles"
@@ -25,7 +25,7 @@ export const SidebarAdCard = () => {
   if (isLoading) {
     return (
       <div className="flex flex-col gap-2.5">
-        <div className="h-36 w-full animate-pulse rounded-xl border border-dashed border-slate-200 bg-slate-50/50" />
+        <div className="h-36 w-full animate-pulse rounded-none border border-dashed border-slate-200 bg-slate-50/50" />
       </div>
     )
   }
@@ -40,7 +40,13 @@ export const SidebarAdCard = () => {
       <>
         <div className="flex flex-col gap-2.5">
           <div className={activeSponsorCard}>
-            <div className="flex items-center justify-between">
+            <CornerBrackets />
+
+            <div className="pointer-events-none absolute inset-0 overflow-hidden">
+              <div className="absolute -top-10 -right-10 size-24 rounded-full bg-indigo-200/25 blur-xl" />
+            </div>
+
+            <div className="relative z-10 flex items-center justify-between">
               <span className="font-mono text-[10px] font-bold tracking-wider text-indigo-700 uppercase">
                 PROMOTED
               </span>
@@ -49,7 +55,7 @@ export const SidebarAdCard = () => {
               </span>
             </div>
 
-            <div className="mt-2.5 flex items-start gap-2.5">
+            <div className="relative z-10 mt-2.5 flex items-start gap-2.5">
               {activeAd.logoUrl ? (
                 <img
                   src={activeAd.logoUrl}
@@ -76,7 +82,7 @@ export const SidebarAdCard = () => {
             </div>
 
             <Button
-              className="mt-3.5 h-8 w-full justify-between rounded-lg border-indigo-200 bg-white px-3 text-xs font-semibold text-indigo-700 shadow-2xs hover:bg-indigo-50"
+              className="relative z-10 mt-3.5 h-8 w-full justify-between rounded-lg border-indigo-200 bg-white px-3 text-xs font-semibold text-indigo-700 shadow-2xs hover:bg-indigo-50 cursor-pointer"
               nativeButton={false}
               render={
                 <a
@@ -90,7 +96,7 @@ export const SidebarAdCard = () => {
               <ArrowUpRight className="size-3.5" />
             </Button>
 
-            <div className="mt-2.5 flex justify-end">
+            <div className="relative z-10 mt-2.5 flex justify-end">
               <button
                 type="button"
                 onClick={() => setDialogOpen(true)}
@@ -115,27 +121,35 @@ export const SidebarAdCard = () => {
     <>
       <div className="flex flex-col gap-2.5">
         <div className={sponsorCard}>
-          <div className="flex items-center justify-between">
+          <CornerBrackets />
+
+          <div className="pointer-events-none absolute inset-0 overflow-hidden">
+            <div className="absolute -top-10 -right-10 size-24 rounded-full bg-indigo-200/25 blur-xl" />
+          </div>
+
+          <div className="relative z-10 flex items-center justify-between">
             <span className="font-mono text-[10px] font-bold tracking-wider text-indigo-700 uppercase">
               PROMOTED
             </span>
             <span className="rounded bg-indigo-100/80 px-1.5 py-0.5 font-mono text-[10px] font-semibold text-indigo-800">
-              50k+ Devs
+              Sponsor Slot
             </span>
           </div>
 
-          <h4 className="mt-2 text-xs font-bold text-slate-900">
-            Reach 50,000+ Builders
-          </h4>
-          <p className="mt-1 text-[11px] leading-relaxed text-slate-600">
-            Feature your developer tool, API, or infrastructure directly in our
-            ecosystem.
-          </p>
+          <div className="relative z-10">
+            <h4 className="mt-2 text-xs font-bold text-slate-900">
+              Reach Active Builders
+            </h4>
+            <p className="mt-1 text-[11px] leading-relaxed text-slate-600">
+              Feature your developer tool, API, or infrastructure directly in our
+              ecosystem.
+            </p>
+          </div>
 
           <Button
             onClick={() => setDialogOpen(true)}
             variant="outline"
-            className="mt-3.5 h-8 w-full justify-between rounded-lg border-indigo-200 bg-white px-3 text-xs font-semibold text-indigo-700 shadow-2xs hover:bg-indigo-50 cursor-pointer"
+            className="relative z-10 mt-3.5 h-8 w-full justify-between rounded-lg border-indigo-200 bg-white px-3 text-xs font-semibold text-indigo-700 shadow-2xs hover:bg-indigo-50 cursor-pointer"
           >
             <span>Reserve Placement</span>
             <ArrowUpRight className="size-3.5" />
