@@ -564,3 +564,9 @@ export const sectionCtaButton =
 
 export const sectionHeaderCtaButton =
   "group flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3.5 py-1.5 text-xs font-semibold text-slate-700 shadow-2xs transition-all hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900"
+
+export const sidebarLaunchRow =
+  "group flex items-center justify-between gap-3 rounded-lg border border-transparent p-2 transition-all hover:border-slate-200/80 hover:bg-slate-50 cursor-pointer"
+
+export const sidebarLaunchVotes =
+  "flex shrink-0 items-center gap-1 rounded-md border border-slate-200/80 bg-slate-50/80 px-2 py-0.5 font-mono text-[11px] font-semibold text-slate-600 transition-colors group-hover:border-amber-300 group-hover:bg-amber-50 group-hover:text-amber-700"
