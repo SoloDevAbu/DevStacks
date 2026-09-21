@@ -366,8 +366,14 @@ export const POST = async (req: NextRequest) => {
         throw txError
       }
 
-      const { ad, payment, totalInCents, discountInCents, weekCount, tierBonusApplied } =
-        dbResult
+      const {
+        ad,
+        payment,
+        totalInCents,
+        discountInCents,
+        weekCount,
+        tierBonusApplied,
+      } = dbResult
 
       const adProductId = getAdDodoProductId(placement as AdPlacement)
 
@@ -391,8 +397,8 @@ export const POST = async (req: NextRequest) => {
           productCart: [
             {
               product_id: adProductId,
-              quantity: weekCount,
-              ...(discountInCents > 0 ? { amount: totalInCents } : {}),
+              quantity: 1,
+              amount: totalInCents,
             },
           ],
           customer: {
