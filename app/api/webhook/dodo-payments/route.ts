@@ -175,7 +175,8 @@ export const POST = Webhooks({
       })
 
       if (payment.adId) {
-        await updateAdStatus(payment.adId, "pending_payment")
+        await deactivateAdWeeks(payment.adId)
+        await updateAdStatus(payment.adId, "paused")
       }
     }
   },

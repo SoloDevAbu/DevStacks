@@ -42,7 +42,7 @@ export const AD_EXISTING_TIER_DISCOUNT = {
   PREMIUM_PLUS: 1900,
 } as const
 
-export const AD_HOLD_DURATION_MINUTES = 30
+export const AD_HOLD_DURATION_MINUTES = 5
 
 export const AD_TRACKING_RATE_LIMIT = {
   IMPRESSION_WINDOW_MS: 30 * 60 * 1000,

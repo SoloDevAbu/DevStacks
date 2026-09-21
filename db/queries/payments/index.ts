@@ -1,7 +1,7 @@
 import { db } from "@/db"
 import { payments } from "@/db/schema"
 import type { Payment, NewPayment } from "@/db/schema"
-import { eq, desc, and } from "drizzle-orm"
+import { eq, desc, and, inArray } from "drizzle-orm"
 
 export type PaymentStatus =
   | "pending"
@@ -131,4 +131,21 @@ export const getUserPayments = async (userId: string): Promise<Payment[]> => {
     .from(payments)
     .where(eq(payments.userId, userId))
     .orderBy(desc(payments.createdAt))
+}
+
+export const cancelPendingPaymentsByAdIds = async (
+  adIds: string[],
+  client: any = db
+): Promise<void> => {
+  if (adIds.length === 0) return
+
+  await client
+    .update(payments)
+    .set({ status: "cancelled", updatedAt: new Date() })
+    .where(
+      and(
+        inArray(payments.adId, adIds),
+        eq(payments.status, "pending")
+      )
+    )
 }

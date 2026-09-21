@@ -209,3 +209,50 @@ export const incrementAdClick = async (id: string): Promise<void> => {
     .set({ clicksCount: sql`${ads.clicksCount} + 1` })
     .where(eq(ads.id, id))
 }
+
+export const cancelPendingAdsForProduct = async (
+  {
+    userId,
+    placement,
+    toolId,
+    productId,
+  }: {
+    userId: string
+    placement: AdPlacement
+    toolId?: string | null
+    productId?: string | null
+  },
+  client: any = db
+): Promise<string[]> => {
+  if (!toolId && !productId) return []
+
+  const conditions = [
+    eq(ads.userId, userId),
+    eq(ads.placement, placement),
+    eq(ads.status, "pending_payment" as AdStatus),
+  ]
+
+  if (toolId) conditions.push(eq(ads.toolId, toolId))
+  if (productId) conditions.push(eq(ads.productId, productId))
+
+  const pendingAds = await client
+    .select({ id: ads.id })
+    .from(ads)
+    .where(and(...conditions))
+
+  if (pendingAds.length === 0) return []
+
+  const pendingAdIds = pendingAds.map((a: { id: string }) => a.id)
+
+  await client
+    .update(adWeeks)
+    .set({ status: "expired" })
+    .where(inArray(adWeeks.adId, pendingAdIds))
+
+  await client
+    .update(ads)
+    .set({ status: "paused" as AdStatus, updatedAt: new Date() })
+    .where(inArray(ads.id, pendingAdIds))
+
+  return pendingAdIds
+}

@@ -19,12 +19,14 @@ import {
   getProductAdWeekCount,
   updateAdStatus,
   deactivateAdWeeks,
+  cancelPendingAdsForProduct,
 } from "@/db/queries/ads"
 import {
   createPayment,
   updatePaymentStatus,
   getPaymentByIdempotencyKey,
   updatePaymentDodoSession,
+  cancelPendingPaymentsByAdIds,
 } from "@/db/queries/payments"
 import { createDodoCheckoutSession } from "@/lib/payments/dodo"
 import { getISOWeekRange } from "@/utils/iso-weeks"
@@ -167,6 +169,21 @@ export const POST = async (req: NextRequest) => {
       let dbResult
       try {
         dbResult = await db.transaction(async (tx) => {
+          // 0. Cancel any previous pending ads for the same product+placement
+          const cancelledAdIds = await cancelPendingAdsForProduct(
+            {
+              userId: user.id,
+              placement: placement as AdPlacement,
+              toolId: toolId ?? null,
+              productId: productId ?? null,
+            },
+            tx
+          )
+
+          if (cancelledAdIds.length > 0) {
+            await cancelPendingPaymentsByAdIds(cancelledAdIds, tx)
+          }
+
           // 1. Acquire transaction-level advisory locks & check real-time availability
           for (const week of sortedWeeks) {
             await tx.execute(
@@ -303,6 +320,7 @@ export const POST = async (req: NextRequest) => {
             ad,
             payment,
             totalInCents,
+            discountInCents,
             weekCount,
             tierBonusApplied,
           }
@@ -348,7 +366,7 @@ export const POST = async (req: NextRequest) => {
         throw txError
       }
 
-      const { ad, payment, totalInCents, weekCount, tierBonusApplied } =
+      const { ad, payment, totalInCents, discountInCents, weekCount, tierBonusApplied } =
         dbResult
 
       const adProductId = getAdDodoProductId(placement as AdPlacement)
@@ -374,6 +392,7 @@ export const POST = async (req: NextRequest) => {
             {
               product_id: adProductId,
               quantity: weekCount,
+              ...(discountInCents > 0 ? { amount: totalInCents } : {}),
             },
           ],
           customer: {
@@ -392,6 +411,7 @@ export const POST = async (req: NextRequest) => {
             placement,
             weekCount,
             tierBonusApplied: tierBonusApplied ?? "",
+            discountInCents,
           },
         })
 
