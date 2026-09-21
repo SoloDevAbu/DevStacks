@@ -32,6 +32,11 @@ const nextConfig: NextConfig = {
       destination: "/discover/weekly-launches",
       permanent: true,
     },
+    {
+      source: "/checkout/success",
+      destination: "/",
+      permanent: false,
+    },
   ],
   headers: async () => [
     {

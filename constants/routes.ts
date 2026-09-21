@@ -19,6 +19,6 @@ export const ROUTES = {
   DASHBOARD_PROFILE: "/dashboard/profile",
   MAKERS: "/makers",
   MAKER: (username: string) => `/makers/${username}`,
-  CHECKOUT_SUCCESS: "/checkout/success",
+  CHECKOUT_SUCCESS: "/",
   CHECKOUT_CANCEL: "/pricing",
 } as const

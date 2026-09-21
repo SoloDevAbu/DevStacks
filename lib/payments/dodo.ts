@@ -79,10 +79,8 @@ export const createDodoCheckoutSession = async ({
 
   const configuredReturnUrl = process.env.DODO_PAYMENTS_RETURN_URL
   const defaultReturnUrl = configuredReturnUrl
-    ? configuredReturnUrl.endsWith("/checkout/success")
-      ? configuredReturnUrl
-      : `${configuredReturnUrl.replace(/\/$/, "")}/checkout/success`
-    : `${SITE_CONFIG.url}/checkout/success`
+    ? configuredReturnUrl.replace(/\/$/, "")
+    : SITE_CONFIG.url
 
   // Build payload following official docs
   const payload: Record<string, any> = {
