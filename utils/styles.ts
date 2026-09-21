@@ -555,3 +555,12 @@ export const cornerBracketBL =
 
 export const cornerBracketBR =
   "absolute right-[-1px] bottom-[-1px] size-2.5 border-r-2 border-b-2 border-slate-900"
+
+export const sectionBottomCta =
+  "flex items-center justify-center border-b border-dashed border-border bg-white px-6 py-4.5"
+
+export const sectionCtaButton =
+  "group flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-5 py-2 text-xs font-semibold text-slate-700 shadow-2xs transition-all hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900"
+
+export const sectionHeaderCtaButton =
+  "group flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3.5 py-1.5 text-xs font-semibold text-slate-700 shadow-2xs transition-all hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900"

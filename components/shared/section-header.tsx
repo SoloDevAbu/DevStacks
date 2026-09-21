@@ -6,8 +6,9 @@ import { sectionHeaderWrapper } from "@/utils/styles"
 interface SectionHeaderProps {
   title: string
   subtitle: string
-  viewAllText: string
+  viewAllText?: string
   viewAllHref?: string
+  action?: React.ReactNode
   className?: string
 }
 
@@ -16,6 +17,7 @@ export const SectionHeader = ({
   subtitle,
   viewAllText,
   viewAllHref = ROUTES.PRODUCTS,
+  action,
   className,
 }: SectionHeaderProps) => {
   return (
@@ -28,12 +30,16 @@ export const SectionHeader = ({
           {subtitle}
         </p>
       </div>
-      <Link
-        href={viewAllHref}
-        className="flex items-center gap-1 text-xs font-semibold text-slate-600 transition-colors hover:text-slate-900 md:text-sm"
-      >
-        {viewAllText} <span className="text-slate-400">→</span>
-      </Link>
+      {action ? (
+        action
+      ) : viewAllText ? (
+        <Link
+          href={viewAllHref}
+          className="flex items-center gap-1 text-xs font-semibold text-slate-600 transition-colors hover:text-slate-900 md:text-sm"
+        >
+          {viewAllText} <span className="text-slate-400">→</span>
+        </Link>
+      ) : null}
     </div>
   )
 }

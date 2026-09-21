@@ -37,7 +37,8 @@ export const LaunchesTabsSection = ({
   todaysLaunches,
   weeklyLaunches,
 }: LaunchesTabsSectionProps) => {
-  const [active, setActive] = useState<Tab>(TAB_TODAY)
+  // Default to TAB_WEEK (today tab commented out until sufficient daily launch volume)
+  const [active, setActive] = useState<Tab>(TAB_WEEK)
   const [todayPage, setTodayPage] = useState(1)
 
   const isToday = active === TAB_TODAY
@@ -56,8 +57,9 @@ export const LaunchesTabsSection = ({
 
   return (
     <section className="flex w-full flex-col">
-      {/* Full-width 50/50 toggle tab bar */}
+      {/* Full-width toggle tab bar — today's tab commented out */}
       <div className="flex w-full border-b border-dashed border-border bg-white">
+        {/* Today's launches tab — commented out until daily launch volume is sufficient
         <button
           id="tab-today"
           type="button"
@@ -89,21 +91,18 @@ export const LaunchesTabsSection = ({
               {todaysLaunches.length}
             </span>
           )}
-          {/* Active bottom indicator */}
           {isToday && (
             <span className="absolute bottom-0 left-0 h-0.5 w-full bg-slate-900" />
           )}
         </button>
+        */}
 
         <button
           id="tab-week"
           type="button"
           onClick={() => setActive(TAB_WEEK)}
           className={cn(
-            "relative flex w-1/2 items-center justify-center gap-2 px-6 py-4 text-sm font-semibold transition-colors",
-            !isToday
-              ? "bg-white text-slate-900"
-              : "bg-slate-50/60 text-slate-500 hover:bg-slate-50 hover:text-slate-700"
+            "relative flex w-full items-center justify-center gap-2 px-6 py-4 text-sm font-semibold transition-colors bg-white text-slate-900"
           )}
         >
           <CalendarDays
