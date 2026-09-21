@@ -146,3 +146,16 @@ export const PLANS: Record<Tier, PlanConfig> = {
     ],
   },
 }
+
+export const getPlanDodoProductId = (tier: Tier): string | undefined => {
+  const plan = PLANS[tier]
+  return (
+    plan?.dodoProductId ||
+    (tier === TIER.PREMIUM
+      ? process.env.DODO_PRODUCT_PREMIUM_LISTING
+      : tier === TIER.PREMIUM_PLUS
+        ? process.env.DODO_PRODUCT_PREMIUM_PLUS_LISTING
+        : undefined)
+  )
+}
+

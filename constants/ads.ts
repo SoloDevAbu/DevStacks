@@ -50,3 +50,16 @@ export const AD_TRACKING_RATE_LIMIT = {
   CHECKOUT_WINDOW_MS: 60 * 1000,
   CHECKOUT_MAX_ATTEMPTS: 10,
 } as const
+
+export const getAdDodoProductId = (
+  placement: AdPlacement
+): string | undefined => {
+  if (placement === AD_PLACEMENT.SIDEBAR) {
+    return process.env.DODO_PRODUCT_SIDEBAR_AD_WEEKLY
+  }
+  if (placement === AD_PLACEMENT.FEED) {
+    return process.env.DODO_PRODUCT_FEED_AD_WEEKLY
+  }
+  return undefined
+}
+

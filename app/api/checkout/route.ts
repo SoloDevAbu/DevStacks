@@ -10,8 +10,9 @@ import {
   AD_HOLD_DURATION_MINUTES,
   AD_TRACKING_RATE_LIMIT,
   type AdPlacement,
+  getAdDodoProductId,
 } from "@/constants/ads"
-import { PLANS, TIER, type Tier } from "@/constants/plans"
+import { PLANS, TIER, type Tier, getPlanDodoProductId } from "@/constants/plans"
 import {
   createAd,
   createAdWeeks,
@@ -269,6 +270,7 @@ export const POST = async (req: NextRequest) => {
               adId: ad.id,
               toolId: toolId ?? null,
               productId: productId ?? null,
+              tier: tierBonusApplied ?? null,
               amount: totalInCents,
               currency: "USD",
               status: "pending",
@@ -333,11 +335,28 @@ export const POST = async (req: NextRequest) => {
 
       const { ad, payment, totalInCents, weekCount, tierBonusApplied } = dbResult
 
+      const adProductId = getAdDodoProductId(placement as AdPlacement)
+
+      if (!adProductId) {
+        console.error(`Missing Dodo Product ID for placement: ${placement}`)
+        await updatePaymentStatus({ id: payment.id, status: "failed" })
+        await updateAdStatus(ad.id, "paused")
+        await deactivateAdWeeks(ad.id)
+        return NextResponse.json(
+          {
+            error:
+              "Ad product configuration is missing. Please contact support.",
+          },
+          { status: 500 }
+        )
+      }
+
       // External Dodo checkout call (executed outside DB transaction)
       try {
         const dodoSession = await createDodoCheckoutSession({
           productCart: [
             {
+              product_id: adProductId,
               quantity: 1,
               amount: totalInCents,
             },
@@ -489,17 +508,26 @@ export const POST = async (req: NextRequest) => {
       throw txError
     }
 
+    const listingProductId = getPlanDodoProductId(tier as Tier)
+
+    if (!listingProductId) {
+      console.error(`Missing Dodo Product ID for plan tier: ${tier}`)
+      await updatePaymentStatus({ id: payment.id, status: "failed" })
+      return NextResponse.json(
+        {
+          error:
+            "Listing plan configuration is missing. Please contact support.",
+        },
+        { status: 500 }
+      )
+    }
+
     try {
-      const productCartItem = plan.dodoProductId
-        ? {
-            product_id: plan.dodoProductId,
-            quantity: 1,
-            amount: plan.priceInCents,
-          }
-        : {
-            quantity: 1,
-            amount: plan.priceInCents,
-          }
+      const productCartItem = {
+        product_id: listingProductId,
+        quantity: 1,
+        amount: plan.priceInCents,
+      }
 
       const dodoSession = await createDodoCheckoutSession({
         productCart: [productCartItem],
