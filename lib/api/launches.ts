@@ -21,3 +21,35 @@ export const fetchWeeklyPremiumLaunches = async (
   })
   return data
 }
+
+export interface LaunchWeekSlot {
+  isoYear: number
+  isoWeek: number
+  startDate: string
+  endDate: string
+  weekLabel: string
+  dateRange: string
+  freeSlotsUsed: number
+  freeSlotsRemaining: number
+  isFreeFull: boolean
+  isPromoActive: boolean
+}
+
+export interface LaunchPromoInfo {
+  isPromoActive: boolean
+  promoClaimed: number
+  promoRemaining: number
+}
+
+export interface LaunchAvailabilityResponse {
+  weeks: LaunchWeekSlot[]
+  promo: LaunchPromoInfo
+}
+
+export const fetchLaunchAvailability =
+  async (): Promise<LaunchAvailabilityResponse> => {
+    const { data } = await apiClient.get<{ data: LaunchAvailabilityResponse }>(
+      "/launches/availability"
+    )
+    return data.data
+  }
