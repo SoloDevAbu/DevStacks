@@ -783,6 +783,35 @@ export const payments = pgTable(
 )
 
 // ---------------------------------------------------------------------------
+// external_link_visits — tracks outbound clicks & visitor attribution
+// ---------------------------------------------------------------------------
+
+export const externalLinkVisits = pgTable(
+  "external_link_visits",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    itemType: launchItemTypeEnum("item_type").notNull(),
+    toolId: uuid("tool_id").references(() => tools.id, { onDelete: "cascade" }),
+    productId: uuid("product_id").references(() => products.id, {
+      onDelete: "cascade",
+    }),
+    userId: text("user_id").references(() => users.id, { onDelete: "set null" }),
+    targetUrl: text("target_url").notNull(),
+    ipHash: text("ip_hash"),
+    userAgent: text("user_agent"),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (t) => [
+    index("external_link_visits_tool_id_idx").on(t.toolId),
+    index("external_link_visits_product_id_idx").on(t.productId),
+    index("external_link_visits_user_id_idx").on(t.userId),
+    index("external_link_visits_created_at_idx").on(t.createdAt),
+  ]
+)
+
+// ---------------------------------------------------------------------------
 // Relations (Drizzle ORM v1 API)
 // ---------------------------------------------------------------------------
 
@@ -808,6 +837,7 @@ export const relations = defineRelations(
     adWeeks,
     payments,
     launches,
+    externalLinkVisits,
   },
   (r) => ({
     users: {
@@ -825,6 +855,7 @@ export const relations = defineRelations(
       ads: r.many.ads(),
       payments: r.many.payments(),
       launches: r.many.launches(),
+      externalLinkVisits: r.many.externalLinkVisits(),
     },
     categories: {
       tools: r.many.tools(),
@@ -869,6 +900,7 @@ export const relations = defineRelations(
       payments: r.many.payments(),
       ads: r.many.ads(),
       launches: r.many.launches(),
+      externalLinkVisits: r.many.externalLinkVisits(),
     },
     products: {
       submitter: r.one.users({ from: r.products.submitterId, to: r.users.id }),
@@ -884,6 +916,7 @@ export const relations = defineRelations(
       payments: r.many.payments(),
       ads: r.many.ads(),
       launches: r.many.launches(),
+      externalLinkVisits: r.many.externalLinkVisits(),
     },
     makerFaqs: {
       user: r.one.users({ from: r.makerFaqs.userId, to: r.users.id }),
@@ -942,6 +975,20 @@ export const relations = defineRelations(
       tool: r.one.tools({ from: r.launches.toolId, to: r.tools.id }),
       product: r.one.products({
         from: r.launches.productId,
+        to: r.products.id,
+      }),
+    },
+    externalLinkVisits: {
+      user: r.one.users({
+        from: r.externalLinkVisits.userId,
+        to: r.users.id,
+      }),
+      tool: r.one.tools({
+        from: r.externalLinkVisits.toolId,
+        to: r.tools.id,
+      }),
+      product: r.one.products({
+        from: r.externalLinkVisits.productId,
         to: r.products.id,
       }),
     },
@@ -1014,3 +1061,6 @@ export type NewPayment = typeof payments.$inferInsert
 
 export type Launch = typeof launches.$inferSelect
 export type NewLaunch = typeof launches.$inferInsert
+
+export type ExternalLinkVisit = typeof externalLinkVisits.$inferSelect
+export type NewExternalLinkVisit = typeof externalLinkVisits.$inferInsert

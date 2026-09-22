@@ -7,7 +7,7 @@ import {
   toolFaqs,
   launches,
 } from "./schema"
-import { eq, or, ilike } from "drizzle-orm"
+import { eq, or, ilike, ne } from "drizzle-orm"
 
 type SeedPlatform =
   | "Web"
@@ -1500,66 +1500,32 @@ const seedToolsData: SeedToolDefinition[] = [
   },
 ]
 
-const ensureLaunchNestsUser = async (): Promise<string> => {
-  const existing = await db
-    .select({ id: users.id })
+const getSubmitterUser = async (): Promise<string> => {
+  const [existingUser] = await db
+    .select({ id: users.id, name: users.name, email: users.email })
     .from(users)
-    .where(
-      or(
-        eq(users.id, LAUNCHNESTS_USER_ID),
-        eq(users.username, "launchnests"),
-        eq(users.email, "official@launchnests.com")
-      )
-    )
+    .where(ne(users.id, LAUNCHNESTS_USER_ID))
     .limit(1)
 
-  if (existing[0]?.id) {
-    await db
-      .update(users)
-      .set({
-        name: "LaunchNests",
-        image: LAUNCHNESTS_FAVICON,
-        avatarUrl: LAUNCHNESTS_FAVICON,
-        username: "launchnests",
-        bio: "Official LaunchNests Account. Curating top developer tools, modern stacks, and indie launches.",
-        description:
-          "LaunchNests is the premier launch platform for developer tools, SaaS products, and indie hacker projects.",
-        websiteUrl: "https://launchnests.com",
-        twitterUrl: "https://twitter.com/launchnests",
-        githubUrl: "https://github.com/launchnests",
-        linkedinUrl: "https://linkedin.com/company/launchnests",
-        country: "United States",
-        state: "California",
-        updatedAt: new Date(),
-      })
-      .where(eq(users.id, existing[0].id))
+  const submitter =
+    existingUser ??
+    (
+      await db
+        .select({ id: users.id, name: users.name, email: users.email })
+        .from(users)
+        .limit(1)
+    )[0]
 
-    return existing[0].id
+  if (!submitter) {
+    throw new Error(
+      "No user found in the database. Please ensure a user account exists in the database."
+    )
   }
 
-  const [created] = await db
-    .insert(users)
-    .values({
-      id: LAUNCHNESTS_USER_ID,
-      name: "LaunchNests",
-      email: "official@launchnests.com",
-      emailVerified: true,
-      image: LAUNCHNESTS_FAVICON,
-      avatarUrl: LAUNCHNESTS_FAVICON,
-      username: "launchnests",
-      bio: "Official LaunchNests Account. Curating top developer tools, modern stacks, and indie launches.",
-      description:
-        "LaunchNests is the premier launch platform for developer tools, SaaS products, and indie hacker projects.",
-      websiteUrl: "https://launchnests.com",
-      twitterUrl: "https://twitter.com/launchnests",
-      githubUrl: "https://github.com/launchnests",
-      linkedinUrl: "https://linkedin.com/company/launchnests",
-      country: "United States",
-      state: "California",
-    })
-    .returning({ id: users.id })
-
-  return created.id
+  console.log(
+    `👤 Submitting tools on behalf of user: ${submitter.name} (${submitter.email}) [ID: ${submitter.id}]`
+  )
+  return submitter.id
 }
 
 const ensureCategory = async (name: string, slug: string): Promise<string> => {
@@ -1596,11 +1562,10 @@ const ensureCategory = async (name: string, slug: string): Promise<string> => {
   return fallback.id
 }
 
-const seed = async () => {
-  console.log("🌱 Starting LaunchNests developer tools database seed...")
+export const seedDatabase = async () => {
+  console.log("🌱 Starting developer tools database seed...")
 
-  const userId = await ensureLaunchNestsUser()
-  console.log(`✅ Verified LaunchNests account: ${userId}`)
+  const userId = await getSubmitterUser()
 
   const now = new Date()
   const { year: currentYear, week: currentWeek, startDate: weekStart, endDate: weekEnd } =
@@ -1669,6 +1634,7 @@ const seed = async () => {
       .onConflictDoUpdate({
         target: tools.slug,
         set: {
+          submitterId: toolPayload.submitterId,
           name: toolPayload.name,
           tagline: toolPayload.tagline,
           description: toolPayload.description,
@@ -1746,6 +1712,7 @@ const seed = async () => {
         await db
           .update(launches)
           .set({
+            submitterId: userId,
             isoYear: currentYear,
             isoWeek: currentWeek,
             startDate: weekStart,
@@ -1763,11 +1730,20 @@ const seed = async () => {
     }
   }
 
-  console.log(`✨ Successfully seeded ${seededCount} developer tools for LaunchNests!`)
-  process.exit(0)
+  // Clean up temporary user_launchnests if it was created previously
+  await db.delete(users).where(eq(users.id, LAUNCHNESTS_USER_ID)).catch(() => {})
+
+  console.log(`✨ Successfully seeded ${seededCount} developer tools for user ID: ${userId}!`)
 }
 
-seed().catch((err) => {
-  console.error("❌ Failed to seed database:", err)
-  process.exit(1)
-})
+export const seed = seedDatabase
+
+if (process.argv[1]?.includes("seed")) {
+  seedDatabase()
+    .then(() => process.exit(0))
+    .catch((err) => {
+      console.error("❌ Failed to seed database:", err)
+      process.exit(1)
+    })
+}
+
