@@ -155,19 +155,27 @@ export const sectionHeaderBox =
 
 export const sectionContentBox = "px-6 py-6 md:px-8"
 
-export const productSpecsContainer =
-  "grid grid-cols-3 divide-x divide-dashed divide-border bg-white"
+export const specContainer =
+  "flex flex-col divide-y divide-dashed divide-border bg-white"
 
-export const toolSpecsContainer =
-  "grid grid-cols-4 divide-x divide-dashed divide-border bg-white"
+export const specRow =
+  "flex flex-col gap-2 px-6 py-4.5 transition-colors hover:bg-slate-50/30 sm:flex-row sm:items-center sm:justify-between md:px-8"
 
-export const specItemBox =
-  "flex flex-col gap-1.5 p-3.5 sm:p-4.5 min-w-0 transition-colors hover:bg-slate-50/50"
+export const specRowHeader = "flex items-center gap-2.5"
 
-export const specItemLabel =
-  "flex items-center gap-1.5 font-mono text-[10px] font-bold tracking-wider text-slate-400 uppercase truncate"
+export const specBadge =
+  "inline-flex size-5 shrink-0 items-center justify-center rounded-sm bg-slate-100 font-mono text-[10px] font-bold text-slate-700"
 
-export const specItemValue = "truncate text-xs font-bold text-slate-900"
+export const specRowTitle =
+  "font-mono text-xs font-bold tracking-wider text-slate-900 uppercase"
+
+export const specRowValue = "text-xs font-bold text-slate-900 sm:text-sm"
+
+export const productSpecsContainer = specContainer
+export const toolSpecsContainer = specContainer
+export const specItemBox = specRow
+export const specItemLabel = specRowTitle
+export const specItemValue = specRowValue
 
 export const toolDeepDiveContainer =
   "flex flex-col divide-y divide-dashed divide-border bg-white"
@@ -262,6 +270,13 @@ export const cardTagIcon = "size-3.5 shrink-0 text-slate-400"
 export const cardTagsGroup = "flex flex-wrap items-center gap-1.5"
 export const cardTagBadge =
   "rounded-md border border-slate-200/80 bg-slate-100/70 px-2 py-0.5 text-xs font-medium text-slate-600 transition-colors hover:bg-slate-200/60"
+
+export const socialIconButton =
+  "flex size-8 items-center justify-center rounded-lg border border-slate-200/80 bg-white shadow-2xs transition-colors hover:border-slate-300 hover:bg-slate-50"
+export const socialIconImage = "size-4 object-contain"
+
+export const specPlatformBadge =
+  "inline-flex items-center gap-1.5 rounded-md border border-slate-200/80 bg-slate-50/80 px-2 py-0.5 text-xs font-medium text-slate-700"
 
 export const toolViewsPill =
   "inline-flex items-center gap-1 text-xs font-medium text-slate-400"

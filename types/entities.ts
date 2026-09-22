@@ -171,5 +171,3 @@ export type Stat = {
   icon: LucideIcon | React.ComponentType<{ className?: string }>
   color: string
 }
-
-

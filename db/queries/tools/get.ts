@@ -1,6 +1,6 @@
 import { db } from "@/db"
 import { tools, categories, users } from "@/db/schema"
-import { eq, ilike, or } from "drizzle-orm"
+import { eq, ilike, or, sql } from "drizzle-orm"
 
 export const getToolBySlugOrName = async (slugOrName: string) => {
   const [row] = await db
@@ -63,7 +63,7 @@ export const getToolBySlug = async (slug: string) => {
       submitterUsername: users.username,
       submitterCountry: users.country,
       submitterState: users.state,
-      submitterAvatarUrl: users.avatarUrl,
+      submitterAvatarUrl: sql<string | null>`COALESCE(${users.image}, ${users.avatarUrl})`,
       createdAt: tools.createdAt,
       updatedAt: tools.updatedAt,
     })

@@ -27,10 +27,17 @@ import { getSocialCardImage } from "@/lib/seo/social-image"
 import { formatGeoMetaTags } from "@/utils/country"
 import { AI_PROVIDERS } from "@/constants/ai-providers"
 import { AI_PROMPTS } from "@/lib/prompts"
+import { PLATFORMS } from "@/constants/platforms"
+import { EntitySocialLinks } from "@/components/shared/entity-social-links"
 import { getProducts } from "@/db/queries/products/list"
 import { getProductFaqs } from "@/db/queries/faqs/get-faqs"
-import { MakerProfileCard } from "@/components/shared/maker-profile-card"
-import { productSchema, breadcrumbSchema, faqSchema, safeJsonLd } from "@/lib/seo/schema"
+import { MakerDetailSection } from "@/components/shared/maker-detail-section"
+import {
+  productSchema,
+  breadcrumbSchema,
+  faqSchema,
+  safeJsonLd,
+} from "@/lib/seo/schema"
 import { ProductLogo } from "@/components/shared/product-logo"
 import { getFaviconUrl } from "@/utils/urls"
 import { VerifiedBadge } from "@/components/shared/verified-badge"
@@ -45,10 +52,13 @@ import { cn } from "@/lib/utils"
 import {
   pricingBadgeColor,
   sectionContentBox,
-  productSpecsContainer,
-  specItemBox,
-  specItemLabel,
-  specItemValue,
+  specContainer,
+  specRow,
+  specRowHeader,
+  specBadge,
+  specRowTitle,
+  specRowValue,
+  specPlatformBadge,
   toolDeepDiveContainer,
   deepDiveItem,
   deepDiveItemHeader,
@@ -109,7 +119,10 @@ export const generateMetadata = async ({
       ]
 
   const socialImage = getSocialCardImage(product.logoUrl, product.images)
-  const geoTags = formatGeoMetaTags(product.submitterCountry, product.submitterState)
+  const geoTags = formatGeoMetaTags(
+    product.submitterCountry,
+    product.submitterState
+  )
 
   return {
     title,
@@ -225,6 +238,17 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
     `${productUrl}.md`
   )
 
+  const hasSocialLinks = Boolean(
+    product.websiteUrl ||
+    product.githubUrl ||
+    product.twitterUrl ||
+    product.linkedinUrl ||
+    product.discordUrl ||
+    product.appStoreUrl ||
+    product.playStoreUrl ||
+    product.chromeExtensionUrl
+  )
+
   return (
     <>
       <script
@@ -306,22 +330,6 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
                     </Badge>
                   ))}
                 </div>
-
-                {(product.submitterName || product.submitterUsername) && (
-                  <div className="mt-2 flex items-center gap-2">
-                    <span className="font-mono text-[11px] font-semibold text-slate-400 uppercase">
-                      Built by
-                    </span>
-                    <MakerProfileCard
-                      name={product.submitterName}
-                      username={product.submitterUsername}
-                      avatarUrl={product.submitterAvatarUrl}
-                      country={product.submitterCountry}
-                      state={product.submitterState}
-                      size="sm"
-                    />
-                  </div>
-                )}
               </div>
             </div>
 
@@ -331,12 +339,25 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
               tier={product.tier}
               initialLikes={product.likesCount}
               websiteUrl={product.websiteUrl}
-              githubUrl={product.githubUrl}
-              appStoreUrl={product.appStoreUrl}
-              playStoreUrl={product.playStoreUrl}
-              chromeExtensionUrl={product.chromeExtensionUrl}
             />
           </div>
+
+          {hasSocialLinks && (
+            <div className="flex items-center justify-center pt-1">
+              <EntitySocialLinks
+                websiteUrl={product.websiteUrl}
+                githubUrl={product.githubUrl}
+                twitterUrl={product.twitterUrl}
+                linkedinUrl={product.linkedinUrl}
+                discordUrl={product.discordUrl}
+                appStoreUrl={product.appStoreUrl}
+                playStoreUrl={product.playStoreUrl}
+                chromeExtensionUrl={product.chromeExtensionUrl}
+                tier={product.tier}
+                className="justify-center"
+              />
+            </div>
+          )}
 
           {/* Ask AI Sub-tray with dashed divider */}
           <div className="-mx-6 mt-2 -mb-8 flex flex-col gap-3 border-t border-dashed border-border bg-slate-50/50 px-6 py-4 sm:flex-row sm:items-center sm:justify-between md:-mx-8 md:px-8">
@@ -465,50 +486,6 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
           </section>
         )}
 
-        {/* Section 2: Product Specifications */}
-        <section className="border-b border-dashed border-border bg-white">
-          <DetailSectionHeader
-            title="Product Specifications"
-            icon={Sliders}
-            theme="slate"
-          />
-
-          <div className={productSpecsContainer}>
-            <div className={specItemBox}>
-              <span className={specItemLabel}>
-                <DollarSign className="size-3 text-slate-400" />
-                Pricing Model
-              </span>
-              <span className={specItemValue}>{product.pricing}</span>
-            </div>
-
-            <div className={specItemBox}>
-              <span className={specItemLabel}>
-                <FolderGit2 className="size-3 text-slate-400" />
-                Category
-              </span>
-              <span className={specItemValue}>
-                {product.category ?? "Developer Tools"}
-              </span>
-            </div>
-
-            <div className={specItemBox}>
-              <span className={specItemLabel}>
-                <Laptop className="size-3 text-slate-400" />
-                Platforms
-              </span>
-              <span
-                className={specItemValue}
-                title={product.platforms?.join(", ")}
-              >
-                {product.platforms && product.platforms.length > 0
-                  ? product.platforms.join(", ")
-                  : "Web / Cloud"}
-              </span>
-            </div>
-          </div>
-        </section>
-
         {/* Section 3: Value Proposition & Deep Dive */}
         {(product.problemStatement ||
           product.solution ||
@@ -623,6 +600,84 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
             </div>
           </section>
         )}
+
+        {/* Section 4: Product Specifications */}
+        <section className="border-b border-dashed border-border bg-white">
+          <DetailSectionHeader
+            title="Product Specifications"
+            subtitle={`Technical overview, pricing model, and supported platforms for ${product.name}`}
+            icon={Sliders}
+            theme="slate"
+          />
+
+          <div className={specContainer}>
+            <div className={specRow}>
+              <div className={specRowHeader}>
+                <span className={specBadge}>
+                  <DollarSign className="size-3 text-slate-600" />
+                </span>
+                <h3 className={specRowTitle}>Pricing Model</h3>
+              </div>
+              <span className={specRowValue}>{product.pricing}</span>
+            </div>
+
+            <div className={specRow}>
+              <div className={specRowHeader}>
+                <span className={specBadge}>
+                  <FolderGit2 className="size-3 text-slate-600" />
+                </span>
+                <h3 className={specRowTitle}>Category</h3>
+              </div>
+              <span className={specRowValue}>
+                {product.category ?? "Developer Tools"}
+              </span>
+            </div>
+
+            <div className={specRow}>
+              <div className={specRowHeader}>
+                <span className={specBadge}>
+                  <Laptop className="size-3 text-slate-600" />
+                </span>
+                <h3 className={specRowTitle}>Platforms</h3>
+              </div>
+              <div className="flex flex-wrap items-center gap-1.5">
+                {product.platforms && product.platforms.length > 0 ? (
+                  product.platforms.map((platformId) => {
+                    const platformConfig = PLATFORMS.find(
+                      (p) => p.id === platformId
+                    )
+                    return (
+                      <span key={platformId} className={specPlatformBadge}>
+                        {platformConfig?.logo && (
+                          <Image
+                            src={platformConfig.logo}
+                            alt={platformConfig.label}
+                            width={14}
+                            height={14}
+                            className="size-3.5 object-contain"
+                          />
+                        )}
+                        {platformConfig?.label ?? platformId}
+                      </span>
+                    )
+                  })
+                ) : (
+                  <span className={specRowValue}>Web / Cloud</span>
+                )}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Section 5: Built By */}
+        <MakerDetailSection
+          entityName={product.name}
+          name={product.submitterName}
+          username={product.submitterUsername}
+          avatarUrl={product.submitterAvatarUrl}
+          country={product.submitterCountry}
+          state={product.submitterState}
+        />
 
         {/* Section: Comments & Community Discussion */}
         <CommentsSection
