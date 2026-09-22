@@ -54,6 +54,7 @@ import {
 } from "@/components/shared/faq-builder"
 import { toast } from "@/components/ui/toast"
 import { getFaviconUrl, getDuckDuckGoFaviconUrl } from "@/utils/urls"
+import { LaunchWeekPicker } from "@/components/shared/launch-week-picker"
 
 const emptyForm = {
   name: "",
@@ -86,6 +87,8 @@ const emptyForm = {
   pricing: "Free" as const,
   platforms: [] as string[],
   faqs: [] as FaqBuilderItem[],
+  launchYear: undefined as number | undefined,
+  launchWeek: undefined as number | undefined,
 }
 
 export const SubmitContent = () => {
@@ -321,6 +324,31 @@ export const SubmitContent = () => {
                 Essential details required to list and index your developer tool
                 on the directory.
               </p>
+            </div>
+
+            {/* Subsection: Launch Week & Scheduling */}
+            <div className="flex flex-col gap-5 border-b border-dashed border-border px-6 py-6 md:px-8 md:py-8">
+              <div className="flex flex-col gap-1">
+                <h3 className="text-sm font-bold text-slate-900">
+                  Launch Week & Scheduling
+                </h3>
+                <p className="text-xs text-slate-500">
+                  Cohorts go live every Monday at 00:00 UTC with community voting.
+                  Select which upcoming week you want to launch.
+                </p>
+              </div>
+
+              <LaunchWeekPicker
+                selectedYear={form.launchYear}
+                selectedWeek={form.launchWeek}
+                onSelectWeek={(year, week) =>
+                  setForm((prev) => ({
+                    ...prev,
+                    launchYear: year,
+                    launchWeek: week,
+                  }))
+                }
+              />
             </div>
 
             {/* Subsection: Core Identity & Links */}

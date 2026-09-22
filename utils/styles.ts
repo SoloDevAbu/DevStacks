@@ -517,6 +517,32 @@ export const promoBanner =
 export const promoBannerSuccess =
   "flex items-start gap-2.5 rounded-lg border border-emerald-200 bg-emerald-50/70 p-3 text-xs text-emerald-900"
 
+export const launchWeekCard = (
+  selected: boolean,
+  disabled: boolean,
+  isFull: boolean
+) =>
+  cn(
+    "relative flex flex-col rounded-xl border p-3.5 text-left transition-all",
+    disabled || isFull
+      ? "cursor-not-allowed border-slate-200/60 bg-slate-50/70 opacity-60"
+      : "cursor-pointer hover:border-slate-300 hover:shadow-xs",
+    selected && !isFull
+      ? "border-indigo-600 bg-indigo-50/50 shadow-xs ring-1 ring-indigo-500/30"
+      : !disabled && !isFull && !selected
+        ? "border-slate-200/80 bg-white"
+        : ""
+  )
+
+export const launchWeekGrid =
+  "grid grid-cols-1 gap-2.5 sm:grid-cols-2 md:grid-cols-4"
+
+export const launchWeekUpsellCallout =
+  "flex flex-col gap-2 rounded-xl border border-amber-200 bg-linear-to-r from-amber-50 to-orange-50/50 p-4 text-xs text-amber-900"
+
+export const launchPromoCelebrationCallout =
+  "flex items-start gap-3 rounded-xl border border-emerald-200/80 bg-linear-to-r from-emerald-50/80 via-teal-50/50 to-blue-50/40 p-4 text-xs text-emerald-950"
+
 export const noSubmissionsCard =
   "flex flex-col items-center gap-3 rounded-xl border border-dashed border-amber-300 bg-amber-50/50 p-6 text-center"
 
