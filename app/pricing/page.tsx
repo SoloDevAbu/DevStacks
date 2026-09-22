@@ -78,9 +78,9 @@ const PricingPage = () => {
           <section className={launchPromoFullWidthSection}>
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-center gap-3">
-                <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-amber-500/20 text-amber-700">
+                {/* <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-amber-500/20 text-amber-700">
                   <Sparkles className="size-4" />
-                </span>
+                </span> */}
                 <div>
                   <h3 className="text-sm font-bold text-slate-900 sm:text-base">
                     {LAUNCH_PROMO.PROMO_TITLE}
@@ -101,14 +101,14 @@ const PricingPage = () => {
                 Claim Free Listing
               </Button>
             </div>
-            <div className={launchPromoFullWidthPerksGrid}>
+            {/* <div className={launchPromoFullWidthPerksGrid}>
               {LAUNCH_PROMO.PERKS.map((perk, i) => (
                 <div key={i} className={launchPromoCardItem}>
                   <Check className="size-3.5 shrink-0 text-emerald-600" />
                   <span>{perk}</span>
                 </div>
               ))}
-            </div>
+            </div> */}
           </section>
         )}
         <PricingSponsorshipSection />

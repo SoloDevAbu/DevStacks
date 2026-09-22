@@ -13,6 +13,7 @@ export interface ActiveAdDto {
   slug: string
   ctaText: string
   type: "tool" | "product"
+  tier?: Tier
 }
 
 export interface UserSubmissionDto {

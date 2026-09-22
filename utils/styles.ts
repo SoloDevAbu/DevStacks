@@ -475,8 +475,17 @@ export const termsRowBody =
 export const termsBulletList =
   "mt-2 list-inside list-disc space-y-1.5 pl-1 text-xs sm:text-sm text-slate-600 leading-relaxed"
 
-export const activeSponsorCard =
-  "group/sponsor relative rounded-none border border-dashed border-indigo-300/90 bg-linear-to-br from-indigo-50/70 via-white to-blue-50/50 p-4 transition-all hover:border-indigo-400 hover:shadow-xs"
+export const activeSponsorCardBg = (tier?: Tier) =>
+  cn(
+    "group/sponsor relative rounded-none border border-dashed p-4 transition-all hover:shadow-xs overflow-hidden",
+    tier === TIER.PREMIUM_PLUS
+      ? "border-amber-300/90 bg-linear-to-br from-amber-50/70 via-white to-orange-50/50 hover:border-amber-400"
+      : tier === TIER.PREMIUM
+        ? "border-blue-300/90 bg-linear-to-br from-blue-50/70 via-white to-indigo-50/50 hover:border-blue-400"
+        : "border-indigo-300/90 bg-linear-to-br from-indigo-50/70 via-white to-blue-50/50 hover:border-indigo-400"
+  )
+
+export const activeSponsorCard = activeSponsorCardBg()
 
 export const adDurationSelectorWrapper = "grid grid-cols-1 gap-3 sm:grid-cols-2"
 
@@ -566,7 +575,14 @@ export const sectionHeaderCtaButton =
   "group flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3.5 py-1.5 text-xs font-semibold text-slate-700 shadow-2xs transition-all hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900"
 
 export const sidebarLaunchRow =
-  "group flex items-center justify-between gap-3 rounded-lg border border-transparent p-2 transition-all hover:border-slate-200/80 hover:bg-slate-50 cursor-pointer"
+  "group relative flex items-center justify-between gap-3 overflow-hidden rounded-lg border p-2 transition-all cursor-pointer"
+
+export const sidebarLaunchRowBorder = (tier: Tier) =>
+  tier === TIER.PREMIUM_PLUS
+    ? "border-amber-200/70 hover:border-amber-300"
+    : tier === TIER.PREMIUM
+      ? "border-blue-200/70 hover:border-blue-300"
+      : "border-transparent hover:border-slate-200/80 hover:bg-slate-50"
 
 export const sidebarLaunchVotes =
   "flex shrink-0 items-center gap-1 rounded-md border border-slate-200/80 bg-slate-50/80 px-2 py-0.5 font-mono text-[11px] font-semibold text-slate-600 transition-colors group-hover:border-amber-300 group-hover:bg-amber-50 group-hover:text-amber-700"

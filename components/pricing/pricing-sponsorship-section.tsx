@@ -55,23 +55,12 @@ export const PricingSponsorshipSection = () => {
         {/* Section Header */}
         <div className={pricingSectionHeader}>
           <div>
-            <div className="inline-flex items-center gap-1.5 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-[11px] font-bold text-indigo-700">
-              <Megaphone className="size-3.5" /> Direct Builder Sponsorships
-            </div>
-            <h2 className={pricingSectionTitle}>
-              High-Authority Sponsorship Slots
-            </h2>
+            <h2 className={pricingSectionTitle}>Sponsorship Slots</h2>
             <p className={pricingSectionSubtitle}>
               Instant self-serve activation powered by Dodo Payments. Per-week
               ISO scheduling with 3 slots per week.
             </p>
           </div>
-          <Badge
-            variant="outline"
-            className="self-start rounded-full border-indigo-200 bg-white px-3 py-1 text-[11px] font-semibold text-indigo-700 sm:self-auto"
-          >
-            Instant Activation • 3 Slots/Wk
-          </Badge>
         </div>
 
         {/* Pricing Sub-Section */}
@@ -84,9 +73,6 @@ export const PricingSponsorshipSection = () => {
                 <span className="flex size-9 items-center justify-center rounded-lg bg-indigo-600 text-white shadow-xs">
                   <Megaphone className="size-4" />
                 </span>
-                <Badge className="bg-indigo-600 text-white hover:bg-indigo-700">
-                  <Sparkles className="mr-1 size-3" /> Right Sidebar
-                </Badge>
               </div>
 
               <h3 className="mt-4 text-lg font-bold text-slate-900">
@@ -96,7 +82,9 @@ export const PricingSponsorshipSection = () => {
                 Persistent rail seen across every tool, product, and maker page
               </p>
 
-              <div className={`${pricingPriceBox} border border-indigo-100 bg-indigo-50/50`}>
+              <div
+                className={`${pricingPriceBox} border border-indigo-100 bg-indigo-50/50`}
+              >
                 <span className="text-2xl font-extrabold text-indigo-950">
                   ${AD_PRICING[AD_PLACEMENT.SIDEBAR].pricePerWeek}
                 </span>
@@ -116,8 +104,8 @@ export const PricingSponsorshipSection = () => {
                 <li className="flex items-start gap-2">
                   <Check className="mt-0.5 size-3.5 shrink-0 text-emerald-600" />
                   <span>
-                    <strong>Direct Outbound Links:</strong> Custom CTA button linking
-                    directly to your landing page or sign-up.
+                    <strong>Direct Outbound Links:</strong> Custom CTA button
+                    linking directly to your landing page or sign-up.
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
@@ -132,8 +120,10 @@ export const PricingSponsorshipSection = () => {
               <div className={pricingBonusBox}>
                 <Gift className="mt-0.5 size-3.5 shrink-0 text-amber-600" />
                 <span>
-                  Book {AD_TIER_BONUS.PREMIUM_THRESHOLD}+ weeks → <strong>Free Premium</strong> upgrade.{" "}
-                  Book {AD_TIER_BONUS.PREMIUM_PLUS_THRESHOLD} weeks → <strong>Free Premium+</strong> upgrade.
+                  Book {AD_TIER_BONUS.PREMIUM_THRESHOLD}+ weeks →{" "}
+                  <strong>Free Premium</strong> upgrade. Book{" "}
+                  {AD_TIER_BONUS.PREMIUM_PLUS_THRESHOLD} weeks →{" "}
+                  <strong>Free Premium+</strong> upgrade.
                 </span>
               </div>
             </div>
@@ -155,22 +145,19 @@ export const PricingSponsorshipSection = () => {
                 <span className="flex size-9 items-center justify-center rounded-lg bg-slate-900 text-white shadow-xs">
                   <Layers className="size-4" />
                 </span>
-                <Badge
-                  variant="outline"
-                  className="border-indigo-200 bg-indigo-50/50 text-indigo-700"
-                >
-                  <Zap className="mr-1 size-3" /> Native Feed
-                </Badge>
               </div>
 
               <h3 className="mt-4 text-lg font-bold text-slate-900">
                 Discovery Feed Placement
               </h3>
               <p className="mt-1 text-xs text-slate-500">
-                Seamless native card injected directly between organic directory listings
+                Seamless native card injected directly between organic directory
+                listings
               </p>
 
-              <div className={`${pricingPriceBox} border border-slate-200 bg-slate-50/50`}>
+              <div
+                className={`${pricingPriceBox} border border-slate-200 bg-slate-50/50`}
+              >
                 <span className="text-2xl font-extrabold text-slate-900">
                   ${AD_PRICING[AD_PLACEMENT.FEED].pricePerWeek}
                 </span>
@@ -190,8 +177,8 @@ export const PricingSponsorshipSection = () => {
                 <li className="flex items-start gap-2">
                   <Check className="mt-0.5 size-3.5 shrink-0 text-emerald-600" />
                   <span>
-                    <strong>Native Developer Card:</strong> Includes logo, headline,
-                    description, and direct external visit action.
+                    <strong>Native Developer Card:</strong> Includes logo,
+                    headline, description, and direct external visit action.
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
@@ -206,8 +193,10 @@ export const PricingSponsorshipSection = () => {
               <div className={pricingBonusBox}>
                 <Gift className="mt-0.5 size-3.5 shrink-0 text-amber-600" />
                 <span>
-                  Book {AD_TIER_BONUS.PREMIUM_THRESHOLD}+ weeks → <strong>Free Premium</strong> upgrade.{" "}
-                  Book {AD_TIER_BONUS.PREMIUM_PLUS_THRESHOLD} weeks → <strong>Free Premium+</strong> upgrade.
+                  Book {AD_TIER_BONUS.PREMIUM_THRESHOLD}+ weeks →{" "}
+                  <strong>Free Premium</strong> upgrade. Book{" "}
+                  {AD_TIER_BONUS.PREMIUM_PLUS_THRESHOLD} weeks →{" "}
+                  <strong>Free Premium+</strong> upgrade.
                 </span>
               </div>
             </div>
@@ -224,9 +213,9 @@ export const PricingSponsorshipSection = () => {
         </div>
       </section>
 
-      {/* 2. Listing Tiers Section */}
+      {/* 2. Listing Tiers Section (Commented out for now)
       <section className={pricingSection}>
-        {/* Section Header */}
+        // Section Header
         <div className={pricingSectionHeader}>
           <div>
             <div className="inline-flex items-center gap-1.5 rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-[11px] font-bold text-blue-700">
@@ -247,9 +236,9 @@ export const PricingSponsorshipSection = () => {
           </Badge>
         </div>
 
-        {/* Pricing Sub-Section */}
+        // Pricing Sub-Section
         <div className={pricingTiersGrid}>
-          {/* Community Free */}
+          // Community Free
           <div className={pricingColumn}>
             <CornerBrackets />
             <div>
@@ -295,7 +284,7 @@ export const PricingSponsorshipSection = () => {
             </Button>
           </div>
 
-          {/* Premium Tier (Featured) */}
+          // Premium Tier (Featured)
           <div
             className={`${pricingColumn} bg-linear-to-b from-blue-50/30 via-white to-white`}
           >
@@ -349,7 +338,7 @@ export const PricingSponsorshipSection = () => {
             </Button>
           </div>
 
-          {/* Premium+ Tier (Partner) */}
+          // Premium+ Tier (Partner)
           <div
             className={`${pricingColumn} bg-linear-to-b from-amber-50/20 via-white to-white`}
           >
@@ -405,6 +394,7 @@ export const PricingSponsorshipSection = () => {
           </div>
         </div>
       </section>
+      */}
 
       <CreateAdDialog
         open={dialogOpen}
