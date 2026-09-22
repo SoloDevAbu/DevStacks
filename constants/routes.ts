@@ -16,6 +16,17 @@ export const ROUTES = {
   REFUND: "/refund",
   FAQ: "/faq",
   DASHBOARD: "/dashboard",
+  DASHBOARD_PRODUCTS: "/dashboard/products",
+  DASHBOARD_PRODUCT_EDIT: (slug: string) =>
+    `/dashboard/products/${encodeURIComponent(slug)}/edit`,
+  DASHBOARD_PRODUCT_ANALYTICS: (slug: string) =>
+    `/dashboard/products/${encodeURIComponent(slug)}/analytics`,
+  DASHBOARD_TOOLS: "/dashboard/tools",
+  DASHBOARD_TOOL_EDIT: (slug: string) =>
+    `/dashboard/tools/${encodeURIComponent(slug)}/edit`,
+  DASHBOARD_TOOL_ANALYTICS: (slug: string) =>
+    `/dashboard/tools/${encodeURIComponent(slug)}/analytics`,
+  DASHBOARD_ANALYTICS: "/dashboard/analytics",
   DASHBOARD_PROFILE: "/dashboard/profile",
   MAKERS: "/makers",
   MAKER: (username: string) => `/makers/${username}`,

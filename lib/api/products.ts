@@ -46,3 +46,12 @@ export const submitProductComment = async (
   const { data } = await apiClient.post(`/products/${slug}/comments`, payload)
   return data.data
 }
+
+export const updateProductApi = async (
+  slug: string,
+  payload: Record<string, unknown>
+) => {
+  const { data } = await apiClient.patch(`/products/${slug}`, payload)
+  return data.data
+}
+

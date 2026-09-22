@@ -51,3 +51,12 @@ export const submitToolComment = async (
   return data.data
 }
 
+export const updateToolApi = async (
+  slug: string,
+  payload: Record<string, unknown>
+) => {
+  const { data } = await apiClient.patch(`/tools/${slug}`, payload)
+  return data.data
+}
+
+
