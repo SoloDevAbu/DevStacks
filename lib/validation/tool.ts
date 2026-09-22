@@ -42,6 +42,8 @@ export const submitToolSchema = z.object({
   metaTitle: z.string().max(60).optional().or(z.literal("")),
   metaDescription: z.string().max(160).optional().or(z.literal("")),
   aiContext: z.string().max(1000).optional().or(z.literal("")),
+  launchYear: z.coerce.number().int().min(2026).optional(),
+  launchWeek: z.coerce.number().int().min(1).max(53).optional(),
   faqs: z
     .array(
       z.object({

@@ -1,6 +1,6 @@
 import { db } from "@/db"
 import { tools, products, categories, productTools } from "@/db/schema"
-import { desc, eq, gte, lte, and, inArray } from "drizzle-orm"
+import { desc, eq, gte, lte, and, or, isNull, inArray } from "drizzle-orm"
 import { getWeekRange } from "@/lib/launches/week-utils"
 import { TIER } from "@/constants/plans"
 import type { RankedItem, RankedProduct } from "@/lib/rankings/types"
@@ -77,8 +77,14 @@ export const getWeeklyLaunches = async ({
       .where(
         and(
           eq(tools.status, "approved"),
-          gte(tools.createdAt, start),
-          lte(tools.createdAt, end)
+          or(
+            and(eq(tools.launchYear, year), eq(tools.launchWeek, week)),
+            and(
+              isNull(tools.launchYear),
+              gte(tools.createdAt, start),
+              lte(tools.createdAt, end)
+            )
+          )
         )
       )
       .orderBy(desc(tools.upvotesCount)),
@@ -108,8 +114,14 @@ export const getWeeklyLaunches = async ({
       .where(
         and(
           eq(products.status, "approved"),
-          gte(products.createdAt, start),
-          lte(products.createdAt, end)
+          or(
+            and(eq(products.launchYear, year), eq(products.launchWeek, week)),
+            and(
+              isNull(products.launchYear),
+              gte(products.createdAt, start),
+              lte(products.createdAt, end)
+            )
+          )
         )
       )
       .orderBy(desc(products.likesCount)),
@@ -169,9 +181,15 @@ export const getWeeklyPremiumLaunches = async ({
       .where(
         and(
           eq(tools.status, "approved"),
-          gte(tools.createdAt, start),
-          lte(tools.createdAt, end),
-          inArray(tools.tier, [TIER.PREMIUM, TIER.PREMIUM_PLUS])
+          inArray(tools.tier, [TIER.PREMIUM, TIER.PREMIUM_PLUS]),
+          or(
+            and(eq(tools.launchYear, year), eq(tools.launchWeek, week)),
+            and(
+              isNull(tools.launchYear),
+              gte(tools.createdAt, start),
+              lte(tools.createdAt, end)
+            )
+          )
         )
       )
       .orderBy(desc(tools.upvotesCount)),
@@ -201,9 +219,15 @@ export const getWeeklyPremiumLaunches = async ({
       .where(
         and(
           eq(products.status, "approved"),
-          gte(products.createdAt, start),
-          lte(products.createdAt, end),
-          inArray(products.tier, [TIER.PREMIUM, TIER.PREMIUM_PLUS])
+          inArray(products.tier, [TIER.PREMIUM, TIER.PREMIUM_PLUS]),
+          or(
+            and(eq(products.launchYear, year), eq(products.launchWeek, week)),
+            and(
+              isNull(products.launchYear),
+              gte(products.createdAt, start),
+              lte(products.createdAt, end)
+            )
+          )
         )
       )
       .orderBy(desc(products.likesCount)),
