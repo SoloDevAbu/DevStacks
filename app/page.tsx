@@ -66,9 +66,6 @@ const Page = async () => {
       limit: HOMEPAGE_LIMITS.POPULAR_BUILDING_BLOCKS,
     }).catch(() => []),
   ])
-
-  const todaysLaunches: FeedItem[] = []
-
   const featuredItems = (weeklyLaunches as FeedItem[])
     .slice(0, 10)
     .map((item) => ({
@@ -100,7 +97,6 @@ const Page = async () => {
         dangerouslySetInnerHTML={{ __html: safeJsonLd(collectionJsonLd) }}
       />
       <MainContent
-        todaysLaunches={todaysLaunches as FeedItem[]}
         weeklyLaunches={weeklyLaunches as FeedItem[]}
         popularBuildingBlocks={popularBuildingBlocks as FeedItem[]}
       />

@@ -1,25 +1,12 @@
-import { useInfiniteQuery, useQuery } from "@tanstack/react-query"
+import { useInfiniteQuery } from "@tanstack/react-query"
 import { fetchProducts, type ProductListParams } from "@/lib/api/products"
 import type { DbProduct } from "@/types/entities"
-
-export const PRODUCTS_QUERY_KEY = (params: ProductListParams) => [
-  "products",
-  params,
-]
 
 export const PRODUCTS_INFINITE_QUERY_KEY = (params: ProductListParams) => [
   "products",
   "infinite",
   params,
 ]
-
-export const useProducts = (params: ProductListParams = {}) => {
-  return useQuery({
-    queryKey: PRODUCTS_QUERY_KEY(params),
-    queryFn: () => fetchProducts(params),
-    staleTime: 60_000,
-  })
-}
 
 export const useInfiniteProducts = ({
   category,

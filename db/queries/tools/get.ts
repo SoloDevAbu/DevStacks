@@ -2,26 +2,15 @@ import { db } from "@/db"
 import { tools, categories, users } from "@/db/schema"
 import { eq, ilike, or } from "drizzle-orm"
 
-export const getToolBySlugOrName = async (identifier: string) => {
-  const clean = identifier.trim()
-  if (!clean) return null
-
+export const getToolBySlugOrName = async (slugOrName: string) => {
   const [row] = await db
     .select({
       id: tools.id,
       slug: tools.slug,
       name: tools.name,
-      tagline: tools.tagline,
-      logoUrl: tools.logoUrl,
-      websiteUrl: tools.websiteUrl,
     })
     .from(tools)
-    .where(
-      or(
-        eq(tools.slug, clean.toLowerCase()),
-        ilike(tools.name, clean)
-      )
-    )
+    .where(or(eq(tools.slug, slugOrName), ilike(tools.name, slugOrName)))
     .limit(1)
 
   return row ?? null

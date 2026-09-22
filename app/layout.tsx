@@ -24,8 +24,16 @@ export const viewport: Viewport = {
   themeColor: SITE_CONFIG.themeColor,
 }
 
+const getMetadataBase = () => {
+  try {
+    return new URL(SITE_CONFIG.url)
+  } catch {
+    return new URL("http://localhost:3000")
+  }
+}
+
 export const metadata: Metadata = {
-  metadataBase: new URL(SITE_CONFIG.url),
+  metadataBase: getMetadataBase(),
   title: {
     default: `${SITE_CONFIG.name} — ${SITE_CONFIG.tagline}`,
     template: `%s | ${SITE_CONFIG.name}`,

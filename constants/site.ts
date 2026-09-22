@@ -1,4 +1,12 @@
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.launchnests.com"
+const getSiteUrl = () => {
+  const envUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim()
+  if (envUrl) return envUrl.replace(/\/$/, "")
+  return process.env.NODE_ENV === "production"
+    ? "https://www.launchnests.com"
+    : "http://localhost:3000"
+}
+
+const siteUrl = getSiteUrl()
 
 export const SITE_CONFIG = {
   name: "LaunchNests",

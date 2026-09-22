@@ -17,11 +17,6 @@ export const fetchProducts = async (params: ProductListParams = {}) => {
   return data.data
 }
 
-export const fetchProduct = async (slug: string) => {
-  const { data } = await apiClient.get(`/products/${slug}`)
-  return data.data
-}
-
 export const submitProduct = async (payload: Record<string, unknown>) => {
   const { data } = await apiClient.post("/products", payload)
   return data.data
