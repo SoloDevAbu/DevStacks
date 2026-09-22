@@ -337,6 +337,12 @@ export const navbarSearchWrapper =
 export const navbarSearchInput =
   "h-9 w-full rounded-lg border border-dashed border-slate-200 bg-slate-50/70 pr-12 pl-9 text-xs text-slate-900 placeholder:text-slate-400 focus-visible:border-slate-400 focus-visible:bg-white focus-visible:ring-0 shadow-2xs transition-all"
 
+export const navbarSearchButton =
+  "group flex h-9 w-52 md:w-64 lg:w-72 xl:w-80 cursor-pointer items-center justify-between rounded-lg border border-dashed border-slate-200 bg-slate-50/70 px-3 text-xs text-slate-400 shadow-2xs transition-all hover:border-slate-300 hover:bg-slate-100/70"
+
+export const commandFooter =
+  "flex items-center justify-between border-t border-dashed border-border bg-slate-50/70 px-3.5 py-2 text-[11px] text-muted-foreground select-none"
+
 export const navbarNavLink =
   "shrink-0 text-xs font-semibold text-slate-600 transition-colors hover:text-slate-950"
 
