@@ -9,6 +9,7 @@ import { useUserInteractions } from "@/hooks/users/use-user-interactions"
 import { useSession } from "@/lib/auth/client"
 import { useAuthModal } from "@/hooks/auth/use-auth-modal"
 import { getOutboundUrl, getLinkRel } from "@/utils/urls"
+import { trackExternalVisit } from "@/lib/api/analytics"
 import { cn } from "@/lib/utils"
 
 interface ProductActionButtonsProps {
@@ -77,6 +78,16 @@ export const ProductActionButtons = ({
     )
   }
 
+  const handleVisit = () => {
+    if (productId) {
+      trackExternalVisit({
+        itemType: "product",
+        id: productId,
+        targetUrl: websiteUrl,
+      })
+    }
+  }
+
   const outboundUrl = getOutboundUrl(websiteUrl, "launchnests")
   const linkRel = getLinkRel(tier)
 
@@ -107,12 +118,13 @@ export const ProductActionButtons = ({
           href={outboundUrl}
           target="_blank"
           rel={linkRel}
+          onClick={handleVisit}
           className={cn(
             buttonVariants({ variant: "outline" }),
             "h-8 gap-2 rounded-lg border-slate-200 bg-white px-3 text-slate-700 hover:bg-slate-50"
           )}
         >
-          Visit Website
+          <span>Visit Website</span>
           <ExternalLink className="size-3.5 text-slate-400" />
         </a>
       )}
