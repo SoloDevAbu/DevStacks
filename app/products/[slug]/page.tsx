@@ -304,10 +304,15 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
               />
               <div className="flex flex-col gap-1.5">
                 <div className="flex flex-wrap items-center gap-2.5">
-                  <h1 className="text-2xl font-bold tracking-tight text-slate-900 md:text-3xl">
-                    {product.name}
-                  </h1>
-                  <VerifiedBadge tier={product.tier as Tier} />
+                  <div className="inline-flex items-center gap-2">
+                    <h1 className="text-2xl font-bold tracking-tight text-slate-900 md:text-3xl">
+                      {product.name}
+                    </h1>
+                    <VerifiedBadge
+                      tier={product.tier as Tier}
+                      className="size-6 md:size-7"
+                    />
+                  </div>
                   <LaunchBadge />
                   <Badge
                     variant="outline"

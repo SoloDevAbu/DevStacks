@@ -317,10 +317,15 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
               />
               <div className="flex flex-col gap-1.5">
                 <div className="flex flex-wrap items-center gap-2.5">
-                  <h1 className="text-2xl font-bold tracking-tight text-slate-900 md:text-3xl">
-                    {tool.name}
-                  </h1>
-                  <VerifiedBadge tier={tool.tier as Tier} />
+                  <div className="inline-flex items-center gap-2">
+                    <h1 className="text-2xl font-bold tracking-tight text-slate-900 md:text-3xl">
+                      {tool.name}
+                    </h1>
+                    <VerifiedBadge
+                      tier={tool.tier as Tier}
+                      className="size-6 md:size-7"
+                    />
+                  </div>
                   <LaunchBadge />
                   <Badge
                     variant="outline"
