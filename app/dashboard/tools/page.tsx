@@ -2,24 +2,25 @@ import type { Metadata } from "next"
 import { headers } from "next/headers"
 import { redirect } from "next/navigation"
 import { auth } from "@/lib/auth"
-import { getUserDashboardData } from "@/db/queries/users/get-dashboard"
+import { getUserTools } from "@/db/queries/users/get-user-tools"
 import { getCurrentUserProfile } from "@/db/queries/users/get-profile"
 import { DashboardNav } from "@/components/dashboard/dashboard-nav"
-import { DashboardOverview } from "@/components/dashboard/dashboard-overview"
+import { ToolsList } from "@/components/dashboard/tools-list"
 import { ROUTES } from "@/constants/routes"
 import { SITE_CONFIG } from "@/constants/site"
+import { dashboardPageContainer } from "@/utils/dashboard/styles"
 
 export const metadata: Metadata = {
-  title: `Maker Dashboard — ${SITE_CONFIG.name}`,
+  title: `My Developer Tools — ${SITE_CONFIG.name}`,
   description:
-    "Track your published developer tools, products, upvotes, comments, views, and submission statuses.",
+    "Manage and track metrics for your published developer tools, APIs, and libraries.",
   robots: {
     index: false,
     follow: false,
   },
 }
 
-const DashboardPage = async () => {
+const DashboardToolsPage = async () => {
   const reqHeaders = await headers()
   const session = await auth.api.getSession({
     headers: reqHeaders,
@@ -29,17 +30,17 @@ const DashboardPage = async () => {
     redirect(ROUTES.HOME)
   }
 
-  const [dashboardData, profile] = await Promise.all([
-    getUserDashboardData(session.user.id),
+  const [tools, profile] = await Promise.all([
+    getUserTools(session.user.id),
     getCurrentUserProfile(session.user.id),
   ])
 
   return (
-    <div className="relative flex min-h-full flex-col bg-slate-50/50">
-      <DashboardNav activeTab="overview" username={profile?.username} />
-      <DashboardOverview data={dashboardData} />
+    <div className={dashboardPageContainer}>
+      <DashboardNav activeTab="tools" username={profile?.username} />
+      <ToolsList tools={tools} />
     </div>
   )
 }
 
-export default DashboardPage
+export default DashboardToolsPage

@@ -2,24 +2,25 @@ import type { Metadata } from "next"
 import { headers } from "next/headers"
 import { redirect } from "next/navigation"
 import { auth } from "@/lib/auth"
-import { getUserDashboardData } from "@/db/queries/users/get-dashboard"
+import { getUserProducts } from "@/db/queries/users/get-user-products"
 import { getCurrentUserProfile } from "@/db/queries/users/get-profile"
 import { DashboardNav } from "@/components/dashboard/dashboard-nav"
-import { DashboardOverview } from "@/components/dashboard/dashboard-overview"
+import { ProductsList } from "@/components/dashboard/products-list"
 import { ROUTES } from "@/constants/routes"
 import { SITE_CONFIG } from "@/constants/site"
+import { dashboardPageContainer } from "@/utils/dashboard/styles"
 
 export const metadata: Metadata = {
-  title: `Maker Dashboard — ${SITE_CONFIG.name}`,
+  title: `My Products — ${SITE_CONFIG.name}`,
   description:
-    "Track your published developer tools, products, upvotes, comments, views, and submission statuses.",
+    "Manage and track performance for your showcased developer products and applications.",
   robots: {
     index: false,
     follow: false,
   },
 }
 
-const DashboardPage = async () => {
+const DashboardProductsPage = async () => {
   const reqHeaders = await headers()
   const session = await auth.api.getSession({
     headers: reqHeaders,
@@ -29,17 +30,17 @@ const DashboardPage = async () => {
     redirect(ROUTES.HOME)
   }
 
-  const [dashboardData, profile] = await Promise.all([
-    getUserDashboardData(session.user.id),
+  const [products, profile] = await Promise.all([
+    getUserProducts(session.user.id),
     getCurrentUserProfile(session.user.id),
   ])
 
   return (
-    <div className="relative flex min-h-full flex-col bg-slate-50/50">
-      <DashboardNav activeTab="overview" username={profile?.username} />
-      <DashboardOverview data={dashboardData} />
+    <div className={dashboardPageContainer}>
+      <DashboardNav activeTab="products" username={profile?.username} />
+      <ProductsList products={products} />
     </div>
   )
 }
 
-export default DashboardPage
+export default DashboardProductsPage
