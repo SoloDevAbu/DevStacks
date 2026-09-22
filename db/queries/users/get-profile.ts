@@ -163,51 +163,13 @@ export const getMakerProfile = async (
 }
 
 export const getCurrentUserProfile = async (userId: string) => {
-  let [user] = await db
+  const [user] = await db
     .select()
     .from(users)
     .where(eq(users.id, userId))
     .limit(1)
 
   if (!user) return null
-
-  let needsUpdate = false
-  const updateData: Record<string, unknown> = { updatedAt: new Date() }
-
-  if (!user.username || !user.username.trim()) {
-    const generatedUsername = await generateUniqueUsername(
-      user.name,
-      user.email
-    )
-    updateData.username = generatedUsername
-    needsUpdate = true
-  }
-
-  if (!user.country) {
-    try {
-      const { headers } = await import("next/headers")
-      const reqHeaders = await headers()
-      const headerCountry =
-        reqHeaders.get("x-vercel-ip-country") || reqHeaders.get("cf-ipcountry")
-      if (headerCountry && headerCountry.length === 2) {
-        updateData.country = headerCountry.toUpperCase()
-        needsUpdate = true
-      }
-    } catch {
-      // headers() might not be available outside request context
-    }
-  }
-
-  if (needsUpdate) {
-    const [updated] = await db
-      .update(users)
-      .set(updateData)
-      .where(eq(users.id, userId))
-      .returning()
-    if (updated) {
-      user = updated
-    }
-  }
 
   const faqs = await db
     .select({

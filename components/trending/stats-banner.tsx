@@ -1,5 +1,5 @@
 import { Box, Flame, Sparkles, TrendingUp } from "lucide-react"
-import type { Stat } from "@/constants/types"
+import type { Stat } from "@/types/entities"
 
 const STATS: Stat[] = [
   {

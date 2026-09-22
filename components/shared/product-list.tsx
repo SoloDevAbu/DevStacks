@@ -3,6 +3,14 @@
 import Link from "next/link"
 import { PackageSearch, PlusCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import {
+  Empty,
+  EmptyHeader,
+  EmptyTitle,
+  EmptyDescription,
+  EmptyContent,
+  EmptyMedia,
+} from "@/components/ui/empty"
 import { ROUTES } from "@/constants/routes"
 import { ProductCard } from "@/components/shared/product-card"
 import type { DbProduct } from "@/types/entities"
@@ -20,23 +28,23 @@ export const ProductList = ({
 }) => {
   if (products.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center p-12 text-center">
-        <div className="mb-3 rounded-full bg-slate-100 p-4 text-slate-400">
-          <PackageSearch className="size-8" />
-        </div>
-        <h3 className="text-base font-semibold text-slate-800">
-          No products found
-        </h3>
-        <p className="mt-1 max-w-sm text-sm text-slate-500">
-          No developer products found here. Be the first to submit yours!
-        </p>
-        <div className="mt-4">
+      <Empty className="py-12">
+        <EmptyMedia variant="icon">
+          <PackageSearch className="size-5" />
+        </EmptyMedia>
+        <EmptyHeader>
+          <EmptyTitle>No products found</EmptyTitle>
+          <EmptyDescription>
+            No developer products found here. Be the first to submit yours!
+          </EmptyDescription>
+        </EmptyHeader>
+        <EmptyContent>
           <Button nativeButton={false} render={<Link href={ROUTES.SUBMIT} />}>
             <PlusCircle className="mr-1.5 size-4" />
             Submit a Product
           </Button>
-        </div>
-      </div>
+        </EmptyContent>
+      </Empty>
     )
   }
 

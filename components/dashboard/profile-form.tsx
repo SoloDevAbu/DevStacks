@@ -1,9 +1,8 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
-import axios from "axios"
 import {
   User,
   Globe,
@@ -15,6 +14,7 @@ import {
   X,
 } from "lucide-react"
 import { useDebounce } from "@/hooks/shared/use-debounce"
+import { useCheckUsername } from "@/hooks/users/use-check-username"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
@@ -49,62 +49,39 @@ export const ProfileForm = ({ initialProfile }: ProfileFormProps) => {
     initialProfile.linkedinUrl || ""
   )
 
-  const [usernameStatus, setUsernameStatus] = useState<{
-    status: "idle" | "checking" | "available" | "taken" | "invalid"
-    message?: string
-  }>({ status: "idle" })
-
   const debouncedUsername = useDebounce(username, 300)
+  const cleanDebounced = debouncedUsername.trim().toLowerCase().replace(/^@/, "")
+  const { data: checkData, isFetching: isCheckingUsername } =
+    useCheckUsername(cleanDebounced)
 
-  useEffect(() => {
-    const clean = debouncedUsername.trim().toLowerCase().replace(/^@/, "")
-    if (!clean) {
-      setUsernameStatus({ status: "idle" })
-      return
+  const usernameStatus = (() => {
+    if (!cleanDebounced) return { status: "idle" as const }
+    if (cleanDebounced.length < 2) {
+      return { status: "invalid" as const, message: "Minimum 2 characters" }
     }
-
-    if (clean.length < 2) {
-      setUsernameStatus({ status: "invalid", message: "Minimum 2 characters" })
-      return
-    }
-
-    if (!/^[a-z0-9_-]+$/i.test(clean)) {
-      setUsernameStatus({
-        status: "invalid",
+    if (!/^[a-z0-9_-]+$/i.test(cleanDebounced)) {
+      return {
+        status: "invalid" as const,
         message: "Only letters, numbers, hyphens, underscores",
-      })
-      return
+      }
     }
-
-    let isMounted = true
-    setUsernameStatus({ status: "checking" })
-
-    axios
-      .get(`/api/users/check-username?username=${encodeURIComponent(clean)}`)
-      .then((res) => {
-        if (!isMounted) return
-        if (res.data.available) {
-          setUsernameStatus({
-            status: "available",
-            message: res.data.isCurrent
-              ? "Your current handle"
-              : `@${clean} is available`,
-          })
-        } else {
-          setUsernameStatus({
-            status: "taken",
-            message: res.data.message || `@${clean} is already taken`,
-          })
+    if (isCheckingUsername) return { status: "checking" as const }
+    if (checkData) {
+      if (checkData.available) {
+        return {
+          status: "available" as const,
+          message: checkData.isCurrent
+            ? "Your current handle"
+            : `@${cleanDebounced} is available`,
         }
-      })
-      .catch(() => {
-        if (isMounted) setUsernameStatus({ status: "idle" })
-      })
-
-    return () => {
-      isMounted = false
+      }
+      return {
+        status: "taken" as const,
+        message: checkData.message || `@${cleanDebounced} is already taken`,
+      }
     }
-  }, [debouncedUsername])
+    return { status: "idle" as const }
+  })()
 
   const [faqs, setFaqs] = useState<
     Array<{ id?: string; question: string; answer: string }>
@@ -308,9 +285,7 @@ export const ProfileForm = ({ initialProfile }: ProfileFormProps) => {
                       className={
                         usernameStatus.status === "available"
                           ? "font-medium text-emerald-600"
-                          : usernameStatus.status === "checking"
-                            ? "text-slate-400"
-                            : "font-medium text-red-500"
+                          : "font-medium text-red-500"
                       }
                     >
                       {usernameStatus.message}

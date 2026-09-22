@@ -21,6 +21,14 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import {
+  Empty,
+  EmptyHeader,
+  EmptyTitle,
+  EmptyDescription,
+  EmptyContent,
+  EmptyMedia,
+} from "@/components/ui/empty"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { ProductLogo } from "@/components/shared/product-logo"
 import { ROUTES } from "@/constants/routes"
@@ -424,31 +432,31 @@ export const DashboardContent = ({ data }: DashboardContentProps) => {
               )}
 
               {filteredTools.length === 0 ? (
-                <div className="flex flex-col items-center justify-center border-b border-dashed border-border bg-white px-6 py-12 text-center md:px-8">
-                  <div className="mb-3 rounded-full bg-slate-100 p-3 text-slate-400">
-                    <Wrench className="size-6" />
-                  </div>
-                  <h3 className="text-sm font-bold text-slate-800">
-                    No tools found
-                  </h3>
-                  <p className="mt-1 max-w-sm text-xs text-slate-500">
-                    {tools.length === 0
-                      ? "You have not listed any developer tools or APIs yet."
-                      : "No tools match your current search query or filter."}
-                  </p>
+                <Empty className="border-b border-dashed border-border bg-white px-6 py-12 md:px-8">
+                  <EmptyMedia variant="icon">
+                    <Wrench className="size-4" />
+                  </EmptyMedia>
+                  <EmptyHeader>
+                    <EmptyTitle>No tools found</EmptyTitle>
+                    <EmptyDescription>
+                      {tools.length === 0
+                        ? "You have not listed any developer tools or APIs yet."
+                        : "No tools match your current search query or filter."}
+                    </EmptyDescription>
+                  </EmptyHeader>
                   {tools.length === 0 && (
-                    <div className="mt-4">
+                    <EmptyContent>
                       <Button
                         size="sm"
-                        className="bg-slate-900 text-xs text-white hover:bg-slate-800"
+                        className="text-xs"
                         render={<Link href={ROUTES.SUBMIT} />}
                       >
                         <PlusCircle className="mr-1.5 size-3.5" />
                         List Your First Tool
                       </Button>
-                    </div>
+                    </EmptyContent>
                   )}
-                </div>
+                </Empty>
               ) : (
                 <div className="flex flex-col">
                   {filteredTools.map((tool) => (
@@ -487,31 +495,31 @@ export const DashboardContent = ({ data }: DashboardContentProps) => {
               )}
 
               {filteredProducts.length === 0 ? (
-                <div className="flex flex-col items-center justify-center border-b border-dashed border-border bg-white px-6 py-12 text-center md:px-8">
-                  <div className="mb-3 rounded-full bg-slate-100 p-3 text-slate-400">
-                    <Package className="size-6" />
-                  </div>
-                  <h3 className="text-sm font-bold text-slate-800">
-                    No products found
-                  </h3>
-                  <p className="mt-1 max-w-sm text-xs text-slate-500">
-                    {products.length === 0
-                      ? "You have not listed any applications or products yet."
-                      : "No products match your current search query or filter."}
-                  </p>
+                <Empty className="border-b border-dashed border-border bg-white px-6 py-12 md:px-8">
+                  <EmptyMedia variant="icon">
+                    <Package className="size-4" />
+                  </EmptyMedia>
+                  <EmptyHeader>
+                    <EmptyTitle>No products found</EmptyTitle>
+                    <EmptyDescription>
+                      {products.length === 0
+                        ? "You have not listed any applications or products yet."
+                        : "No products match your current search query or filter."}
+                    </EmptyDescription>
+                  </EmptyHeader>
                   {products.length === 0 && (
-                    <div className="mt-4">
+                    <EmptyContent>
                       <Button
                         size="sm"
-                        className="bg-slate-900 text-xs text-white hover:bg-slate-800"
+                        className="text-xs"
                         render={<Link href={ROUTES.SHOWCASE} />}
                       >
                         <Sparkles className="mr-1.5 size-3.5" />
                         Showcase Your First Product
                       </Button>
-                    </div>
+                    </EmptyContent>
                   )}
-                </div>
+                </Empty>
               ) : (
                 <div className="flex flex-col">
                   {filteredProducts.map((product) => (

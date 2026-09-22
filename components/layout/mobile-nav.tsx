@@ -11,7 +11,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet"
 import { HeaderLogo } from "@/components/layout/header-logo"
-import { LeftSidebar } from "@/components/shared/left-sidebar"
+import { LeftSidebar } from "@/components/layout/left-sidebar"
 
 export const MobileNav = () => {
   const [open, setOpen] = useState(false)

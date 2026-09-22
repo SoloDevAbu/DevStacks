@@ -1,4 +1,5 @@
 import type { Tier, Pricing } from "@/constants/plans"
+import type { LucideIcon } from "lucide-react"
 
 export type ProductBuiltWith = {
   name: string
@@ -149,4 +150,12 @@ export type UserDashboardData = {
     totalBuilds: number
   }
 }
+
+export type Stat = {
+  label: string
+  value: string
+  icon: LucideIcon | React.ComponentType<{ className?: string }>
+  color: string
+}
+
 
