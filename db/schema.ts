@@ -64,6 +64,18 @@ export const platformEnum = pgEnum("platform", [
   "Self-Hosted",
 ])
 
+export const launchItemTypeEnum = pgEnum("launch_item_type", [
+  "tool",
+  "product",
+])
+
+export const launchStatusEnum = pgEnum("launch_status", [
+  "scheduled",
+  "live",
+  "completed",
+  "cancelled",
+])
+
 // ---------------------------------------------------------------------------
 // users (Better Auth user table)
 // ---------------------------------------------------------------------------
@@ -172,6 +184,11 @@ export const tools = pgTable(
     commentsCount: integer("comments_count").notNull().default(0),
     viewsCount: integer("views_count").notNull().default(0),
 
+    // Launch scheduling
+    launchYear: integer("launch_year"),
+    launchWeek: integer("launch_week"),
+    launchDate: timestamp("launch_date", { withTimezone: true }),
+
     createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()
       .defaultNow(),
@@ -186,6 +203,11 @@ export const tools = pgTable(
     index("tools_submitter_id_idx").on(t.submitterId),
     index("tools_status_upvotes_idx").on(t.status, t.upvotesCount),
     index("tools_status_created_at_idx").on(t.status, t.createdAt),
+    index("tools_status_launch_week_idx").on(
+      t.status,
+      t.launchYear,
+      t.launchWeek
+    ),
     index("tools_tags_idx").using("gin", t.tags),
     index("tools_platforms_idx").using("gin", t.platforms),
   ]
@@ -254,6 +276,11 @@ export const products = pgTable(
     commentsCount: integer("comments_count").notNull().default(0),
     viewsCount: integer("views_count").notNull().default(0),
 
+    // Launch scheduling
+    launchYear: integer("launch_year"),
+    launchWeek: integer("launch_week"),
+    launchDate: timestamp("launch_date", { withTimezone: true }),
+
     createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()
       .defaultNow(),
@@ -268,6 +295,11 @@ export const products = pgTable(
     index("products_submitter_id_idx").on(t.submitterId),
     index("products_status_likes_idx").on(t.status, t.likesCount),
     index("products_status_created_at_idx").on(t.status, t.createdAt),
+    index("products_status_launch_week_idx").on(
+      t.status,
+      t.launchYear,
+      t.launchWeek
+    ),
     index("products_tags_idx").using("gin", t.tags),
     index("products_platforms_idx").using("gin", t.platforms),
   ]
@@ -654,6 +686,52 @@ export const adWeeks = pgTable(
 )
 
 // ---------------------------------------------------------------------------
+// launches — scheduled weekly cohort launches for tools and products
+// ---------------------------------------------------------------------------
+
+export const launches = pgTable(
+  "launches",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    toolId: uuid("tool_id").references(() => tools.id, { onDelete: "cascade" }),
+    productId: uuid("product_id").references(() => products.id, {
+      onDelete: "cascade",
+    }),
+    submitterId: text("submitter_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    itemType: launchItemTypeEnum("item_type").notNull(),
+    isoYear: integer("iso_year").notNull(),
+    isoWeek: integer("iso_week").notNull(),
+    startDate: timestamp("start_date", { withTimezone: true }).notNull(),
+    endDate: timestamp("end_date", { withTimezone: true }).notNull(),
+    tier: tierEnum("tier").notNull().default("free"),
+    status: statusEnum("status").notNull().default("pending"),
+    launchStatus: launchStatusEnum("launch_status")
+      .notNull()
+      .default("scheduled"),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (t) => [
+    index("launches_year_week_idx").on(t.isoYear, t.isoWeek),
+    index("launches_year_week_tier_status_idx").on(
+      t.isoYear,
+      t.isoWeek,
+      t.tier,
+      t.status
+    ),
+    index("launches_tool_id_idx").on(t.toolId),
+    index("launches_product_id_idx").on(t.productId),
+    index("launches_submitter_id_idx").on(t.submitterId),
+  ]
+)
+
+// ---------------------------------------------------------------------------
 // payments — Dodo Payments transaction ledger for ads and listing upgrades
 // ---------------------------------------------------------------------------
 
@@ -729,6 +807,7 @@ export const relations = defineRelations(
     ads,
     adWeeks,
     payments,
+    launches,
   },
   (r) => ({
     users: {
@@ -745,6 +824,7 @@ export const relations = defineRelations(
       accounts: r.many.accounts(),
       ads: r.many.ads(),
       payments: r.many.payments(),
+      launches: r.many.launches(),
     },
     categories: {
       tools: r.many.tools(),
@@ -788,6 +868,7 @@ export const relations = defineRelations(
       productTools: r.many.productTools(),
       payments: r.many.payments(),
       ads: r.many.ads(),
+      launches: r.many.launches(),
     },
     products: {
       submitter: r.one.users({ from: r.products.submitterId, to: r.users.id }),
@@ -802,6 +883,7 @@ export const relations = defineRelations(
       productTools: r.many.productTools(),
       payments: r.many.payments(),
       ads: r.many.ads(),
+      launches: r.many.launches(),
     },
     makerFaqs: {
       user: r.one.users({ from: r.makerFaqs.userId, to: r.users.id }),
@@ -854,6 +936,14 @@ export const relations = defineRelations(
         to: r.products.id,
       }),
       user: r.one.users({ from: r.productComments.userId, to: r.users.id }),
+    },
+    launches: {
+      submitter: r.one.users({ from: r.launches.submitterId, to: r.users.id }),
+      tool: r.one.tools({ from: r.launches.toolId, to: r.tools.id }),
+      product: r.one.products({
+        from: r.launches.productId,
+        to: r.products.id,
+      }),
     },
   })
 )
@@ -921,3 +1011,6 @@ export type NewAdWeek = typeof adWeeks.$inferInsert
 
 export type Payment = typeof payments.$inferSelect
 export type NewPayment = typeof payments.$inferInsert
+
+export type Launch = typeof launches.$inferSelect
+export type NewLaunch = typeof launches.$inferInsert
