@@ -125,6 +125,20 @@ export type MakerProfile = {
   productsCount: number
 }
 
+export type CommentUser = {
+  id: string
+  name: string
+  image?: string | null
+  avatarUrl?: string | null
+}
+
+export type CommentItem = {
+  id: string
+  body: string
+  createdAt: string | Date
+  user: CommentUser
+}
+
 export type UserDashboardComment = {
   id: string
   body: string

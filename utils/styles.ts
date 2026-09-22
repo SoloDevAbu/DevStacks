@@ -595,3 +595,44 @@ export const itemTypeBadge = (kind: ItemKind) =>
       ? "border-sky-200/80 bg-sky-50/80 text-sky-700 hover:bg-sky-100/80"
       : "border-violet-200/80 bg-violet-50/80 text-violet-700 hover:bg-violet-100/80"
   )
+
+export const commentSectionContainer =
+  "border-b border-dashed border-border bg-white"
+
+export const commentInputSection =
+  "border-b border-dashed border-border bg-slate-50/25 px-6 py-6 md:px-8"
+
+export const commentAuthBanner =
+  "flex flex-col items-center justify-between gap-4 rounded-lg border border-dashed border-border bg-white p-5 sm:flex-row sm:p-6"
+
+export const commentListContainer =
+  "flex flex-col divide-y divide-dashed divide-border"
+
+export const commentItemRow =
+  "flex flex-col gap-2.5 px-6 py-5 transition-colors hover:bg-slate-50/40 md:px-8"
+
+export const commentItemBody =
+  "text-xs leading-relaxed text-slate-700 whitespace-pre-wrap"
+
+export const commentItemTime = "text-[11px] text-slate-400 font-normal"
+
+export const commentLoadMoreContainer =
+  "flex items-center justify-center border-t border-dashed border-border p-4"
+
+export const commentAuthOverlay =
+  "absolute inset-0 z-10 flex items-center justify-center p-4 bg-white/40 backdrop-blur-[2px]"
+
+export const commentAuthCard =
+  "flex flex-col items-center text-center gap-1.5 rounded-2xl border border-slate-200/80 bg-white px-7 py-5.5 shadow-[0_12px_36px_rgba(0,0,0,0.1)] max-w-sm"
+
+export const commentAuthTitle =
+  "text-sm font-bold tracking-tight text-slate-900"
+
+export const commentAuthSubtitle =
+  "text-xs text-slate-500 leading-normal max-w-xs"
+
+export const commentAuthButton =
+  "mt-2 cursor-pointer gap-2 text-xs font-semibold"
+
+
+

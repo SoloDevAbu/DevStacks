@@ -49,6 +49,7 @@ import { Button } from "@/components/ui/button"
 import { ToolActionButtons } from "@/components/tools/tool-action-buttons"
 import { HoverOutline } from "@/components/shared/hover-outline"
 import { DetailSectionHeader } from "@/components/shared/detail-section-header"
+import { CommentsSection } from "@/components/shared/comments-section"
 import { cn } from "@/lib/utils"
 import {
   pricingBadgeColor,
@@ -591,7 +592,7 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
         )}
 
         {/* Section 4: AI Summary / Direct Answers (GEO / AEO) */}
-        {tool.aiContext && (
+        {/* {tool.aiContext && (
           <section className="border-b border-dashed border-border bg-white">
             <DetailSectionHeader
               title="AI Overview & Direct Answers"
@@ -605,7 +606,43 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
               </p>
             </div>
           </section>
+        )} */}
+
+        {/* Section 6: Q&A Section */}
+        {toolFaqs.length > 0 && (
+          <section className="border-b border-dashed border-border bg-white">
+            <DetailSectionHeader
+              title="Frequently Asked Questions"
+              subtitle={`Common questions and technical details about ${tool.name}`}
+              icon={HelpCircle}
+              theme="teal"
+            />
+
+            <div className={faqContainer}>
+              {toolFaqs.map((faq, idx) => (
+                <div
+                  key={faq.id ?? `${faq.question}-${idx}`}
+                  className={faqItem}
+                >
+                  <div className={faqQuestionHeader}>
+                    <span className="inline-flex size-5 shrink-0 items-center justify-center rounded-sm bg-teal-100 font-mono text-[10px] font-bold text-teal-800">
+                      Q{idx + 1}
+                    </span>
+                    <h3 className={faqQuestionText}>{faq.question}</h3>
+                  </div>
+                  <p className={faqAnswerText}>{faq.answer}</p>
+                </div>
+              ))}
+            </div>
+          </section>
         )}
+
+        {/* Section: Comments & Community Discussion */}
+        <CommentsSection
+          entityType="tool"
+          slug={tool.slug}
+          entityName={tool.name}
+        />
 
         {/* Section 5: Products Built with this Tool */}
         <section className="border-b border-dashed border-border bg-white">
@@ -661,35 +698,6 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
             </div>
           )}
         </section>
-
-        {/* Section 6: Q&A Section */}
-        {toolFaqs.length > 0 && (
-          <section className="border-b border-dashed border-border bg-white">
-            <DetailSectionHeader
-              title="Frequently Asked Questions"
-              subtitle={`Common questions and technical details about ${tool.name}`}
-              icon={HelpCircle}
-              theme="teal"
-            />
-
-            <div className={faqContainer}>
-              {toolFaqs.map((faq, idx) => (
-                <div
-                  key={faq.id ?? `${faq.question}-${idx}`}
-                  className={faqItem}
-                >
-                  <div className={faqQuestionHeader}>
-                    <span className="inline-flex size-5 shrink-0 items-center justify-center rounded-sm bg-teal-100 font-mono text-[10px] font-bold text-teal-800">
-                      Q{idx + 1}
-                    </span>
-                    <h3 className={faqQuestionText}>{faq.question}</h3>
-                  </div>
-                  <p className={faqAnswerText}>{faq.answer}</p>
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
 
         {/* Section 7: Ecosystem Callout */}
         <section className="border-b border-dashed border-border bg-slate-50/70 px-6 py-10 md:px-8 md:py-12">

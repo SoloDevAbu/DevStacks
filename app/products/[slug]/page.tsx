@@ -40,6 +40,7 @@ import { Button } from "@/components/ui/button"
 import { ProductActionButtons } from "@/components/products/product-action-buttons"
 import { HoverOutline } from "@/components/shared/hover-outline"
 import { DetailSectionHeader } from "@/components/shared/detail-section-header"
+import { CommentsSection } from "@/components/shared/comments-section"
 import { cn } from "@/lib/utils"
 import {
   pricingBadgeColor,
@@ -622,6 +623,13 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
             </div>
           </section>
         )}
+
+        {/* Section: Comments & Community Discussion */}
+        <CommentsSection
+          entityType="product"
+          slug={product.slug}
+          entityName={product.name}
+        />
 
         {/* Section 7: Ecosystem Showcase */}
         {/* <section className="border-b border-dashed border-border bg-slate-50/70 px-6 py-10 md:px-8 md:py-12">

@@ -41,7 +41,7 @@ export const fetchProductComments = async (slug: string) => {
 
 export const submitProductComment = async (
   slug: string,
-  payload: { userId: string; body: string }
+  payload: { userId?: string; body: string }
 ) => {
   const { data } = await apiClient.post(`/products/${slug}/comments`, payload)
   return data.data
