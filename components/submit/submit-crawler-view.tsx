@@ -35,9 +35,9 @@ const SUBMISSION_BENEFITS = [
   },
   {
     icon: Cpu,
-    title: "Today's & Weekly Launches",
+    title: "This Week's Launches",
     description:
-      "Every new submission features in Today's Launches and Weekly Launches on the homepage, ranked directly by community votes.",
+      "Every new submission features in This Week's Launches on the homepage, ranked directly by community votes.",
   },
 ]
 
@@ -138,8 +138,8 @@ export const SubmitCrawlerView = () => {
 
           <div className="mt-4 flex items-center justify-between border-t border-dashed border-slate-200 pt-4">
             <p className="text-xs text-slate-500">
-              Ready to submit your developer tool? Sign in with your GitHub or
-              Google account.
+              Ready to submit your developer tool? Sign in with your Google
+              account.
             </p>
             <Button
               render={<Link href="/?redirect=/submit" />}

@@ -1,4 +1,4 @@
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://launchnests.com"
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.launchnests.com"
 
 export const SITE_CONFIG = {
   name: "LaunchNests",
@@ -12,7 +12,7 @@ export const SITE_CONFIG = {
   description:
     "Discover developer tools, APIs, and infrastructure products. Explore what developers are building, community upvotes, and modern tech stacks.",
   url: siteUrl,
-  domain: "launchnests.com",
+  domain: "www.launchnests.com",
   creator: "Abu Bakkar Siddique",
   publisher: "LaunchNests",
   keywords: [

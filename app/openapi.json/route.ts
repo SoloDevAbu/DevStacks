@@ -10,7 +10,7 @@ export const GET = () => {
       title: `${SITE_CONFIG.name} Public API`,
       summary:
         "Read-only REST API for the developer tools and products catalog.",
-      description: `Public, unauthenticated REST API for ${SITE_CONFIG.name}. Use this contract to search tools and products, inspect verified tech stacks, read leaderboard rankings, and fetch entity details. No API key required for GET requests. Rate limit: 120 requests per minute per IP. RFC 9457 Problem Details for errors. CLI: npx @launchnests/cli (see ${SITE_CONFIG.url}/cli). MCP Streamable HTTP: POST ${SITE_CONFIG.url}/api/mcp.`,
+      description: `Public, unauthenticated REST API for ${SITE_CONFIG.name}. Use this contract to search tools and products, inspect verified tech stacks, read leaderboard rankings, and fetch entity details. No API key required for GET requests. Rate limit: 120 requests per minute per IP. RFC 9457 Problem Details for errors. Documentation: ${SITE_CONFIG.url}/cli. MCP Streamable HTTP: POST ${SITE_CONFIG.url}/api/mcp.`,
       version: "1.0.0",
       contact: {
         name: SITE_CONFIG.name,
@@ -47,7 +47,7 @@ export const GET = () => {
           operationId: "getApiIndex",
           summary: "Public API index",
           description:
-            "Lists all public REST endpoints, OpenAPI contract, CLI instructions, and MCP transport.",
+            "Lists all public REST endpoints, OpenAPI contract, and MCP transport.",
           responses: {
             "200": {
               description: "API index summary",

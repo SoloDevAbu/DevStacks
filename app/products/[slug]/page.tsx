@@ -30,7 +30,7 @@ import { AI_PROMPTS } from "@/lib/prompts"
 import { getProducts } from "@/db/queries/products/list"
 import { getProductFaqs } from "@/db/queries/faqs/get-faqs"
 import { MakerProfileCard } from "@/components/shared/maker-profile-card"
-import { productSchema, breadcrumbSchema, faqSchema } from "@/lib/seo/schema"
+import { productSchema, breadcrumbSchema, faqSchema, safeJsonLd } from "@/lib/seo/schema"
 import { ProductLogo } from "@/components/shared/product-logo"
 import { getFaviconUrl } from "@/utils/urls"
 import { VerifiedBadge } from "@/components/shared/verified-badge"
@@ -216,22 +216,28 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
   }))
 
   const faqJsonLd = productFaqs.length > 0 ? faqSchema(productFaqs) : null
-  const aiPrompt = AI_PROMPTS.product(product.name, product.tagline)
+  const aiPrompt = AI_PROMPTS.product(
+    product.name,
+    product.tagline,
+    product.aiContext || product.description,
+    productUrl,
+    `${productUrl}.md`
+  )
 
   return (
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(prodJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(prodJsonLd) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbJsonLd) }}
       />
       {faqJsonLd && (
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+          dangerouslySetInnerHTML={{ __html: safeJsonLd(faqJsonLd) }}
         />
       )}
 

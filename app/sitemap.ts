@@ -18,103 +18,105 @@ const FALLBACK_CATEGORIES = [
   "APIs",
 ]
 
+const STATIC_LAST_MODIFIED = new Date("2026-09-22T00:00:00.000Z")
+
 const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
   const siteUrl = SITE_CONFIG.url
 
   const staticRoutes: MetadataRoute.Sitemap = [
     {
       url: siteUrl,
-      lastModified: new Date(),
+      lastModified: STATIC_LAST_MODIFIED,
       changeFrequency: "daily",
       priority: 1.0,
     },
     {
       url: `${siteUrl}${ROUTES.TOOLS}`,
-      lastModified: new Date(),
+      lastModified: STATIC_LAST_MODIFIED,
       changeFrequency: "daily",
       priority: 0.9,
     },
     {
       url: `${siteUrl}${ROUTES.PRODUCTS}`,
-      lastModified: new Date(),
+      lastModified: STATIC_LAST_MODIFIED,
       changeFrequency: "daily",
       priority: 0.9,
     },
     {
       url: `${siteUrl}${ROUTES.TRENDING}`,
-      lastModified: new Date(),
+      lastModified: STATIC_LAST_MODIFIED,
       changeFrequency: "hourly",
       priority: 0.9,
     },
     {
       url: `${siteUrl}${ROUTES.DISCOVER_POPULAR_BUILDING_BLOCKS}`,
-      lastModified: new Date(),
+      lastModified: STATIC_LAST_MODIFIED,
       changeFrequency: "daily",
       priority: 0.85,
     },
     {
       url: `${siteUrl}${ROUTES.MAKERS}`,
-      lastModified: new Date(),
+      lastModified: STATIC_LAST_MODIFIED,
       changeFrequency: "daily",
       priority: 0.85,
     },
     {
       url: `${siteUrl}${ROUTES.DISCOVER_WEEKLY_LAUNCHES}`,
-      lastModified: new Date(),
+      lastModified: STATIC_LAST_MODIFIED,
       changeFrequency: "daily",
       priority: 0.85,
     },
     {
       url: `${siteUrl}/mcp`,
-      lastModified: new Date(),
+      lastModified: STATIC_LAST_MODIFIED,
       changeFrequency: "weekly",
       priority: 0.8,
     },
     {
       url: `${siteUrl}/cli`,
-      lastModified: new Date(),
+      lastModified: STATIC_LAST_MODIFIED,
       changeFrequency: "weekly",
       priority: 0.8,
     },
     {
       url: `${siteUrl}${ROUTES.PRICING}`,
-      lastModified: new Date(),
+      lastModified: STATIC_LAST_MODIFIED,
       changeFrequency: "weekly",
       priority: 0.8,
     },
     {
       url: `${siteUrl}${ROUTES.SHOWCASE}`,
-      lastModified: new Date(),
+      lastModified: STATIC_LAST_MODIFIED,
       changeFrequency: "daily",
       priority: 0.7,
     },
     {
       url: `${siteUrl}${ROUTES.SUBMIT}`,
-      lastModified: new Date(),
+      lastModified: STATIC_LAST_MODIFIED,
       changeFrequency: "monthly",
       priority: 0.8,
     },
     {
       url: `${siteUrl}${ROUTES.PRIVACY}`,
-      lastModified: new Date(),
+      lastModified: STATIC_LAST_MODIFIED,
       changeFrequency: "monthly",
       priority: 0.5,
     },
     {
       url: `${siteUrl}${ROUTES.TERMS}`,
-      lastModified: new Date(),
+      lastModified: STATIC_LAST_MODIFIED,
       changeFrequency: "monthly",
       priority: 0.5,
     },
     {
       url: `${siteUrl}${ROUTES.REFUND}`,
-      lastModified: new Date(),
+      lastModified: STATIC_LAST_MODIFIED,
       changeFrequency: "monthly",
       priority: 0.5,
     },
     {
       url: `${siteUrl}${ROUTES.FAQ}`,
-      lastModified: new Date(),
+      lastModified: STATIC_LAST_MODIFIED,
       changeFrequency: "daily",
       priority: 0.85,
     },
@@ -142,11 +144,29 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
 
     const dynamicRoutes: MetadataRoute.Sitemap = []
 
+    toolCats.forEach((cat) => {
+      dynamicRoutes.push({
+        url: `${siteUrl}/tools?category=${encodeURIComponent(cat)}`,
+        lastModified: STATIC_LAST_MODIFIED,
+        changeFrequency: "daily",
+        priority: 0.7,
+      })
+    })
+
+    prodCats.forEach((cat) => {
+      dynamicRoutes.push({
+        url: `${siteUrl}/products?category=${encodeURIComponent(cat)}`,
+        lastModified: STATIC_LAST_MODIFIED,
+        changeFrequency: "daily",
+        priority: 0.7,
+      })
+    })
+
     if (dbProducts && dbProducts.length > 0) {
       dynamicRoutes.push(
         ...dbProducts.map((product) => ({
           url: `${siteUrl}/products/${product.slug}`,
-          lastModified: product.updatedAt ?? new Date(),
+          lastModified: product.updatedAt ?? STATIC_LAST_MODIFIED,
           changeFrequency: "weekly" as const,
           priority: 0.8,
         }))
@@ -157,7 +177,7 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
       dynamicRoutes.push(
         ...dbTools.map((tool) => ({
           url: `${siteUrl}/tools/${tool.slug}`,
-          lastModified: tool.updatedAt ?? new Date(),
+          lastModified: tool.updatedAt ?? STATIC_LAST_MODIFIED,
           changeFrequency: "weekly" as const,
           priority: 0.8,
         }))
@@ -170,7 +190,7 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
           .filter((maker) => Boolean(maker.username))
           .map((maker) => ({
             url: `${siteUrl}/makers/${maker.username}`,
-            lastModified: maker.updatedAt ?? maker.createdAt ?? new Date(),
+            lastModified: maker.updatedAt ?? maker.createdAt ?? STATIC_LAST_MODIFIED,
             changeFrequency: "weekly" as const,
             priority: 0.75,
           }))

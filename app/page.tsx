@@ -3,10 +3,10 @@ import { MainContent } from "@/components/home/main-content"
 import {
   collectionPageSchema,
   breadcrumbSchema,
+  safeJsonLd,
 } from "@/lib/seo/schema"
 import { SITE_CONFIG } from "@/constants/site"
 import { HOMEPAGE_LIMITS } from "@/constants/rankings"
-import { getTodaysLaunches } from "@/lib/launches/todays-launches"
 import { getWeeklyLaunches } from "@/lib/launches/weekly-launches"
 import { getPopularBuildingBlocks } from "@/lib/rankings/popular"
 import { getCurrentWeek } from "@/lib/launches/week-utils"
@@ -15,34 +15,6 @@ import type { FeedItem } from "@/components/shared/feed-card"
 export const revalidate = 60
 
 export const metadata: Metadata = {
-  /*
-  title: {
-    absolute: `${SITE_CONFIG.name} — Today's Developer Launches`,
-  },
-  description:
-    `Discover the developer tools, APIs, and products launching today and this week on ${SITE_CONFIG.name}. Ranked by community votes, updated every minute.`,
-  keywords: [
-    ...SITE_CONFIG.keywords,
-    "daily developer launches",
-    "today's developer tools",
-    "product launches today",
-    "new software launches",
-    "community voted tools",
-  ],
-  openGraph: {
-    title: `${SITE_CONFIG.name} — Today's Developer Launches`,
-    description:
-      `Discover the developer tools, APIs, and products launching today on ${SITE_CONFIG.name}, ranked by community votes.`,
-    ...
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: `${SITE_CONFIG.name} — Today's Developer Launches`,
-    description:
-      `Discover the developer tools, APIs, and products launching today on ${SITE_CONFIG.name}, ranked by community votes.`,
-    images: [`${SITE_CONFIG.url}/twitter-image`],
-  },
-  */
   title: {
     absolute: `${SITE_CONFIG.name} — This Week's Developer Launches`,
   },
@@ -88,34 +60,15 @@ export const metadata: Metadata = {
 const Page = async () => {
   const { year, week } = getCurrentWeek()
 
-  /*
-  const [todaysLaunches, weeklyLaunches, popularBuildingBlocks] =
-    await Promise.all([
-      getTodaysLaunches({ limit: HOMEPAGE_LIMITS.TODAYS_LAUNCHES_MAX }).catch(() => []),
-      getWeeklyLaunches({ year, week, limit: HOMEPAGE_LIMITS.WEEKLY_LAUNCHES }).catch(() => []),
-      getPopularBuildingBlocks({
-        limit: HOMEPAGE_LIMITS.POPULAR_BUILDING_BLOCKS,
-      }).catch(() => []),
-    ])
-  */
   const [weeklyLaunches, popularBuildingBlocks] = await Promise.all([
     getWeeklyLaunches({ year, week, limit: HOMEPAGE_LIMITS.WEEKLY_LAUNCHES_MAX }).catch(() => []),
     getPopularBuildingBlocks({
       limit: HOMEPAGE_LIMITS.POPULAR_BUILDING_BLOCKS,
     }).catch(() => []),
   ])
-  // Temporarily commented out while daily launch volume ramps up
+
   const todaysLaunches: FeedItem[] = []
 
-  /*
-  const featuredItems = (todaysLaunches as FeedItem[])
-    .slice(0, 10)
-    .map((item) => ({
-      name: item.name,
-      url: `${SITE_CONFIG.url}${item.itemKind === "tool" ? `/tools/${item.slug}` : `/products/${item.slug}`}`,
-      description: item.tagline,
-    }))
-  */
   const featuredItems = (weeklyLaunches as FeedItem[])
     .slice(0, 10)
     .map((item) => ({
@@ -140,11 +93,11 @@ const Page = async () => {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbs) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(collectionJsonLd) }}
       />
       <MainContent
         todaysLaunches={todaysLaunches as FeedItem[]}

@@ -37,6 +37,7 @@ import {
   breadcrumbSchema,
   faqSchema,
   itemListSchema,
+  safeJsonLd,
 } from "@/lib/seo/schema"
 import { ProductLogo } from "@/components/shared/product-logo"
 import { getFaviconUrl } from "@/utils/urls"
@@ -219,7 +220,13 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
   }))
 
   const faqJsonLd = toolFaqs.length > 0 ? faqSchema(toolFaqs) : null
-  const aiPrompt = AI_PROMPTS.tool(tool.name, tool.tagline)
+  const aiPrompt = AI_PROMPTS.tool(
+    tool.name,
+    tool.tagline,
+    tool.aiContext || tool.description,
+    toolUrl,
+    `${toolUrl}.md`
+  )
 
   const builtWithJsonLd =
     builtWithProducts.length > 0
@@ -236,22 +243,22 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(prodJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(prodJsonLd) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbJsonLd) }}
       />
       {faqJsonLd && (
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+          dangerouslySetInnerHTML={{ __html: safeJsonLd(faqJsonLd) }}
         />
       )}
       {builtWithJsonLd && (
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(builtWithJsonLd) }}
+          dangerouslySetInnerHTML={{ __html: safeJsonLd(builtWithJsonLd) }}
         />
       )}
 

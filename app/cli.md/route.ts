@@ -4,29 +4,34 @@ import { SITE_CONFIG } from "@/constants/site"
 export const revalidate = 86400
 
 export const GET = () => {
-  const content = `# ${SITE_CONFIG.name} CLI and Public API
+  const content = `# ${SITE_CONFIG.name} Public REST API Reference
 
-> Official command-line client and OpenAPI 3.1 REST API for the developer tools and products catalog. No API key for reads.
+> Official OpenAPI 3.1 REST API reference and cURL guide for the developer tools and products catalog. No API key required for reads.
 
 \`\`\`yaml
 url: "${SITE_CONFIG.url}/cli"
 openapi: "${SITE_CONFIG.url}/openapi.json"
 openapi_yaml: "${SITE_CONFIG.url}/api/openapi.yaml"
 rest: "${SITE_CONFIG.url}/v1"
-cli: npx @launchnests/cli
 auth: none - public read-only GET
 \`\`\`
 
-## Quick Start via CLI
+## Terminal Quickstart (cURL)
 
-Run without installing:
+Query public data directly from your terminal:
 
 \`\`\`bash
-npx @launchnests/cli --help
-npx @launchnests/cli search "postgres" --json
-npx @launchnests/cli leaderboard --limit 10
-npx @launchnests/cli tool supabase
-npx @launchnests/cli product decispher
+# Search developer tools and products
+curl -sS "${SITE_CONFIG.url}/v1/search?q=postgres"
+
+# Fetch top community upvoted tools & products
+curl -sS "${SITE_CONFIG.url}/v1/leaderboard?limit=10"
+
+# Inspect tool details
+curl -sS "${SITE_CONFIG.url}/v1/tools/supabase"
+
+# Inspect product details
+curl -sS "${SITE_CONFIG.url}/v1/products/decispher"
 \`\`\`
 
 ## Public REST Endpoints

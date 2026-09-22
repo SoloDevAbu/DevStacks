@@ -37,7 +37,7 @@ ${SITE_CONFIG.name} is a developer-focused platform cataloging modern tools, lib
 2. Discover products that developers have built using those tools.
 3. Evaluate pricing models (Free, Freemium, Open Source, Paid) and platform compatibility.
 4. Promote developer software through verified badges, community upvotes (tools) and likes (products).
-5. First 100 Launches Promotion: Currently onboarding the first 100 developer tools and products with complimentary Lifetime Premium status ($49 value), including permanent Do-Follow SEO backlinks, verified checkmark badges, and priority LLM agent indexing.
+5. First 50 Launches Promotion: Currently onboarding the first 50 developer tools and products with complimentary Lifetime Premium status ($49 value), including permanent Do-Follow SEO backlinks, verified checkmark badges, and priority LLM agent indexing.
 
 ---
 
@@ -62,22 +62,25 @@ ${PLATFORMS.map((p) => `- **${p.label}**`).join("\n")}
 ## 3. Trending Developer Tools & Products
 
 ${trendingItems
-  .map(
-    (p) => `### ${p.name}
+  .map((p) => {
+    const isTool = p.itemKind === "tool"
+    const entityPath = isTool ? `/tools/${p.slug}` : `/products/${p.slug}`
+    return `### ${p.name}
 - Slug: ${p.slug}
-- URL: ${SITE_CONFIG.url}/products/${p.slug}
+- Canonical URL: ${SITE_CONFIG.url}${entityPath}
+- Markdown Twin: ${SITE_CONFIG.url}${entityPath}.md
 - Tagline: ${p.tagline}
 - Tags: ${(p.tags ?? []).join(", ")}
 - Type: ${p.itemKind}
 `
-  )
+  })
   .join("\n")}
 
 ---
 
 ## 4. Popular Building Blocks ("Built With" Ecosystem)
 
-${buildingBlocks.map((b) => `- **${b.name}** (${b.category ?? "Tool"}): Used in ${b.buildsCount} verified developer projects. Page: ${SITE_CONFIG.url}/tools/${b.slug}`).join("\n")}
+${buildingBlocks.map((b) => `- **${b.name}** (${b.category ?? "Tool"}): Used in ${b.buildsCount} verified developer projects. Page: ${SITE_CONFIG.url}/tools/${b.slug} (Markdown: ${SITE_CONFIG.url}/tools/${b.slug}.md)`).join("\n")}
 
 ---
 

@@ -13,11 +13,11 @@ export const LAUNCH_PROMO = {
   BANNER_CTA: "Submit Launch",
   SEO_AWARD: "First 50 Launches — Verified Premium Builder",
   SEO_OFFER_DESCRIPTION:
-    "DevStacks Launch Special: Free Premium Verified Listing ($49 value) with permanent Do-Follow SEO backlink",
+    "LaunchNests Launch Special: Free Premium Verified Listing ($49 value) with permanent Do-Follow SEO backlink",
   PERKS: [
     "Permanent Do-Follow SEO Backlink (boosts domain authority & rank)",
     "Verified Checkmark Badge across all feeds and search listings",
     "Featured placement in search and category exploration feeds",
-    "Priority inclusion in Weekly AI newsletter and LLM indexing",
+    "Priority inclusion in upcoming Weekly AI newsletter and LLM indexing",
   ],
 } as const

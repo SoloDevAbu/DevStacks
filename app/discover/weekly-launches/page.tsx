@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import { CalendarDays } from "lucide-react"
 import { PageHeader } from "@/components/shared/page-header"
-import { breadcrumbSchema, collectionPageSchema } from "@/lib/seo/schema"
+import { breadcrumbSchema, collectionPageSchema, safeJsonLd } from "@/lib/seo/schema"
 import { SITE_CONFIG } from "@/constants/site"
 import { HOMEPAGE_LIMITS } from "@/constants/rankings"
 import { heroStatPill } from "@/utils/styles"
@@ -84,11 +84,11 @@ const WeeklyLaunchesPage = async () => {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbs) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(collectionJsonLd) }}
       />
       <div className="relative flex min-h-full flex-col bg-slate-50/50">
         <PageHeader

@@ -107,13 +107,11 @@ export const organizationSchema = () => ({
   ],
 })
 
+export const safeJsonLd = (data: unknown): string =>
+  JSON.stringify(data).replace(/</g, "\\u003c")
+
 export const productSchema = (product: ProductSchemaInput) => {
   const count = product.likesCount ?? product.upvotesCount ?? 0
-  const hasRating = count > 5
-  const ratingValue = hasRating
-    ? Math.min(5, Math.max(4.2, 4 + count / 1000)).toFixed(1)
-    : null
-  const ratingCount = hasRating ? count : null
 
   const featureList: string[] = []
   if (product.problemStatement)
@@ -167,15 +165,16 @@ export const productSchema = (product: ProductSchemaInput) => {
           ? downloadUrls[0]
           : downloadUrls
         : undefined,
-    aggregateRating: hasRating
-      ? {
-          "@type": "AggregateRating",
-          ratingValue,
-          ratingCount,
-          bestRating: "5",
-          worstRating: "1",
-        }
-      : undefined,
+    interactionStatistic:
+      count > 0
+        ? [
+            {
+              "@type": "InteractionCounter",
+              interactionType: "https://schema.org/LikeAction",
+              userInteractionCount: count,
+            },
+          ]
+        : undefined,
     offers: {
       "@type": "Offer",
       price:
@@ -208,7 +207,7 @@ export const productSchema = (product: ProductSchemaInput) => {
             {
               "@type": "PropertyValue",
               name: "LaunchBatch",
-              value: "First 100 Launches",
+              value: "First 50 Launches",
             },
             {
               "@type": "PropertyValue",
@@ -395,11 +394,6 @@ export type ToolSchemaInput = Omit<
 
 export const toolSchema = (tool: ToolSchemaInput) => {
   const count = tool.upvotesCount ?? 0
-  const hasRating = count > 5
-  const ratingValue = hasRating
-    ? Math.min(5, Math.max(4.2, 4 + count / 1000)).toFixed(1)
-    : null
-  const ratingCount = hasRating ? count : null
 
   const featureList: string[] = []
   if (tool.problemStatement)
@@ -432,15 +426,16 @@ export const toolSchema = (tool: ToolSchemaInput) => {
     keywords: tool.keywords ?? undefined,
     featureList: featureList.length > 0 ? featureList : undefined,
     sameAs: sameAs.length > 0 ? sameAs : undefined,
-    aggregateRating: hasRating
-      ? {
-          "@type": "AggregateRating",
-          ratingValue,
-          ratingCount,
-          bestRating: "5",
-          worstRating: "1",
-        }
-      : undefined,
+    interactionStatistic:
+      count > 0
+        ? [
+            {
+              "@type": "InteractionCounter",
+              interactionType: "https://schema.org/LikeAction",
+              userInteractionCount: count,
+            },
+          ]
+        : undefined,
     offers: {
       "@type": "Offer",
       price:
@@ -473,7 +468,7 @@ export const toolSchema = (tool: ToolSchemaInput) => {
             {
               "@type": "PropertyValue",
               name: "LaunchBatch",
-              value: "First 100 Launches",
+              value: "First 50 Launches",
             },
             {
               "@type": "PropertyValue",

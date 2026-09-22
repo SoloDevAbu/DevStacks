@@ -1,12 +1,12 @@
 import { SITE_CONFIG } from "@/constants/site"
 
 export const AI_PROMPTS = {
-  home: `What tools and products are launching today and this week on ${SITE_CONFIG.name}? What's gaining the most community votes right now?`,
+  home: `What developer tools and products launched this week on ${SITE_CONFIG.name}? What's gaining the most community votes right now?`,
   trending: `What are the most popular trending developer tools, APIs, and software products right now on ${SITE_CONFIG.name}?`,
   discover: `Help me discover new and interesting developer tools, database solutions, authentication APIs, and developer infrastructure on ${SITE_CONFIG.name}.`,
   pricing: `What are the listing, verification, and sponsorship plans available on ${SITE_CONFIG.name} to promote developer tools and products?`,
   newRising: `What are the newest and rising developer tools and products launched in the last 7 days on ${SITE_CONFIG.name}?`,
-  dailyLaunches: `What developer tools and products are launching today on ${SITE_CONFIG.name}? Which ones are getting the most community votes?`,
+  dailyLaunches: `What developer tools and products launched this week on ${SITE_CONFIG.name}? Which ones are getting the most community votes?`,
   weeklyLaunches: `What developer tools and products launched this week on ${SITE_CONFIG.name}? Show me what the community voted for most.`,
   risingTools: `What developer tools and APIs are gaining the most momentum right now on ${SITE_CONFIG.name}?`,
   risingProducts: `What products and developer tools are gaining the most momentum right now on ${SITE_CONFIG.name}?`,
@@ -18,19 +18,49 @@ export const AI_PROMPTS = {
   showcase: `How do developer build showcases and 'Built With' tech-stack breakdowns work on ${SITE_CONFIG.name}?`,
   faq: `What is ${SITE_CONFIG.name} (${SITE_CONFIG.domain})? How does directory submission, community ranking, and AI answer engine discoverability work for developer tools and products?`,
   mcp: `How does the ${SITE_CONFIG.name} Model Context Protocol (MCP) server work, what 8 tools are available, and how do I connect it to Cursor, Windsurf, or Claude Code?`,
-  cli: `How do I use the ${SITE_CONFIG.name} CLI and OpenAPI 3.1 REST API (/v1) to query developer tools, products, and tech stacks from the terminal or AI pipelines?`,
+  cli: `How do I use the ${SITE_CONFIG.name} OpenAPI 3.1 REST API (/v1) and cURL to query developer tools, products, and tech stacks from the terminal or AI agent pipelines?`,
   terms: `Summarize the Terms of Service for ${SITE_CONFIG.name} (${SITE_CONFIG.domain}). What are the rules for directory submissions, community rankings, and promotional services?`,
   privacy: `Summarize the Privacy Policy for ${SITE_CONFIG.name} (${SITE_CONFIG.domain}). What data is collected, how is it protected, and what are my rights?`,
   refund: `What is the Refund Policy for advertising, featured placements, and sponsorship packages on ${SITE_CONFIG.name}?`,
   dashboard: `How does the maker dashboard work on ${SITE_CONFIG.name}? How can I manage my submissions, track upvotes, and optimize my product listings?`,
   notFound: `I encountered a missing page on ${SITE_CONFIG.name} (${SITE_CONFIG.domain}). What developer tools, products, and tech stacks can I explore?`,
-  product: (productName: string, tagline?: string) =>
-    `Tell me about ${productName}${tagline ? ` (${tagline})` : ""} featured on ${SITE_CONFIG.name}. What problem does it solve, what are its key features, tech stack compatibility, and alternatives?`,
-  tool: (toolName: string, tagline?: string) =>
-    `Tell me about ${toolName}${tagline ? ` (${tagline})` : ""} featured on ${SITE_CONFIG.name}. What problem does it solve, what are its key features, pricing, and what products are built with it?`,
+  product: (
+    productName: string,
+    tagline?: string,
+    aiContext?: string | null,
+    canonicalUrl?: string,
+    markdownUrl?: string
+  ) =>
+    `Analyze ${productName}${tagline ? ` (${tagline})` : ""}. ${
+      aiContext ? `Summary context: "${aiContext}". ` : ""
+    }Direct URL: ${canonicalUrl || `${SITE_CONFIG.url}/products/${productName}`}. Machine-readable Markdown (.md): ${
+      markdownUrl || `${SITE_CONFIG.url}/products/${productName}.md`
+    }. What problem does it solve, what are its key architectural advantages, tech stack compatibility, and alternatives?`,
+  tool: (
+    toolName: string,
+    tagline?: string,
+    aiContext?: string | null,
+    canonicalUrl?: string,
+    markdownUrl?: string
+  ) =>
+    `Analyze ${toolName}${tagline ? ` (${tagline})` : ""}. ${
+      aiContext ? `Summary context: "${aiContext}". ` : ""
+    }Direct URL: ${canonicalUrl || `${SITE_CONFIG.url}/tools/${toolName}`}. Machine-readable Markdown (.md): ${
+      markdownUrl || `${SITE_CONFIG.url}/tools/${toolName}.md`
+    }. What problem does it solve, what are its key features, pricing, and what products are built with it?`,
   makers: `Who are the featured developers and makers building software and developer tools on ${SITE_CONFIG.name}? What tech stacks and tools do they specialize in?`,
-  maker: (makerName: string, username?: string, bio?: string | null) =>
-    `Tell me about ${makerName}${username ? ` (@${username})` : ""}, developer and maker on ${SITE_CONFIG.name}.${bio ? ` Bio: "${bio}".` : ""} What developer tools, products, and tech stacks have they built?`,
+  maker: (
+    makerName: string,
+    username?: string,
+    bio?: string | null,
+    canonicalUrl?: string,
+    markdownUrl?: string
+  ) =>
+    `Tell me about ${makerName}${username ? ` (@${username})` : ""}, developer and maker on ${SITE_CONFIG.name}.${
+      bio ? ` Bio: "${bio}". ` : " "
+    }Profile: ${canonicalUrl || `${SITE_CONFIG.url}/makers/${username}`}. Machine-readable Markdown (.md): ${
+      markdownUrl || `${SITE_CONFIG.url}/makers/${username}.md`
+    }. What developer tools, products, and tech stacks have they built?`,
 }
 
 export interface PageAiGuide {
@@ -46,15 +76,15 @@ export const getPageAiGuide = (pathname: string): PageAiGuide => {
 
   if (cleanPath === "/") {
     return {
-      title: "Today's Launches & Live Feed",
+      title: "This Week's Developer Launches",
       whatItIs:
-        "The real-time discovery feed of developer tools, APIs, and software products launched today and this week, ranked by live community upvotes.",
+        "The real-time discovery feed of developer tools, APIs, and software products launched this week, ranked by live community upvotes.",
       howToUse:
-        "Toggle between Today and This Week tabs, upvote tools you love, click product cards to inspect verified tech stacks, or click tools to see live builds.",
+        "Explore launches this week, upvote tools you love, click product cards to inspect verified tech stacks, or click tools to see live builds.",
       prompt: AI_PROMPTS.home,
       suggestedQuestions: [
-        "What are the top 3 launches today?",
-        "How does the daily launch ranking work?",
+        "What are the top 3 launches this week?",
+        "How does the weekly launch ranking work?",
         "Which new developer tools launched this week?",
       ],
     }
@@ -211,14 +241,14 @@ export const getPageAiGuide = (pathname: string): PageAiGuide => {
     return {
       title: "Sidebar Sponsorship & Pricing",
       whatItIs:
-        "Transparent details on directory submission (100% free forever) and premium sidebar sponsorship packages seen across all pages on LaunchNests.",
+        "Transparent details on directory submission (free for the first 50 launches) and premium sidebar sponsorship packages seen across all pages on LaunchNests.",
       howToUse:
-        "Review impressions, audience reach (50,000+ developers), and sponsorship packages. Direct message on X or reach out to reserve exclusive placement.",
+        "Review impressions and verified sponsorship packages. Reserve and purchase verified placement instantly via our self-serve checkout or reach out to support@launchnests.com.",
       prompt: AI_PROMPTS.pricing,
       suggestedQuestions: [
         "How much does directory submission cost?",
         "Where do sponsored sidebar placements appear?",
-        "What developer audience does LaunchNests reach?",
+        "How do I reserve a verified sponsorship slot?",
       ],
     }
   }
@@ -306,14 +336,14 @@ export const getPageAiGuide = (pathname: string): PageAiGuide => {
 
   if (cleanPath === "/cli") {
     return {
-      title: "CLI & Public REST API (/v1)",
+      title: "Public REST API & cURL (/v1)",
       whatItIs:
-        "Developer access guide for querying the LaunchNests catalog directly via terminal CLI commands, cURL, or the OpenAPI 3.1 REST API.",
+        "Developer access guide for querying the LaunchNests catalog directly via cURL, HTTP scripts, or the OpenAPI 3.1 REST API.",
       howToUse:
-        "Run CLI commands or make direct HTTP GET requests to /v1/tools, /v1/products, and /v1/search. No API key required for public read requests.",
+        "Make direct HTTP GET requests to /v1/tools, /v1/products, and /v1/search using cURL or your HTTP client. No API key required for public read requests.",
       prompt: AI_PROMPTS.cli,
       suggestedQuestions: [
-        "How do I query developer tools using cURL or CLI?",
+        "How do I query developer tools using cURL?",
         "What REST endpoints are exposed under /v1?",
         "Where can I find the OpenAPI 3.1 JSON specification?",
       ],
@@ -377,10 +407,10 @@ export const getPageAiGuide = (pathname: string): PageAiGuide => {
       whatItIs:
         "The creator control center to manage submitted tools, products, tech-stack backlinks, and monitor community upvote performance.",
       howToUse:
-        "Review submission statuses, edit tool descriptions and AI Context, view live upvote metrics, and link new builds.",
+        "Review your submitted products and tools, track community upvotes, view listing statuses, and manage your maker portfolio.",
       prompt: AI_PROMPTS.dashboard,
       suggestedQuestions: [
-        "How do I edit my submitted tool or product?",
+        "How do I view my submitted tools and products?",
         "How can I track community upvotes on my projects?",
         "How do I add custom maker FAQs to my profile?",
       ],

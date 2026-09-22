@@ -4,6 +4,7 @@ import {
   breadcrumbSchema,
   itemListSchema,
   collectionPageSchema,
+  safeJsonLd,
 } from "@/lib/seo/schema"
 import { getTrending } from "@/lib/rankings/trending"
 import type { TimeframeOption } from "@/lib/rankings/types"
@@ -116,15 +117,15 @@ const TrendingPage = async (props: {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbs) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLd) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(collectionJsonLd) }}
       />
       <TrendingContent
         key={`${category ?? "all"}-${timeframe}`}

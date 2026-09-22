@@ -12,7 +12,7 @@ import { LaunchPromoBanner } from "@/components/layout/launch-promo-banner"
 import { Providers } from "@/app/providers"
 
 import { SITE_CONFIG } from "@/constants/site"
-import { organizationSchema, websiteSchema } from "@/lib/seo/schema"
+import { organizationSchema, websiteSchema, safeJsonLd } from "@/lib/seo/schema"
 
 import "./globals.css"
 import { cn } from "@/lib/utils"
@@ -82,6 +82,9 @@ export const metadata: Metadata = {
   },
   alternates: {
     canonical: SITE_CONFIG.url,
+    types: {
+      "application/rss+xml": `${SITE_CONFIG.url}/feed.xml`,
+    },
     languages: {
       "x-default": SITE_CONFIG.url,
       "en-US": SITE_CONFIG.url,
@@ -127,15 +130,21 @@ const RootLayout = ({
       <head>
         <link rel="me" href={SITE_CONFIG.socials.x} />
         <link rel="me" href={SITE_CONFIG.socials.linkedin} />
+        <link
+          rel="alternate"
+          type="application/rss+xml"
+          title={`${SITE_CONFIG.name} — Weekly Developer Launches`}
+          href={`${SITE_CONFIG.url}/feed.xml`}
+        />
       </head>
       <body>
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(orgSchema) }}
+          dangerouslySetInnerHTML={{ __html: safeJsonLd(orgSchema) }}
         />
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(webSchema) }}
+          dangerouslySetInnerHTML={{ __html: safeJsonLd(webSchema) }}
         />
         <Providers>
           <div className="flex min-h-dvh flex-col bg-slate-50/30">

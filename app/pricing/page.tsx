@@ -11,7 +11,7 @@ import {
   launchPromoFullWidthPerksGrid,
   launchPromoCardItem,
 } from "@/utils/styles"
-import { breadcrumbSchema, faqSchema } from "@/lib/seo/schema"
+import { breadcrumbSchema, faqSchema, safeJsonLd } from "@/lib/seo/schema"
 import { AI_PROMPTS } from "@/lib/prompts"
 import { PricingSponsorshipSection } from "@/components/pricing/pricing-sponsorship-section"
 
@@ -63,7 +63,7 @@ const PricingPage = () => {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbs) }}
       />
       <div className="relative flex min-h-full flex-col bg-slate-50/50">
         <PageHeader

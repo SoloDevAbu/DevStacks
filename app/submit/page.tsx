@@ -4,7 +4,7 @@ import { auth } from "@/lib/auth"
 import { SubmitContent } from "@/components/submit/submit-content"
 import { SubmitCrawlerView } from "@/components/submit/submit-crawler-view"
 import { SITE_CONFIG } from "@/constants/site"
-import { breadcrumbSchema, faqSchema } from "@/lib/seo/schema"
+import { breadcrumbSchema, faqSchema, safeJsonLd } from "@/lib/seo/schema"
 
 export const metadata: Metadata = {
   title: "Submit a Developer Tool — Get Discovered by Engineers & AI",
@@ -51,11 +51,11 @@ export const metadata: Metadata = {
 const SUBMISSION_FAQS = [
   {
     question: `How do I list my developer tool or product on ${SITE_CONFIG.name}?`,
-    answer: `Sign in with your GitHub or Google account, complete the submission form detailing your product's problem statement, solution, target audience, and underlying tech stack, then submit for review.`,
+    answer: `Sign in with your Google account, complete the submission form detailing your product's problem statement, solution, target audience, and underlying tech stack, then submit for review.`,
   },
   {
     question: `What are the discoverability benefits of listing on ${SITE_CONFIG.name}?`,
-    answer: `Listings receive permanent directory indexing, inclusion in /llms.txt and /llms-full.txt for generative AI engines (ChatGPT, Claude, Perplexity), structured SoftwareApplication JSON-LD, and placement in Today's Launches and Weekly Launches on the homepage ranked by community votes.`,
+    answer: `Listings receive permanent directory indexing, inclusion in /llms.txt and /llms-full.txt for generative AI engines (ChatGPT, Claude, Perplexity), structured SoftwareApplication JSON-LD, and placement in This Week's Launches on the homepage ranked by community votes.`,
   },
   {
     question: `What metadata is collected for AEO and GEO optimization?`,
@@ -85,11 +85,11 @@ const SubmitPage = async () => {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbs) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqs) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(faqs) }}
       />
       {session?.user ? <SubmitContent /> : <SubmitCrawlerView />}
     </>

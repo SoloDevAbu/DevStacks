@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
 import { ToolsHero } from "@/components/tools/tools-hero"
-import { collectionPageSchema, breadcrumbSchema } from "@/lib/seo/schema"
+import { collectionPageSchema, breadcrumbSchema, safeJsonLd } from "@/lib/seo/schema"
 import { SITE_CONFIG } from "@/constants/site"
 import { ROUTES } from "@/constants/routes"
 import { AI_PROMPTS } from "@/lib/prompts"
@@ -140,11 +140,11 @@ const ToolsPage = async (props: {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbs) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(collectionJsonLd) }}
       />
       <div className="relative flex min-h-full flex-col bg-slate-50/50">
         <ToolsHero

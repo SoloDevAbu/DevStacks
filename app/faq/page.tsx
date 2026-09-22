@@ -13,7 +13,7 @@ import { FAQ_CATEGORIES, LAUNCHNESTS_FAQS } from "@/constants/faqs"
 import { SITE_CONFIG } from "@/constants/site"
 import { ROUTES } from "@/constants/routes"
 import { AI_PROMPTS } from "@/lib/prompts"
-import { breadcrumbSchema, faqSchema } from "@/lib/seo/schema"
+import { breadcrumbSchema, faqSchema, safeJsonLd } from "@/lib/seo/schema"
 import {
   faqCategoryHeaders,
   faqSectionTitle,
@@ -81,11 +81,11 @@ const FaqPage = () => {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbsJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbsJsonLd) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(faqJsonLd) }}
       />
 
       <div className="relative flex min-h-full flex-col bg-slate-50/50">
