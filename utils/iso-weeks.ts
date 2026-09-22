@@ -94,3 +94,55 @@ export const formatWeekRangeShort = (isoYear: number, isoWeek: number): string =
   }
   return `${startMonth} ${startDay} – ${endMonth} ${endDay}`
 }
+
+export const getUpcomingLaunchWeeks = (
+  fromDate?: Date,
+  horizonWeeks = 8
+): ISOWeekInfo[] => {
+  const now = fromDate ?? new Date()
+  const current = getISOWeek(now)
+  const currentRange = getISOWeekRange(current.isoYear, current.isoWeek)
+
+  // Current week is locked once Monday 00:00 UTC begins. Start strictly from next week Monday.
+  let cursor = new Date(
+    currentRange.startDate.getTime() + 7 * 24 * 60 * 60 * 1000
+  )
+
+  const weeks: ISOWeekInfo[] = []
+  for (let i = 0; i < horizonWeeks; i++) {
+    const weekInfo = getISOWeek(cursor)
+    const range = getISOWeekRange(weekInfo.isoYear, weekInfo.isoWeek)
+
+    weeks.push({
+      isoYear: weekInfo.isoYear,
+      isoWeek: weekInfo.isoWeek,
+      startDate: range.startDate,
+      endDate: range.endDate,
+    })
+
+    cursor = new Date(cursor.getTime() + 7 * 24 * 60 * 60 * 1000)
+  }
+
+  return weeks
+}
+
+export const formatLaunchWeekDisplay = (
+  isoYear: number,
+  isoWeek: number
+): { weekLabel: string; dateRange: string } => {
+  const { startDate, endDate } = getISOWeekRange(isoYear, isoWeek)
+  const startMonth = MONTH_SHORT[startDate.getUTCMonth()]
+  const endMonth = MONTH_SHORT[endDate.getUTCMonth()]
+  const startDay = startDate.getUTCDate()
+  const endDay = endDate.getUTCDate()
+
+  const dateRange =
+    startMonth === endMonth
+      ? `${startMonth} ${startDay} – ${endDay}`
+      : `${startMonth} ${startDay} – ${endMonth} ${endDay}`
+
+  return {
+    weekLabel: `Week ${isoWeek}`,
+    dateRange,
+  }
+}
