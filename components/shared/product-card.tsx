@@ -18,6 +18,8 @@ import { cn } from "@/lib/utils"
 import { HoverOutline } from "@/components/shared/hover-outline"
 import { VerifiedBadge } from "@/components/shared/verified-badge"
 import { ProductLogo } from "@/components/shared/product-logo"
+import { ItemTypeBadge } from "@/components/shared/item-type-badge"
+import { ITEM_KIND } from "@/constants/items"
 import { TIER, type Tier, type Pricing } from "@/constants/plans"
 import { ROUTES } from "@/constants/routes"
 import {
@@ -49,6 +51,7 @@ interface ProductCardProps {
   showMedals?: boolean
   showTrendingBadge?: boolean
   showFreshnessBadge?: boolean
+  showTypeBadge?: boolean
 }
 
 export const ProductCard = ({
@@ -57,6 +60,7 @@ export const ProductCard = ({
   showMedals = false,
   showTrendingBadge = false,
   showFreshnessBadge = false,
+  showTypeBadge = false,
 }: ProductCardProps) => {
   const router = useRouter()
   const { data: session } = useSession()
@@ -204,6 +208,7 @@ export const ProductCard = ({
                 <ExternalLink className="size-3 shrink-0 text-slate-400 opacity-0 transition-opacity group-hover:opacity-100" />
               </a>
             </h3>
+            {showTypeBadge && <ItemTypeBadge kind={ITEM_KIND.PRODUCT} />}
             {showTrendingBadge && isTrending && (
               <Badge
                 variant="outline"

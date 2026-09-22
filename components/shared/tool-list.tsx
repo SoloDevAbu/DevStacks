@@ -12,7 +12,7 @@ export type { DbTool }
 export const ToolList = ({
   tools,
   showMedals = false,
-  showTrendingBadge = true,
+  showTrendingBadge = false,
 }: {
   tools: DbTool[]
   showMedals?: boolean

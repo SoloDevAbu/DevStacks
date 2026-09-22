@@ -12,7 +12,7 @@ export type { DbProduct }
 export const ProductList = ({
   products,
   showMedals = false,
-  showTrendingBadge = true,
+  showTrendingBadge = false,
 }: {
   products: DbProduct[]
   showMedals?: boolean

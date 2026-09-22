@@ -5,6 +5,7 @@ import {
   type Tier,
   type Pricing,
 } from "@/constants/plans"
+import { ITEM_KIND, type ItemKind } from "@/constants/items"
 
 export const tierCardBg = (tier: Tier) =>
   cn(
@@ -586,3 +587,11 @@ export const sidebarLaunchRowBorder = (tier: Tier) =>
 
 export const sidebarLaunchVotes =
   "flex shrink-0 items-center gap-1 rounded-md border border-slate-200/80 bg-slate-50/80 px-2 py-0.5 font-mono text-[11px] font-semibold text-slate-600 transition-colors group-hover:border-amber-300 group-hover:bg-amber-50 group-hover:text-amber-700"
+
+export const itemTypeBadge = (kind: ItemKind) =>
+  cn(
+    "flex items-center rounded-none px-1.5 py-0.5 text-[10px] font-bold tracking-wider uppercase transition-colors shrink-0",
+    kind === ITEM_KIND.TOOL
+      ? "border-sky-200/80 bg-sky-50/80 text-sky-700 hover:bg-sky-100/80"
+      : "border-violet-200/80 bg-violet-50/80 text-violet-700 hover:bg-violet-100/80"
+  )

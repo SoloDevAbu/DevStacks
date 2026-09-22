@@ -40,7 +40,9 @@ export const TrendingContent = ({
       if (cat && cat.toLowerCase() !== "all") params.set("category", cat)
 
       const qs = params.toString()
-      router.push(qs ? `${ROUTES.TRENDING}?${qs}` : ROUTES.TRENDING, { scroll: false })
+      router.push(qs ? `${ROUTES.TRENDING}?${qs}` : ROUTES.TRENDING, {
+        scroll: false,
+      })
     },
     [router, timeframe, selectedCategory]
   )
@@ -84,13 +86,6 @@ export const TrendingContent = ({
         }
         aiPrompt={AI_PROMPTS.trending}
         variant="trending"
-        metrics={
-          <div className={heroStatPill}>
-            <Flame className="size-3.5 text-amber-500" />
-            <span className="font-bold text-slate-900">Live Rankings</span>
-            <span className="text-slate-500">Ranked by Upvotes</span>
-          </div>
-        }
       />
       <FilterBar
         timeframe={timeframe}
