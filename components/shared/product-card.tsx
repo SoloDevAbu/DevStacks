@@ -9,6 +9,7 @@ import {
   ArrowUp,
   Sparkles,
   Tag,
+  MessageSquare,
 } from "lucide-react"
 import Link from "next/link"
 import { Card, CardContent } from "@/components/ui/card"
@@ -32,6 +33,9 @@ import {
   directoryCard,
   directoryCardContent,
   medalBadge,
+  cardCommentIcon,
+  cardCommentGroup,
+  cardTagBadge,
   cardTagIcon,
   cardTagsGroup,
 } from "@/utils/styles"
@@ -233,9 +237,20 @@ export const ProductCard = ({
             {product.tagline}
           </p>
 
-          {/* Tags + Built with row */}
-          {((product.tags ?? []).length > 0 || builtWithTools.length > 0) && (
+          {/* Comments, tags + Built with row */}
+          {((product.commentsCount ?? 0) >= 0 || (product.tags ?? []).length > 0 || builtWithTools.length > 0) && (
             <div className="mt-2 flex flex-wrap items-center gap-3">
+              <Link
+                href={`${ROUTES.PRODUCT(product.slug)}#comments`}
+                onClick={(e) => e.stopPropagation()}
+                className={cardCommentGroup}
+                title={`${(product.commentsCount ?? 0).toLocaleString()} comments`}
+                aria-label={`${(product.commentsCount ?? 0).toLocaleString()} comments`}
+              >
+                <MessageSquare className={cardCommentIcon} />
+                <span>{(product.commentsCount ?? 0).toLocaleString()}</span>
+              </Link>
+
               {(product.tags ?? []).length > 0 && (
                 <div className={cardTagsGroup}>
                   <Tag className={cardTagIcon} />
@@ -243,7 +258,7 @@ export const ProductCard = ({
                     <Badge
                       key={tag}
                       variant="secondary"
-                      className="rounded-none bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-600"
+                      className={cardTagBadge}
                     >
                       {tag}
                     </Badge>

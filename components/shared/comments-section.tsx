@@ -115,7 +115,7 @@ export const CommentsSection = ({
   const remainingCount = comments.length - visibleCount
 
   return (
-    <section className={commentSectionContainer}>
+    <section id="comments" className={commentSectionContainer}>
       <DetailSectionHeader
         title="Discussion & Comments"
         subtitle={`Questions, feedback, and insights from developers about ${entityName}`}

@@ -10,7 +10,9 @@ import {
   Sparkles,
   Layers,
   Tag,
+  MessageSquare,
 } from "lucide-react"
+import Link from "next/link"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -35,6 +37,9 @@ import {
   directoryCardContent,
   medalBadge,
   toolBuildsBadge,
+  cardCommentIcon,
+  cardCommentGroup,
+  cardTagBadge,
   cardTagIcon,
   cardTagsGroup,
 } from "@/utils/styles"
@@ -234,9 +239,20 @@ export const ToolCard = ({
             {tool.tagline}
           </p>
 
-          {/* Tags + stats row */}
-          {((tool.tags ?? []).length > 0 || tool.buildsCount > 0) && (
+          {/* Comments, tags, and stats row */}
+          {((tool.commentsCount ?? 0) >= 0 || (tool.tags ?? []).length > 0 || tool.buildsCount > 0) && (
             <div className="mt-2 flex flex-wrap items-center gap-2.5">
+              <Link
+                href={`${ROUTES.TOOL(tool.slug)}#comments`}
+                onClick={(e) => e.stopPropagation()}
+                className={cardCommentGroup}
+                title={`${(tool.commentsCount ?? 0).toLocaleString()} comments`}
+                aria-label={`${(tool.commentsCount ?? 0).toLocaleString()} comments`}
+              >
+                <MessageSquare className={cardCommentIcon} />
+                <span>{(tool.commentsCount ?? 0).toLocaleString()}</span>
+              </Link>
+
               {(tool.tags ?? []).length > 0 && (
                 <div className={cardTagsGroup}>
                   <Tag className={cardTagIcon} />
@@ -244,7 +260,7 @@ export const ToolCard = ({
                     <Badge
                       key={tag}
                       variant="secondary"
-                      className="rounded-md border border-slate-200/80 bg-slate-100/70 px-2 py-0.5 text-xs font-medium text-slate-600 transition-colors hover:bg-slate-200/60"
+                      className={cardTagBadge}
                     >
                       {tag}
                     </Badge>
