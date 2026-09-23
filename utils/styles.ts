@@ -427,6 +427,9 @@ export const launchPromoBannerWrapper =
 export const launchPromoBadge =
   "inline-flex items-center gap-1 rounded-md border border-amber-300/80 bg-amber-100/60 px-2 py-0.5 text-[11px] font-semibold text-amber-900 shadow-2xs"
 
+export const addedByLaunchNestsBadge =
+  "inline-flex items-center gap-1 rounded-md border border-slate-200 bg-slate-100/70 px-2 py-0.5 text-[11px] font-semibold text-slate-700 shadow-2xs"
+
 export const launchPromoCard =
   "relative overflow-hidden rounded-xl border border-dashed border-amber-300/80 bg-linear-to-br from-amber-50/70 via-white to-yellow-50/50 p-5 shadow-xs"
 

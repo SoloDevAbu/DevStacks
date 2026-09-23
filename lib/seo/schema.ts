@@ -85,11 +85,11 @@ export const organizationSchema = () => ({
   disambiguatingDescription:
     "The premier developer tools discovery directory, APIs database, and tech-stack ecosystem platform.",
   foundingDate: "2026",
-  email: "support@launchnests.com",
+  email: SITE_CONFIG.supportEmail,
   sameAs: [SITE_CONFIG.socials.x, SITE_CONFIG.socials.linkedin],
   contactPoint: {
     "@type": "ContactPoint",
-    email: "support@launchnests.com",
+    email: SITE_CONFIG.supportEmail,
     contactType: "technical support",
     url: `${SITE_CONFIG.url}/submit`,
   },

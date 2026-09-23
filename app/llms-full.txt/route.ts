@@ -37,7 +37,7 @@ ${SITE_CONFIG.name} is a developer-focused platform cataloging modern tools, lib
 2. Discover products that developers have built using those tools.
 3. Evaluate pricing models (Free, Freemium, Open Source, Paid) and platform compatibility.
 4. Promote developer software through verified badges, community upvotes (tools) and likes (products).
-5. First 50 Launches Promotion: Currently onboarding the first 50 developer tools and products with complimentary Lifetime Premium status ($49 value), including permanent Do-Follow SEO backlinks, verified checkmark badges, and priority LLM agent indexing.
+5. First 50 Launches Promotion: Currently onboarding the first 50 developer tools and products with complimentary Lifetime Premium status ($15 value), including permanent Do-Follow SEO backlinks, verified checkmark badges, and priority LLM agent indexing.
 
 ---
 

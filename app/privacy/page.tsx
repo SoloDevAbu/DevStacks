@@ -217,7 +217,7 @@ const PrivacyPage = () => {
                 <Button
                   size="sm"
                   nativeButton={false}
-                  render={<a href="mailto:support@launchnests.com" />}
+                  render={<a href={`mailto:${SITE_CONFIG.supportEmail}`} />}
                   className="text-xs"
                 >
                   <Mail className="mr-1.5 size-3.5" />

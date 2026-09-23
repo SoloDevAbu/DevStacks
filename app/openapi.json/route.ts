@@ -15,7 +15,7 @@ export const GET = () => {
       contact: {
         name: SITE_CONFIG.name,
         url: `${SITE_CONFIG.url}/cli`,
-        email: "support@launchnests.com",
+        email: SITE_CONFIG.supportEmail,
       },
       license: {
         name: "Public read-only API",

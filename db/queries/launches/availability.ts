@@ -1,6 +1,6 @@
 import { db } from "@/db"
 import { launches, tools, products } from "@/db/schema"
-import { and, eq, ne, sql } from "drizzle-orm"
+import { and, eq, ne, isNotNull, sql } from "drizzle-orm"
 import { MAX_FREE_LAUNCHES_PER_WEEK } from "@/constants/launches"
 import { LAUNCH_PROMO } from "@/constants/promo"
 import {
@@ -32,11 +32,13 @@ export const getLaunchPromoStatus = async (): Promise<LaunchPromoStatus> => {
     db
       .select({ count: sql<number>`count(*)::int` })
       .from(tools)
-      .where(ne(tools.status, "rejected")),
+      .where(and(ne(tools.status, "rejected"), isNotNull(tools.submitterId))),
     db
       .select({ count: sql<number>`count(*)::int` })
       .from(products)
-      .where(ne(products.status, "rejected")),
+      .where(
+        and(ne(products.status, "rejected"), isNotNull(products.submitterId))
+      ),
   ])
 
   const promoClaimed =

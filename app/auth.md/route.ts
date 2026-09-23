@@ -49,7 +49,7 @@ ${SITE_CONFIG.name} supports interactive sign-in with OAuth-verified identities:
 
 ## Contact
 
-- Agent integration inquiries: support@launchnests.com
+- Agent integration inquiries: ${SITE_CONFIG.supportEmail}
 `
 
   return new NextResponse(content, {

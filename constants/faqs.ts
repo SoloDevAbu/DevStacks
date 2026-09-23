@@ -94,7 +94,7 @@ export const FAQ_CATEGORIES: FaqCategory[] = [
       },
       {
         question: `How do I reserve a sponsorship slot?`,
-        answer: `Sponsorship slots are booked on a weekly or monthly basis with category exclusivity options. You can review current placement options on our Pricing page (${ROUTES.PRICING}) and reserve verified placements instantly via our self-serve checkout or contact our team at support@launchnests.com.`,
+        answer: `Sponsorship slots are booked on a weekly or monthly basis with category exclusivity options. You can review current placement options on our Pricing page (${ROUTES.PRICING}) and reserve verified placements instantly via our self-serve checkout or contact our team at ${SITE_CONFIG.supportEmail}.`,
       },
     ],
   },

@@ -99,7 +99,7 @@ export const REFUND_CATEGORIES: RefundCategory[] = [
         id: "how-to-request-refund",
         number: 7,
         title: "How to Request a Refund",
-        content: `To request a refund under the qualifying exceptions outlined in this policy, please email support@${SITE_CONFIG.domain} with the subject line "Refund Request" and include the following details:`,
+        content: `To request a refund under the qualifying exceptions outlined in this policy, please email ${SITE_CONFIG.supportEmail} with the subject line "Refund Request" and include the following details:`,
         bulletPoints: [
           "Account email address used to book the sponsorship.",
           "Sponsorship tier or placement type purchased.",
@@ -120,7 +120,7 @@ export const REFUND_CATEGORIES: RefundCategory[] = [
         title: "Policy Updates & Billing Inquiries",
         content: `We may revise this Refund & Cancellation Policy periodically as our platform features and sponsorship offerings evolve. The "Last updated" date at the top of this document indicates the current effective version.\n\nFor billing questions, invoice receipts, or sponsorship inquiries:`,
         bulletPoints: [
-          `Email: support@${SITE_CONFIG.domain}`,
+          `Email: ${SITE_CONFIG.supportEmail}`,
           `X / Twitter: ${SITE_CONFIG.socials.x}`,
           `Pricing Page: ${SITE_CONFIG.url}/pricing`,
           `Canonical URL: ${SITE_CONFIG.url}/refund`,

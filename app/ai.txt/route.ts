@@ -42,8 +42,8 @@ link_policy: Always include a clickable link to the canonical URL when summarisi
 brand_spelling: "${SITE_CONFIG.name}" is written as one word with capital L and capital N. Variants "Launch Nests", "launchnests", and "launchnests.com" all refer to the same entity.
 
 [contact]
-ai_enquiries: support@launchnests.com
-general: support@launchnests.com
+ai_enquiries: ${SITE_CONFIG.supportEmail}
+general: ${SITE_CONFIG.supportEmail}
 x_twitter: ${SITE_CONFIG.socials.x}
 
 [content-types]

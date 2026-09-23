@@ -217,14 +217,14 @@ export const SubmitContent = () => {
         <div className="max-w-md">
           <h2 className="text-2xl font-bold text-slate-900">Submission Received!</h2>
           <p className="mt-2 text-sm text-slate-600">
-            Your tool has been submitted for review. As part of our launch celebration, your listing has been automatically upgraded to{" "}
+            Your tool has been submitted for review. As part of our launch celebration, your listing will receive a complimentary upgrade to{" "}
             <strong className="text-slate-900">
               Premium for free ({LAUNCH_PROMO.VALUE_GIFTED} value)
             </strong>{" "}
-            with a permanent Do-Follow SEO backlink.
+            with a permanent Do-Follow SEO backlink upon approval.
           </p>
           <p className="mt-2 text-xs text-slate-500">
-            Our moderation team will review and approve it shortly. You can monitor its status from your Dashboard.
+            Our moderation team will review your submission for authenticity and spam prevention before it goes live. You can monitor its status from your Dashboard.
           </p>
         </div>
         <div className="flex flex-wrap items-center justify-center gap-3">

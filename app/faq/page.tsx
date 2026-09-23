@@ -182,7 +182,7 @@ const FaqPage = () => {
                   variant="ghost"
                   size="sm"
                   nativeButton={false}
-                  render={<a href="mailto:support@launchnests.com" />}
+                  render={<a href={`mailto:${SITE_CONFIG.supportEmail}`} />}
                   className="text-xs text-slate-600 hover:text-slate-900"
                 >
                   <Mail className="mr-1.5 size-3.5" />

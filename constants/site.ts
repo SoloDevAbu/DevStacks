@@ -21,6 +21,7 @@ export const SITE_CONFIG = {
     "Discover developer tools, APIs, and infrastructure products. Explore what developers are building, community upvotes, and modern tech stacks.",
   url: siteUrl,
   domain: "www.launchnests.com",
+  supportEmail: "support@launchnests.com",
   creator: "Abu Bakkar Siddique",
   publisher: "LaunchNests",
   keywords: [

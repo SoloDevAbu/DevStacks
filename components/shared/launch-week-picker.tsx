@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useLaunchAvailability } from "@/hooks/launches/use-launch-availability"
 import { TIER, type Tier } from "@/constants/plans"
+import { LAUNCH_PROMO } from "@/constants/promo"
 import { MAX_FREE_LAUNCHES_PER_WEEK } from "@/constants/launches"
 import {
   launchWeekCard,
@@ -102,7 +103,7 @@ export const LaunchWeekPicker = ({
               Launch Celebration: You are within the First 50 Launches!
             </p>
             <p className="text-emerald-800">
-              Your tool receives a <strong>Free Lifetime Premium Listing ($49 value)</strong> with verified badge and permanent Do-Follow SEO backlink. You can schedule for <strong>any week</strong> with guaranteed entry.
+              Your tool receives a <strong>Free Lifetime Premium Listing ({LAUNCH_PROMO.VALUE_GIFTED} value)</strong> with verified badge and permanent Do-Follow SEO backlink upon approval. You can schedule for <strong>any week</strong> (all submissions undergo review for quality and spam prevention before going live).
             </p>
           </div>
           <Badge
@@ -218,7 +219,7 @@ export const LaunchWeekPicker = ({
                   Week {clickedFullWeek.week} free slots are completely full!
                 </p>
                 <p className="text-amber-800">
-                  Free submissions are capped at {MAX_FREE_LAUNCHES_PER_WEEK} per week. You can choose a later week for Free, or upgrade to <strong>Featured Builder</strong> to launch in Week {clickedFullWeek.week} immediately with unlimited slots.
+                  Free submissions are capped at {MAX_FREE_LAUNCHES_PER_WEEK} per week. You can choose a later week for Free, or upgrade to <strong>Featured Builder</strong> to schedule for Week {clickedFullWeek.week} with unlimited slots upon approval.
                 </p>
               </div>
             </div>
