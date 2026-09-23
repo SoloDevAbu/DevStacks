@@ -1,4 +1,12 @@
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://launchnests.com"
+const getSiteUrl = () => {
+  const envUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim()
+  if (envUrl) return envUrl.replace(/\/$/, "")
+  return process.env.NODE_ENV === "production"
+    ? "https://www.launchnests.com"
+    : "http://localhost:3000"
+}
+
+const siteUrl = getSiteUrl()
 
 export const SITE_CONFIG = {
   name: "LaunchNests",
@@ -12,7 +20,8 @@ export const SITE_CONFIG = {
   description:
     "Discover developer tools, APIs, and infrastructure products. Explore what developers are building, community upvotes, and modern tech stacks.",
   url: siteUrl,
-  domain: "launchnests.com",
+  domain: "www.launchnests.com",
+  supportEmail: "support@launchnests.com",
   creator: "Abu Bakkar Siddique",
   publisher: "LaunchNests",
   keywords: [

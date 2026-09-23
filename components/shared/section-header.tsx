@@ -22,11 +22,11 @@ export const SectionHeader = ({
 }: SectionHeaderProps) => {
   return (
     <div className={cn(sectionHeaderWrapper, className)}>
-      <div>
-        <h2 className="text-base font-bold text-slate-900 md:text-lg">
+      <div className="min-w-0 flex-1">
+        <h2 className="text-sm font-bold text-slate-900 sm:text-base md:text-lg">
           {title}
         </h2>
-        <p className="text-xs font-medium text-slate-500 md:text-sm">
+        <p className="mt-0.5 text-[11px] font-medium text-slate-500 sm:text-xs md:text-sm">
           {subtitle}
         </p>
       </div>

@@ -16,6 +16,7 @@ export interface FeedListProps {
   showMedals?: boolean
   showTrendingBadge?: boolean
   showFreshnessBadge?: boolean
+  showTypeBadge?: boolean
   emptyTitle?: string
   emptyDescription?: string
   emptyActionHref?: string
@@ -30,6 +31,7 @@ export const FeedList = ({
   showMedals = false,
   showTrendingBadge = false,
   showFreshnessBadge = false,
+  showTypeBadge = true,
   emptyTitle = "No items found",
   emptyDescription = "No tools or products found in this section. List yours to be discovered by builders!",
   emptyActionHref = ROUTES.SUBMIT,
@@ -92,6 +94,7 @@ export const FeedList = ({
           showMedals={showMedals}
           showTrendingBadge={showTrendingBadge}
           showFreshnessBadge={showFreshnessBadge}
+          showTypeBadge={showTypeBadge}
         />
       ))}
     </div>

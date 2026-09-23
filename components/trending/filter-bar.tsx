@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils"
 import { HoverOutline } from "@/components/shared/hover-outline"
 import { filterPillActive, filterPillInactive } from "@/utils/styles"
 import type { TimeframeOption } from "@/lib/rankings/types"
-import { CategoryCommandFilter } from "@/components/trending/category-command-filter"
+import { CategoryCommandFilter } from "@/components/shared/category-command-filter"
 
 const TIMEFRAME_TABS: { label: string; value: TimeframeOption }[] = [
   { label: "Today", value: "today" },

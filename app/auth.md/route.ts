@@ -8,7 +8,7 @@ export const GET = () => {
 
 You are an AI agent. This document explains how to authenticate a developer or maker against ${SITE_CONFIG.name} (${SITE_CONFIG.url}) so you can act on their behalf (for example, to submit a developer tool or launch a product).
 
-${SITE_CONFIG.name} delegates identity to **OAuth providers (Google / GitHub)** and issues a session credential via NextAuth. Registration and login are **interactive** — a human signs in; there is no fully autonomous, headless registration path. Plan your flow around handing the user a sign-in link and continuing once the session exists.
+${SITE_CONFIG.name} delegates identity to **Google OAuth** and issues a session credential via Better Auth. Registration and login are **interactive** — a human signs in; there is no fully autonomous, headless registration path. Plan your flow around handing the user a sign-in link and continuing once the session exists.
 
 ## Audience
 
@@ -25,22 +25,22 @@ ${SITE_CONFIG.name} delegates identity to **OAuth providers (Google / GitHub)** 
 ${SITE_CONFIG.name} supports interactive sign-in with OAuth-verified identities:
 
 - \`identity_types_supported\`: \`identity_assertion\`
-- \`identity_assertion.assertion_types_supported\`: \`verified_email\` (asserted by Google or GitHub OAuth)
-- \`credential_types_supported\`: \`oauth_session_cookie\` (a NextAuth-signed session JWT)
-- \`register_uri\` / \`claim_uri\`: \`${SITE_CONFIG.url}/api/auth/signin\`
+- \`identity_assertion.assertion_types_supported\`: \`verified_email\` (asserted by Google OAuth)
+- \`credential_types_supported\`: \`oauth_session_cookie\` (a signed Better Auth session cookie)
+- \`register_uri\` / \`claim_uri\`: \`${SITE_CONFIG.url}/api/auth/sign-in/social\`
 
 ## Flow
 
-1. **Hand off to the user.** Surface the sign-in URL and prompt the human user to complete authentication: \`${SITE_CONFIG.url}/api/auth/signin?callbackUrl=<return_path>\`. To deep-link the developer straight into tool or product submission, set \`callbackUrl=/submit\`.
-2. **User authenticates.** The user authorizes via GitHub or Google (this is the verified-email assertion and the user consent gate).
-3. **Session established.** ${SITE_CONFIG.name} issues an HTTP-only NextAuth session cookie scoped to the user's account. Active session state can be checked at \`${SITE_CONFIG.url}/api/auth/session\`.
+1. **Hand off to the user.** Surface the sign-in URL and prompt the human user to complete authentication: \`${SITE_CONFIG.url}/?redirect=<return_path>\`. To deep-link the developer straight into tool or product submission, set \`callbackUrl=/submit\`.
+2. **User authenticates.** The user authorizes via Google (this is the verified-email assertion and the user consent gate).
+3. **Session established.** ${SITE_CONFIG.name} issues an HTTP-only session cookie scoped to the user's account. Active session state can be checked at \`${SITE_CONFIG.url}/api/auth/get-session\`.
 4. **Act within the session.** Authenticated requests to submission endpoints (e.g. \`POST /api/products\`, \`POST /api/tools\`) are authorized by that session cookie.
 
 ## Credential Use
 
 - The credential is a browser session cookie set on the ${SITE_CONFIG.domain} origin; send it as a cookie on same-origin requests. It is not a portable bearer token and should not be copied across origins.
-- Sessions are managed by NextAuth. When a mutation request returns \`401\`, restart at the sign-in step.
-- To terminate a session, send the user to \`${SITE_CONFIG.url}/api/auth/signout\`.
+- Sessions are managed by Better Auth. When a mutation request returns \`401\`, restart at the sign-in step.
+- To terminate a session, send the user to \`${SITE_CONFIG.url}/api/auth/sign-out\`.
 
 ## Not Supported
 
@@ -49,7 +49,7 @@ ${SITE_CONFIG.name} supports interactive sign-in with OAuth-verified identities:
 
 ## Contact
 
-- Agent integration inquiries: support@launchnests.com
+- Agent integration inquiries: ${SITE_CONFIG.supportEmail}
 `
 
   return new NextResponse(content, {

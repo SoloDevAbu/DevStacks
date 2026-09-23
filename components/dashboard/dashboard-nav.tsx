@@ -1,6 +1,9 @@
 import Link from "next/link"
 import {
   LayoutDashboard,
+  Package,
+  Wrench,
+  BarChart3,
   UserCog,
   ExternalLink,
   PlusCircle,
@@ -9,22 +12,74 @@ import {
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { ROUTES } from "@/constants/routes"
-import { cn } from "@/lib/utils"
+import {
+  dashboardNavWrapper,
+  dashboardNavTabsContainer,
+  dashboardNavTab,
+} from "@/utils/dashboard/styles"
+
+export type DashboardTab =
+  | "overview"
+  | "products"
+  | "tools"
+  | "analytics"
+  | "profile"
 
 interface DashboardNavProps {
-  activeTab: "overview" | "profile"
+  activeTab: DashboardTab
   username?: string | null
+  title?: string
+  subtitle?: string
 }
 
-export const DashboardNav = ({ activeTab, username }: DashboardNavProps) => {
+const TAB_TITLES: Record<DashboardTab, { title: string; subtitle: string }> = {
+  overview: {
+    title: "Maker Dashboard",
+    subtitle:
+      "High-level metrics, launch performance, and quick access to your products and developer tools.",
+  },
+  products: {
+    title: "My Products & Applications",
+    subtitle:
+      "Manage all your showcased products, inspect performance metrics, modify content, or upgrade tiers.",
+  },
+  tools: {
+    title: "My Developer Tools & APIs",
+    subtitle:
+      "Manage listed developer tools, track adoption, update documentation, or upgrade tiers.",
+  },
+  analytics: {
+    title: "Performance & Audience Analytics",
+    subtitle:
+      "Full analytics across all your products and tools: views, likes, comments, and external link clicks.",
+  },
+  profile: {
+    title: "Maker Profile Settings",
+    subtitle:
+      "Configure your public developer identity, bio, country, social handles, and maker FAQs.",
+  },
+}
+
+export const DashboardNav = ({
+  activeTab,
+  username,
+  title,
+  subtitle,
+}: DashboardNavProps) => {
+  const currentInfo = TAB_TITLES[activeTab] || TAB_TITLES.overview
+  const displayTitle = title || currentInfo.title
+  const displaySubtitle = subtitle || currentInfo.subtitle
+
   return (
-    <div className="relative flex flex-col justify-between overflow-hidden border-b border-dashed border-border bg-linear-to-b from-slate-50/80 via-white to-white px-6 pt-8 pb-0 md:px-8">
-      {/* Subtle ambient gradient mesh for theme vibrancy */}
-      <div className="pointer-events-none absolute -top-24 -left-24 size-72 rounded-full bg-slate-200/30 blur-3xl" />
-      <div className="pointer-events-none absolute top-0 right-1/4 size-64 rounded-full bg-indigo-200/20 blur-3xl" />
+    <div className={dashboardNavWrapper}>
+      {/* Subtle ambient gradient mesh */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="absolute -top-24 -left-24 size-72 rounded-full bg-slate-200/30 blur-3xl" />
+        <div className="absolute top-0 right-1/4 size-64 rounded-full bg-indigo-200/20 blur-3xl" />
+      </div>
 
       {/* Top bar with Breadcrumbs & Action CTAs */}
-      <div className="relative z-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="relative z-10 flex flex-col gap-4 px-6 pt-8 sm:flex-row sm:items-center sm:justify-between md:px-8">
         <div className="flex flex-col gap-1">
           <div className="flex items-center gap-2">
             <span className="font-mono text-xs font-bold tracking-widest text-[#a06138] uppercase">
@@ -38,15 +93,9 @@ export const DashboardNav = ({ activeTab, username }: DashboardNavProps) => {
             </Badge>
           </div>
           <h1 className="text-xl font-bold tracking-tight text-slate-900 md:text-2xl">
-            {activeTab === "overview"
-              ? "Maker Dashboard"
-              : "Maker Profile Settings"}
+            {displayTitle}
           </h1>
-          <p className="text-xs text-slate-500 md:text-sm">
-            {activeTab === "overview"
-              ? "Manage your published developer tools, applications, performance metrics, and community engagement."
-              : "Configure your public developer identity, bio, social links, and maker FAQs."}
-          </p>
+          <p className="text-xs text-slate-500 md:text-sm">{displaySubtitle}</p>
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5 sm:self-start">
@@ -82,31 +131,45 @@ export const DashboardNav = ({ activeTab, username }: DashboardNavProps) => {
       </div>
 
       {/* Navigation Tabs Bar */}
-      <div className="relative z-10 mt-6 flex items-center gap-2 overflow-x-auto text-xs font-semibold">
+      <div className={dashboardNavTabsContainer}>
         <Link
           href={ROUTES.DASHBOARD}
-          className={cn(
-            "flex items-center gap-2 border-b-2 px-3.5 py-2.5 transition-colors -mb-px",
-            activeTab === "overview"
-              ? "border-slate-900 text-slate-900 font-bold"
-              : "border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-800"
-          )}
+          className={dashboardNavTab(activeTab === "overview")}
         >
           <LayoutDashboard className="size-3.5" />
-          <span>Overview & Submissions</span>
+          <span>Overview</span>
+        </Link>
+
+        <Link
+          href={ROUTES.DASHBOARD_PRODUCTS}
+          className={dashboardNavTab(activeTab === "products")}
+        >
+          <Package className="size-3.5" />
+          <span>Products</span>
+        </Link>
+
+        <Link
+          href={ROUTES.DASHBOARD_TOOLS}
+          className={dashboardNavTab(activeTab === "tools")}
+        >
+          <Wrench className="size-3.5" />
+          <span>Tools</span>
+        </Link>
+
+        <Link
+          href={ROUTES.DASHBOARD_ANALYTICS}
+          className={dashboardNavTab(activeTab === "analytics")}
+        >
+          <BarChart3 className="size-3.5" />
+          <span>Analytics</span>
         </Link>
 
         <Link
           href={ROUTES.DASHBOARD_PROFILE}
-          className={cn(
-            "flex items-center gap-2 border-b-2 px-3.5 py-2.5 transition-colors -mb-px",
-            activeTab === "profile"
-              ? "border-slate-900 text-slate-900 font-bold"
-              : "border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-800"
-          )}
+          className={dashboardNavTab(activeTab === "profile")}
         >
           <UserCog className="size-3.5" />
-          <span>Profile Settings</span>
+          <span>Profile</span>
         </Link>
       </div>
     </div>

@@ -11,6 +11,7 @@ export interface ProductLogoProps {
   textColor?: string
   borderColor?: string
   className?: string
+  imageClassName?: string
   imageUrl?: string | null
   websiteUrl?: string | null
   alt?: string
@@ -22,6 +23,7 @@ export const ProductLogo = ({
   textColor = "text-white",
   borderColor,
   className,
+  imageClassName,
   imageUrl,
   websiteUrl,
   alt,
@@ -48,6 +50,11 @@ export const ProductLogo = ({
     setHasFailed(true)
   }
 
+  const isSmall = Boolean(
+    className &&
+      /\b(size-[4-9]|w-[4-9]|h-[4-9]|size-10|w-10|h-10)\b/.test(className)
+  )
+
   if (currentSrc && !hasFailed) {
     return (
       <div
@@ -62,7 +69,11 @@ export const ProductLogo = ({
           alt={alt ?? text}
           fill
           unoptimized
-          className="object-contain p-2 transition-transform duration-200 group-hover:scale-105"
+          className={cn(
+            "object-contain transition-transform duration-200 group-hover:scale-105",
+            isSmall ? "p-0.5" : "p-2",
+            imageClassName
+          )}
           onError={handleError}
         />
       </div>

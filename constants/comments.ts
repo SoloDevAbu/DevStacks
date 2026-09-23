@@ -1,0 +1,3 @@
+export const INITIAL_COMMENTS_LIMIT = 5
+export const COMMENTS_LOAD_MORE_STEP = 5
+export const MAX_COMMENT_LENGTH = 1000

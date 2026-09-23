@@ -4,7 +4,7 @@ import { auth } from "@/lib/auth"
 import { ShowcaseContent } from "@/components/showcase/showcase-content"
 import { ShowcaseCrawlerView } from "@/components/showcase/showcase-crawler-view"
 import { SITE_CONFIG } from "@/constants/site"
-import { breadcrumbSchema, faqSchema, collectionPageSchema } from "@/lib/seo/schema"
+import { breadcrumbSchema, faqSchema, collectionPageSchema, safeJsonLd } from "@/lib/seo/schema"
 import { getToolBySlugOrName } from "@/db/queries/tools/get"
 import type { BuiltWithToolItem } from "@/components/shared/built-with-tools-input"
 
@@ -122,15 +122,15 @@ const ShowcasePage = async (props: ShowcasePageProps) => {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbs) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqs) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(faqs) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(collectionJsonLd) }}
       />
       {session?.user ? (
         <ShowcaseContent initialTool={initialTool} />

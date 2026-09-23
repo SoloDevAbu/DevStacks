@@ -17,6 +17,7 @@ import {
 import { HoverOutline } from "@/components/shared/hover-outline"
 import { useCategories } from "@/hooks/categories/use-categories"
 import { useDebounce } from "@/hooks/shared/use-debounce"
+import { commandFooter } from "@/utils/styles"
 import { cn } from "@/lib/utils"
 
 import type { CategoryFilterType } from "@/lib/api/categories"
@@ -40,7 +41,10 @@ export const CategoryCommandFilter = ({
   const [isMac, setIsMac] = useState(false)
 
   const debouncedSearch = useDebounce(search, 250)
-  const { data: categories = [], isLoading } = useCategories(debouncedSearch, type)
+  const { data: categories = [], isLoading } = useCategories(
+    debouncedSearch,
+    type
+  )
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -97,7 +101,7 @@ export const CategoryCommandFilter = ({
               !isAllSelected ? "text-indigo-600" : "text-slate-500"
             )}
           />
-          <span className="max-w-[140px] truncate sm:max-w-[180px]">
+          <span className="max-w-35 truncate sm:max-w-45">
             {isAllSelected ? "All Categories" : selectedCategory}
           </span>
 
@@ -189,8 +193,7 @@ export const CategoryCommandFilter = ({
             )}
           </CommandList>
 
-          {/* Dashed line and keyboard hint footer */}
-          <div className="flex items-center justify-between border-t border-dashed border-border bg-slate-50/70 px-3.5 py-2 text-[11px] text-muted-foreground select-none">
+          <div className={commandFooter}>
             <div className="flex items-center gap-3.5">
               <span className="inline-flex items-center gap-1.5">
                 <KbdGroup>

@@ -4,6 +4,10 @@ import type { NewProduct } from "@/db/schema"
 import { getOrCreateCategory } from "@/db/queries/categories/list"
 import { getFaviconUrl } from "@/utils/urls"
 import { eq, ilike, or, sql } from "drizzle-orm"
+import {
+  resolveAndValidateLaunchSlot,
+  recordLaunchEntry,
+} from "@/db/queries/launches/book"
 
 import { randomBytes } from "crypto"
 
@@ -46,6 +50,12 @@ export type CreateProductInput = Omit<
 export const createProduct = async (data: CreateProductInput) => {
   const { category, builtWithTools: toolsToLink, faqs, ...rest } = data
 
+  const slot = await resolveAndValidateLaunchSlot({
+    launchYear: rest.launchYear ?? undefined,
+    launchWeek: rest.launchWeek ?? undefined,
+    tier: rest.tier ?? undefined,
+  })
+
   let categoryId = rest.categoryId
   if (!categoryId && category && category.trim()) {
     categoryId = await getOrCreateCategory(category)
@@ -60,13 +70,25 @@ export const createProduct = async (data: CreateProductInput) => {
     .insert(products)
     .values({
       ...rest,
-      tier: "premium",
+      tier: slot.tier,
+      launchYear: slot.launchYear,
+      launchWeek: slot.launchWeek,
+      launchDate: slot.startDate,
       logoUrl,
       categoryId,
       slug,
       status: "pending",
     })
     .returning()
+
+  if (product) {
+    await recordLaunchEntry({
+      productId: product.id,
+      submitterId: rest.submitterId,
+      itemType: "product",
+      slot,
+    })
+  }
 
   if (toolsToLink && toolsToLink.length > 0) {
     for (const item of toolsToLink) {

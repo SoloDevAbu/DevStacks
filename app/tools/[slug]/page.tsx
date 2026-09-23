@@ -24,19 +24,22 @@ import {
 } from "lucide-react"
 import { resolveTool, getProductsBuiltWithTool } from "@/lib/tools/resolve-tool"
 import { getToolFaqs } from "@/db/queries/faqs/get-faqs"
-import { MakerProfileCard } from "@/components/shared/maker-profile-card"
+import { MakerDetailSection } from "@/components/shared/maker-detail-section"
 import { SITE_CONFIG } from "@/constants/site"
 import { ROUTES } from "@/constants/routes"
 import { getSocialCardImage } from "@/lib/seo/social-image"
 import { formatGeoMetaTags } from "@/utils/country"
 import { AI_PROVIDERS } from "@/constants/ai-providers"
 import { AI_PROMPTS } from "@/lib/prompts"
+import { PLATFORMS } from "@/constants/platforms"
+import { EntitySocialLinks } from "@/components/shared/entity-social-links"
 import { getTools } from "@/db/queries/tools/list"
 import {
   toolSchema,
   breadcrumbSchema,
   faqSchema,
   itemListSchema,
+  safeJsonLd,
 } from "@/lib/seo/schema"
 import { ProductLogo } from "@/components/shared/product-logo"
 import { getFaviconUrl } from "@/utils/urls"
@@ -48,14 +51,18 @@ import { Button } from "@/components/ui/button"
 import { ToolActionButtons } from "@/components/tools/tool-action-buttons"
 import { HoverOutline } from "@/components/shared/hover-outline"
 import { DetailSectionHeader } from "@/components/shared/detail-section-header"
+import { CommentsSection } from "@/components/shared/comments-section"
 import { cn } from "@/lib/utils"
 import {
   pricingBadgeColor,
   sectionContentBox,
-  toolSpecsContainer,
-  specItemBox,
-  specItemLabel,
-  specItemValue,
+  specContainer,
+  specRow,
+  specRowHeader,
+  specBadge,
+  specRowTitle,
+  specRowValue,
+  specPlatformBadge,
   toolDeepDiveContainer,
   deepDiveItem,
   deepDiveItemHeader,
@@ -219,7 +226,13 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
   }))
 
   const faqJsonLd = toolFaqs.length > 0 ? faqSchema(toolFaqs) : null
-  const aiPrompt = AI_PROMPTS.tool(tool.name, tool.tagline)
+  const aiPrompt = AI_PROMPTS.tool(
+    tool.name,
+    tool.tagline,
+    tool.aiContext || tool.description,
+    toolUrl,
+    `${toolUrl}.md`
+  )
 
   const builtWithJsonLd =
     builtWithProducts.length > 0
@@ -232,26 +245,37 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
         )
       : null
 
+  const hasSocialLinks = Boolean(
+    tool.websiteUrl ||
+    tool.githubUrl ||
+    tool.twitterUrl ||
+    tool.linkedinUrl ||
+    tool.discordUrl ||
+    tool.appStoreUrl ||
+    tool.playStoreUrl ||
+    tool.chromeExtensionUrl
+  )
+
   return (
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(prodJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(prodJsonLd) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbJsonLd) }}
       />
       {faqJsonLd && (
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+          dangerouslySetInnerHTML={{ __html: safeJsonLd(faqJsonLd) }}
         />
       )}
       {builtWithJsonLd && (
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(builtWithJsonLd) }}
+          dangerouslySetInnerHTML={{ __html: safeJsonLd(builtWithJsonLd) }}
         />
       )}
 
@@ -293,11 +317,16 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
               />
               <div className="flex flex-col gap-1.5">
                 <div className="flex flex-wrap items-center gap-2.5">
-                  <h1 className="text-2xl font-bold tracking-tight text-slate-900 md:text-3xl">
-                    {tool.name}
-                  </h1>
-                  <VerifiedBadge tier={tool.tier as Tier} />
-                  <LaunchBadge />
+                  <div className="inline-flex items-center gap-2">
+                    <h1 className="text-2xl font-bold tracking-tight text-slate-900 md:text-3xl">
+                      {tool.name}
+                    </h1>
+                    <VerifiedBadge
+                      tier={tool.tier as Tier}
+                      className="size-6 md:size-7"
+                    />
+                  </div>
+                  <LaunchBadge submitterId={tool.submitterId} />
                   <Badge
                     variant="outline"
                     className={pricingBadgeColor(tool.pricing as Pricing)}
@@ -322,22 +351,6 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
                     {tool.buildsCount} builds
                   </span>
                 </div>
-
-                {(tool.submitterName || tool.submitterUsername) && (
-                  <div className="mt-2 flex items-center gap-2">
-                    <span className="font-mono text-[11px] font-semibold text-slate-400 uppercase">
-                      Listed by
-                    </span>
-                    <MakerProfileCard
-                      name={tool.submitterName}
-                      username={tool.submitterUsername}
-                      avatarUrl={tool.submitterAvatarUrl}
-                      country={tool.submitterCountry}
-                      state={tool.submitterState}
-                      size="sm"
-                    />
-                  </div>
-                )}
               </div>
             </div>
 
@@ -347,12 +360,25 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
               tier={tool.tier}
               initialUpvotes={tool.upvotesCount}
               websiteUrl={tool.websiteUrl}
-              githubUrl={tool.githubUrl}
-              appStoreUrl={tool.appStoreUrl}
-              playStoreUrl={tool.playStoreUrl}
-              chromeExtensionUrl={tool.chromeExtensionUrl}
             />
           </div>
+
+          {hasSocialLinks && (
+            <div className="flex items-center justify-center pt-1">
+              <EntitySocialLinks
+                websiteUrl={tool.websiteUrl}
+                githubUrl={tool.githubUrl}
+                twitterUrl={tool.twitterUrl}
+                linkedinUrl={tool.linkedinUrl}
+                discordUrl={tool.discordUrl}
+                appStoreUrl={tool.appStoreUrl}
+                playStoreUrl={tool.playStoreUrl}
+                chromeExtensionUrl={tool.chromeExtensionUrl}
+                tier={tool.tier}
+                className="justify-center"
+              />
+            </div>
+          )}
 
           {/* Ask AI Sub-tray with dashed divider */}
           <div className="-mx-6 mt-2 -mb-8 flex flex-col gap-3 border-t border-dashed border-border bg-slate-50/50 px-6 py-4 sm:flex-row sm:items-center sm:justify-between md:-mx-8 md:px-8">
@@ -481,58 +507,6 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
           </section>
         )}
 
-        {/* Section 2: Tool Specifications */}
-        <section className="border-b border-dashed border-border bg-white">
-          <DetailSectionHeader
-            title="Tool Specifications"
-            icon={Sliders}
-            theme="slate"
-          />
-
-          <div className={toolSpecsContainer}>
-            <div className={specItemBox}>
-              <span className={specItemLabel}>
-                <DollarSign className="size-3 text-slate-400" />
-                Pricing Model
-              </span>
-              <span className={specItemValue}>{tool.pricing}</span>
-            </div>
-
-            <div className={specItemBox}>
-              <span className={specItemLabel}>
-                <Hammer className="size-3 text-slate-400" />
-                Ecosystem Builds
-              </span>
-              <span className="text-xs font-bold text-blue-600">
-                {tool.buildsCount.toLocaleString()} projects
-              </span>
-            </div>
-
-            <div className={specItemBox}>
-              <span className={specItemLabel}>
-                <FolderGit2 className="size-3 text-slate-400" />
-                Category
-              </span>
-              <span className={specItemValue}>
-                {tool.category ?? "Developer Tool"}
-              </span>
-            </div>
-            <div className={specItemBox}>
-              <span className={specItemLabel}>
-                <Laptop className="size-3 text-slate-400" />
-                Platforms
-              </span>
-              <span
-                className={specItemValue}
-                title={tool.platforms?.join(", ")}
-              >
-                {tool.platforms && tool.platforms.length > 0
-                  ? tool.platforms.join(", ")
-                  : "Web / Cloud"}
-              </span>
-            </div>
-          </div>
-        </section>
 
         {/* Section 3: Value Proposition & Deep Dive */}
         {(tool.problemStatement || tool.solution || tool.uniqueValue) && (
@@ -584,7 +558,7 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
         )}
 
         {/* Section 4: AI Summary / Direct Answers (GEO / AEO) */}
-        {tool.aiContext && (
+        {/* {tool.aiContext && (
           <section className="border-b border-dashed border-border bg-white">
             <DetailSectionHeader
               title="AI Overview & Direct Answers"
@@ -598,9 +572,135 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
               </p>
             </div>
           </section>
+        )} */}
+
+        {/* Section 6: Q&A Section */}
+        {toolFaqs.length > 0 && (
+          <section className="border-b border-dashed border-border bg-white">
+            <DetailSectionHeader
+              title="Frequently Asked Questions"
+              subtitle={`Common questions and technical details about ${tool.name}`}
+              icon={HelpCircle}
+              theme="teal"
+            />
+
+            <div className={faqContainer}>
+              {toolFaqs.map((faq, idx) => (
+                <div
+                  key={faq.id ?? `${faq.question}-${idx}`}
+                  className={faqItem}
+                >
+                  <div className={faqQuestionHeader}>
+                    <span className="inline-flex size-5 shrink-0 items-center justify-center rounded-sm bg-teal-100 font-mono text-[10px] font-bold text-teal-800">
+                      Q{idx + 1}
+                    </span>
+                    <h3 className={faqQuestionText}>{faq.question}</h3>
+                  </div>
+                  <p className={faqAnswerText}>{faq.answer}</p>
+                </div>
+              ))}
+            </div>
+          </section>
         )}
 
-        {/* Section 5: Products Built with this Tool */}
+        {/* Section 4: Tool Specifications */}
+        <section className="border-b border-dashed border-border bg-white">
+          <DetailSectionHeader
+            title="Tool Specifications"
+            subtitle={`Technical overview, pricing model, and ecosystem statistics for ${tool.name}`}
+            icon={Sliders}
+            theme="slate"
+          />
+
+          <div className={specContainer}>
+            <div className={specRow}>
+              <div className={specRowHeader}>
+                <span className={specBadge}>
+                  <DollarSign className="size-3 text-slate-600" />
+                </span>
+                <h3 className={specRowTitle}>Pricing Model</h3>
+              </div>
+              <span className={specRowValue}>{tool.pricing}</span>
+            </div>
+
+            <div className={specRow}>
+              <div className={specRowHeader}>
+                <span className={specBadge}>
+                  <Hammer className="size-3 text-slate-600" />
+                </span>
+                <h3 className={specRowTitle}>Ecosystem Builds</h3>
+              </div>
+              <span className="text-xs font-bold text-blue-600 sm:text-sm">
+                {tool.buildsCount.toLocaleString()} projects
+              </span>
+            </div>
+
+            <div className={specRow}>
+              <div className={specRowHeader}>
+                <span className={specBadge}>
+                  <FolderGit2 className="size-3 text-slate-600" />
+                </span>
+                <h3 className={specRowTitle}>Category</h3>
+              </div>
+              <span className={specRowValue}>
+                {tool.category ?? "Developer Tool"}
+              </span>
+            </div>
+
+            <div className={specRow}>
+              <div className={specRowHeader}>
+                <span className={specBadge}>
+                  <Laptop className="size-3 text-slate-600" />
+                </span>
+                <h3 className={specRowTitle}>Platforms</h3>
+              </div>
+              <div className="flex flex-wrap items-center gap-1.5">
+                {tool.platforms && tool.platforms.length > 0 ? (
+                  tool.platforms.map((platformId) => {
+                    const platformConfig = PLATFORMS.find(
+                      (p) => p.id === platformId
+                    )
+                    return (
+                      <span key={platformId} className={specPlatformBadge}>
+                        {platformConfig?.logo && (
+                          <Image
+                            src={platformConfig.logo}
+                            alt={platformConfig.label}
+                            width={14}
+                            height={14}
+                            className="size-3.5 object-contain"
+                          />
+                        )}
+                        {platformConfig?.label ?? platformId}
+                      </span>
+                    )
+                  })
+                ) : (
+                  <span className={specRowValue}>Web / Cloud</span>
+                )}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Section 5: The Maker */}
+        <MakerDetailSection
+          entityName={tool.name}
+          name={tool.submitterName}
+          username={tool.submitterUsername}
+          avatarUrl={tool.submitterAvatarUrl}
+          country={tool.submitterCountry}
+          state={tool.submitterState}
+        />
+
+        {/* Section: Comments & Community Discussion */}
+        <CommentsSection
+          entityType="tool"
+          slug={tool.slug}
+          entityName={tool.name}
+        />
+
+        {/* Section 6: Products Built with this Tool */}
         <section className="border-b border-dashed border-border bg-white">
           <DetailSectionHeader
             title={`Products Built With ${tool.name}`}
@@ -654,35 +754,6 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
             </div>
           )}
         </section>
-
-        {/* Section 6: Q&A Section */}
-        {toolFaqs.length > 0 && (
-          <section className="border-b border-dashed border-border bg-white">
-            <DetailSectionHeader
-              title="Frequently Asked Questions"
-              subtitle={`Common questions and technical details about ${tool.name}`}
-              icon={HelpCircle}
-              theme="teal"
-            />
-
-            <div className={faqContainer}>
-              {toolFaqs.map((faq, idx) => (
-                <div
-                  key={faq.id ?? `${faq.question}-${idx}`}
-                  className={faqItem}
-                >
-                  <div className={faqQuestionHeader}>
-                    <span className="inline-flex size-5 shrink-0 items-center justify-center rounded-sm bg-teal-100 font-mono text-[10px] font-bold text-teal-800">
-                      Q{idx + 1}
-                    </span>
-                    <h3 className={faqQuestionText}>{faq.question}</h3>
-                  </div>
-                  <p className={faqAnswerText}>{faq.answer}</p>
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
 
         {/* Section 7: Ecosystem Callout */}
         <section className="border-b border-dashed border-border bg-slate-50/70 px-6 py-10 md:px-8 md:py-12">

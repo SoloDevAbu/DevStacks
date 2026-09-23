@@ -17,11 +17,6 @@ export const fetchProducts = async (params: ProductListParams = {}) => {
   return data.data
 }
 
-export const fetchProduct = async (slug: string) => {
-  const { data } = await apiClient.get(`/products/${slug}`)
-  return data.data
-}
-
 export const submitProduct = async (payload: Record<string, unknown>) => {
   const { data } = await apiClient.post("/products", payload)
   return data.data
@@ -46,8 +41,17 @@ export const fetchProductComments = async (slug: string) => {
 
 export const submitProductComment = async (
   slug: string,
-  payload: { userId: string; body: string }
+  payload: { userId?: string; body: string }
 ) => {
   const { data } = await apiClient.post(`/products/${slug}/comments`, payload)
   return data.data
 }
+
+export const updateProductApi = async (
+  slug: string,
+  payload: Record<string, unknown>
+) => {
+  const { data } = await apiClient.patch(`/products/${slug}`, payload)
+  return data.data
+}
+

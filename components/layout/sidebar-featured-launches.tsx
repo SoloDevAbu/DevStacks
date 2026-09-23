@@ -4,12 +4,19 @@ import Link from "next/link"
 import { ChevronUp } from "lucide-react"
 import { useWeeklyPremiumLaunches } from "@/hooks/launches/use-weekly-premium-launches"
 import { ProductLogo } from "@/components/shared/product-logo"
+import { VerifiedBadge } from "@/components/shared/verified-badge"
 import { Skeleton } from "@/components/ui/skeleton"
 import { ROUTES } from "@/constants/routes"
+import { TIER, type Tier } from "@/constants/plans"
+import { getFaviconUrl } from "@/utils/urls"
+import { cn } from "@/lib/utils"
 import {
   sidebarHeading,
   sidebarLaunchRow,
+  sidebarLaunchRowBorder,
   sidebarLaunchVotes,
+  tierCardBg,
+  tierShimmerGradient,
 } from "@/utils/styles"
 
 export const SidebarFeaturedLaunches = () => {
@@ -52,27 +59,49 @@ export const SidebarFeaturedLaunches = () => {
             const detailHref = isTool
               ? ROUTES.TOOL(item.slug)
               : ROUTES.PRODUCT(item.slug)
+            const tier: Tier = (item.tier ?? TIER.FREE) as Tier
+            const logoUrl =
+              item.logoUrl?.trim() || getFaviconUrl(item.websiteUrl)
 
             return (
               <Link
                 key={item.id}
                 href={detailHref}
-                className={sidebarLaunchRow}
+                className={cn(
+                  sidebarLaunchRow,
+                  tierCardBg(tier),
+                  sidebarLaunchRowBorder(tier)
+                )}
               >
-                <div className="flex min-w-0 items-center gap-2.5">
+                {tier !== TIER.FREE && (
+                  <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden rounded-lg">
+                    <div
+                      className={cn(
+                        "absolute inset-0 -translate-x-full animate-[shimmer_3s_infinite]",
+                        tierShimmerGradient(tier)
+                      )}
+                    />
+                  </div>
+                )}
+
+                <div className="relative z-10 flex min-w-0 items-center gap-2.5">
                   <ProductLogo
                     text={item.name.slice(0, 2).toUpperCase()}
-                    imageUrl={item.logoUrl}
+                    imageUrl={logoUrl}
                     websiteUrl={item.websiteUrl}
                     alt={item.name}
-                    className="size-7 shrink-0 rounded-md border border-slate-200/80 object-contain text-[10px]"
+                    className="size-7 shrink-0 rounded-md border border-slate-200/80 text-[10px]"
+                    imageClassName="p-0.5"
                   />
-                  <span className="truncate text-xs font-semibold text-slate-800 transition-colors group-hover:text-indigo-600">
-                    {item.name}
-                  </span>
+                  <div className="flex min-w-0 items-center gap-1.5">
+                    <span className="truncate text-xs font-semibold text-slate-800 transition-colors group-hover:text-indigo-600">
+                      {item.name}
+                    </span>
+                    <VerifiedBadge tier={tier} />
+                  </div>
                 </div>
 
-                <div className={sidebarLaunchVotes}>
+                <div className={cn("relative z-10", sidebarLaunchVotes)}>
                   <ChevronUp className="size-3 text-slate-400 transition-colors group-hover:text-amber-500" />
                   <span>{votesCount}</span>
                 </div>

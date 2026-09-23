@@ -55,6 +55,8 @@ export const submitProductSchema = z.object({
   aiContext: z.string().max(1000).optional().or(z.literal("")),
   geoTarget: z.string().max(200).optional().or(z.literal("")),
   asoCategory: z.string().max(100).optional().or(z.literal("")),
+  launchYear: z.coerce.number().int().min(2026).optional(),
+  launchWeek: z.coerce.number().int().min(1).max(53).optional(),
 
   // Internal
   category: z.string().max(100).optional().or(z.literal("")),

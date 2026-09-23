@@ -1,6 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { getActiveAdsForCurrentWeek } from "@/db/queries/ads"
 import { AD_PLACEMENT, type AdPlacement } from "@/constants/ads"
+import { TIER, type Tier } from "@/constants/plans"
 import { z } from "zod"
 
 const querySchema = z.object({
@@ -40,6 +41,7 @@ export const GET = async (req: NextRequest) => {
         slug: source?.slug ?? "",
         ctaText: ad.ctaText,
         type: ad.tool ? "tool" : "product",
+        tier: (source?.tier ?? TIER.FREE) as Tier,
       }
     })
 

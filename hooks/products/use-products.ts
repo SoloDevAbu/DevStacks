@@ -7,19 +7,23 @@ export const PRODUCTS_QUERY_KEY = (params: ProductListParams) => [
   params,
 ]
 
+export const useProducts = (
+  params: ProductListParams = {},
+  options?: { enabled?: boolean }
+) => {
+  return useQuery<DbProduct[]>({
+    queryKey: PRODUCTS_QUERY_KEY(params),
+    queryFn: () => fetchProducts(params),
+    staleTime: 60_000,
+    ...options,
+  })
+}
+
 export const PRODUCTS_INFINITE_QUERY_KEY = (params: ProductListParams) => [
   "products",
   "infinite",
   params,
 ]
-
-export const useProducts = (params: ProductListParams = {}) => {
-  return useQuery({
-    queryKey: PRODUCTS_QUERY_KEY(params),
-    queryFn: () => fetchProducts(params),
-    staleTime: 60_000,
-  })
-}
 
 export const useInfiniteProducts = ({
   category,

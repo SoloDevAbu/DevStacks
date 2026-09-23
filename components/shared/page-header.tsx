@@ -6,13 +6,7 @@ export type PageHeaderVariant =
   | "home"
   | "trending"
   | "pricing"
-  | "discover"
-  | "discover-new-rising"
   | "discover-building-blocks"
-  | "discover-recently-added"
-  | "discover-rising-products"
-  | "discover-rising-tools"
-  | "discover-daily-launches"
   | "discover-weekly-launches"
   | "products"
   | "tools"
@@ -46,47 +40,11 @@ const VARIANT_CONFIGS = {
     mesh2: "bg-violet-200/20",
     aiLabel: "ASK AI ABOUT PLANS",
   },
-  discover: {
-    bg: "bg-linear-to-b from-blue-50/40 via-white to-slate-50/30",
-    mesh1: "bg-blue-200/25",
-    mesh2: "bg-indigo-200/20",
-    aiLabel: "ASK AI ABOUT DISCOVERY",
-  },
-  "discover-new-rising": {
-    bg: "bg-linear-to-b from-amber-50/50 via-white to-slate-50/30",
-    mesh1: "bg-amber-200/30",
-    mesh2: "bg-orange-200/20",
-    aiLabel: "ASK AI ABOUT NEW & RISING",
-  },
   "discover-building-blocks": {
     bg: "bg-linear-to-b from-purple-50/45 via-white to-slate-50/30",
     mesh1: "bg-purple-200/25",
     mesh2: "bg-fuchsia-200/20",
     aiLabel: "ASK AI ABOUT TECH STACKS",
-  },
-  "discover-recently-added": {
-    bg: "bg-linear-to-b from-sky-50/50 via-white to-slate-50/30",
-    mesh1: "bg-sky-200/25",
-    mesh2: "bg-cyan-200/20",
-    aiLabel: "ASK AI ABOUT RECENT SUBMISSIONS",
-  },
-  "discover-rising-products": {
-    bg: "bg-linear-to-b from-emerald-50/45 via-white to-slate-50/30",
-    mesh1: "bg-emerald-200/25",
-    mesh2: "bg-teal-200/20",
-    aiLabel: "ASK AI ABOUT RISING PRODUCTS",
-  },
-  "discover-rising-tools": {
-    bg: "bg-linear-to-b from-indigo-50/45 via-white to-slate-50/30",
-    mesh1: "bg-indigo-200/25",
-    mesh2: "bg-cyan-200/20",
-    aiLabel: "ASK AI ABOUT RISING TOOLS",
-  },
-  "discover-daily-launches": {
-    bg: "bg-linear-to-b from-rose-50/45 via-white to-slate-50/30",
-    mesh1: "bg-rose-200/30",
-    mesh2: "bg-amber-200/20",
-    aiLabel: "ASK AI ABOUT TODAY'S LAUNCHES",
   },
   "discover-weekly-launches": {
     bg: "bg-linear-to-b from-indigo-50/40 via-white to-slate-50/30",
@@ -133,7 +91,7 @@ export const PageHeader = ({
   return (
     <div
       className={cn(
-        "relative flex flex-col justify-between gap-6 overflow-hidden border-b border-dashed border-border px-6 pt-8 pb-6 md:px-8 lg:flex-row lg:items-start",
+        "relative flex flex-col justify-between gap-5 overflow-hidden border-b border-dashed border-border px-4 pt-6 pb-5 sm:px-6 sm:pt-8 sm:pb-6 md:px-8 lg:flex-row lg:items-start",
         config.bg
       )}
     >
@@ -151,28 +109,28 @@ export const PageHeader = ({
         )}
       />
 
-      <div className="relative z-10 flex max-w-2xl flex-col gap-3">
+      <div className="relative z-10 flex max-w-2xl flex-col gap-2.5 sm:gap-3">
         <div>
-          <h1 className="mb-2 text-xl font-bold tracking-tight text-slate-900 md:text-2xl">
+          <h1 className="mb-1.5 text-lg font-bold tracking-tight text-slate-900 sm:text-xl md:text-2xl">
             {heading}
           </h1>
-          <p className="mt-1.5 text-sm leading-relaxed text-slate-600">
+          <p className="mt-1 text-xs leading-relaxed text-slate-600 sm:text-sm">
             {description}
           </p>
         </div>
 
         {metrics && (
-          <div className="mt-1 flex flex-wrap items-center gap-2.5">
+          <div className="mt-1 flex flex-wrap items-center gap-2 sm:gap-2.5">
             {metrics}
           </div>
         )}
       </div>
 
-      <div className="relative z-10 flex w-full max-w-[320px] flex-col gap-3 lg:max-w-100 lg:items-end">
+      <div className="relative z-10 flex w-full flex-col gap-2.5 sm:gap-3 lg:max-w-100 lg:items-end">
         <AskAiBar
           prompt={aiPrompt}
           label={askAiLabel ?? config.aiLabel}
-          align="end"
+          align="responsive"
         />
       </div>
     </div>

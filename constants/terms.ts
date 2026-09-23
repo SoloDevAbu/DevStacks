@@ -41,7 +41,7 @@ export const TERMS_CATEGORIES: TermCategory[] = [
         bulletPoints: [
           "One account per person or legal entity.",
           "You must provide accurate information — including your display name, maker profile, and listing details.",
-          `Notify us immediately at support@${SITE_CONFIG.domain} of any unauthorised access or suspected security breach.`,
+          `Notify us immediately at ${SITE_CONFIG.supportEmail} of any unauthorised access or suspected security breach.`,
           "We reserve the right to suspend or terminate accounts that provide fraudulent information or violate these Terms.",
         ],
       },
@@ -79,7 +79,7 @@ export const TERMS_CATEGORIES: TermCategory[] = [
         id: "directory-listings-tools-and-products",
         number: 5,
         title: "Directory Listings — Tools & Products",
-        content: `${SITE_CONFIG.name} operates a dual-taxonomy directory of developer Tools and Products:\n\n• Tools are foundational building blocks, APIs, libraries, databases, and infrastructure services.\n• Products are end-user software applications, SaaS products, desktop utilities, and indie apps built by developers.\n\nSubmissions are subject to editorial review for authenticity, verified URLs, and developer categorization. Approval is not guaranteed. We reserve the right to reject, remove, unpublish, or recategorize listings that are misleading, low-quality, malicious, or outside our technical scope.\n\nRankings across the platform are transparent, verified, and community-driven:\n• Once approved, new listings feature immediately in "Today's Launches" and "This Week's Launches" on the homepage, ranked strictly by live community votes (upvotes for tools, likes for products, comments tie-breaker). We do not provide artificial freshness boosts or separate new-and-rising staging—every launch competes on genuine community merit.\n• Directory catalogs (${ROUTES.TOOLS} and ${ROUTES.PRODUCTS}) provide filtering by category and pricing, and sorting by Upvoted, Most Builds (connected projects), or Most Viewed.\n• The Trending leaderboard (${ROUTES.TRENDING}) ranks items algorithmically based on vote and view velocity with time decay.`,
+        content: `${SITE_CONFIG.name} operates a dual-taxonomy directory of developer Tools and Products:\n\n• Tools are foundational building blocks, APIs, libraries, databases, and infrastructure services.\n• Products are end-user software applications, SaaS products, desktop utilities, and indie apps built by developers.\n\nSubmissions are subject to editorial review for authenticity, verified URLs, and developer categorization. Approval is not guaranteed. We reserve the right to reject, remove, unpublish, or recategorize listings that are misleading, low-quality, malicious, or outside our technical scope.\n\nRankings across the platform are transparent, verified, and community-driven:\n• Once approved, new listings are scheduled for and feature in "This Week's Launches" for the specific ISO calendar week to which the user submitted their project, ranked strictly by live community votes (upvotes for tools, likes for products, comments tie-breaker). Every launch competes on genuine community merit during its scheduled launch week.\n• The homepage highlights the current week's active developer launches alongside "Popular Building Blocks".\n• Directory catalogs (${ROUTES.TOOLS} and ${ROUTES.PRODUCTS}) provide filtering by category and pricing, and sorting by Upvoted, Most Builds (connected projects), or Most Viewed.\n• The Trending leaderboard (${ROUTES.TRENDING}) ranks items algorithmically based on vote and view velocity with time decay.`,
       },
       {
         id: "built-with-tech-stack-graph",
@@ -112,7 +112,7 @@ export const TERMS_CATEGORIES: TermCategory[] = [
         id: "sponsorships-and-paid-placements",
         number: 8,
         title: "Sponsorships & Paid Placements",
-        content: `${SITE_CONFIG.name} offers optional paid sidebar sponsorships and promotional placements ("Sponsorships"). Sponsorship inquiries and slot reservations are arranged via direct communication (X / Twitter DM or email) and outlined on our Pricing page (${ROUTES.PRICING}).`,
+        content: `${SITE_CONFIG.name} offers optional paid sidebar sponsorships and promotional placements ("Sponsorships"). Sponsorship slots can be booked instantly through our self-serve checkout powered by Dodo Payments or arranged via direct communication (email or X / Twitter DM) as outlined on our Pricing page (${ROUTES.PRICING}).`,
         bulletPoints: [
           "Paid placements are clearly labeled as sponsored across the Service.",
           "Sponsorships include a verified sponsor badge and a direct Do-Follow backlink to the advertiser's landing page for the duration of the paid period.",
@@ -170,7 +170,7 @@ export const TERMS_CATEGORIES: TermCategory[] = [
           "Hosting & Edge Network: Vercel Inc.",
           "Database & Storage: Neon Serverless PostgreSQL",
           "Authentication: BetterAuth with Google OAuth",
-          "AI & Answer Engine Integrations: Anthropic, OpenAI, Perplexity, Google Gemini",
+          "Payments & Billing: Dodo Payments Inc. (Merchant of record and checkout provider)",
         ],
       },
       {
@@ -207,13 +207,13 @@ export const TERMS_CATEGORIES: TermCategory[] = [
         id: "termination",
         number: 17,
         title: "Account Suspension & Termination",
-        content: `You may request account deletion at any time by contacting support@${SITE_CONFIG.domain}. Account deletion removes your profile and personal data subject to our Privacy Policy retention obligations.\n\n${SITE_CONFIG.name} may suspend or permanently terminate accounts or unpublish listings that violate these Terms, manipulate community signals (upvotes, rankings, reviews), engage in spam or abusive conduct, or expose the platform to legal or operational risk. Termination for cause does not entitle you to a refund of any paid fees.`,
+        content: `You may request account deletion at any time by contacting ${SITE_CONFIG.supportEmail}. Account deletion removes your profile and personal data subject to our Privacy Policy retention obligations.\n\n${SITE_CONFIG.name} may suspend or permanently terminate accounts or unpublish listings that violate these Terms, manipulate community signals (upvotes, rankings, reviews), engage in spam or abusive conduct, or expose the platform to legal or operational risk. Termination for cause does not entitle you to a refund of any paid fees.`,
       },
       {
         id: "changes-to-these-terms",
         number: 18,
         title: "Changes to These Terms",
-        content: `We may revise these Terms from time to time. The "Last updated" date at the top of this page indicates the most recent revision. Continued use of the Service after revised Terms are posted constitutes your acceptance of the changes. For material changes affecting paid features or active obligations, we will provide advance notice via email or platform announcement.`,
+        content: `We may revise these Terms from time to time. The "Last updated" date at the top of this page indicates the most recent revision. Continued use of the Service after revised Terms are posted constitutes your acceptance of the changes. For material changes affecting paid features or active obligations, we will provide advance notice via platform announcement.`,
       },
       {
         id: "governing-law-and-disputes",
@@ -227,7 +227,7 @@ export const TERMS_CATEGORIES: TermCategory[] = [
         title: "Contact & Legal Notices",
         content: `For questions about these Terms, copyright inquiries, or legal notices, please contact us:`,
         bulletPoints: [
-          `Email: support@${SITE_CONFIG.domain}`,
+          `Email: ${SITE_CONFIG.supportEmail}`,
           `X / Twitter: ${SITE_CONFIG.socials.x}`,
           `Canonical URL: ${SITE_CONFIG.url}/terms`,
         ],

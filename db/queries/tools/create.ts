@@ -3,6 +3,10 @@ import { tools, toolFaqs } from "@/db/schema"
 import type { NewTool } from "@/db/schema"
 import { getOrCreateCategory } from "@/db/queries/categories/list"
 import { getFaviconUrl } from "@/utils/urls"
+import {
+  resolveAndValidateLaunchSlot,
+  recordLaunchEntry,
+} from "@/db/queries/launches/book"
 
 import { randomBytes } from "crypto"
 
@@ -38,6 +42,12 @@ export type CreateToolInput = Omit<
 export const createTool = async (data: CreateToolInput) => {
   const { category, faqs, ...rest } = data
 
+  const slot = await resolveAndValidateLaunchSlot({
+    launchYear: rest.launchYear ?? undefined,
+    launchWeek: rest.launchWeek ?? undefined,
+    tier: rest.tier ?? undefined,
+  })
+
   let categoryId = rest.categoryId
   if (!categoryId && category && category.trim()) {
     categoryId = await getOrCreateCategory(category)
@@ -52,13 +62,25 @@ export const createTool = async (data: CreateToolInput) => {
     .insert(tools)
     .values({
       ...rest,
-      tier: "premium",
+      tier: slot.tier,
+      launchYear: slot.launchYear,
+      launchWeek: slot.launchWeek,
+      launchDate: slot.startDate,
       logoUrl,
       categoryId,
       slug,
       status: "pending",
     })
     .returning()
+
+  if (tool) {
+    await recordLaunchEntry({
+      toolId: tool.id,
+      submitterId: rest.submitterId,
+      itemType: "tool",
+      slot,
+    })
+  }
 
   if (tool && faqs && faqs.length > 0) {
     const validFaqs = faqs

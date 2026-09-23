@@ -208,7 +208,7 @@ export const AgentFooter = () => (
 
     {/* --- TIER 3: Copyright & Status Strip --- */}
     <div className={siteFooterBottomStrip}>
-      <div className="flex items-center gap-1.5 text-[11px] whitespace-nowrap text-slate-500">
+      <div className="flex flex-wrap items-center gap-1.5 text-[11px] text-slate-500">
         <span className="font-semibold text-slate-700">
           © {new Date().getFullYear()} {SITE_CONFIG.name}.
         </span>
@@ -216,7 +216,7 @@ export const AgentFooter = () => (
           Built for developers & autonomous agents.
         </span>
       </div>
-      <div className="flex items-center gap-x-2.5 font-mono text-[11px] whitespace-nowrap sm:gap-x-3.5 sm:text-xs">
+      <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 font-mono text-[11px] sm:gap-x-3.5 sm:text-xs">
         <Link
           href={ROUTES.FAQ}
           className="text-slate-500 underline-offset-4 transition-colors hover:text-slate-900 hover:underline"

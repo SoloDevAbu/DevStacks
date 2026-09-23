@@ -103,6 +103,29 @@ const MCP_TOOLS = [
   },
 ]
 
+const CORS_HEADERS = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Requested-With",
+}
+
+export const OPTIONS = () => {
+  return new NextResponse(null, {
+    status: 204,
+    headers: CORS_HEADERS,
+  })
+}
+
+const sendJsonRpc = (data: unknown, status = 200) => {
+  return NextResponse.json(data, {
+    status,
+    headers: {
+      ...CORS_HEADERS,
+      "Content-Type": "application/json; charset=utf-8",
+    },
+  })
+}
+
 export const GET = () => {
   const discovery = {
     name: `${SITE_CONFIG.name} MCP`,
@@ -120,6 +143,7 @@ export const GET = () => {
 
   return NextResponse.json(discovery, {
     headers: {
+      ...CORS_HEADERS,
       "Content-Type": "application/json; charset=utf-8",
       "Cache-Control": "public, max-age=3600",
     },
@@ -138,16 +162,16 @@ export const POST = async (request: NextRequest) => {
   try {
     body = await request.json()
   } catch {
-    return NextResponse.json(
+    return sendJsonRpc(
       { jsonrpc: "2.0", id: null, error: { code: -32700, message: "Parse error" } },
-      { status: 400 }
+      400
     )
   }
 
   const { id = null, method, params = {} } = body
 
   if (method === "initialize") {
-    return NextResponse.json({
+    return sendJsonRpc({
       jsonrpc: "2.0",
       id,
       result: {
@@ -164,11 +188,11 @@ export const POST = async (request: NextRequest) => {
   }
 
   if (method === "ping") {
-    return NextResponse.json({ jsonrpc: "2.0", id, result: {} })
+    return sendJsonRpc({ jsonrpc: "2.0", id, result: {} })
   }
 
   if (method === "tools/list") {
-    return NextResponse.json({
+    return sendJsonRpc({
       jsonrpc: "2.0",
       id,
       result: {
@@ -186,7 +210,7 @@ export const POST = async (request: NextRequest) => {
         const query = String(toolArgs.query ?? "")
         const limit = Number(toolArgs.limit ?? 10)
         const results = await getTools({ q: query, limit })
-        return NextResponse.json({
+        return sendJsonRpc({
           jsonrpc: "2.0",
           id,
           result: {
@@ -199,7 +223,7 @@ export const POST = async (request: NextRequest) => {
         const query = String(toolArgs.query ?? "")
         const limit = Number(toolArgs.limit ?? 10)
         const results = await getProducts({ q: query, limit })
-        return NextResponse.json({
+        return sendJsonRpc({
           jsonrpc: "2.0",
           id,
           result: {
@@ -211,7 +235,7 @@ export const POST = async (request: NextRequest) => {
       if (toolName === "get_tool") {
         const slug = String(toolArgs.slug ?? "")
         const tool = await getToolBySlug(slug)
-        return NextResponse.json({
+        return sendJsonRpc({
           jsonrpc: "2.0",
           id,
           result: {
@@ -223,7 +247,7 @@ export const POST = async (request: NextRequest) => {
       if (toolName === "get_product") {
         const slug = String(toolArgs.slug ?? "")
         const product = await getProductBySlug(slug)
-        return NextResponse.json({
+        return sendJsonRpc({
           jsonrpc: "2.0",
           id,
           result: {
@@ -240,7 +264,7 @@ export const POST = async (request: NextRequest) => {
             ? await getTrending(limit)
             : await getTools({ sortBy: "builds", limit })
 
-        return NextResponse.json({
+        return sendJsonRpc({
           jsonrpc: "2.0",
           id,
           result: {
@@ -252,7 +276,7 @@ export const POST = async (request: NextRequest) => {
       if (toolName === "get_maker_profile") {
         const username = String(toolArgs.username ?? "")
         const maker = await getMakerProfile(username)
-        return NextResponse.json({
+        return sendJsonRpc({
           jsonrpc: "2.0",
           id,
           result: {
@@ -264,7 +288,7 @@ export const POST = async (request: NextRequest) => {
       if (toolName === "get_daily_launches") {
         const limit = Number(toolArgs.limit ?? 20)
         const launches = await getTodaysLaunches({ limit })
-        return NextResponse.json({
+        return sendJsonRpc({
           jsonrpc: "2.0",
           id,
           result: {
@@ -277,7 +301,7 @@ export const POST = async (request: NextRequest) => {
         const limit = Number(toolArgs.limit ?? 20)
         const { year, week } = getCurrentWeek()
         const launches = await getWeeklyLaunches({ year, week, limit })
-        return NextResponse.json({
+        return sendJsonRpc({
           jsonrpc: "2.0",
           id,
           result: {
@@ -286,13 +310,13 @@ export const POST = async (request: NextRequest) => {
         })
       }
 
-      return NextResponse.json({
+      return sendJsonRpc({
         jsonrpc: "2.0",
         id,
         error: { code: -32601, message: `Tool '${toolName}' not found` },
       })
     } catch (err) {
-      return NextResponse.json({
+      return sendJsonRpc({
         jsonrpc: "2.0",
         id,
         error: { code: -32000, message: err instanceof Error ? err.message : "Execution error" },
@@ -300,7 +324,7 @@ export const POST = async (request: NextRequest) => {
     }
   }
 
-  return NextResponse.json({
+  return sendJsonRpc({
     jsonrpc: "2.0",
     id,
     error: { code: -32601, message: `Method '${method}' not found` },

@@ -29,7 +29,7 @@ import {
 } from "@/constants/privacy"
 import { PageHeader } from "@/components/shared/page-header"
 import { Button } from "@/components/ui/button"
-import { breadcrumbSchema } from "@/lib/seo/schema"
+import { breadcrumbSchema, safeJsonLd } from "@/lib/seo/schema"
 import { AI_PROMPTS } from "@/lib/prompts"
 import {
   termsCategoryHeaders,
@@ -113,7 +113,7 @@ const PrivacyPage = () => {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbsJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbsJsonLd) }}
       />
 
       <div className="relative flex min-h-full flex-col bg-slate-50/50">
@@ -217,7 +217,7 @@ const PrivacyPage = () => {
                 <Button
                   size="sm"
                   nativeButton={false}
-                  render={<a href="mailto:support@launchnests.com" />}
+                  render={<a href={`mailto:${SITE_CONFIG.supportEmail}`} />}
                   className="text-xs"
                 >
                   <Mail className="mr-1.5 size-3.5" />

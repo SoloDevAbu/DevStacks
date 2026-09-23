@@ -13,6 +13,7 @@ interface FeedCardProps {
   showMedals?: boolean
   showTrendingBadge?: boolean
   showFreshnessBadge?: boolean
+  showTypeBadge?: boolean
 }
 
 export const FeedCard = ({
@@ -21,6 +22,7 @@ export const FeedCard = ({
   showMedals = false,
   showTrendingBadge = false,
   showFreshnessBadge = false,
+  showTypeBadge = true,
 }: FeedCardProps) => {
   const isProduct =
     ("itemKind" in item && item.itemKind === "product") ||
@@ -34,6 +36,7 @@ export const FeedCard = ({
         showMedals={showMedals}
         showTrendingBadge={showTrendingBadge}
         showFreshnessBadge={showFreshnessBadge}
+        showTypeBadge={showTypeBadge}
       />
     )
   }
@@ -45,6 +48,7 @@ export const FeedCard = ({
       showMedals={showMedals}
       showTrendingBadge={showTrendingBadge}
       showFreshnessBadge={showFreshnessBadge}
+      showTypeBadge={showTypeBadge}
     />
   )
 }

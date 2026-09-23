@@ -1,8 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import Image from "next/image"
-import { ArrowBigUp, Bookmark, ExternalLink, Code2 } from "lucide-react"
+import { ArrowBigUp, Bookmark, ExternalLink } from "lucide-react"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { useUpvoteTool } from "@/hooks/tools/use-upvote-tool"
 import { useBookmarkTool } from "@/hooks/tools/use-bookmark-tool"
@@ -10,6 +9,7 @@ import { useUserInteractions } from "@/hooks/users/use-user-interactions"
 import { useSession } from "@/lib/auth/client"
 import { useAuthModal } from "@/hooks/auth/use-auth-modal"
 import { getOutboundUrl, getLinkRel } from "@/utils/urls"
+import { trackExternalVisit } from "@/lib/api/analytics"
 import { cn } from "@/lib/utils"
 
 interface ToolActionButtonsProps {
@@ -30,10 +30,6 @@ export const ToolActionButtons = ({
   tier,
   initialUpvotes,
   websiteUrl,
-  githubUrl,
-  appStoreUrl,
-  playStoreUrl,
-  chromeExtensionUrl,
 }: ToolActionButtonsProps) => {
   const { data: session } = useSession()
   const { requireAuth } = useAuthModal()
@@ -111,6 +107,30 @@ export const ToolActionButtons = ({
         {isUpvoted ? "Upvoted" : "Upvote"} ({upvotes.toLocaleString()})
       </Button>
 
+      {websiteUrl && (
+        <a
+          href={outboundUrl}
+          target="_blank"
+          rel={linkRel}
+          onClick={() => {
+            if (toolId) {
+              trackExternalVisit({
+                itemType: "tool",
+                id: toolId,
+                targetUrl: websiteUrl,
+              })
+            }
+          }}
+          className={cn(
+            buttonVariants({ variant: "outline" }),
+            "h-8 gap-2 rounded-lg border-slate-200 bg-white px-3 text-slate-700 hover:bg-slate-50"
+          )}
+        >
+          <span>Visit Website</span>
+          <ExternalLink className="size-3.5 text-slate-400" />
+        </a>
+      )}
+
       <Button
         variant="outline"
         onClick={handleBookmark}
@@ -128,99 +148,6 @@ export const ToolActionButtons = ({
         />
         {isBookmarked ? "Bookmarked" : "Bookmark"}
       </Button>
-
-      {websiteUrl && (
-        <a
-          href={outboundUrl}
-          target="_blank"
-          rel={linkRel}
-          className={cn(
-            buttonVariants({ variant: "outline" }),
-            "h-8 gap-2 rounded-lg border-slate-200 bg-white px-3 text-slate-700 hover:bg-slate-50"
-          )}
-        >
-          Visit Website
-          <ExternalLink className="size-3.5 text-slate-400" />
-        </a>
-      )}
-
-      {githubUrl && (
-        <a
-          href={githubUrl}
-          target="_blank"
-          rel="noopener noreferrer nofollow"
-          className={cn(
-            buttonVariants({ variant: "outline" }),
-            "h-8 gap-2 rounded-lg border-slate-200 bg-white px-3 text-slate-700 hover:bg-slate-50"
-          )}
-        >
-          <Code2 className="size-4" />
-          GitHub
-        </a>
-      )}
-
-      {appStoreUrl && (
-        <a
-          href={appStoreUrl}
-          target="_blank"
-          rel="noopener noreferrer nofollow"
-          className={cn(
-            buttonVariants({ variant: "outline" }),
-            "h-8 gap-2 rounded-lg border-slate-200 bg-white px-3 text-slate-700 hover:bg-slate-50"
-          )}
-        >
-          <Image
-            src="/social-logo/app-store.png"
-            alt="App Store"
-            width={14}
-            height={14}
-            className="size-3.5 object-contain rounded-xs"
-          />
-          App Store
-        </a>
-      )}
-
-      {playStoreUrl && (
-        <a
-          href={playStoreUrl}
-          target="_blank"
-          rel="noopener noreferrer nofollow"
-          className={cn(
-            buttonVariants({ variant: "outline" }),
-            "h-8 gap-2 rounded-lg border-slate-200 bg-white px-3 text-slate-700 hover:bg-slate-50"
-          )}
-        >
-          <Image
-            src="/social-logo/playstore.png"
-            alt="Play Store"
-            width={14}
-            height={14}
-            className="size-3.5 object-contain rounded-xs"
-          />
-          Play Store
-        </a>
-      )}
-
-      {chromeExtensionUrl && (
-        <a
-          href={chromeExtensionUrl}
-          target="_blank"
-          rel="noopener noreferrer nofollow"
-          className={cn(
-            buttonVariants({ variant: "outline" }),
-            "h-8 gap-2 rounded-lg border-slate-200 bg-white px-3 text-slate-700 hover:bg-slate-50"
-          )}
-        >
-          <Image
-            src="/social-logo/chrome.png"
-            alt="Extension"
-            width={14}
-            height={14}
-            className="size-3.5 object-contain rounded-xs"
-          />
-          Extension
-        </a>
-      )}
     </div>
   )
 }

@@ -5,7 +5,7 @@ import { auth } from "@/lib/auth"
 import { getUserDashboardData } from "@/db/queries/users/get-dashboard"
 import { getCurrentUserProfile } from "@/db/queries/users/get-profile"
 import { DashboardNav } from "@/components/dashboard/dashboard-nav"
-import { DashboardContent } from "@/components/dashboard/dashboard-content"
+import { DashboardOverview } from "@/components/dashboard/dashboard-overview"
 import { ROUTES } from "@/constants/routes"
 import { SITE_CONFIG } from "@/constants/site"
 
@@ -37,7 +37,7 @@ const DashboardPage = async () => {
   return (
     <div className="relative flex min-h-full flex-col bg-slate-50/50">
       <DashboardNav activeTab="overview" username={profile?.username} />
-      <DashboardContent data={dashboardData} />
+      <DashboardOverview data={dashboardData} />
     </div>
   )
 }

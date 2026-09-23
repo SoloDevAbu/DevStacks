@@ -51,14 +51,14 @@ export const getProductBySlug = async (slug: string) => {
       submitterUsername: users.username,
       submitterCountry: users.country,
       submitterState: users.state,
-      submitterAvatarUrl: users.avatarUrl,
+      submitterAvatarUrl: sql<string | null>`COALESCE(${users.image}, ${users.avatarUrl})`,
       submitter: {
         id: users.id,
         name: users.name,
         username: users.username,
         country: users.country,
         state: users.state,
-        avatarUrl: users.avatarUrl,
+        avatarUrl: sql<string | null>`COALESCE(${users.image}, ${users.avatarUrl})`,
       },
     })
     .from(products)

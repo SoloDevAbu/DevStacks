@@ -45,8 +45,10 @@ export const POST = async (
     const parsed = createCommentSchema.safeParse(body)
 
     if (!parsed.success) {
+      const errorMsg =
+        parsed.error.issues[0]?.message ?? "Validation failed"
       return NextResponse.json(
-        { error: "Validation failed", details: parsed.error.flatten() },
+        { error: errorMsg, details: parsed.error.flatten() },
         { status: 422 }
       )
     }

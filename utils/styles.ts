@@ -5,6 +5,7 @@ import {
   type Tier,
   type Pricing,
 } from "@/constants/plans"
+import { ITEM_KIND, type ItemKind } from "@/constants/items"
 
 export const tierCardBg = (tier: Tier) =>
   cn(
@@ -41,7 +42,7 @@ export const directoryCard =
   "group relative z-0 cursor-pointer rounded-none p-0 transition-colors"
 
 export const directoryCardContent =
-  "relative flex items-center gap-4 overflow-hidden px-6 py-5 backdrop-blur-sm md:gap-6"
+  "relative flex items-center gap-3 overflow-hidden px-3.5 py-3.5 backdrop-blur-sm sm:gap-4 sm:px-6 sm:py-4 md:gap-6 md:py-5"
 
 export const tagBadge =
   "inline-flex items-center rounded-md border border-slate-200/60 bg-slate-100/50 px-2 py-0.5 text-xs text-slate-600 hover:bg-slate-100 transition-colors"
@@ -50,7 +51,7 @@ export const externalVisitButton =
   "relative z-10 h-8 gap-1 rounded-lg border-slate-200 bg-white px-2.5 text-xs text-slate-700 hover:bg-slate-50 transition-colors"
 
 export const sectionHeaderWrapper =
-  "flex items-center justify-between border-b border-dashed border-border bg-white px-6 py-4 md:px-8"
+  "flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between border-b border-dashed border-border bg-white px-4 py-3.5 sm:px-6 sm:py-4 md:px-8"
 
 export const sectionGridWrapper =
   "grid grid-cols-1 gap-4 border-b border-dashed border-border px-6 py-6 md:px-8"
@@ -154,19 +155,27 @@ export const sectionHeaderBox =
 
 export const sectionContentBox = "px-6 py-6 md:px-8"
 
-export const productSpecsContainer =
-  "grid grid-cols-3 divide-x divide-dashed divide-border bg-white"
+export const specContainer =
+  "flex flex-col divide-y divide-dashed divide-border bg-white"
 
-export const toolSpecsContainer =
-  "grid grid-cols-4 divide-x divide-dashed divide-border bg-white"
+export const specRow =
+  "flex flex-col gap-2 px-6 py-4.5 transition-colors hover:bg-slate-50/30 sm:flex-row sm:items-center sm:justify-between md:px-8"
 
-export const specItemBox =
-  "flex flex-col gap-1.5 p-3.5 sm:p-4.5 min-w-0 transition-colors hover:bg-slate-50/50"
+export const specRowHeader = "flex items-center gap-2.5"
 
-export const specItemLabel =
-  "flex items-center gap-1.5 font-mono text-[10px] font-bold tracking-wider text-slate-400 uppercase truncate"
+export const specBadge =
+  "inline-flex size-5 shrink-0 items-center justify-center rounded-sm bg-slate-100 font-mono text-[10px] font-bold text-slate-700"
 
-export const specItemValue = "truncate text-xs font-bold text-slate-900"
+export const specRowTitle =
+  "font-mono text-xs font-bold tracking-wider text-slate-900 uppercase"
+
+export const specRowValue = "text-xs font-bold text-slate-900 sm:text-sm"
+
+export const productSpecsContainer = specContainer
+export const toolSpecsContainer = specContainer
+export const specItemBox = specRow
+export const specItemLabel = specRowTitle
+export const specItemValue = specRowValue
 
 export const toolDeepDiveContainer =
   "flex flex-col divide-y divide-dashed divide-border bg-white"
@@ -206,16 +215,16 @@ export const faqAnswerText =
   "max-w-4xl text-xs sm:text-sm leading-relaxed wrap-break-word whitespace-pre-line text-slate-600"
 
 export const upvoteButtonActive =
-  "relative z-10 h-8 gap-1.5 rounded-lg border-amber-300 bg-amber-50 px-3 text-sm font-bold text-amber-600 hover:bg-amber-100/80 transition-colors"
+  "relative z-10 h-7.5 sm:h-8 gap-1 sm:gap-1.5 rounded-lg border-amber-300 bg-amber-50 px-2 sm:px-3 text-xs sm:text-sm font-bold text-amber-600 hover:bg-amber-100/80 transition-colors"
 
 export const upvoteButtonInactive =
-  "relative z-10 h-8 gap-1.5 rounded-lg border-slate-200 bg-white px-3 text-sm font-bold text-slate-600 hover:bg-slate-50 transition-colors"
+  "relative z-10 h-7.5 sm:h-8 gap-1 sm:gap-1.5 rounded-lg border-slate-200 bg-white px-2 sm:px-3 text-xs sm:text-sm font-bold text-slate-600 hover:bg-slate-50 transition-colors"
 
 export const bookmarkButtonActive =
-  "relative z-10 size-8 rounded-lg border-indigo-300 bg-indigo-50 p-0 text-indigo-600 hover:bg-indigo-100/80 transition-colors"
+  "relative z-10 size-7.5 sm:size-8 rounded-lg border-indigo-300 bg-indigo-50 p-0 text-indigo-600 hover:bg-indigo-100/80 transition-colors"
 
 export const bookmarkButtonInactive =
-  "relative z-10 size-8 rounded-lg border-slate-200 bg-white p-0 text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition-colors"
+  "relative z-10 size-7.5 sm:size-8 rounded-lg border-slate-200 bg-white p-0 text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition-colors"
 
 export const discoveryCard =
   "group flex flex-col rounded-none bg-white transition-colors hover:border-slate-300"
@@ -252,8 +261,22 @@ export const agentFooterDot = "text-slate-300 select-none"
 export const toolBuildsBadge =
   "inline-flex items-center gap-1 rounded-md border border-blue-200/80 bg-blue-50/80 px-2 py-0.5 text-xs font-semibold text-blue-700 hover:bg-blue-100/80 transition-colors"
 
-export const cardTagIcon = "size-3.5 shrink-0 text-slate-400"
-export const cardTagsGroup = "flex flex-wrap items-center gap-1.5"
+export const cardCommentIcon =
+  "size-3 sm:size-3.5 shrink-0 text-slate-400 transition-colors group-hover/comment:text-slate-600"
+export const cardCommentGroup =
+  "group/comment inline-flex shrink-0 items-center gap-1 text-[11px] sm:text-xs font-medium text-slate-500 transition-colors hover:text-slate-700"
+
+export const cardTagIcon = "size-3 sm:size-3.5 shrink-0 text-slate-400"
+export const cardTagsGroup = "flex min-w-0 items-center gap-1 sm:gap-1.5 overflow-hidden flex-nowrap"
+export const cardTagBadge =
+  "truncate shrink-0 rounded-md border border-slate-200/80 bg-slate-100/70 px-1.5 py-0 text-[10px] sm:px-2 sm:py-0.5 sm:text-xs font-medium text-slate-600 transition-colors hover:bg-slate-200/60 max-w-[120px]"
+
+export const socialIconButton =
+  "flex size-8 items-center justify-center rounded-lg border border-slate-200/80 bg-white shadow-2xs transition-colors hover:border-slate-300 hover:bg-slate-50"
+export const socialIconImage = "size-4 object-contain"
+
+export const specPlatformBadge =
+  "inline-flex items-center gap-1.5 rounded-md border border-slate-200/80 bg-slate-50/80 px-2 py-0.5 text-xs font-medium text-slate-700"
 
 export const toolViewsPill =
   "inline-flex items-center gap-1 text-xs font-medium text-slate-400"
@@ -313,6 +336,12 @@ export const navbarSearchWrapper =
 
 export const navbarSearchInput =
   "h-9 w-full rounded-lg border border-dashed border-slate-200 bg-slate-50/70 pr-12 pl-9 text-xs text-slate-900 placeholder:text-slate-400 focus-visible:border-slate-400 focus-visible:bg-white focus-visible:ring-0 shadow-2xs transition-all"
+
+export const navbarSearchButton =
+  "group flex h-9 w-52 md:w-64 lg:w-72 xl:w-80 cursor-pointer items-center justify-between rounded-lg border border-dashed border-slate-200 bg-slate-50/70 px-3 text-xs text-slate-400 shadow-2xs transition-all hover:border-slate-300 hover:bg-slate-100/70"
+
+export const commandFooter =
+  "flex items-center justify-between border-t border-dashed border-border bg-slate-50/70 px-3.5 py-2 text-[11px] text-muted-foreground select-none"
 
 export const navbarNavLink =
   "shrink-0 text-xs font-semibold text-slate-600 transition-colors hover:text-slate-950"
@@ -390,20 +419,16 @@ export const submissionStatusBadge = (status?: string) => {
   }
 }
 
-export const dashboardMetricsGrid =
-  "grid w-full grid-cols-2 border-b border-dashed border-border bg-white sm:grid-cols-3 lg:grid-cols-6 divide-y sm:divide-y-0 sm:divide-x divide-dashed divide-border"
-
-export const dashboardMetricCell =
-  "flex flex-col justify-between gap-2 p-5 sm:p-6 transition-colors hover:bg-slate-50/60"
-
-export const dashboardRow =
-  "flex flex-col gap-4 border-b border-dashed border-border bg-white px-6 py-5 transition-colors hover:bg-slate-50/30 md:px-8"
+export * from "@/utils/dashboard/styles"
 
 export const launchPromoBannerWrapper =
   "relative z-50 flex w-full items-center justify-between border-b border-amber-200/80 bg-linear-to-r from-amber-500/10 via-yellow-500/10 to-amber-500/10 px-4 py-2 text-xs text-amber-950 transition-colors"
 
 export const launchPromoBadge =
   "inline-flex items-center gap-1 rounded-md border border-amber-300/80 bg-amber-100/60 px-2 py-0.5 text-[11px] font-semibold text-amber-900 shadow-2xs"
+
+export const addedByLaunchNestsBadge =
+  "inline-flex items-center gap-1 rounded-md border border-slate-200 bg-slate-100/70 px-2 py-0.5 text-[11px] font-semibold text-slate-700 shadow-2xs"
 
 export const launchPromoCard =
   "relative overflow-hidden rounded-xl border border-dashed border-amber-300/80 bg-linear-to-br from-amber-50/70 via-white to-yellow-50/50 p-5 shadow-xs"
@@ -475,8 +500,17 @@ export const termsRowBody =
 export const termsBulletList =
   "mt-2 list-inside list-disc space-y-1.5 pl-1 text-xs sm:text-sm text-slate-600 leading-relaxed"
 
-export const activeSponsorCard =
-  "group/sponsor relative rounded-none border border-dashed border-indigo-300/90 bg-linear-to-br from-indigo-50/70 via-white to-blue-50/50 p-4 transition-all hover:border-indigo-400 hover:shadow-xs"
+export const activeSponsorCardBg = (tier?: Tier) =>
+  cn(
+    "group/sponsor relative rounded-none border border-dashed p-4 transition-all hover:shadow-xs overflow-hidden",
+    tier === TIER.PREMIUM_PLUS
+      ? "border-amber-300/90 bg-linear-to-br from-amber-50/70 via-white to-orange-50/50 hover:border-amber-400"
+      : tier === TIER.PREMIUM
+        ? "border-blue-300/90 bg-linear-to-br from-blue-50/70 via-white to-indigo-50/50 hover:border-blue-400"
+        : "border-indigo-300/90 bg-linear-to-br from-indigo-50/70 via-white to-blue-50/50 hover:border-indigo-400"
+  )
+
+export const activeSponsorCard = activeSponsorCardBg()
 
 export const adDurationSelectorWrapper = "grid grid-cols-1 gap-3 sm:grid-cols-2"
 
@@ -506,6 +540,32 @@ export const promoBanner =
 
 export const promoBannerSuccess =
   "flex items-start gap-2.5 rounded-lg border border-emerald-200 bg-emerald-50/70 p-3 text-xs text-emerald-900"
+
+export const launchWeekCard = (
+  selected: boolean,
+  disabled: boolean,
+  isFull: boolean
+) =>
+  cn(
+    "relative flex flex-col rounded-xl border p-3.5 text-left transition-all",
+    disabled || isFull
+      ? "cursor-not-allowed border-slate-200/60 bg-slate-50/70 opacity-60"
+      : "cursor-pointer hover:border-slate-300 hover:shadow-xs",
+    selected && !isFull
+      ? "border-indigo-600 bg-indigo-50/50 shadow-xs ring-1 ring-indigo-500/30"
+      : !disabled && !isFull && !selected
+        ? "border-slate-200/80 bg-white"
+        : ""
+  )
+
+export const launchWeekGrid =
+  "grid grid-cols-1 gap-2.5 sm:grid-cols-2 md:grid-cols-4"
+
+export const launchWeekUpsellCallout =
+  "flex flex-col gap-2 rounded-xl border border-amber-200 bg-linear-to-r from-amber-50 to-orange-50/50 p-4 text-xs text-amber-900"
+
+export const launchPromoCelebrationCallout =
+  "flex items-start gap-3 rounded-xl border border-emerald-200/80 bg-linear-to-r from-emerald-50/80 via-teal-50/50 to-blue-50/40 p-4 text-xs text-emerald-950"
 
 export const noSubmissionsCard =
   "flex flex-col items-center gap-3 rounded-xl border border-dashed border-amber-300 bg-amber-50/50 p-6 text-center"
@@ -566,7 +626,63 @@ export const sectionHeaderCtaButton =
   "group flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3.5 py-1.5 text-xs font-semibold text-slate-700 shadow-2xs transition-all hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900"
 
 export const sidebarLaunchRow =
-  "group flex items-center justify-between gap-3 rounded-lg border border-transparent p-2 transition-all hover:border-slate-200/80 hover:bg-slate-50 cursor-pointer"
+  "group relative flex items-center justify-between gap-3 overflow-hidden rounded-lg border p-2 transition-all cursor-pointer"
+
+export const sidebarLaunchRowBorder = (tier: Tier) =>
+  tier === TIER.PREMIUM_PLUS
+    ? "border-amber-200/70 hover:border-amber-300"
+    : tier === TIER.PREMIUM
+      ? "border-blue-200/70 hover:border-blue-300"
+      : "border-transparent hover:border-slate-200/80 hover:bg-slate-50"
 
 export const sidebarLaunchVotes =
   "flex shrink-0 items-center gap-1 rounded-md border border-slate-200/80 bg-slate-50/80 px-2 py-0.5 font-mono text-[11px] font-semibold text-slate-600 transition-colors group-hover:border-amber-300 group-hover:bg-amber-50 group-hover:text-amber-700"
+
+export const itemTypeBadge = (kind: ItemKind) =>
+  cn(
+    "flex items-center rounded-none px-1.5 py-0.5 text-[10px] font-bold tracking-wider uppercase transition-colors shrink-0",
+    kind === ITEM_KIND.TOOL
+      ? "border-sky-200/80 bg-sky-50/80 text-sky-700 hover:bg-sky-100/80"
+      : "border-violet-200/80 bg-violet-50/80 text-violet-700 hover:bg-violet-100/80"
+  )
+
+export const commentSectionContainer =
+  "border-b border-dashed border-border bg-white"
+
+export const commentInputSection =
+  "border-b border-dashed border-border bg-slate-50/25 px-6 py-6 md:px-8"
+
+export const commentAuthBanner =
+  "flex flex-col items-center justify-between gap-4 rounded-lg border border-dashed border-border bg-white p-5 sm:flex-row sm:p-6"
+
+export const commentListContainer =
+  "flex flex-col divide-y divide-dashed divide-border"
+
+export const commentItemRow =
+  "flex flex-col gap-2.5 px-6 py-5 transition-colors hover:bg-slate-50/40 md:px-8"
+
+export const commentItemBody =
+  "text-xs leading-relaxed text-slate-700 whitespace-pre-wrap"
+
+export const commentItemTime = "text-[11px] text-slate-400 font-normal"
+
+export const commentLoadMoreContainer =
+  "flex items-center justify-center border-t border-dashed border-border p-4"
+
+export const commentAuthOverlay =
+  "absolute inset-0 z-10 flex items-center justify-center p-4 bg-white/40 backdrop-blur-[2px]"
+
+export const commentAuthCard =
+  "flex flex-col items-center text-center gap-1.5 rounded-2xl border border-slate-200/80 bg-white px-7 py-5.5 shadow-[0_12px_36px_rgba(0,0,0,0.1)] max-w-sm"
+
+export const commentAuthTitle =
+  "text-sm font-bold tracking-tight text-slate-900"
+
+export const commentAuthSubtitle =
+  "text-xs text-slate-500 leading-normal max-w-xs"
+
+export const commentAuthButton =
+  "mt-2 cursor-pointer gap-2 text-xs font-semibold"
+
+
+

@@ -32,6 +32,7 @@ import {
   profilePageSchema,
   breadcrumbSchema,
   faqSchema,
+  safeJsonLd,
 } from "@/lib/seo/schema"
 
 interface MakerPageProps {
@@ -121,7 +122,13 @@ export default async function MakerPage({ params }: MakerPageProps) {
     year: "numeric",
   }).format(new Date(maker.createdAt))
 
-  const aiPrompt = AI_PROMPTS.maker(displayName, maker.username, maker.bio)
+  const aiPrompt = AI_PROMPTS.maker(
+    displayName,
+    maker.username,
+    maker.bio || maker.description,
+    profileUrl,
+    `${profileUrl}.md`
+  )
 
   const socials: string[] = []
   if (maker.websiteUrl) socials.push(maker.websiteUrl)
@@ -163,16 +170,16 @@ export default async function MakerPage({ params }: MakerPageProps) {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(profileJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(profileJsonLd) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbsJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbsJsonLd) }}
       />
       {faqJsonLd && (
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+          dangerouslySetInnerHTML={{ __html: safeJsonLd(faqJsonLd) }}
         />
       )}
 

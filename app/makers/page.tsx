@@ -5,7 +5,7 @@ import { PageHeader } from "@/components/shared/page-header"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
-import { breadcrumbSchema, collectionPageSchema } from "@/lib/seo/schema"
+import { breadcrumbSchema, collectionPageSchema, safeJsonLd } from "@/lib/seo/schema"
 import { SITE_CONFIG } from "@/constants/site"
 import { ROUTES } from "@/constants/routes"
 import { AI_PROMPTS } from "@/lib/prompts"
@@ -81,11 +81,11 @@ const MakersPage = async () => {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbs) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(collectionJsonLd) }}
       />
 
       <div className="relative flex min-h-full flex-col bg-slate-50/50">

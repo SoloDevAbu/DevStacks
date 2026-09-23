@@ -5,14 +5,14 @@ import { HeaderNav } from "@/components/layout/header-nav"
 import { HeaderActions } from "@/components/layout/header-actions"
 import { HeaderAdvertise } from "@/components/layout/header-advertise"
 import { MobileNav } from "@/components/layout/mobile-nav"
-import { LeftSidebar } from "@/components/shared/left-sidebar"
+import { LeftSidebar } from "@/components/layout/left-sidebar"
 import { RightSidebar } from "@/components/layout/right-sidebar"
 import { AgentFooter } from "@/components/layout/agent-footer"
 import { LaunchPromoBanner } from "@/components/layout/launch-promo-banner"
 import { Providers } from "@/app/providers"
 
 import { SITE_CONFIG } from "@/constants/site"
-import { organizationSchema, websiteSchema } from "@/lib/seo/schema"
+import { organizationSchema, websiteSchema, safeJsonLd } from "@/lib/seo/schema"
 
 import "./globals.css"
 import { cn } from "@/lib/utils"
@@ -24,8 +24,16 @@ export const viewport: Viewport = {
   themeColor: SITE_CONFIG.themeColor,
 }
 
+const getMetadataBase = () => {
+  try {
+    return new URL(SITE_CONFIG.url)
+  } catch {
+    return new URL("http://localhost:3000")
+  }
+}
+
 export const metadata: Metadata = {
-  metadataBase: new URL(SITE_CONFIG.url),
+  metadataBase: getMetadataBase(),
   title: {
     default: `${SITE_CONFIG.name} — ${SITE_CONFIG.tagline}`,
     template: `%s | ${SITE_CONFIG.name}`,
@@ -82,6 +90,9 @@ export const metadata: Metadata = {
   },
   alternates: {
     canonical: SITE_CONFIG.url,
+    types: {
+      "application/rss+xml": `${SITE_CONFIG.url}/feed.xml`,
+    },
     languages: {
       "x-default": SITE_CONFIG.url,
       "en-US": SITE_CONFIG.url,
@@ -127,15 +138,21 @@ const RootLayout = ({
       <head>
         <link rel="me" href={SITE_CONFIG.socials.x} />
         <link rel="me" href={SITE_CONFIG.socials.linkedin} />
+        <link
+          rel="alternate"
+          type="application/rss+xml"
+          title={`${SITE_CONFIG.name} — Weekly Developer Launches`}
+          href={`${SITE_CONFIG.url}/feed.xml`}
+        />
       </head>
       <body>
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(orgSchema) }}
+          dangerouslySetInnerHTML={{ __html: safeJsonLd(orgSchema) }}
         />
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(webSchema) }}
+          dangerouslySetInnerHTML={{ __html: safeJsonLd(webSchema) }}
         />
         <Providers>
           <div className="flex min-h-dvh flex-col bg-slate-50/30">
@@ -151,7 +168,7 @@ const RootLayout = ({
               <div className="flex w-full items-center justify-between gap-4 px-4 lg:px-6">
                 <div className="flex items-center gap-2 lg:hidden">
                   <MobileNav />
-                  <HeaderLogo />
+                  <HeaderLogo hideTextOnMobile />
                 </div>
                 <div className="hidden w-full items-center justify-between gap-4 md:flex">
                   <HeaderNav />

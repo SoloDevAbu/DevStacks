@@ -45,7 +45,7 @@ export const FAQ_CATEGORIES: FaqCategory[] = [
       },
       {
         question: `How do I submit my developer tool or product?`,
-        answer: `Submitting is simple: sign in using your GitHub or Google account, then navigate to ${ROUTES.SUBMIT} for developer tools or ${ROUTES.SHOWCASE} for products. Fill in your project name, tagline, website URL, description, pricing model, supported platforms, and optional AEO/SEO metadata. Once submitted, our moderation team reviews it for authenticity and technical relevance.`,
+        answer: `Submitting is simple: sign in using your Google account, then navigate to ${ROUTES.SUBMIT} for developer tools or ${ROUTES.SHOWCASE} for products. Fill in your project name, tagline, website URL, description, pricing model, supported platforms, and optional AEO/SEO metadata. Once submitted, our moderation team reviews it for authenticity and technical relevance.`,
       },
       {
         question: `Is listing on ${SITE_CONFIG.name} free?`,
@@ -53,7 +53,7 @@ export const FAQ_CATEGORIES: FaqCategory[] = [
       },
       {
         question: `How does the community ranking and voting system work?`,
-        answer: `Rankings across ${SITE_CONFIG.name} are transparent, verified, and community-driven across four core views:\n\n• Homepage: Features "Today's Launches" and "This Week's Launches", ranked strictly by live community votes (upvotes for developer tools, likes for products, with comment count as a tie-breaker). We do not have a separate "New & Rising" section or page—every new launch enters the live feed immediately and ranks purely on genuine community support. The homepage also highlights "Popular Building Blocks" (the most-used tools across verified projects).\n• Trending Page (/trending): An algorithmic momentum leaderboard that measures velocity by weighting community engagement (upvotes and likes) alongside page views with time decay across selectable timeframes (Today, This Week, This Month, and All Time), with category filtering.\n• Tools Directory (/tools): The comprehensive developer infrastructure catalog, filterable by category and pricing model (Free, Freemium, Paid, Open Source), and sortable by "Upvoted" (community upvotes) and "Most Builds" (number of live products built with the tool).\n• Products Directory (/products): The showcase of developer-built applications with declared tech stacks, filterable by category and pricing model, and sortable by "Upvoted" (community likes) and "Most Viewed" (total page views).\n\nTo preserve community integrity, voting requires verified GitHub or Google authentication to eliminate bots, duplicate voting, and artificial manipulation.`,
+        answer: `Rankings across ${SITE_CONFIG.name} are transparent, verified, and community-driven across four core views:\n\n• Homepage: Features "This Week's Launches", ranked strictly by live community votes (upvotes for developer tools, likes for products, with comment count as a tie-breaker). We do not have a separate "New & Rising" section or page—every new launch enters the live weekly feed immediately and ranks purely on genuine community support. The homepage also highlights "Popular Building Blocks" (the most-used tools across verified projects).\n• Trending Page (/trending): An algorithmic momentum leaderboard that measures velocity by weighting community engagement (upvotes and likes) alongside page views with time decay across selectable timeframes (Today, This Week, This Month, and All Time), with category filtering.\n• Tools Directory (/tools): The comprehensive developer infrastructure catalog, filterable by category and pricing model (Free, Freemium, Paid, Open Source), and sortable by "Upvoted" (community upvotes) and "Most Builds" (number of live products built with the tool).\n• Products Directory (/products): The showcase of developer-built applications with declared tech stacks, filterable by category and pricing model, and sortable by "Upvoted" (community likes) and "Most Viewed" (total page views).\n\nTo preserve community integrity, voting requires verified Google authentication to eliminate bots, duplicate voting, and artificial manipulation.`,
       },
 
       {
@@ -94,7 +94,7 @@ export const FAQ_CATEGORIES: FaqCategory[] = [
       },
       {
         question: `How do I reserve a sponsorship slot?`,
-        answer: `Sponsorship slots are booked on a weekly or monthly basis with category exclusivity options. You can review current placement options on our Pricing page (${ROUTES.PRICING}) and reserve a slot by direct messaging our founder on X (${SITE_CONFIG.socials.x}) or contacting our team at support@launchnests.com.`,
+        answer: `Sponsorship slots are booked on a weekly or monthly basis with category exclusivity options. You can review current placement options on our Pricing page (${ROUTES.PRICING}) and reserve verified placements instantly via our self-serve checkout or contact our team at ${SITE_CONFIG.supportEmail}.`,
       },
     ],
   },
@@ -162,7 +162,7 @@ export const FAQ_CATEGORIES: FaqCategory[] = [
       },
       {
         question: `What markdown and machine-readable formats does ${SITE_CONFIG.name} support?`,
-        answer: `${SITE_CONFIG.name} natively supports Schema.org JSON-LD, OpenAPI 3.1 JSON specifications, Model Context Protocol (JSON-RPC streamable HTTP), raw GitHub-flavored Markdown endpoints (.md), /llms.txt and /llms-full.txt files, and standard XML sitemaps and RSS feeds.`,
+        answer: `${SITE_CONFIG.name} natively supports Schema.org JSON-LD, OpenAPI 3.1 JSON specifications, Model Context Protocol (JSON-RPC streamable HTTP), raw GitHub-flavored Markdown endpoints (.md), /llms.txt and /llms-full.txt files, and standard XML sitemaps and RSS feeds (${SITE_CONFIG.url}/feed.xml).`,
       },
     ],
   },

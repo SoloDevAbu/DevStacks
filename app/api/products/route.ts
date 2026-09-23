@@ -98,6 +98,9 @@ export const POST = async (req: NextRequest) => {
         { status: 409 }
       )
     }
+    if (message.includes("full") || message.includes("slots")) {
+      return NextResponse.json({ error: message }, { status: 409 })
+    }
     return NextResponse.json(
       { error: `Failed to create product: ${message}` },
       { status: 500 }

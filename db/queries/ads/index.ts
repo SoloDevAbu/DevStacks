@@ -8,6 +8,8 @@ import {
   type AdStatus,
 } from "@/constants/ads"
 
+import type { Tier } from "@/constants/plans"
+
 export const getActiveAdsForCurrentWeek = async ({
   placement = "sidebar",
   limit = 3,
@@ -23,6 +25,7 @@ export const getActiveAdsForCurrentWeek = async ({
       logoUrl: string | null
       websiteUrl: string
       slug: string
+      tier: Tier
     } | null
     product: {
       id: string
@@ -31,6 +34,7 @@ export const getActiveAdsForCurrentWeek = async ({
       logoUrl: string | null
       websiteUrl: string
       slug: string
+      tier: Tier
     } | null
   })[]
 > => {
@@ -63,6 +67,7 @@ export const getActiveAdsForCurrentWeek = async ({
         logoUrl: tools.logoUrl,
         websiteUrl: tools.websiteUrl,
         slug: tools.slug,
+        tier: tools.tier,
       },
       product: {
         id: products.id,
@@ -71,6 +76,7 @@ export const getActiveAdsForCurrentWeek = async ({
         logoUrl: products.logoUrl,
         websiteUrl: products.websiteUrl,
         slug: products.slug,
+        tier: products.tier,
       },
     })
     .from(ads)

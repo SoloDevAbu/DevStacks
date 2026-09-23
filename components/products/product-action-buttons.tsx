@@ -1,8 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import Image from "next/image"
-import { Heart, Bookmark, ExternalLink, Code2 } from "lucide-react"
+import { Heart, Bookmark, ExternalLink } from "lucide-react"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { useLikeProduct } from "@/hooks/products/use-like-product"
 import { useBookmarkProduct } from "@/hooks/products/use-bookmark-product"
@@ -10,6 +9,7 @@ import { useUserInteractions } from "@/hooks/users/use-user-interactions"
 import { useSession } from "@/lib/auth/client"
 import { useAuthModal } from "@/hooks/auth/use-auth-modal"
 import { getOutboundUrl, getLinkRel } from "@/utils/urls"
+import { trackExternalVisit } from "@/lib/api/analytics"
 import { cn } from "@/lib/utils"
 
 interface ProductActionButtonsProps {
@@ -18,10 +18,6 @@ interface ProductActionButtonsProps {
   tier?: string | null
   initialLikes: number
   websiteUrl: string
-  githubUrl?: string | null
-  appStoreUrl?: string | null
-  playStoreUrl?: string | null
-  chromeExtensionUrl?: string | null
 }
 
 export const ProductActionButtons = ({
@@ -30,10 +26,6 @@ export const ProductActionButtons = ({
   tier,
   initialLikes,
   websiteUrl,
-  githubUrl,
-  appStoreUrl,
-  playStoreUrl,
-  chromeExtensionUrl,
 }: ProductActionButtonsProps) => {
   const { data: session } = useSession()
   const { requireAuth } = useAuthModal()
@@ -67,7 +59,7 @@ export const ProductActionButtons = ({
       {
         title: "Sign in to like",
         description:
-          "Sign in with your Google account to like and support developer products.",
+          "Sign in with your Google account to like and support launches.",
       }
     )
   }
@@ -81,9 +73,19 @@ export const ProductActionButtons = ({
       {
         title: "Sign in to bookmark",
         description:
-          "Sign in with your Google account to save products to your library.",
+          "Sign in with your Google account to bookmark products to your library.",
       }
     )
+  }
+
+  const handleVisit = () => {
+    if (productId) {
+      trackExternalVisit({
+        itemType: "product",
+        id: productId,
+        targetUrl: websiteUrl,
+      })
+    }
   }
 
   const outboundUrl = getOutboundUrl(websiteUrl, "launchnests")
@@ -111,6 +113,22 @@ export const ProductActionButtons = ({
         {isLiked ? "Liked" : "Like"} ({likes.toLocaleString()})
       </Button>
 
+      {websiteUrl && (
+        <a
+          href={outboundUrl}
+          target="_blank"
+          rel={linkRel}
+          onClick={handleVisit}
+          className={cn(
+            buttonVariants({ variant: "outline" }),
+            "h-8 gap-2 rounded-lg border-slate-200 bg-white px-3 text-slate-700 hover:bg-slate-50"
+          )}
+        >
+          <span>Visit Website</span>
+          <ExternalLink className="size-3.5 text-slate-400" />
+        </a>
+      )}
+
       <Button
         variant="outline"
         onClick={handleBookmark}
@@ -128,99 +146,6 @@ export const ProductActionButtons = ({
         />
         {isBookmarked ? "Bookmarked" : "Bookmark"}
       </Button>
-
-      {websiteUrl && (
-        <a
-          href={outboundUrl}
-          target="_blank"
-          rel={linkRel}
-          className={cn(
-            buttonVariants({ variant: "outline" }),
-            "h-8 gap-2 rounded-lg border-slate-200 bg-white px-3 text-slate-700 hover:bg-slate-50"
-          )}
-        >
-          Visit Website
-          <ExternalLink className="size-3.5 text-slate-400" />
-        </a>
-      )}
-
-      {githubUrl && (
-        <a
-          href={githubUrl}
-          target="_blank"
-          rel="noopener noreferrer nofollow"
-          className={cn(
-            buttonVariants({ variant: "outline" }),
-            "h-8 gap-2 rounded-lg border-slate-200 bg-white px-3 text-slate-700 hover:bg-slate-50"
-          )}
-        >
-          <Code2 className="size-4" />
-          GitHub
-        </a>
-      )}
-
-      {appStoreUrl && (
-        <a
-          href={appStoreUrl}
-          target="_blank"
-          rel="noopener noreferrer nofollow"
-          className={cn(
-            buttonVariants({ variant: "outline" }),
-            "h-8 gap-2 rounded-lg border-slate-200 bg-white px-3 text-slate-700 hover:bg-slate-50"
-          )}
-        >
-          <Image
-            src="/social-logo/app-store.png"
-            alt="App Store"
-            width={14}
-            height={14}
-            className="size-3.5 object-contain rounded-xs"
-          />
-          App Store
-        </a>
-      )}
-
-      {playStoreUrl && (
-        <a
-          href={playStoreUrl}
-          target="_blank"
-          rel="noopener noreferrer nofollow"
-          className={cn(
-            buttonVariants({ variant: "outline" }),
-            "h-8 gap-2 rounded-lg border-slate-200 bg-white px-3 text-slate-700 hover:bg-slate-50"
-          )}
-        >
-          <Image
-            src="/social-logo/playstore.png"
-            alt="Play Store"
-            width={14}
-            height={14}
-            className="size-3.5 object-contain rounded-xs"
-          />
-          Play Store
-        </a>
-      )}
-
-      {chromeExtensionUrl && (
-        <a
-          href={chromeExtensionUrl}
-          target="_blank"
-          rel="noopener noreferrer nofollow"
-          className={cn(
-            buttonVariants({ variant: "outline" }),
-            "h-8 gap-2 rounded-lg border-slate-200 bg-white px-3 text-slate-700 hover:bg-slate-50"
-          )}
-        >
-          <Image
-            src="/social-logo/chrome.png"
-            alt="Extension"
-            width={14}
-            height={14}
-            className="size-3.5 object-contain rounded-xs"
-          />
-          Extension
-        </a>
-      )}
     </div>
   )
 }

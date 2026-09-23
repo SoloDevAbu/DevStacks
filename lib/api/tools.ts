@@ -37,3 +37,26 @@ export const submitTool = async (payload: unknown) => {
   const { data } = await apiClient.post("/tools", payload)
   return data.data as DbTool
 }
+
+export const fetchToolComments = async (slug: string) => {
+  const { data } = await apiClient.get(`/tools/${slug}/comments`)
+  return data.data
+}
+
+export const submitToolComment = async (
+  slug: string,
+  payload: { body: string }
+) => {
+  const { data } = await apiClient.post(`/tools/${slug}/comments`, payload)
+  return data.data
+}
+
+export const updateToolApi = async (
+  slug: string,
+  payload: Record<string, unknown>
+) => {
+  const { data } = await apiClient.patch(`/tools/${slug}`, payload)
+  return data.data
+}
+
+

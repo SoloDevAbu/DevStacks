@@ -117,7 +117,7 @@ export const PLANS: Record<Tier, PlanConfig> = {
       "Permanent Do-Follow SEO backlink",
       "Verified Blue Check badge",
       "Featured placement in category searches",
-      "Priority inclusion in Weekly AI Newsletter",
+      "Priority inclusion in upcoming Weekly AI Newsletter",
       "Direct GitHub repository link integration",
     ],
   },

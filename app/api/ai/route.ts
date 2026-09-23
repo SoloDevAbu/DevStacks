@@ -3,8 +3,8 @@ import { SITE_CONFIG } from "@/constants/site"
 import { getTools } from "@/db/queries/tools/list"
 import { getProducts } from "@/db/queries/products/list"
 import { db } from "@/db"
-import { users } from "@/db/schema"
-import { sql } from "drizzle-orm"
+import { tools, products, users } from "@/db/schema"
+import { sql, count } from "drizzle-orm"
 
 export const revalidate = 3600
 
@@ -17,9 +17,19 @@ export const GET = async () => {
     country: string | null
     bio: string | null
   }> = []
+  let totalToolsCount = 0
+  let totalProductsCount = 0
+  let totalMakersCount = 0
 
   try {
-    const [fetchedTools, fetchedProducts, fetchedMakers] = await Promise.all([
+    const [
+      fetchedTools,
+      fetchedProducts,
+      fetchedMakers,
+      toolCountRes,
+      productCountRes,
+      makerCountRes,
+    ] = await Promise.all([
       getTools({ sortBy: "builds", limit: 20 }),
       getProducts({ sortBy: "likes", limit: 20 }),
       db
@@ -32,10 +42,19 @@ export const GET = async () => {
         .from(users)
         .where(sql`${users.username} IS NOT NULL`)
         .limit(12),
+      db.select({ total: count() }).from(tools),
+      db.select({ total: count() }).from(products),
+      db
+        .select({ total: count() })
+        .from(users)
+        .where(sql`${users.username} IS NOT NULL`),
     ])
     toolsList = fetchedTools ?? []
     productsList = fetchedProducts ?? []
     makersList = fetchedMakers ?? []
+    totalToolsCount = Number(toolCountRes[0]?.total ?? toolsList.length)
+    totalProductsCount = Number(productCountRes[0]?.total ?? productsList.length)
+    totalMakersCount = Number(makerCountRes[0]?.total ?? makersList.length)
   } catch {
     toolsList = []
     productsList = []
@@ -48,9 +67,9 @@ export const GET = async () => {
     tagline: SITE_CONFIG.tagline,
     url: SITE_CONFIG.url,
     stats: {
-      totalTools: toolsList.length,
-      totalProducts: productsList.length,
-      totalMakers: makersList.length,
+      totalTools: totalToolsCount,
+      totalProducts: totalProductsCount,
+      totalMakers: totalMakersCount,
       activeEcosystem: true,
     },
     topMakers: makersList

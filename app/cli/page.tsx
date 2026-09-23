@@ -5,8 +5,8 @@ import { AI_PROMPTS } from "@/lib/prompts"
 import { AskAiBar } from "@/components/shared/ask-ai-bar"
 
 export const metadata: Metadata = {
-  title: "CLI and Public REST API",
-  description: `Official ${SITE_CONFIG.name} command-line client and OpenAPI 3.1 REST API for querying developer tools and tech stacks.`,
+  title: "Public REST API & cURL Reference",
+  description: `Official ${SITE_CONFIG.name} OpenAPI 3.1 REST API documentation and cURL reference for querying developer tools and tech stacks.`,
   alternates: {
     canonical: `${SITE_CONFIG.url}/cli`,
   },
@@ -25,7 +25,7 @@ const CliPage = () => {
           </span>
         </div>
         <h1 className="text-2xl font-bold tracking-tight text-slate-900 md:text-3xl">
-          CLI & Public REST API
+          Public REST API & cURL Reference
         </h1>
         <p className="text-sm leading-relaxed text-slate-600">
           Query the live catalog of developer tools, products, and tech stacks
@@ -58,9 +58,9 @@ const CliPage = () => {
         <div className="mt-2 pt-2">
           <AskAiBar
             prompt={AI_PROMPTS.cli}
-            label="ASK AI ABOUT CLI & REST API"
+            label="ASK AI ABOUT REST API & cURL"
             questions={[
-              "How do I query tools via cURL or CLI?",
+              "How do I query tools and products via cURL?",
               "What REST endpoints are exposed under /v1?",
             ]}
           />
@@ -68,23 +68,23 @@ const CliPage = () => {
       </div>
 
       <div className="mt-8 space-y-8">
-        {/* CLI Section */}
+        {/* cURL Quickstart Section */}
         <section className="space-y-3">
           <h2 className="text-lg font-semibold text-slate-900">
-            1. Command-Line Usage
+            1. Terminal Quickstart (cURL)
           </h2>
           <p className="text-xs text-slate-600">
-            Query the directory immediately using npx:
+            Query the directory immediately using standard cURL commands:
           </p>
           <pre className="overflow-x-auto rounded-lg border border-border bg-slate-900 p-4 font-mono text-xs text-slate-100">
             {`# Search developer tools and products
-npx @launchnests/cli search "vector database"
+curl -sS "${SITE_CONFIG.url}/v1/search?q=vector+database"
 
-# Fetch top community upvoted tools
-npx @launchnests/cli leaderboard --limit 10
+# Fetch top community upvoted tools & products
+curl -sS "${SITE_CONFIG.url}/v1/leaderboard?limit=10"
 
-# Inspect verified tech stack and details
-npx @launchnests/cli tool supabase`}
+# Inspect tool details and verified build counts
+curl -sS "${SITE_CONFIG.url}/v1/tools/supabase"`}
           </pre>
         </section>
 

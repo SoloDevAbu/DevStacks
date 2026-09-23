@@ -110,7 +110,6 @@ export const ProductsDirectoryContent = ({
         <ProductList
           products={displayedProducts}
           showMedals
-          showTrendingBadge
         />
         <InfiniteScrollSentinel
           sentinelRef={sentinelRef}

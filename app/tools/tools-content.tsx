@@ -107,7 +107,6 @@ export const ToolsDirectoryContent = ({
         <ToolList
           tools={displayedTools}
           showMedals
-          showTrendingBadge
         />
         <InfiniteScrollSentinel
           sentinelRef={sentinelRef}

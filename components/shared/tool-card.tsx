@@ -10,7 +10,9 @@ import {
   Sparkles,
   Layers,
   Tag,
+  MessageSquare,
 } from "lucide-react"
+import Link from "next/link"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -18,6 +20,8 @@ import { cn } from "@/lib/utils"
 import { HoverOutline } from "@/components/shared/hover-outline"
 import { VerifiedBadge } from "@/components/shared/verified-badge"
 import { ProductLogo } from "@/components/shared/product-logo"
+import { ItemTypeBadge } from "@/components/shared/item-type-badge"
+import { ITEM_KIND } from "@/constants/items"
 import { TIER, type Tier, type Pricing } from "@/constants/plans"
 import { ROUTES } from "@/constants/routes"
 import {
@@ -33,6 +37,9 @@ import {
   directoryCardContent,
   medalBadge,
   toolBuildsBadge,
+  cardCommentIcon,
+  cardCommentGroup,
+  cardTagBadge,
   cardTagIcon,
   cardTagsGroup,
 } from "@/utils/styles"
@@ -52,6 +59,7 @@ interface ToolCardProps {
   showMedals?: boolean
   showTrendingBadge?: boolean
   showFreshnessBadge?: boolean
+  showTypeBadge?: boolean
 }
 
 export const ToolCard = ({
@@ -60,6 +68,7 @@ export const ToolCard = ({
   showMedals = false,
   showTrendingBadge = false,
   showFreshnessBadge = false,
+  showTypeBadge = false,
 }: ToolCardProps) => {
   const router = useRouter()
   const { data: session } = useSession()
@@ -184,70 +193,87 @@ export const ToolCard = ({
             imageUrl={logoUrl}
             websiteUrl={tool.websiteUrl}
             alt={tool.name}
-            className="size-14 overflow-hidden rounded-xl border border-slate-200 text-xl"
+            className="size-12 shrink-0 overflow-hidden rounded-lg border border-slate-200 text-lg sm:size-14 sm:rounded-xl sm:text-xl"
           />
         </a>
 
         {/* Tool Details */}
-        <div className="flex min-w-0 flex-1 flex-col gap-1">
-          <div className="flex items-center gap-2">
-            <h3 className="truncate text-base font-bold text-slate-900">
+        <div className="flex min-w-0 flex-1 flex-col gap-0.5 sm:gap-1">
+          <div className="flex min-w-0 items-center gap-1.5 overflow-hidden flex-nowrap sm:gap-2">
+            <h3 className="min-w-0 truncate text-sm font-bold text-slate-900 sm:text-base">
               <a
                 href={outboundUrl}
                 target="_blank"
                 rel={linkRel}
                 onClick={(e) => e.stopPropagation()}
-                className="inline-flex items-center gap-1.5 transition-colors hover:text-indigo-600"
+                className="inline-flex min-w-0 items-center gap-1.5 transition-colors hover:text-indigo-600"
                 title={`Visit ${tool.name}`}
               >
                 <span className="truncate">{tool.name}</span>
-                <VerifiedBadge tier={tier} />
-                <ExternalLink className="size-3 shrink-0 text-slate-400 opacity-0 transition-opacity group-hover:opacity-100" />
+                <VerifiedBadge tier={tier} className="size-3.5 shrink-0 sm:size-4" />
+                <ExternalLink className="hidden size-3 shrink-0 text-slate-400 opacity-0 transition-opacity group-hover:opacity-100 sm:inline" />
               </a>
             </h3>
+            {showTypeBadge && <ItemTypeBadge kind={ITEM_KIND.TOOL} className="shrink-0 text-[10px]" />}
             {showTrendingBadge && isTrending && (
               <Badge
                 variant="outline"
-                className="flex items-center gap-0.5 rounded-none border-transparent bg-green-100/50 px-2 py-0.5 text-[10px] font-bold tracking-wider text-green-700 uppercase hover:bg-green-100/50"
+                className="hidden shrink-0 items-center gap-0.5 rounded-none border-transparent bg-green-100/50 px-1.5 py-0 text-[9px] font-bold tracking-wider text-green-700 uppercase hover:bg-green-100/50 sm:inline-flex sm:px-2 sm:py-0.5 sm:text-[10px]"
               >
-                <ArrowUp className="size-3" /> TRENDING
+                <ArrowUp className="size-2.5 sm:size-3" /> TRENDING
               </Badge>
             )}
             {showFreshnessBadge &&
               typeof tool.freshnessDaysLeft === "number" && (
                 <Badge
                   variant="outline"
-                  className="flex items-center gap-1 rounded-none border-amber-300 bg-amber-50 px-2 py-0.5 text-[10px] font-bold tracking-wider text-amber-700 uppercase hover:bg-amber-50"
+                  className="hidden shrink-0 items-center gap-1 rounded-none border-amber-300 bg-amber-50 px-1.5 py-0 text-[9px] font-bold tracking-wider text-amber-700 uppercase hover:bg-amber-50 sm:inline-flex sm:px-2 sm:py-0.5 sm:text-[10px]"
                 >
-                  <Sparkles className="size-3 text-amber-500" />
+                  <Sparkles className="size-2.5 text-amber-500 sm:size-3" />
                   {tool.freshnessDaysLeft}d boost
                 </Badge>
               )}
           </div>
 
-          <p className="line-clamp-1 text-sm font-medium text-slate-500">
+          <p className="line-clamp-1 text-xs font-normal text-slate-500 sm:text-sm">
             {tool.tagline}
           </p>
 
-          {/* Tags + stats row */}
-          {((tool.tags ?? []).length > 0 || tool.buildsCount > 0) && (
-            <div className="mt-2 flex flex-wrap items-center gap-2.5">
+          {/* Comments, tags, and stats row */}
+          {((tool.commentsCount ?? 0) >= 0 || (tool.tags ?? []).length > 0 || tool.buildsCount > 0) && (
+            <div className="mt-0.5 flex min-w-0 items-center gap-2 overflow-hidden flex-nowrap sm:mt-1.5 sm:gap-2.5">
+              <Link
+                href={`${ROUTES.TOOL(tool.slug)}#comments`}
+                onClick={(e) => e.stopPropagation()}
+                className={cardCommentGroup}
+                title={`${(tool.commentsCount ?? 0).toLocaleString()} comments`}
+                aria-label={`${(tool.commentsCount ?? 0).toLocaleString()} comments`}
+              >
+                <MessageSquare className={cardCommentIcon} />
+                <span>{(tool.commentsCount ?? 0).toLocaleString()}</span>
+              </Link>
+
               {(tool.tags ?? []).length > 0 && (
                 <div className={cardTagsGroup}>
                   <Tag className={cardTagIcon} />
-                  {(tool.tags ?? []).slice(0, 3).map((tag) => (
-                    <Badge
-                      key={tag}
-                      variant="secondary"
-                      className="rounded-md border border-slate-200/80 bg-slate-100/70 px-2 py-0.5 text-xs font-medium text-slate-600 transition-colors hover:bg-slate-200/60"
-                    >
-                      {tag}
-                    </Badge>
-                  ))}
+                  <div className="flex min-w-0 items-center gap-1 overflow-hidden flex-nowrap sm:gap-1.5">
+                    {(tool.tags ?? []).map((tag, tagIdx) => (
+                      <Badge
+                        key={tag}
+                        variant="secondary"
+                        className={cn(
+                          cardTagBadge,
+                          tagIdx > 1 && "hidden sm:inline-flex"
+                        )}
+                      >
+                        <span className="truncate">{tag}</span>
+                      </Badge>
+                    ))}
+                  </div>
                 </div>
               )}
               {tool.buildsCount > 0 && (
-                <Badge variant="outline" className={toolBuildsBadge}>
+                <Badge variant="outline" className={cn(toolBuildsBadge, "hidden shrink-0 py-0 text-[10px] sm:inline-flex sm:py-0.5 sm:text-xs")}>
                   <Layers className="size-3" />
                   <span>{tool.buildsCount} builds</span>
                 </Badge>
@@ -257,18 +283,18 @@ export const ToolCard = ({
         </div>
 
         {/* Action Buttons & Pricing */}
-        <div className="ml-4 flex shrink-0 flex-col items-end gap-2.5">
+        <div className="ml-2 flex shrink-0 flex-col items-end gap-1.5 sm:ml-4 sm:gap-2">
           <Badge
             variant="outline"
             className={cn(
-              "rounded-none border-transparent px-2.5 py-1 text-[11px]",
+              "rounded-none border-transparent px-2 py-0.5 text-[10px] sm:px-2.5 sm:py-1 sm:text-[11px]",
               pricingBadgeColor(pricing)
             )}
           >
             {pricing}
           </Badge>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2">
             {/* Upvote Button */}
             <div
               className="group/btn relative inline-flex"
@@ -284,14 +310,14 @@ export const ToolCard = ({
               >
                 <ArrowBigUp
                   className={cn(
-                    "size-4",
+                    "size-3.5 sm:size-4",
                     isUpvoted
                       ? "fill-amber-500 text-amber-500"
                       : "text-slate-400"
                   )}
                   fill={isUpvoted ? "currentColor" : "none"}
                 />
-                {upvoteCount?.toLocaleString() ?? "0"}
+                <span>{upvoteCount?.toLocaleString() ?? "0"}</span>
               </Button>
               <HoverOutline />
             </div>
@@ -310,7 +336,7 @@ export const ToolCard = ({
                 )}
               >
                 <Bookmark
-                  className="size-4"
+                  className="size-3.5 sm:size-4"
                   fill={isBookmarked ? "currentColor" : "none"}
                 />
               </Button>
