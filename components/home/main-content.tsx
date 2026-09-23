@@ -20,7 +20,7 @@ export const MainContent = ({
       <PageHeader
         heading="GET DISCOVERED BY HUMANS AND AI"
         description={`Launch your product once on ${SITE_CONFIG.name}. Get discovered by developers,
-search engines, and AI systems looking for tools like yours.`}
+search engines, and AI systems looking for tools/products like yours.`}
         aiPrompt={AI_PROMPTS.home}
         variant="home"
         askAiLabel="ASK AI"
