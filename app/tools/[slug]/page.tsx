@@ -26,6 +26,7 @@ import { resolveTool, getProductsBuiltWithTool } from "@/lib/tools/resolve-tool"
 import { getToolFaqs } from "@/db/queries/faqs/get-faqs"
 import { MakerDetailSection } from "@/components/shared/maker-detail-section"
 import { SITE_CONFIG } from "@/constants/site"
+import { LAUNCH_PROMO } from "@/constants/promo"
 import { ROUTES } from "@/constants/routes"
 import { getSocialCardImage } from "@/lib/seo/social-image"
 import { formatGeoMetaTags } from "@/utils/country"
@@ -117,7 +118,8 @@ export const generateMetadata = async ({
         ...(tool.tags ?? []),
         "developer tool",
         "verified developer launch",
-        "First 100 Launches",
+        LAUNCH_PROMO.BADGE_LABEL,
+        "First 50 Launches",
         "API",
         "infrastructure",
         SITE_CONFIG.name,

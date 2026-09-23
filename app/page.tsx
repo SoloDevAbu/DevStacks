@@ -16,13 +16,20 @@ export const revalidate = 60
 
 export const metadata: Metadata = {
   title: {
-    absolute: `${SITE_CONFIG.name} — This Week's Developer Launches`,
+    absolute: `${SITE_CONFIG.name} — This Week's Launches for AI & Search Engines`,
   },
   description:
-    `Discover the developer tools, APIs, and products launching this week on ${SITE_CONFIG.name}. Ranked by community votes, updated continuously.`,
+    `Discover this week's developer tools, APIs, and products launching on ${SITE_CONFIG.name}. Ranked by community votes and optimized for AI search engines, ChatGPT, Claude, and Google.`,
   keywords: [
     ...SITE_CONFIG.keywords,
     "weekly developer launches",
+    "search by AI",
+    "AI search engines",
+    "AI product discovery",
+    "ChatGPT tool discovery",
+    "Claude software search",
+    "GEO optimization",
+    "AEO discovery",
     "this week's developer tools",
     "product launches this week",
     "new software launches",
@@ -33,9 +40,9 @@ export const metadata: Metadata = {
     canonical: SITE_CONFIG.url,
   },
   openGraph: {
-    title: `${SITE_CONFIG.name} — This Week's Developer Launches`,
+    title: `${SITE_CONFIG.name} — This Week's Launches for AI & Search Engines`,
     description:
-      `Discover the developer tools, APIs, and products launching this week on ${SITE_CONFIG.name}, ranked by community votes.`,
+      `Discover this week's developer tools, APIs, and products launching on ${SITE_CONFIG.name}. Ranked by community votes and optimized for AI search engines, ChatGPT, Claude, and Google.`,
     type: "website",
     url: SITE_CONFIG.url,
     siteName: SITE_CONFIG.name,
@@ -44,15 +51,15 @@ export const metadata: Metadata = {
         url: `${SITE_CONFIG.url}/opengraph-image`,
         width: 1200,
         height: 630,
-        alt: `${SITE_CONFIG.name} — This Week's Developer Launches`,
+        alt: `${SITE_CONFIG.name} — This Week's Launches for AI & Search Engines`,
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: `${SITE_CONFIG.name} — This Week's Developer Launches`,
+    title: `${SITE_CONFIG.name} — This Week's Launches for AI & Search Engines`,
     description:
-      `Discover the developer tools, APIs, and products launching this week on ${SITE_CONFIG.name}, ranked by community votes.`,
+      `Discover this week's developer tools, APIs, and products launching on ${SITE_CONFIG.name}. Ranked by community votes and optimized for AI search engines, ChatGPT, Claude, and Google.`,
     images: [`${SITE_CONFIG.url}/twitter-image`],
   },
 }
@@ -79,9 +86,9 @@ const Page = async () => {
   ])
 
   const collectionJsonLd = collectionPageSchema({
-    name: `${SITE_CONFIG.name} — This Week's Developer Tools & Products`,
+    name: `${SITE_CONFIG.name} — This Week's Launches for AI & Search Engines`,
     description:
-      `Discover developer tools, APIs, and software products launched this week on ${SITE_CONFIG.name}, ranked by community votes.`,
+      `Discover developer tools, APIs, and software products launched this week on ${SITE_CONFIG.name}, ranked by community votes and optimized for AI and search engine discovery.`,
     url: SITE_CONFIG.url,
     items: featuredItems,
   })

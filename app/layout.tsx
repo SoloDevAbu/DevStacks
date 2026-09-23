@@ -103,7 +103,7 @@ export const metadata: Metadata = {
   },
   other: {
     "ai-agent":
-      "LaunchNests - The Developer Tools & Tech Stack Discovery Engine",
+      "LaunchNests - Developer Tools, Product Launches & Tech Stack Discovery for AI & Search Engines",
     "application-type": "developer directory",
     "DC.Coverage": "World",
   },

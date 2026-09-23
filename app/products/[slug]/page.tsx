@@ -22,6 +22,7 @@ import {
 import { resolveProduct } from "@/lib/products/resolve-product"
 import { resolveTool } from "@/lib/tools/resolve-tool"
 import { SITE_CONFIG } from "@/constants/site"
+import { LAUNCH_PROMO } from "@/constants/promo"
 import { ROUTES } from "@/constants/routes"
 import { getSocialCardImage } from "@/lib/seo/social-image"
 import { formatGeoMetaTags } from "@/utils/country"
@@ -113,7 +114,8 @@ export const generateMetadata = async ({
         ...(product.tags ?? []),
         "developer product",
         "verified developer launch",
-        "First 100 Launches",
+        LAUNCH_PROMO.BADGE_LABEL,
+        "First 50 Launches",
         "software",
         SITE_CONFIG.name,
       ]
