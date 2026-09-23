@@ -73,7 +73,7 @@ export const metadata: Metadata = {
     description: SITE_CONFIG.description,
     images: [
       {
-        url: `${SITE_CONFIG.url}/opengraph-image`,
+        url: SITE_CONFIG.ogImage,
         width: 1200,
         height: 630,
         alt: `${SITE_CONFIG.name} — ${SITE_CONFIG.tagline}`,
@@ -86,7 +86,7 @@ export const metadata: Metadata = {
     title: `${SITE_CONFIG.name} — ${SITE_CONFIG.tagline}`,
     description: SITE_CONFIG.description,
     creator: "@AbuBakkar2502",
-    images: [`${SITE_CONFIG.url}/twitter-image`],
+    images: [SITE_CONFIG.ogImage],
   },
   alternates: {
     canonical: SITE_CONFIG.url,

@@ -1,6 +1,10 @@
 import type { Metadata } from "next"
 import { ToolsHero } from "@/components/tools/tools-hero"
-import { collectionPageSchema, breadcrumbSchema, safeJsonLd } from "@/lib/seo/schema"
+import {
+  collectionPageSchema,
+  breadcrumbSchema,
+  safeJsonLd,
+} from "@/lib/seo/schema"
 import { SITE_CONFIG } from "@/constants/site"
 import { ROUTES } from "@/constants/routes"
 import { AI_PROMPTS } from "@/lib/prompts"

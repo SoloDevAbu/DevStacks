@@ -48,7 +48,7 @@ export const metadata: Metadata = {
     siteName: SITE_CONFIG.name,
     images: [
       {
-        url: `${SITE_CONFIG.url}/opengraph-image`,
+        url: SITE_CONFIG.ogImage,
         width: 1200,
         height: 630,
         alt: `${SITE_CONFIG.name} — This Week's Launches for AI & Search Engines`,
@@ -60,7 +60,7 @@ export const metadata: Metadata = {
     title: `${SITE_CONFIG.name} — This Week's Launches for AI & Search Engines`,
     description:
       `Discover this week's developer tools, APIs, and products launching on ${SITE_CONFIG.name}. Ranked by community votes and optimized for AI search engines, ChatGPT, Claude, and Google.`,
-    images: [`${SITE_CONFIG.url}/twitter-image`],
+    images: [SITE_CONFIG.ogImage],
   },
 }
 

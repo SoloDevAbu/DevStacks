@@ -21,6 +21,7 @@ export const SITE_CONFIG = {
     "Launch, rank, and discover developer tools and products built for search engines and AI search. Explore community upvotes, tech stacks, permanent backlinks, and AI indexing across ChatGPT, Claude, and Google.",
   url: siteUrl,
   domain: "www.launchnests.com",
+  ogImage: `${siteUrl}/og-image.png`,
   supportEmail: "support@launchnests.com",
   creator: "Abu Bakkar Siddique",
   publisher: "LaunchNests",
@@ -66,5 +67,3 @@ export const CREATOR_SOCIALS = {
   x: "https://x.com/AbuBakkar2502",
   linkedin: "https://www.linkedin.com/in/abu-bakkar-siddique-546112205/",
 } as const
-
-

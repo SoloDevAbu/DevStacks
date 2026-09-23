@@ -142,7 +142,7 @@ export const productSchema = (product: ProductSchemaInput) => {
     name: product.name,
     description: product.description,
     url: product.url,
-    image: product.logoUrl ?? `${SITE_CONFIG.url}/opengraph-image`,
+    image: product.logoUrl ?? SITE_CONFIG.ogImage,
     applicationCategory:
       product.asoCategory ?? product.category ?? "DeveloperApplication",
     applicationSubCategory: product.category ?? undefined,

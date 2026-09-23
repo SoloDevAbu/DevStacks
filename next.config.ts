@@ -37,6 +37,16 @@ const nextConfig: NextConfig = {
       destination: "/",
       permanent: false,
     },
+    {
+      source: "/opengraph-image",
+      destination: "/LaunchNests%20OG.png",
+      permanent: false,
+    },
+    {
+      source: "/twitter-image",
+      destination: "/LaunchNests%20OG.png",
+      permanent: false,
+    },
   ],
   headers: async () => [
     {
