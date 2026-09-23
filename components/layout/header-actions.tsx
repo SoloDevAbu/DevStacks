@@ -64,7 +64,7 @@ export const HeaderActions = () => {
   if (isPending) {
     return (
       <div className="flex items-center gap-3">
-        <div className="h-8 w-24 animate-pulse rounded-none bg-slate-100" />
+        <div className="hidden h-8 w-24 animate-pulse rounded-none bg-slate-100 md:block" />
         <div className="h-8 w-16 animate-pulse rounded-md bg-slate-100" />
       </div>
     )
@@ -74,7 +74,7 @@ export const HeaderActions = () => {
     return (
       <div className="flex items-center gap-3">
         <Button
-          className="rounded-lg px-3 py-1.5 text-xs font-semibold text-white shadow-xs transition-all hover:bg-slate-800 active:scale-[0.98]"
+          className="hidden md:inline-flex rounded-lg px-3 py-1.5 text-xs font-semibold text-white shadow-xs transition-all hover:bg-slate-800 active:scale-[0.98]"
           nativeButton={false}
           render={<Link href={ROUTES.SUBMIT} />}
         >
@@ -179,7 +179,7 @@ export const HeaderActions = () => {
   return (
     <div className="flex items-center gap-2.5">
       <Button
-        className="rounded-lg px-3 py-1.5 text-xs font-semibold text-white shadow-xs transition-all hover:bg-slate-800 active:scale-[0.98]"
+        className="hidden md:inline-flex rounded-lg px-3 py-1.5 text-xs font-semibold text-white shadow-xs transition-all hover:bg-slate-800 active:scale-[0.98]"
         onClick={handleAddToolClick}
       >
         <PlusCircle className="mr-1.5 size-3.5" />

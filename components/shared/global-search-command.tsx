@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback, type ReactNode } from "react"
 import { useRouter } from "next/navigation"
 import {
   Search,
@@ -28,6 +28,10 @@ import { ItemTypeBadge } from "@/components/shared/item-type-badge"
 import { useProducts } from "@/hooks/products/use-products"
 import { useTools } from "@/hooks/tools/use-tools"
 import { useDebounce } from "@/hooks/shared/use-debounce"
+import {
+  SearchCommandContext,
+  useSearchCommand,
+} from "@/hooks/shared/use-search-command"
 import { ROUTES } from "@/constants/routes"
 import { ITEM_KIND } from "@/constants/items"
 import {
@@ -38,26 +42,20 @@ import {
 import type { Tier, Pricing } from "@/constants/plans"
 import { cn } from "@/lib/utils"
 
-export interface GlobalSearchCommandProps {
-  className?: string
-}
+export { useSearchCommand }
 
-export const GlobalSearchCommand = ({ className }: GlobalSearchCommandProps) => {
+export const SearchCommandProvider = ({ children }: { children: ReactNode }) => {
   const router = useRouter()
-  const [open, setOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(false)
   const [search, setSearch] = useState("")
-  const [isMac, setIsMac] = useState(false)
+
+  const openSearch = useCallback(() => setIsOpen(true), [])
+  const closeSearch = useCallback(() => {
+    setIsOpen(false)
+    setSearch("")
+  }, [])
 
   const debouncedSearch = useDebounce(search.trim(), 200)
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const isPlatformMac =
-        navigator.platform?.toUpperCase().indexOf("MAC") >= 0 ||
-        navigator.userAgent?.toUpperCase().indexOf("MAC") >= 0
-      setIsMac(isPlatformMac)
-    }
-  }, [])
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -69,7 +67,7 @@ export const GlobalSearchCommand = ({ className }: GlobalSearchCommandProps) => 
         (e.key === "/" && !isTargetInput)
       ) {
         e.preventDefault()
-        setOpen((prev) => !prev)
+        setIsOpen((prev) => !prev)
       }
     }
 
@@ -92,37 +90,28 @@ export const GlobalSearchCommand = ({ className }: GlobalSearchCommandProps) => 
   const isLoading = hasQuery && (isToolsLoading || isProductsLoading)
 
   const handleSelect = (url: string) => {
-    setOpen(false)
-    setSearch("")
+    closeSearch()
     router.push(url)
   }
 
   const hasResults = tools.length > 0 || products.length > 0
 
   return (
-    <>
-      <button
-        type="button"
-        onClick={() => setOpen(true)}
-        className={cn(navbarSearchButton, className)}
-        aria-label="Search tools, products, APIs"
-      >
-        <div className="flex items-center gap-2 truncate">
-          <Search className="size-3.5 shrink-0 text-slate-400 transition-colors group-hover:text-slate-600" />
-          <span className="truncate text-slate-400 transition-colors group-hover:text-slate-600">
-            Search tools, APIs, products...
-          </span>
-        </div>
-        <Kbd className="shrink-0 border border-slate-200 bg-white px-1 font-mono text-[10px] text-slate-400 shadow-2xs">
-          {isMac ? "⌘K" : "Ctrl+K"}
-        </Kbd>
-      </button>
+    <SearchCommandContext.Provider
+      value={{
+        isOpen,
+        openSearch,
+        closeSearch,
+        setIsOpen,
+      }}
+    >
+      {children}
 
       <CommandDialog
-        open={open}
-        onOpenChange={(isOpen) => {
-          setOpen(isOpen)
-          if (!isOpen) setSearch("")
+        open={isOpen}
+        onOpenChange={(openState) => {
+          setIsOpen(openState)
+          if (!openState) setSearch("")
         }}
         title="Search"
         description="Search developer tools, products, and categories"
@@ -168,7 +157,7 @@ export const GlobalSearchCommand = ({ className }: GlobalSearchCommandProps) => 
                             <span className="truncate font-semibold text-slate-900">
                               {tool.name}
                             </span>
-                            <VerifiedBadge tier={tool.tier as Tier} className="size-3.5" />
+                            <VerifiedBadge tier={tool.tier as Tier} className="size-3.5 shrink-0" />
                             {tool.pricing && (
                               <Badge
                                 variant="outline"
@@ -214,7 +203,7 @@ export const GlobalSearchCommand = ({ className }: GlobalSearchCommandProps) => 
                             <span className="truncate font-semibold text-slate-900">
                               {product.name}
                             </span>
-                            <VerifiedBadge tier={product.tier as Tier} className="size-3.5" />
+                            <VerifiedBadge tier={product.tier as Tier} className="size-3.5 shrink-0" />
                             {product.pricing && (
                               <Badge
                                 variant="outline"
@@ -365,6 +354,43 @@ export const GlobalSearchCommand = ({ className }: GlobalSearchCommandProps) => 
           </div>
         </Command>
       </CommandDialog>
-    </>
+    </SearchCommandContext.Provider>
+  )
+}
+
+export interface GlobalSearchCommandProps {
+  className?: string
+}
+
+export const GlobalSearchCommand = ({ className }: GlobalSearchCommandProps) => {
+  const { openSearch } = useSearchCommand()
+  const [isMac, setIsMac] = useState(false)
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const isPlatformMac =
+        navigator.platform?.toUpperCase().indexOf("MAC") >= 0 ||
+        navigator.userAgent?.toUpperCase().indexOf("MAC") >= 0
+      setIsMac(isPlatformMac)
+    }
+  }, [])
+
+  return (
+    <button
+      type="button"
+      onClick={openSearch}
+      className={cn(navbarSearchButton, className)}
+      aria-label="Search tools, products, APIs"
+    >
+      <div className="flex items-center gap-2 truncate">
+        <Search className="size-3.5 shrink-0 text-slate-400 transition-colors group-hover:text-slate-600" />
+        <span className="truncate text-slate-400 transition-colors group-hover:text-slate-600">
+          Search tools, APIs, products...
+        </span>
+      </div>
+      <Kbd className="shrink-0 border border-slate-200 bg-white px-1 font-mono text-[10px] text-slate-400 shadow-2xs">
+        {isMac ? "⌘K" : "Ctrl+K"}
+      </Kbd>
+    </button>
   )
 }

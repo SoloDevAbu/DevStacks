@@ -91,7 +91,7 @@ export const PageHeader = ({
   return (
     <div
       className={cn(
-        "relative flex flex-col justify-between gap-6 overflow-hidden border-b border-dashed border-border px-6 pt-8 pb-6 md:px-8 lg:flex-row lg:items-start",
+        "relative flex flex-col justify-between gap-5 overflow-hidden border-b border-dashed border-border px-4 pt-6 pb-5 sm:px-6 sm:pt-8 sm:pb-6 md:px-8 lg:flex-row lg:items-start",
         config.bg
       )}
     >
@@ -109,28 +109,28 @@ export const PageHeader = ({
         )}
       />
 
-      <div className="relative z-10 flex max-w-2xl flex-col gap-3">
+      <div className="relative z-10 flex max-w-2xl flex-col gap-2.5 sm:gap-3">
         <div>
-          <h1 className="mb-2 text-xl font-bold tracking-tight text-slate-900 md:text-2xl">
+          <h1 className="mb-1.5 text-lg font-bold tracking-tight text-slate-900 sm:text-xl md:text-2xl">
             {heading}
           </h1>
-          <p className="mt-1.5 text-sm leading-relaxed text-slate-600">
+          <p className="mt-1 text-xs leading-relaxed text-slate-600 sm:text-sm">
             {description}
           </p>
         </div>
 
         {metrics && (
-          <div className="mt-1 flex flex-wrap items-center gap-2.5">
+          <div className="mt-1 flex flex-wrap items-center gap-2 sm:gap-2.5">
             {metrics}
           </div>
         )}
       </div>
 
-      <div className="relative z-10 flex w-full max-w-[320px] flex-col gap-3 lg:max-w-100 lg:items-end">
+      <div className="relative z-10 flex w-full flex-col gap-2.5 sm:gap-3 lg:max-w-100 lg:items-end">
         <AskAiBar
           prompt={aiPrompt}
           label={askAiLabel ?? config.aiLabel}
-          align="end"
+          align="responsive"
         />
       </div>
     </div>

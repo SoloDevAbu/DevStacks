@@ -3,6 +3,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { useState } from "react"
 import { AuthModalProvider } from "@/components/auth/auth-modal-provider"
+import { SearchCommandProvider } from "@/components/shared/global-search-command"
 import { Toaster } from "@/components/ui/toast"
 import { CheckoutStatusDialog } from "@/components/shared/checkout-status-dialog"
 
@@ -23,9 +24,11 @@ export const Providers = ({ children }: { children: React.ReactNode }) => {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthModalProvider>
-        {children}
-        <CheckoutStatusDialog />
-        <Toaster />
+        <SearchCommandProvider>
+          {children}
+          <CheckoutStatusDialog />
+          <Toaster />
+        </SearchCommandProvider>
       </AuthModalProvider>
     </QueryClientProvider>
   )

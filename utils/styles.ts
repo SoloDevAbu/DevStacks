@@ -42,7 +42,7 @@ export const directoryCard =
   "group relative z-0 cursor-pointer rounded-none p-0 transition-colors"
 
 export const directoryCardContent =
-  "relative flex items-center gap-4 overflow-hidden px-6 py-5 backdrop-blur-sm md:gap-6"
+  "relative flex items-center gap-3 overflow-hidden px-3.5 py-3.5 backdrop-blur-sm sm:gap-4 sm:px-6 sm:py-4 md:gap-6 md:py-5"
 
 export const tagBadge =
   "inline-flex items-center rounded-md border border-slate-200/60 bg-slate-100/50 px-2 py-0.5 text-xs text-slate-600 hover:bg-slate-100 transition-colors"
@@ -51,7 +51,7 @@ export const externalVisitButton =
   "relative z-10 h-8 gap-1 rounded-lg border-slate-200 bg-white px-2.5 text-xs text-slate-700 hover:bg-slate-50 transition-colors"
 
 export const sectionHeaderWrapper =
-  "flex items-center justify-between border-b border-dashed border-border bg-white px-6 py-4 md:px-8"
+  "flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between border-b border-dashed border-border bg-white px-4 py-3.5 sm:px-6 sm:py-4 md:px-8"
 
 export const sectionGridWrapper =
   "grid grid-cols-1 gap-4 border-b border-dashed border-border px-6 py-6 md:px-8"
@@ -215,16 +215,16 @@ export const faqAnswerText =
   "max-w-4xl text-xs sm:text-sm leading-relaxed wrap-break-word whitespace-pre-line text-slate-600"
 
 export const upvoteButtonActive =
-  "relative z-10 h-8 gap-1.5 rounded-lg border-amber-300 bg-amber-50 px-3 text-sm font-bold text-amber-600 hover:bg-amber-100/80 transition-colors"
+  "relative z-10 h-7.5 sm:h-8 gap-1 sm:gap-1.5 rounded-lg border-amber-300 bg-amber-50 px-2 sm:px-3 text-xs sm:text-sm font-bold text-amber-600 hover:bg-amber-100/80 transition-colors"
 
 export const upvoteButtonInactive =
-  "relative z-10 h-8 gap-1.5 rounded-lg border-slate-200 bg-white px-3 text-sm font-bold text-slate-600 hover:bg-slate-50 transition-colors"
+  "relative z-10 h-7.5 sm:h-8 gap-1 sm:gap-1.5 rounded-lg border-slate-200 bg-white px-2 sm:px-3 text-xs sm:text-sm font-bold text-slate-600 hover:bg-slate-50 transition-colors"
 
 export const bookmarkButtonActive =
-  "relative z-10 size-8 rounded-lg border-indigo-300 bg-indigo-50 p-0 text-indigo-600 hover:bg-indigo-100/80 transition-colors"
+  "relative z-10 size-7.5 sm:size-8 rounded-lg border-indigo-300 bg-indigo-50 p-0 text-indigo-600 hover:bg-indigo-100/80 transition-colors"
 
 export const bookmarkButtonInactive =
-  "relative z-10 size-8 rounded-lg border-slate-200 bg-white p-0 text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition-colors"
+  "relative z-10 size-7.5 sm:size-8 rounded-lg border-slate-200 bg-white p-0 text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition-colors"
 
 export const discoveryCard =
   "group flex flex-col rounded-none bg-white transition-colors hover:border-slate-300"
@@ -262,14 +262,14 @@ export const toolBuildsBadge =
   "inline-flex items-center gap-1 rounded-md border border-blue-200/80 bg-blue-50/80 px-2 py-0.5 text-xs font-semibold text-blue-700 hover:bg-blue-100/80 transition-colors"
 
 export const cardCommentIcon =
-  "size-3.5 shrink-0 text-slate-400 transition-colors group-hover/comment:text-slate-600"
+  "size-3 sm:size-3.5 shrink-0 text-slate-400 transition-colors group-hover/comment:text-slate-600"
 export const cardCommentGroup =
-  "group/comment inline-flex items-center gap-1 text-xs font-medium text-slate-500 transition-colors hover:text-slate-700"
+  "group/comment inline-flex shrink-0 items-center gap-1 text-[11px] sm:text-xs font-medium text-slate-500 transition-colors hover:text-slate-700"
 
-export const cardTagIcon = "size-3.5 shrink-0 text-slate-400"
-export const cardTagsGroup = "flex flex-wrap items-center gap-1.5"
+export const cardTagIcon = "size-3 sm:size-3.5 shrink-0 text-slate-400"
+export const cardTagsGroup = "flex min-w-0 items-center gap-1 sm:gap-1.5 overflow-hidden flex-nowrap"
 export const cardTagBadge =
-  "rounded-md border border-slate-200/80 bg-slate-100/70 px-2 py-0.5 text-xs font-medium text-slate-600 transition-colors hover:bg-slate-200/60"
+  "truncate shrink-0 rounded-md border border-slate-200/80 bg-slate-100/70 px-1.5 py-0 text-[10px] sm:px-2 sm:py-0.5 sm:text-xs font-medium text-slate-600 transition-colors hover:bg-slate-200/60 max-w-[120px]"
 
 export const socialIconButton =
   "flex size-8 items-center justify-center rounded-lg border border-slate-200/80 bg-white shadow-2xs transition-colors hover:border-slate-300 hover:bg-slate-50"

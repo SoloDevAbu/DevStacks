@@ -168,7 +168,7 @@ const RootLayout = ({
               <div className="flex w-full items-center justify-between gap-4 px-4 lg:px-6">
                 <div className="flex items-center gap-2 lg:hidden">
                   <MobileNav />
-                  <HeaderLogo />
+                  <HeaderLogo hideTextOnMobile />
                 </div>
                 <div className="hidden w-full items-center justify-between gap-4 md:flex">
                   <HeaderNav />
