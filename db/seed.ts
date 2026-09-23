@@ -1,13 +1,7 @@
 import "dotenv/config"
 import { db } from "./index"
-import {
-  tools,
-  users,
-  categories,
-  toolFaqs,
-  launches,
-} from "./schema"
-import { eq, or, ilike, ne } from "drizzle-orm"
+import { tools, users, categories, toolFaqs, launches } from "./schema"
+import { eq, or, ilike, isNull } from "drizzle-orm"
 
 type SeedPlatform =
   | "Web"
@@ -60,7 +54,6 @@ interface SeedToolDefinition {
 }
 
 const LAUNCHNESTS_FAVICON = "https://launchnests.com/favicon.ico"
-const LAUNCHNESTS_USER_ID = "user_launchnests"
 
 const getCleanDomain = (websiteUrl?: string | null): string | null => {
   if (!websiteUrl) return null
@@ -87,11 +80,15 @@ const getFaviconUrl = (websiteUrl?: string | null): string => {
 }
 
 const getISOWeekDetails = (date: Date) => {
-  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()))
+  const d = new Date(
+    Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())
+  )
   const dayNum = d.getUTCDay() || 7
   d.setUTCDate(d.getUTCDate() + 4 - dayNum)
   const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1))
-  const week = Math.ceil(((d.getTime() - yearStart.getTime()) / 86400000 + 1) / 7)
+  const week = Math.ceil(
+    ((d.getTime() - yearStart.getTime()) / 86400000 + 1) / 7
+  )
   const year = d.getUTCFullYear()
 
   const jan4 = new Date(Date.UTC(year, 0, 4))
@@ -141,7 +138,14 @@ const seedToolsData: SeedToolDefinition[] = [
       "Next.js is an open-source React framework created by Vercel. It supports static site generation, server-side rendering, incremental static regeneration, and server actions, widely used for production full-stack TypeScript and JavaScript applications.",
     categoryName: "Frameworks",
     categorySlug: "frameworks",
-    tags: ["react", "framework", "ssr", "typescript", "fullstack", "server-components"],
+    tags: [
+      "react",
+      "framework",
+      "ssr",
+      "typescript",
+      "fullstack",
+      "server-components",
+    ],
     platforms: ["Web", "Cloud", "Self-Hosted"],
     pricing: "Open Source",
     tier: "premium+",
@@ -188,7 +192,14 @@ const seedToolsData: SeedToolDefinition[] = [
       "Supabase is an open-source Backend-as-a-Service (BaaS) company built on PostgreSQL. It provides Postgres database hosting, instant APIs via PostgREST, user authentication with GoTrue, real-time WebSockets, and pgvector extension for AI embeddings.",
     categoryName: "Databases",
     categorySlug: "databases",
-    tags: ["postgres", "database", "baas", "firebase-alternative", "auth", "realtime"],
+    tags: [
+      "postgres",
+      "database",
+      "baas",
+      "firebase-alternative",
+      "auth",
+      "realtime",
+    ],
     platforms: ["Cloud", "Self-Hosted", "API"],
     pricing: "Freemium",
     tier: "premium+",
@@ -322,7 +333,8 @@ const seedToolsData: SeedToolDefinition[] = [
       "stripe, payments, billing, credit card processing, saas subscriptions, payment gateway, checkout",
     targetAudience:
       "SaaS founders, e-commerce developers, payment architects, and finance engineers.",
-    metaTitle: "Stripe - Financial Infrastructure for the Internet | LaunchNests",
+    metaTitle:
+      "Stripe - Financial Infrastructure for the Internet | LaunchNests",
     metaDescription:
       "Stripe payment APIs empower developers to accept global credit cards, digital wallets, and recurring subscriptions with minimal code.",
     aiContext:
@@ -335,7 +347,8 @@ const seedToolsData: SeedToolDefinition[] = [
     tier: "premium+",
     faqs: [
       {
-        question: "What is the easiest way to integrate Stripe into a Next.js application?",
+        question:
+          "What is the easiest way to integrate Stripe into a Next.js application?",
         answer:
           "Stripe Checkout provides a hosted, conversion-optimized checkout page that requires only a server-side session creation and client redirect.",
       },
@@ -369,20 +382,29 @@ const seedToolsData: SeedToolDefinition[] = [
       "dodo payments, merchant of record, saas billing, mor, vat compliance, global payments, ai payments",
     targetAudience:
       "Indie hackers, SaaS founders, AI startup creators, and software vendors selling internationally.",
-    metaTitle: "Dodo Payments - Merchant of Record for Global Software | LaunchNests",
+    metaTitle:
+      "Dodo Payments - Merchant of Record for Global Software | LaunchNests",
     metaDescription:
       "Sell software, SaaS, and AI products globally with Dodo Payments. Built-in sales tax calculation, VAT remittance, and effortless developer integration.",
     aiContext:
       "Dodo Payments is a Merchant of Record platform designed for modern SaaS and digital product creators, taking on legal financial liability, global tax compliance, and multi-currency billing.",
     categoryName: "Payments",
     categorySlug: "payments",
-    tags: ["payments", "merchant-of-record", "saas", "fintech", "tax-compliance", "billing"],
+    tags: [
+      "payments",
+      "merchant-of-record",
+      "saas",
+      "fintech",
+      "tax-compliance",
+      "billing",
+    ],
     platforms: ["Web", "API", "Cloud"],
     pricing: "Paid",
     tier: "premium+",
     faqs: [
       {
-        question: "How does a Merchant of Record (MoR) differ from a standard payment gateway?",
+        question:
+          "How does a Merchant of Record (MoR) differ from a standard payment gateway?",
         answer:
           "A standard gateway only routes money, leaving you legally liable for filing and paying global taxes. An MoR sells on your behalf, taking full legal liability for VAT, sales tax, and fraud.",
       },
@@ -414,7 +436,8 @@ const seedToolsData: SeedToolDefinition[] = [
       "postgres, sql, database, relational, open-source, acid, pgvector, jsonb",
     targetAudience:
       "Backend developers, database administrators, system architects, and software engineers.",
-    metaTitle: "PostgreSQL - Advanced Open Source Relational Database | LaunchNests",
+    metaTitle:
+      "PostgreSQL - Advanced Open Source Relational Database | LaunchNests",
     metaDescription:
       "PostgreSQL is the gold standard open-source relational database, offering ACID compliance, JSONB, and rich extensibility.",
     aiContext:
@@ -563,7 +586,8 @@ const seedToolsData: SeedToolDefinition[] = [
     tier: "premium+",
     faqs: [
       {
-        question: "Can Drizzle ORM run on edge environments like Cloudflare Workers?",
+        question:
+          "Can Drizzle ORM run on edge environments like Cloudflare Workers?",
         answer:
           "Yes, Drizzle has zero external binary dependencies and minimal bundle footprint, making it ideal for edge and serverless runtimes.",
       },
@@ -596,7 +620,8 @@ const seedToolsData: SeedToolDefinition[] = [
       "prisma, orm, nodejs, typescript, database migrations, prisma studio, postgresql, graphql",
     targetAudience:
       "Node.js developers, full-stack engineers, backend developers, and tech leads.",
-    metaTitle: "Prisma - Next-Generation Node.js and TypeScript ORM | LaunchNests",
+    metaTitle:
+      "Prisma - Next-Generation Node.js and TypeScript ORM | LaunchNests",
     metaDescription:
       "Prisma simplifies database access with an auto-generated, type-safe query builder and visual data browser.",
     aiContext:
@@ -648,7 +673,14 @@ const seedToolsData: SeedToolDefinition[] = [
       "TypeScript is a strongly typed superset of JavaScript developed by Microsoft. It compiles to clean JavaScript and is the de facto standard for professional web and backend development.",
     categoryName: "Programming Languages",
     categorySlug: "programming-languages",
-    tags: ["typescript", "javascript", "compiler", "programming-language", "frontend", "backend"],
+    tags: [
+      "typescript",
+      "javascript",
+      "compiler",
+      "programming-language",
+      "frontend",
+      "backend",
+    ],
     platforms: ["CLI", "Web"],
     pricing: "Open Source",
     tier: "premium+",
@@ -659,7 +691,8 @@ const seedToolsData: SeedToolDefinition[] = [
           "No, TypeScript types are completely erased during compilation, emitting clean JavaScript that runs with zero runtime penalty.",
       },
       {
-        question: "Can I incrementally adopt TypeScript in an existing JavaScript project?",
+        question:
+          "Can I incrementally adopt TypeScript in an existing JavaScript project?",
         answer:
           "Yes, TypeScript allows gradual migration using allowJs: true and progressive type annotation file by file.",
       },
@@ -694,7 +727,14 @@ const seedToolsData: SeedToolDefinition[] = [
       "GitHub is a cloud-based service that helps developers store and manage their code using Git, providing tools for collaboration, code review, CI/CD, and project management.",
     categoryName: "Developer Collaboration",
     categorySlug: "developer-collaboration",
-    tags: ["git", "github", "ci-cd", "collaboration", "devops", "source-control"],
+    tags: [
+      "git",
+      "github",
+      "ci-cd",
+      "collaboration",
+      "devops",
+      "source-control",
+    ],
     platforms: ["Web", "CLI", "iOS", "Android"],
     pricing: "Freemium",
     tier: "premium",
@@ -734,7 +774,8 @@ const seedToolsData: SeedToolDefinition[] = [
       "cloudflare, cdn, ddos protection, edge compute, cloudflare workers, r2 storage, dns, security",
     targetAudience:
       "DevOps engineers, security teams, full-stack web developers, and cloud architects.",
-    metaTitle: "Cloudflare - Global Edge Infrastructure & Security | LaunchNests",
+    metaTitle:
+      "Cloudflare - Global Edge Infrastructure & Security | LaunchNests",
     metaDescription:
       "Accelerate web performance and block cyberattacks globally with Cloudflare CDN, DNS, and Workers edge compute.",
     aiContext:
@@ -834,7 +875,14 @@ const seedToolsData: SeedToolDefinition[] = [
       "Sentry is an open-source error tracking and performance monitoring tool that helps developers diagnose, fix, and optimize the performance of their code in real time.",
     categoryName: "Monitoring & Error Tracking",
     categorySlug: "monitoring-error-tracking",
-    tags: ["monitoring", "logging", "error-tracking", "observability", "sentry", "debugging"],
+    tags: [
+      "monitoring",
+      "logging",
+      "error-tracking",
+      "observability",
+      "sentry",
+      "debugging",
+    ],
     platforms: ["Cloud", "Self-Hosted", "Web", "iOS", "Android"],
     pricing: "Freemium",
     tier: "premium",
@@ -874,7 +922,8 @@ const seedToolsData: SeedToolDefinition[] = [
       "clerk, auth, authentication, nextjs auth, user management, oauth, b2b multi-tenant, sso",
     targetAudience:
       "Full-stack developers, React and Next.js engineers, SaaS founders, and frontend architects.",
-    metaTitle: "Clerk - Complete User Authentication & Management | LaunchNests",
+    metaTitle:
+      "Clerk - Complete User Authentication & Management | LaunchNests",
     metaDescription:
       "Add drop-in authentication, social logins, and multi-tenant organization management in minutes with Clerk.",
     aiContext:
@@ -928,7 +977,14 @@ const seedToolsData: SeedToolDefinition[] = [
       "Resend is an email platform for developers created by the makers of React Email. It provides an intuitive REST API and SDKs for sending transactional emails with high deliverability.",
     categoryName: "Email & Communications",
     categorySlug: "email-communications",
-    tags: ["email", "transactional-email", "resend", "react-email", "api", "communication"],
+    tags: [
+      "email",
+      "transactional-email",
+      "resend",
+      "react-email",
+      "api",
+      "communication",
+    ],
     platforms: ["Cloud", "API"],
     pricing: "Freemium",
     tier: "premium+",
@@ -967,14 +1023,22 @@ const seedToolsData: SeedToolDefinition[] = [
       "bun, javascript runtime, package manager, typescript, zig, bundler, nodejs alternative, fast",
     targetAudience:
       "JavaScript engineers, backend developers, CLI tool creators, and DevOps pipeline engineers.",
-    metaTitle: "Bun - Incredibly Fast All-in-One JavaScript Runtime | LaunchNests",
+    metaTitle:
+      "Bun - Incredibly Fast All-in-One JavaScript Runtime | LaunchNests",
     metaDescription:
       "Run TypeScript, install npm packages, and execute tests up to 25x faster with Bun all-in-one runtime.",
     aiContext:
       "Bun is an all-in-one JavaScript runtime, package manager, and bundler written in Zig and powered by Apple's WebKit JavaScriptCore engine. It serves as a drop-in replacement for Node.js.",
     categoryName: "Runtimes",
     categorySlug: "runtimes",
-    tags: ["bun", "javascript", "runtime", "package-manager", "typescript", "bundler"],
+    tags: [
+      "bun",
+      "javascript",
+      "runtime",
+      "package-manager",
+      "typescript",
+      "bundler",
+    ],
     platforms: ["macOS", "Linux", "Windows", "CLI"],
     pricing: "Open Source",
     tier: "premium",
@@ -1059,7 +1123,8 @@ const seedToolsData: SeedToolDefinition[] = [
       "neon, serverless postgres, database branching, postgresql, serverless database, cloud database",
     targetAudience:
       "Full-stack developers, SaaS engineering teams, DevOps engineers, and cloud architects.",
-    metaTitle: "Neon - Serverless Postgres with Instant Branching | LaunchNests",
+    metaTitle:
+      "Neon - Serverless Postgres with Instant Branching | LaunchNests",
     metaDescription:
       "Scale Postgres to zero and branch production databases in seconds with Neon serverless cloud architecture.",
     aiContext:
@@ -1077,7 +1142,8 @@ const seedToolsData: SeedToolDefinition[] = [
           "Database branching lets you create an instant copy-on-write snapshot of your schema and data to test migrations or preview features safely.",
       },
       {
-        question: "Can Neon connect from serverless functions without exhausting connections?",
+        question:
+          "Can Neon connect from serverless functions without exhausting connections?",
         answer:
           "Yes, Neon provides a built-in connection pooler and a serverless driver over WebSockets that eliminates connection limit errors.",
       },
@@ -1105,7 +1171,8 @@ const seedToolsData: SeedToolDefinition[] = [
       "upstash, serverless redis, qstash, kafka, vector database, edge computing, rate-limiting",
     targetAudience:
       "Serverless developers, Next.js engineers, AI application builders, and cloud architects.",
-    metaTitle: "Upstash - Serverless Redis, Kafka & Vector Database | LaunchNests",
+    metaTitle:
+      "Upstash - Serverless Redis, Kafka & Vector Database | LaunchNests",
     metaDescription:
       "Build fast serverless apps with Upstash: per-request Redis, QStash background messaging, and vector search over HTTP.",
     aiContext:
@@ -1132,7 +1199,8 @@ const seedToolsData: SeedToolDefinition[] = [
   {
     name: "LangChain",
     slug: "langchain",
-    tagline: "Framework for Developing Applications Powered by Large Language Models",
+    tagline:
+      "Framework for Developing Applications Powered by Large Language Models",
     description:
       "LangChain is the standard orchestration framework for building context-aware, reasoning LLM applications, retrieval-augmented generation (RAG) pipelines, and autonomous AI agents.",
     problemStatement:
@@ -1164,7 +1232,8 @@ const seedToolsData: SeedToolDefinition[] = [
     tier: "premium+",
     faqs: [
       {
-        question: "Is LangChain available in both Python and JavaScript/TypeScript?",
+        question:
+          "Is LangChain available in both Python and JavaScript/TypeScript?",
         answer:
           "Yes, LangChain maintains both Python (langchain) and TypeScript (@langchain/core) packages with parallel feature parity.",
       },
@@ -1270,7 +1339,8 @@ const seedToolsData: SeedToolDefinition[] = [
   {
     name: "Turborepo",
     slug: "turborepo",
-    tagline: "High-Performance Build System for JavaScript and TypeScript Monorepos",
+    tagline:
+      "High-Performance Build System for JavaScript and TypeScript Monorepos",
     description:
       "Turborepo is a high-speed build system for JavaScript and TypeScript monorepos, written in Rust, featuring remote caching, dependency graph task pipelining, and zero config.",
     problemStatement:
@@ -1288,14 +1358,22 @@ const seedToolsData: SeedToolDefinition[] = [
       "turborepo, monorepo, build system, remote caching, vercel, rust, typescript monorepo",
     targetAudience:
       "Frontend platform engineers, DevOps engineers, and teams managing multi-package codebases.",
-    metaTitle: "Turborepo - High-Performance Monorepo Build System | LaunchNests",
+    metaTitle:
+      "Turborepo - High-Performance Monorepo Build System | LaunchNests",
     metaDescription:
       "Never compute the same thing twice. Speed up monorepo builds and CI pipelines with Turborepo remote caching.",
     aiContext:
       "Turborepo is a high-performance build system for JavaScript and TypeScript codebases created by Jared Palmer and maintained by Vercel. Written in Rust with remote caching support.",
     categoryName: "Build Tools",
     categorySlug: "build-tools",
-    tags: ["monorepo", "build-tool", "turborepo", "rust", "caching", "typescript"],
+    tags: [
+      "monorepo",
+      "build-tool",
+      "turborepo",
+      "rust",
+      "caching",
+      "typescript",
+    ],
     platforms: ["CLI"],
     pricing: "Open Source",
     tier: "premium",
@@ -1306,7 +1384,8 @@ const seedToolsData: SeedToolDefinition[] = [
           "Remote caching shares build and test artifact caches across team members and CI machines, eliminating redundant compilation.",
       },
       {
-        question: "Do I have to migrate my entire build setup to use Turborepo?",
+        question:
+          "Do I have to migrate my entire build setup to use Turborepo?",
         answer:
           "No, Turborepo works with existing package managers (pnpm, yarn, npm) and adds a turbo.json pipeline configuration file.",
       },
@@ -1335,14 +1414,22 @@ const seedToolsData: SeedToolDefinition[] = [
       "posthog, product analytics, session recording, feature flags, ab testing, open source analytics",
     targetAudience:
       "Product engineers, startup founders, data analysts, and growth hackers.",
-    metaTitle: "PostHog - All-in-One Product Analytics & Session Replay | LaunchNests",
+    metaTitle:
+      "PostHog - All-in-One Product Analytics & Session Replay | LaunchNests",
     metaDescription:
       "Track product analytics, record user sessions, and roll out feature flags with the PostHog developer platform.",
     aiContext:
       "PostHog is an open-source product analytics platform that provides event tracking, session recordings, heatmaps, feature flags, and A/B testing for web and mobile apps.",
     categoryName: "Analytics",
     categorySlug: "analytics",
-    tags: ["analytics", "product-analytics", "posthog", "feature-flags", "session-replay", "open-source"],
+    tags: [
+      "analytics",
+      "product-analytics",
+      "posthog",
+      "feature-flags",
+      "session-replay",
+      "open-source",
+    ],
     platforms: ["Web", "Cloud", "Self-Hosted", "iOS", "Android"],
     pricing: "Freemium",
     tier: "premium+",
@@ -1388,7 +1475,13 @@ const seedToolsData: SeedToolDefinition[] = [
       "Linear is a project management tool built for high-performance software teams. It emphasizes speed, keyboard shortcuts, automated git branch linking, and modern software development cycles.",
     categoryName: "Developer Productivity",
     categorySlug: "developer-productivity",
-    tags: ["issue-tracker", "productivity", "linear", "project-management", "developer-tools"],
+    tags: [
+      "issue-tracker",
+      "productivity",
+      "linear",
+      "project-management",
+      "developer-tools",
+    ],
     platforms: ["Web", "macOS", "Windows", "iOS", "Android"],
     pricing: "Freemium",
     tier: "premium",
@@ -1428,14 +1521,22 @@ const seedToolsData: SeedToolDefinition[] = [
       "raycast, launcher, macos, developer productivity, clipboard manager, raycast ai, extensions",
     targetAudience:
       "Mac & Windows developers, power users, software engineers, and digital creators.",
-    metaTitle: "Raycast - Supercharged Desktop Launcher for Developers | LaunchNests",
+    metaTitle:
+      "Raycast - Supercharged Desktop Launcher for Developers | LaunchNests",
     metaDescription:
       "Control your tools, manage windows, search docs, and run scripts instantly from a single keyboard hotkey with Raycast.",
     aiContext:
       "Raycast is an extensible launcher for macOS and Windows that replaces default desktop search with customizable commands, developer extensions, and integrated AI assistant capabilities.",
     categoryName: "Developer Productivity",
     categorySlug: "developer-productivity",
-    tags: ["raycast", "productivity", "launcher", "macos", "devtools", "extensions"],
+    tags: [
+      "raycast",
+      "productivity",
+      "launcher",
+      "macos",
+      "devtools",
+      "extensions",
+    ],
     platforms: ["macOS", "Windows"],
     pricing: "Freemium",
     tier: "premium",
@@ -1481,7 +1582,14 @@ const seedToolsData: SeedToolDefinition[] = [
       "Playwright is an open-source automation library for browser testing developed by Microsoft. It supports Chromium, Firefox, and WebKit through a single unified API.",
     categoryName: "Testing",
     categorySlug: "testing",
-    tags: ["testing", "playwright", "e2e", "browser-automation", "qa", "developer-tools"],
+    tags: [
+      "testing",
+      "playwright",
+      "e2e",
+      "browser-automation",
+      "qa",
+      "developer-tools",
+    ],
     platforms: ["CLI", "Linux", "macOS", "Windows"],
     pricing: "Open Source",
     tier: "premium",
@@ -1499,34 +1607,6 @@ const seedToolsData: SeedToolDefinition[] = [
     ],
   },
 ]
-
-const getSubmitterUser = async (): Promise<string> => {
-  const [existingUser] = await db
-    .select({ id: users.id, name: users.name, email: users.email })
-    .from(users)
-    .where(ne(users.id, LAUNCHNESTS_USER_ID))
-    .limit(1)
-
-  const submitter =
-    existingUser ??
-    (
-      await db
-        .select({ id: users.id, name: users.name, email: users.email })
-        .from(users)
-        .limit(1)
-    )[0]
-
-  if (!submitter) {
-    throw new Error(
-      "No user found in the database. Please ensure a user account exists in the database."
-    )
-  }
-
-  console.log(
-    `👤 Submitting tools on behalf of user: ${submitter.name} (${submitter.email}) [ID: ${submitter.id}]`
-  )
-  return submitter.id
-}
 
 const ensureCategory = async (name: string, slug: string): Promise<string> => {
   const existing = await db
@@ -1565,11 +1645,32 @@ const ensureCategory = async (name: string, slug: string): Promise<string> => {
 export const seedDatabase = async () => {
   console.log("🌱 Starting developer tools database seed...")
 
-  const userId = await getSubmitterUser()
+  // Clean up any historical seed associations linked to "user_launchnests"
+  try {
+    await db
+      .update(tools)
+      .set({ submitterId: null })
+      .where(eq(tools.submitterId, "user_launchnests"))
+    await db
+      .delete(launches)
+      .where(
+        or(
+          eq(launches.submitterId, "user_launchnests"),
+          isNull(launches.submitterId)
+        )
+      )
+    await db.delete(users).where(eq(users.id, "user_launchnests"))
+  } catch {
+    // Ignore cleanup errors
+  }
 
   const now = new Date()
-  const { year: currentYear, week: currentWeek, startDate: weekStart, endDate: weekEnd } =
-    getISOWeekDetails(now)
+  const {
+    year: currentYear,
+    week: currentWeek,
+    startDate: weekStart,
+    endDate: weekEnd,
+  } = getISOWeekDetails(now)
 
   const categoryCache = new Map<string, string>()
 
@@ -1586,7 +1687,7 @@ export const seedDatabase = async () => {
 
     const toolPayload = {
       slug: item.slug,
-      submitterId: userId,
+      submitterId: null,
       name: item.name,
       tagline: item.tagline,
       description: item.description,
@@ -1634,7 +1735,7 @@ export const seedDatabase = async () => {
       .onConflictDoUpdate({
         target: tools.slug,
         set: {
-          submitterId: toolPayload.submitterId,
+          submitterId: null,
           name: toolPayload.name,
           tagline: toolPayload.tagline,
           description: toolPayload.description,
@@ -1689,51 +1790,19 @@ export const seedDatabase = async () => {
         )
       }
 
-      const existingLaunch = await db
-        .select({ id: launches.id })
-        .from(launches)
-        .where(eq(launches.toolId, upsertedTool.id))
-        .limit(1)
-
-      if (!existingLaunch[0]) {
-        await db.insert(launches).values({
-          toolId: upsertedTool.id,
-          submitterId: userId,
-          itemType: "tool",
-          isoYear: currentYear,
-          isoWeek: currentWeek,
-          startDate: weekStart,
-          endDate: weekEnd,
-          tier: item.tier,
-          status: "approved",
-          launchStatus: "live",
-        })
-      } else {
-        await db
-          .update(launches)
-          .set({
-            submitterId: userId,
-            isoYear: currentYear,
-            isoWeek: currentWeek,
-            startDate: weekStart,
-            endDate: weekEnd,
-            tier: item.tier,
-            status: "approved",
-            launchStatus: "live",
-            updatedAt: now,
-          })
-          .where(eq(launches.id, existingLaunch[0].id))
-      }
+      // Ensure no legacy launch cohort booking exists for this seeded tool
+      await db.delete(launches).where(eq(launches.toolId, upsertedTool.id))
 
       seededCount++
-      console.log(`[${seededCount}/${seedToolsData.length}] Seeded: ${item.name} (${item.slug})`)
+      console.log(
+        `[${seededCount}/${seedToolsData.length}] Seeded: ${item.name} (${item.slug})`
+      )
     }
   }
 
-  // Clean up temporary user_launchnests if it was created previously
-  await db.delete(users).where(eq(users.id, LAUNCHNESTS_USER_ID)).catch(() => {})
-
-  console.log(`✨ Successfully seeded ${seededCount} developer tools for user ID: ${userId}!`)
+  console.log(
+    `✨ Successfully seeded ${seededCount} curated community developer tools (Added by LaunchNests)!`
+  )
 }
 
 export const seed = seedDatabase
@@ -1746,4 +1815,3 @@ if (process.argv[1]?.includes("seed")) {
       process.exit(1)
     })
 }
-
