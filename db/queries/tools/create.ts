@@ -34,7 +34,9 @@ export type CreateToolInput = Omit<
   | "viewsCount"
   | "createdAt"
   | "updatedAt"
+  | "submitterId"
 > & {
+  submitterId: string
   category?: string
   faqs?: Array<{ question: string; answer: string }>
 }

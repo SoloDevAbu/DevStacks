@@ -24,10 +24,7 @@ export const pricingEnum = pgEnum("pricing", [
 
 export const tierEnum = pgEnum("tier", ["free", "premium", "premium+"])
 
-export const adPlacementEnum = pgEnum("ad_placement", [
-  "sidebar",
-  "feed",
-])
+export const adPlacementEnum = pgEnum("ad_placement", ["sidebar", "feed"])
 
 export const adStatusEnum = pgEnum("ad_status", [
   "pending_payment",
@@ -129,9 +126,9 @@ export const tools = pgTable(
   {
     id: uuid("id").primaryKey().defaultRandom(),
     slug: text("slug").notNull().unique(),
-    submitterId: text("submitter_id")
-      .notNull()
-      .references(() => users.id, { onDelete: "cascade" }),
+    submitterId: text("submitter_id").references(() => users.id, {
+      onDelete: "cascade",
+    }),
 
     // General Information
     name: text("name").notNull(),
@@ -622,7 +619,9 @@ export const ads = pgTable(
       .references(() => users.id, { onDelete: "cascade" }),
 
     // Linked submission (exactly one must be set)
-    toolId: uuid("tool_id").references(() => tools.id, { onDelete: "set null" }),
+    toolId: uuid("tool_id").references(() => tools.id, {
+      onDelete: "set null",
+    }),
     productId: uuid("product_id").references(() => products.id, {
       onDelete: "set null",
     }),
@@ -747,7 +746,9 @@ export const payments = pgTable(
     paymentType: paymentTypeEnum("payment_type").notNull(),
     tier: tierEnum("tier"),
     adId: uuid("ad_id").references(() => ads.id, { onDelete: "set null" }),
-    toolId: uuid("tool_id").references(() => tools.id, { onDelete: "set null" }),
+    toolId: uuid("tool_id").references(() => tools.id, {
+      onDelete: "set null",
+    }),
     productId: uuid("product_id").references(() => products.id, {
       onDelete: "set null",
     }),
@@ -795,7 +796,9 @@ export const externalLinkVisits = pgTable(
     productId: uuid("product_id").references(() => products.id, {
       onDelete: "cascade",
     }),
-    userId: text("user_id").references(() => users.id, { onDelete: "set null" }),
+    userId: text("user_id").references(() => users.id, {
+      onDelete: "set null",
+    }),
     targetUrl: text("target_url").notNull(),
     ipHash: text("ip_hash"),
     userAgent: text("user_agent"),

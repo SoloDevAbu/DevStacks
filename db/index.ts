@@ -30,5 +30,8 @@ sql`CREATE UNIQUE INDEX IF NOT EXISTS "accounts_issuer_accountId_uidx" ON "accou
 sql`CREATE INDEX IF NOT EXISTS "accounts_userId_idx" ON "accounts" ("user_id");`.catch(
   () => {}
 )
+sql`ALTER TABLE "tools" ALTER COLUMN "submitter_id" DROP NOT NULL;`.catch(
+  () => {}
+)
 
 export { schema }
