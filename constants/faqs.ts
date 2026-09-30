@@ -45,7 +45,7 @@ export const FAQ_CATEGORIES: FaqCategory[] = [
       },
       {
         question: `How do I submit my developer tool or product?`,
-        answer: `Submitting is simple: sign in using your Google account, then navigate to ${ROUTES.SUBMIT} for developer tools or ${ROUTES.SHOWCASE} for products. Fill in your project name, tagline, website URL, description, pricing model, supported platforms, and optional AEO/SEO metadata. Once submitted, our moderation team reviews it for authenticity and technical relevance.`,
+        answer: `Submitting is simple: sign in using your Google account, then navigate to ${ROUTES.SUBMIT}. Select whether you are launching a Software Product or a Developer Tool, then fill in your project name, tagline, website URL, description, pricing model, supported platforms, and optional AEO/SEO metadata. Once submitted, our moderation team reviews it for authenticity and technical relevance.`,
       },
       {
         question: `Is listing on ${SITE_CONFIG.name} free?`,

@@ -399,6 +399,21 @@ export const submitSectionHeaderOptional =
 export const submitSectionHeaderDiscoverability =
   "flex flex-col gap-1 border-b border-dashed border-border bg-linear-to-r from-indigo-100/50 via-violet-50/40 to-white px-6 py-6 md:px-8"
 
+export const submitTypeTabsContainer =
+  "w-full border-b border-dashed border-border bg-white px-6 py-5 md:px-8"
+
+export const submitTypeTabsList =
+  "grid h-auto w-full grid-cols-2 gap-2 rounded-xl border border-slate-200/90 bg-slate-100/70 p-1.5"
+
+export const submitTypeTabTrigger =
+  "flex flex-col items-center justify-center gap-1 rounded-lg py-2.5 px-2 sm:px-4 text-center transition-all cursor-pointer select-none"
+
+export const submitTypeTabActive =
+  "bg-white text-slate-900 shadow-xs ring-1 ring-slate-200/80 font-semibold"
+
+export const submitTypeTabInactive =
+  "text-slate-500 hover:text-slate-800 hover:bg-white/50"
+
 export const socialInputWrapper = "relative"
 
 export const socialInputIconContainer =
@@ -443,6 +458,15 @@ export const launchPromoCardList = "mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2"
 
 export const launchPromoCardItem =
   "flex items-center gap-2 text-xs font-medium text-slate-700"
+
+export const crawlerTrackCard =
+  "relative flex flex-col justify-between overflow-hidden rounded-xl border border-dashed border-border bg-white p-6 transition-all hover:border-slate-400/80 shadow-2xs"
+
+export const crawlerTrackHeader =
+  "flex items-start justify-between gap-4 border-b border-dashed border-border pb-5"
+
+export const crawlerTrackPerkItem =
+  "flex items-start gap-2.5 text-xs leading-relaxed text-slate-600"
 
 export const faqCategoryHeaders = {
   launching:

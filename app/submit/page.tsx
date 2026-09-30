@@ -5,12 +5,18 @@ import { SubmitContent } from "@/components/submit/submit-content"
 import { SubmitCrawlerView } from "@/components/submit/submit-crawler-view"
 import { SITE_CONFIG } from "@/constants/site"
 import { breadcrumbSchema, faqSchema, safeJsonLd } from "@/lib/seo/schema"
+import { getToolBySlugOrName } from "@/db/queries/tools/get"
+import type { BuiltWithToolItem } from "@/components/shared/built-with-tools-input"
+import { SUBMISSION_FAQS } from "@/constants/submit"
 
 export const metadata: Metadata = {
-  title: "Submit a Developer Tool — Get Discovered by Engineers & AI",
-  description: `List your developer tool, API, or infrastructure product on ${SITE_CONFIG.name} for the community and AI models to discover. Includes structured SEO, AEO, GEO, and ASO metadata.`,
+  title: "New Launch — Submit a Product or Developer Tool",
+  description: `Launch your product, SaaS, developer tool, or API on ${SITE_CONFIG.name} for the community and AI models to discover. Includes structured SEO, AEO, GEO, and ASO metadata.`,
   keywords: [
+    "submit product",
+    "launch product",
     "submit developer tool",
+    "launch dev tool",
     "list developer tool",
     "submit API",
     "developer tool directory",
@@ -22,8 +28,8 @@ export const metadata: Metadata = {
     canonical: `${SITE_CONFIG.url}/submit`,
   },
   openGraph: {
-    title: `Submit a Developer Tool | ${SITE_CONFIG.name}`,
-    description: `List your developer tool or API on ${SITE_CONFIG.name} to reach thousands of builders.`,
+    title: `New Launch — Submit a Product or Developer Tool | ${SITE_CONFIG.name}`,
+    description: `Launch your product, SaaS, developer tool, or API on ${SITE_CONFIG.name} to reach thousands of builders.`,
     type: "website",
     url: `${SITE_CONFIG.url}/submit`,
     siteName: SITE_CONFIG.name,
@@ -32,14 +38,14 @@ export const metadata: Metadata = {
         url: `${SITE_CONFIG.url}/opengraph-image`,
         width: 1200,
         height: 630,
-        alt: `Submit to ${SITE_CONFIG.name}`,
+        alt: `Launch on ${SITE_CONFIG.name}`,
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: `Submit a Developer Tool | ${SITE_CONFIG.name}`,
-    description: `List your developer tool or API on ${SITE_CONFIG.name}.`,
+    title: `New Launch — Submit a Product or Developer Tool | ${SITE_CONFIG.name}`,
+    description: `Launch your product, SaaS, developer tool, or API on ${SITE_CONFIG.name}.`,
     images: [`${SITE_CONFIG.url}/twitter-image`],
   },
   robots: {
@@ -48,22 +54,16 @@ export const metadata: Metadata = {
   },
 }
 
-const SUBMISSION_FAQS = [
-  {
-    question: `How do I list my developer tool or product on ${SITE_CONFIG.name}?`,
-    answer: `Sign in with your Google account, complete the submission form detailing your product's problem statement, solution, target audience, and underlying tech stack, then submit for review.`,
-  },
-  {
-    question: `What are the discoverability benefits of listing on ${SITE_CONFIG.name}?`,
-    answer: `Listings receive permanent directory indexing, inclusion in /llms.txt and /llms-full.txt for generative AI engines (ChatGPT, Claude, Perplexity), structured SoftwareApplication JSON-LD, and placement in This Week's Launches on the homepage ranked by community votes.`,
-  },
-  {
-    question: `What metadata is collected for AEO and GEO optimization?`,
-    answer: `Submissions collect problem statements, technical solutions, unique value propositions, platform compatibility, and AI Context prompts to give answer engines precise citation data.`,
-  },
-] as const
+type SubmitPageProps = {
+  searchParams?: Promise<{ type?: string; tool?: string; toolSlug?: string }>
+}
 
-const SubmitPage = async () => {
+const SubmitPage = async (props: SubmitPageProps) => {
+  const searchParams = props.searchParams ? await props.searchParams : undefined
+  const initialType: "product" | "tool" =
+    searchParams?.type === "tool" ? "tool" : "product"
+  const toolSlugOrName = searchParams?.tool ?? searchParams?.toolSlug
+
   let session = null
   try {
     const headerList = await headers()
@@ -74,9 +74,25 @@ const SubmitPage = async () => {
     session = null
   }
 
+  let initialTool: BuiltWithToolItem | null = null
+  if (toolSlugOrName) {
+    const foundTool = await getToolBySlugOrName(toolSlugOrName)
+    if (foundTool) {
+      initialTool = {
+        name: foundTool.name,
+        toolSlug: foundTool.slug,
+        toolId: foundTool.id,
+      }
+    } else {
+      initialTool = {
+        name: toolSlugOrName.trim(),
+      }
+    }
+  }
+
   const breadcrumbs = breadcrumbSchema([
     { name: "Home", url: SITE_CONFIG.url },
-    { name: "Submit", url: `${SITE_CONFIG.url}/submit` },
+    { name: "New Launch", url: `${SITE_CONFIG.url}/submit` },
   ])
 
   const faqs = faqSchema(SUBMISSION_FAQS)
@@ -91,7 +107,11 @@ const SubmitPage = async () => {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: safeJsonLd(faqs) }}
       />
-      {session?.user ? <SubmitContent /> : <SubmitCrawlerView />}
+      {session?.user ? (
+        <SubmitContent initialType={initialType} initialTool={initialTool} />
+      ) : (
+        <SubmitCrawlerView />
+      )}
     </>
   )
 }
