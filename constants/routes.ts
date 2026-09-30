@@ -32,4 +32,5 @@ export const ROUTES = {
   MAKER: (username: string) => `/makers/${username}`,
   CHECKOUT_SUCCESS: "/",
   CHECKOUT_CANCEL: "/pricing",
+  ADMIN: "/admin",
 } as const

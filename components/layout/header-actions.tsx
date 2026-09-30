@@ -74,7 +74,7 @@ export const HeaderActions = () => {
     return (
       <div className="flex items-center gap-3">
         <Button
-          className="hidden md:inline-flex rounded-lg px-3 py-1.5 text-xs font-semibold text-white shadow-xs transition-all hover:bg-slate-800 active:scale-[0.98]"
+          className="hidden rounded-lg px-3 py-1.5 text-xs font-semibold text-white shadow-xs transition-all hover:bg-slate-800 active:scale-[0.98] md:inline-flex"
           nativeButton={false}
           render={<Link href={ROUTES.SUBMIT} />}
         >
@@ -179,7 +179,7 @@ export const HeaderActions = () => {
   return (
     <div className="flex items-center gap-2.5">
       <Button
-        className="hidden md:inline-flex rounded-lg px-3 py-1.5 text-xs font-semibold text-white shadow-xs transition-all hover:bg-slate-800 active:scale-[0.98]"
+        className="hidden rounded-lg px-3 py-1.5 text-xs font-semibold text-white shadow-xs transition-all hover:bg-slate-800 active:scale-[0.98] md:inline-flex"
         onClick={handleAddToolClick}
       >
         <PlusCircle className="mr-1.5 size-3.5" />

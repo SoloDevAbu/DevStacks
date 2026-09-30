@@ -19,11 +19,7 @@ import {
 } from "@/utils/dashboard/styles"
 
 export type DashboardTab =
-  | "overview"
-  | "products"
-  | "tools"
-  | "analytics"
-  | "profile"
+  "overview" | "products" | "tools" | "analytics" | "profile"
 
 interface DashboardNavProps {
   activeTab: DashboardTab
