@@ -3,7 +3,7 @@ import {
   Wrench,
   Package,
   TrendingUp,
-  PlusCircle,
+  Users,
   type LucideIcon,
 } from "lucide-react"
 import { ROUTES } from "@/constants/routes"
@@ -48,10 +48,9 @@ export const SIDEBAR_NAV: NavSection[] = [
     label: "Community",
     items: [
       {
-        name: "Launch Product",
-        icon: PlusCircle,
-        href: ROUTES.SHOWCASE,
-        badge: { text: "NEW", variant: "new" },
+        name: "Makers",
+        icon: Users,
+        href: ROUTES.MAKERS,
       },
     ],
   },

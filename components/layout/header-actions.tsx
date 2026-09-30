@@ -30,12 +30,12 @@ export const HeaderActions = () => {
   const { openAuthModal, requireAuth } = useAuthModal()
   const router = useRouter()
 
-  const handleAddToolClick = () => {
+  const handleLaunchClick = () => {
     requireAuth(() => router.push(ROUTES.SUBMIT), {
       redirectTo: ROUTES.SUBMIT,
-      title: "Sign in with Google to add a tool",
+      title: "Sign in with Google to launch",
       description:
-        "Sign in with your Google account to list your developer tool, library, or API.",
+        "Sign in with your Google account to list your developer tool, product, or API.",
     })
   }
 
@@ -79,7 +79,7 @@ export const HeaderActions = () => {
           render={<Link href={ROUTES.SUBMIT} />}
         >
           <PlusCircle className="mr-1.5 size-3.5" />
-          Launch Tool
+          New Launch
         </Button>
 
         <DropdownMenu>
@@ -149,14 +149,7 @@ export const HeaderActions = () => {
                 render={<Link href={ROUTES.SUBMIT} />}
               >
                 <PlusCircle className="mr-2 size-3.5" />
-                Submit a Tool
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                className="cursor-pointer text-xs"
-                render={<Link href={ROUTES.SHOWCASE} />}
-              >
-                <Sparkles className="mr-2 size-3.5" />
-                Submit a Product
+                New Launch
               </DropdownMenuItem>
             </DropdownMenuGroup>
 
@@ -180,10 +173,10 @@ export const HeaderActions = () => {
     <div className="flex items-center gap-2.5">
       <Button
         className="hidden md:inline-flex rounded-lg px-3 py-1.5 text-xs font-semibold text-white shadow-xs transition-all hover:bg-slate-800 active:scale-[0.98]"
-        onClick={handleAddToolClick}
+        onClick={handleLaunchClick}
       >
         <PlusCircle className="mr-1.5 size-3.5" />
-        Launch Tool
+        New Launch
       </Button>
       <Button
         variant="outline"

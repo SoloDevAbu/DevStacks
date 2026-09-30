@@ -113,7 +113,7 @@ export const DashboardNav = ({
           <Button
             size="sm"
             className="h-8 gap-1.5 bg-slate-900 text-xs font-semibold text-white hover:bg-slate-800"
-            render={<Link href={ROUTES.SUBMIT} />}
+            render={<Link href={ROUTES.SUBMIT_TOOL} />}
           >
             <PlusCircle className="size-3.5" />
             <span>Add Tool</span>
@@ -122,7 +122,7 @@ export const DashboardNav = ({
             size="sm"
             variant="outline"
             className="h-8 gap-1.5 border-slate-300 text-xs font-semibold text-slate-800 hover:bg-slate-50"
-            render={<Link href={ROUTES.SHOWCASE} />}
+            render={<Link href={ROUTES.SUBMIT_PRODUCT} />}
           >
             <Sparkles className="size-3.5 text-amber-500" />
             <span>Submit Product</span>

@@ -5,8 +5,13 @@ export const ROUTES = {
   TRENDING: "/trending",
   PRICING: "/pricing",
   SUBMIT: "/submit",
-  SHOWCASE: "/showcase",
-  SHOWCASE_TOOL: (toolSlug: string) => `/showcase?tool=${encodeURIComponent(toolSlug)}`,
+  SUBMIT_PRODUCT: "/submit?type=product",
+  SUBMIT_TOOL: "/submit?type=tool",
+  SUBMIT_PRODUCT_WITH_TOOL: (toolSlug: string) =>
+    `/submit?type=product&tool=${encodeURIComponent(toolSlug)}`,
+  SHOWCASE: "/submit?type=product",
+  SHOWCASE_TOOL: (toolSlug: string) =>
+    `/submit?type=product&tool=${encodeURIComponent(toolSlug)}`,
   PRODUCTS: "/products",
   PRODUCT: (slug: string) => `/products/${slug}`,
   TOOLS: "/tools",

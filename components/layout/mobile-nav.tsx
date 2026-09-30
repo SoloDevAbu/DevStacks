@@ -39,13 +39,13 @@ export const MobileNav = () => {
     openSearch()
   }
 
-  const handleLaunchToolClick = () => {
+  const handleLaunchClick = () => {
     setOpen(false)
     requireAuth(() => router.push(ROUTES.SUBMIT), {
       redirectTo: ROUTES.SUBMIT,
-      title: "Sign in with Google to add a tool",
+      title: "Sign in with Google to launch",
       description:
-        "Sign in with your Google account to list your developer tool, library, or API.",
+        "Sign in with your Google account to list your developer tool, product, or API.",
     })
   }
 
@@ -70,7 +70,7 @@ export const MobileNav = () => {
           </SheetTitle>
         </SheetHeader>
 
-        {/* Search & Launch Tool on mobile sidebar */}
+        {/* Search & New Launch on mobile sidebar */}
         <div className="flex flex-col gap-2.5 border-b border-dashed border-border px-6 py-4">
           <button
             type="button"
@@ -89,10 +89,10 @@ export const MobileNav = () => {
 
           <Button
             className="h-9 w-full justify-center rounded-lg px-3 py-1.5 text-xs font-semibold text-white shadow-xs transition-all hover:bg-slate-800 active:scale-[0.98]"
-            onClick={handleLaunchToolClick}
+            onClick={handleLaunchClick}
           >
             <PlusCircle className="mr-1.5 size-3.5" />
-            Launch Tool
+            New Launch
           </Button>
         </div>
 

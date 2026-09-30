@@ -33,6 +33,11 @@ const nextConfig: NextConfig = {
       permanent: true,
     },
     {
+      source: "/showcase",
+      destination: "/submit?type=product",
+      permanent: true,
+    },
+    {
       source: "/checkout/success",
       destination: "/",
       permanent: false,

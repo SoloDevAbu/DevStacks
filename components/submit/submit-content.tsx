@@ -1,7 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
+import { useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { PageHeader } from "@/components/shared/page-header"
@@ -17,11 +16,11 @@ import {
   Globe,
   CheckCircle2,
   AlertCircle,
-  Upload,
   Video,
   Plus,
-  Trash2,
   Sparkles,
+  Package,
+  Wrench,
 } from "lucide-react"
 import { Spinner } from "@/components/ui/spinner"
 import {
@@ -34,20 +33,23 @@ import {
 import { PRICING } from "@/constants/plans"
 import { PLATFORMS } from "@/constants/platforms"
 import { useSubmitTool } from "@/hooks/tools/use-submit-tool"
+import { useSubmitProduct } from "@/hooks/products/use-submit-product"
 import { submitToolSchema } from "@/lib/validation/tool"
+import { submitProductSchema } from "@/lib/validation/product"
 import { useSession } from "@/lib/auth/client"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
   submitSectionHeaderRequired,
   submitSectionHeaderOptional,
   submitSectionHeaderDiscoverability,
-  launchPromoCard,
-  launchPromoCardList,
-  launchPromoCardItem,
-  launchPromoBadge,
 } from "@/utils/styles"
+import { cn } from "@/lib/utils"
 import { LAUNCH_PROMO } from "@/constants/promo"
 import { ROUTES } from "@/constants/routes"
+import {
+  BuiltWithToolsInput,
+  type BuiltWithToolItem,
+} from "@/components/shared/built-with-tools-input"
 import {
   FaqBuilder,
   type FaqBuilderItem,
@@ -55,6 +57,7 @@ import {
 import { toast } from "@/components/ui/toast"
 import { getFaviconUrl, getDuckDuckGoFaviconUrl } from "@/utils/urls"
 import { LaunchWeekPicker } from "@/components/shared/launch-week-picker"
+import type { DbProduct, DbTool } from "@/types/entities"
 
 const emptyForm = {
   name: "",
@@ -75,6 +78,8 @@ const emptyForm = {
   images: [] as string[],
   demoVideoUrl: "",
   useCases: "",
+  tools: "",
+  builtWithTools: [] as BuiltWithToolItem[],
   keywords: "",
   targetAudience: "",
   metaTitle: "",
@@ -91,23 +96,77 @@ const emptyForm = {
   launchWeek: undefined as number | undefined,
 }
 
-export const SubmitContent = () => {
-  const [form, setForm] = useState(emptyForm)
-  // const [screenshotInput, setScreenshotInput] = useState("")
+interface SubmitContentProps {
+  initialType?: "product" | "tool"
+  initialTool?: BuiltWithToolItem | null
+}
+
+const CornerBorders = ({ active }: { active: boolean }) => (
+  <div
+    className={cn(
+      "pointer-events-none absolute -inset-1 z-0 transition-opacity",
+      active ? "opacity-100" : "opacity-0 group-hover/tab:opacity-100"
+    )}
+  >
+    <div
+      className={cn(
+        "absolute top-0 left-0 size-2 border-t-2 border-l-2 transition-colors",
+        active ? "border-slate-800" : "border-slate-400"
+      )}
+    />
+    <div
+      className={cn(
+        "absolute top-0 right-0 size-2 border-t-2 border-r-2 transition-colors",
+        active ? "border-slate-800" : "border-slate-400"
+      )}
+    />
+    <div
+      className={cn(
+        "absolute bottom-0 left-0 size-2 border-b-2 border-l-2 transition-colors",
+        active ? "border-slate-800" : "border-slate-400"
+      )}
+    />
+    <div
+      className={cn(
+        "absolute right-0 bottom-0 size-2 border-r-2 border-b-2 transition-colors",
+        active ? "border-slate-800" : "border-slate-400"
+      )}
+    />
+  </div>
+)
+
+export const SubmitContent = ({
+  initialType = "product",
+  initialTool = null,
+}: SubmitContentProps) => {
+  const [activeType, setActiveType] = useState<"product" | "tool">(initialType)
+  const [form, setForm] = useState(() => ({
+    ...emptyForm,
+    builtWithTools: initialTool ? [initialTool] : [],
+  }))
   const [errors, setErrors] = useState<Record<string, string[]>>({})
   const [submitted, setSubmitted] = useState(false)
+  const [submittedProduct, setSubmittedProduct] = useState<DbProduct | null>(
+    null
+  )
+  const [submittedTool, setSubmittedTool] = useState<DbTool | null>(null)
 
-  const { data: session, isPending } = useSession()
-  const router = useRouter()
-  const { mutate, isPending: isSubmitting, isError, error } = useSubmitTool()
+  const { data: session, isPending: isSessionPending } = useSession()
+  const {
+    mutateAsync: submitToolMutation,
+    isPending: isToolSubmitting,
+    error: toolError,
+  } = useSubmitTool()
+  const {
+    mutateAsync: submitProductMutation,
+    isPending: isProductSubmitting,
+    error: productError,
+  } = useSubmitProduct()
 
-  useEffect(() => {
-    if (!isPending && !session?.user) {
-      router.replace("/?redirect=/submit")
-    }
-  }, [isPending, session?.user, router])
+  const isSubmitting = isToolSubmitting || isProductSubmitting
+  const submissionError = activeType === "product" ? productError : toolError
 
-  if (isPending || !session?.user) {
+  if (isSessionPending || !session?.user) {
     return (
       <div className="relative flex min-h-[60vh] flex-col items-center justify-center gap-4 bg-slate-50/50 p-12 text-center">
         <Spinner className="size-8 text-slate-400" />
@@ -117,6 +176,26 @@ export const SubmitContent = () => {
   }
 
   const user = session.user
+
+  const handleTypeChange = (newType: "product" | "tool") => {
+    if (newType === activeType) return
+    setActiveType(newType)
+    setErrors({})
+
+    if (newType === "tool") {
+      setForm((prev) => ({
+        ...prev,
+        builtWithTools: [],
+        tools: "",
+      }))
+    }
+
+    if (typeof window !== "undefined") {
+      const url = new URL(window.location.href)
+      url.searchParams.set("type", newType)
+      window.history.replaceState(null, "", url.toString())
+    }
+  }
 
   const set =
     (key: keyof typeof emptyForm) =>
@@ -145,30 +224,10 @@ export const SubmitContent = () => {
     }))
   }
 
-  /* Screenshots helpers temporarily commented out
-  const addScreenshot = (customUrl?: string) => {
-    const url = customUrl || screenshotInput
-    if (!url.trim() || form.images.length >= 5) return
-    setForm((prev) => ({
-      ...prev,
-      images: [...prev.images, url.trim()],
-    }))
-    if (!customUrl) {
-      setScreenshotInput("")
-    }
-  }
-
-  const removeScreenshot = (index: number) => {
-    setForm((prev) => ({
-      ...prev,
-      images: prev.images.filter((_, i) => i !== index),
-    }))
-  }
-  */
-
-  const executeSubmit = () => {
+  const executeSubmit = async (userId: string) => {
     const nonBlankFaqs = form.faqs
       .map((f) => ({
+        id: f.id,
         question: f.question.trim(),
         answer: f.answer.trim(),
       }))
@@ -184,51 +243,134 @@ export const SubmitContent = () => {
     }
 
     const faviconUrl = getFaviconUrl(form.websiteUrl)
-    const payload = {
-      ...form,
-      logoUrl: form.logoUrl?.trim() || faviconUrl || "",
-      faqs: nonBlankFaqs,
-    }
+    const resolvedLogoUrl = form.logoUrl?.trim() || faviconUrl || ""
 
-    const parsed = submitToolSchema.safeParse(payload)
-    if (!parsed.success) {
-      setErrors(parsed.error.flatten().fieldErrors as Record<string, string[]>)
-      return
-    }
+    if (activeType === "product") {
+      const payload = {
+        ...form,
+        logoUrl: resolvedLogoUrl,
+        faqs: nonBlankFaqs,
+        builtWithTools: form.builtWithTools,
+      }
 
-    mutate(parsed.data, {
-      onSuccess: () => {
+      const parsed = submitProductSchema.safeParse({
+        ...payload,
+        submitterId: userId,
+      })
+
+      if (!parsed.success) {
+        setErrors(
+          parsed.error.flatten().fieldErrors as Record<string, string[]>
+        )
+        toast.error(
+          "Validation Error",
+          "Please review the required fields highlighted in red."
+        )
+        return
+      }
+
+      try {
+        const { submitterId: _unused, ...clientPayload } = parsed.data
+        const res = await submitProductMutation(clientPayload)
+        setSubmittedProduct(res as DbProduct)
         setSubmitted(true)
         setForm(emptyForm)
         setErrors({})
-      },
-    })
+        toast.success(
+          "Product Submitted!",
+          "Your product has been submitted for review."
+        )
+      } catch (err: unknown) {
+        const msg =
+          err instanceof Error ? err.message : "Failed to submit product"
+        toast.error("Submission Failed", msg)
+      }
+    } else {
+      const payload = {
+        ...form,
+        logoUrl: resolvedLogoUrl,
+        faqs: nonBlankFaqs,
+      }
+
+      const parsed = submitToolSchema.safeParse(payload)
+
+      if (!parsed.success) {
+        setErrors(
+          parsed.error.flatten().fieldErrors as Record<string, string[]>
+        )
+        toast.error(
+          "Validation Error",
+          "Please review the required fields highlighted in red."
+        )
+        return
+      }
+
+      try {
+        const res = await submitToolMutation(parsed.data)
+        setSubmittedTool(res as DbTool)
+        setSubmitted(true)
+        setForm(emptyForm)
+        setErrors({})
+        toast.success(
+          "Developer Tool Submitted!",
+          "Your developer tool has been submitted for review."
+        )
+      } catch (err: unknown) {
+        const msg = err instanceof Error ? err.message : "Failed to submit tool"
+        toast.error("Submission Failed", msg)
+      }
+    }
   }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    executeSubmit()
+    executeSubmit(user.id)
   }
 
   if (submitted) {
+    const isProduct = activeType === "product"
+    const viewUrl = isProduct
+      ? submittedProduct?.slug
+        ? ROUTES.PRODUCT(submittedProduct.slug)
+        : ROUTES.PRODUCTS
+      : submittedTool?.slug
+        ? ROUTES.TOOL(submittedTool.slug)
+        : ROUTES.TOOLS
+
     return (
       <div className="relative flex min-h-full flex-col items-center justify-center gap-6 bg-slate-50/50 p-12 text-center">
         <CheckCircle2 className="size-16 text-emerald-500" />
         <div className="max-w-md">
-          <h2 className="text-2xl font-bold text-slate-900">Submission Received!</h2>
+          <h2 className="text-2xl font-bold text-slate-900">
+            {isProduct
+              ? "Product Submitted for Review!"
+              : "Developer Tool Submitted for Review!"}
+          </h2>
           <p className="mt-2 text-sm text-slate-600">
-            Your tool has been submitted for review. As part of our launch celebration, your listing will receive a complimentary upgrade to{" "}
+            Your {isProduct ? "product" : "developer tool"} has been submitted
+            for review. As part of our launch celebration, your listing will
+            receive a complimentary upgrade to{" "}
             <strong className="text-slate-900">
               Premium for free ({LAUNCH_PROMO.VALUE_GIFTED} value)
             </strong>{" "}
             with a permanent Do-Follow SEO backlink upon approval.
           </p>
           <p className="mt-2 text-xs text-slate-500">
-            Our moderation team will review your submission for authenticity and spam prevention before it goes live. You can monitor its status from your Dashboard.
+            Our moderation team will review your submission for authenticity and
+            technical relevance before it goes live. You can monitor its status
+            from your Dashboard.
           </p>
         </div>
         <div className="flex flex-wrap items-center justify-center gap-3">
-          <Button onClick={() => setSubmitted(false)}>Submit Another Tool</Button>
+          <Button
+            onClick={() => {
+              setSubmitted(false)
+              setSubmittedProduct(null)
+              setSubmittedTool(null)
+            }}
+          >
+            Submit Another Launch
+          </Button>
           <Button
             variant="outline"
             nativeButton={false}
@@ -236,16 +378,27 @@ export const SubmitContent = () => {
           >
             Go to Dashboard
           </Button>
+          {viewUrl && (
+            <Button
+              variant="secondary"
+              nativeButton={false}
+              render={<Link href={viewUrl} />}
+            >
+              View Listing
+            </Button>
+          )}
         </div>
       </div>
     )
   }
 
+  const typeLabel = activeType === "product" ? "Product" : "Tool"
+
   return (
     <div className="relative flex min-h-full flex-col bg-slate-50/50 pb-20">
       <PageHeader
-        heading="Submit a Developer Tool"
-        description="List your developer tool, library, API, or infrastructure product for the developer ecosystem to discover."
+        heading="New Launch"
+        description={`List your ${activeType === "product" ? "product, SaaS, or web app" : "developer tool, library, API, or infrastructure product"} for the developer ecosystem and AI models to discover.`}
         aiPrompt={AI_PROMPTS.submit}
       />
 
@@ -269,45 +422,81 @@ export const SubmitContent = () => {
         </div>
       </div>
 
-      {/* Launch Promo Card */}
+      {/* Launch Promo Ribbon - Compact & Sleek */}
       {LAUNCH_PROMO.IS_ACTIVE && (
-        <div className="border-b border-dashed border-border bg-amber-50/20 px-6 py-6 md:px-8">
-          <div className={launchPromoCard}>
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <div className="flex items-center gap-2.5">
-                <span className="flex size-7 items-center justify-center rounded-lg bg-amber-500/20 text-amber-700">
-                  <Sparkles className="size-4" />
-                </span>
-                <div>
-                  <h3 className="text-sm font-bold text-slate-900">
-                    {LAUNCH_PROMO.PROMO_TITLE}
-                  </h3>
-                  <p className="text-xs text-slate-600">
-                    Submit your tool today and receive an automatic upgrade to Verified Premium status ({LAUNCH_PROMO.VALUE_GIFTED} value) upon approval.
-                  </p>
-                </div>
-              </div>
-              <Badge variant="outline" className={launchPromoBadge}>
-                {LAUNCH_PROMO.BADGE_LABEL}
-              </Badge>
-            </div>
-            <div className={launchPromoCardList}>
-              {LAUNCH_PROMO.PERKS.map((perk, i) => (
-                <div key={i} className={launchPromoCardItem}>
-                  <CheckCircle2 className="size-3.5 shrink-0 text-emerald-600" />
-                  <span>{perk}</span>
-                </div>
-              ))}
-            </div>
+        <div className="flex items-center justify-between border-b border-dashed border-amber-200/80 bg-linear-to-r from-amber-500/10 via-yellow-500/5 to-amber-500/10 px-4 py-2.5 text-xs text-amber-950 sm:px-6 md:px-8">
+          <div className="flex items-center gap-2">
+            <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-amber-500/20 text-amber-700">
+              <Sparkles className="size-3" />
+            </span>
+            <p className="font-medium text-amber-950">
+              <strong className="font-semibold text-amber-900">
+                Launch Special Active:
+              </strong>{" "}
+              First {LAUNCH_PROMO.MAX_LAUNCHES} launches receive a{" "}
+              <span className="font-semibold text-amber-900">
+                FREE Lifetime Premium Listing ({LAUNCH_PROMO.VALUE_GIFTED}{" "}
+                value)
+              </span>{" "}
+              with permanent Do-Follow SEO backlink.
+            </p>
           </div>
+          <Badge
+            variant="outline"
+            className="hidden shrink-0 border-amber-300/80 bg-amber-100/60 font-mono text-[10px] font-semibold text-amber-900 sm:inline-flex"
+          >
+            {LAUNCH_PROMO.BADGE_LABEL}
+          </Badge>
         </div>
       )}
 
-      <div className="flex w-full flex-1 flex-col bg-white">
-        <form onSubmit={handleSubmit} className="flex flex-col">
-          {/* SECTION: REQUIRED INFORMATION */}
+      {/* Top Type Selector Tabs - Compact, Full-Width with Corner Outline Style */}
+      <div className="w-full border-b border-dashed border-border bg-white px-4 py-3 sm:px-6 md:px-8">
+        <div className="grid w-full grid-cols-2 gap-2.5 sm:gap-3">
+          <div className="group/tab relative flex-1">
+            <button
+              type="button"
+              onClick={() => handleTypeChange("product")}
+              className={cn(
+                "relative z-10 flex h-10 w-full cursor-pointer items-center justify-center gap-2 rounded-md border text-xs font-semibold transition-all sm:text-sm",
+                activeType === "product"
+                  ? "border-slate-300 bg-slate-100/90 font-bold text-slate-950 shadow-2xs"
+                  : "border-slate-200/80 bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+              )}
+            >
+              <Package className="size-3.5 shrink-0 text-indigo-600 sm:size-4" />
+              <span>Product / App</span>
+              <span className="py-0.2 hidden rounded-xs bg-indigo-50 px-1.5 font-mono text-[9px] font-bold text-indigo-700 sm:inline-block">
+                DEFAULT
+              </span>
+            </button>
+            <CornerBorders active={activeType === "product"} />
+          </div>
+
+          <div className="group/tab relative flex-1">
+            <button
+              type="button"
+              onClick={() => handleTypeChange("tool")}
+              className={cn(
+                "relative z-10 flex h-10 w-full cursor-pointer items-center justify-center gap-2 rounded-md border text-xs font-semibold transition-all sm:text-sm",
+                activeType === "tool"
+                  ? "border-slate-300 bg-slate-100/90 font-bold text-slate-950 shadow-2xs"
+                  : "border-slate-200/80 bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+              )}
+            >
+              <Wrench className="size-3.5 shrink-0 text-emerald-600 sm:size-4" />
+              <span>Developer Tool</span>
+            </button>
+            <CornerBorders active={activeType === "tool"} />
+          </div>
+        </div>
+      </div>
+
+      {/* Form Container */}
+      <div className="flex flex-col">
+        <form onSubmit={handleSubmit} noValidate>
+          {/* SECTION: BASIC INFORMATION (REQUIRED) */}
           <div className="flex flex-col border-b border-dashed border-border">
-            {/* Section Header */}
             <div className={submitSectionHeaderRequired}>
               <div className="flex items-center gap-2.5">
                 <h2 className="text-base font-bold text-slate-900">
@@ -315,32 +504,35 @@ export const SubmitContent = () => {
                 </h2>
                 <Badge
                   variant="destructive"
-                  className="rounded-md px-2 py-0.5 font-mono text-[10px] font-bold tracking-wider uppercase"
+                  className="rounded-md px-2 py-0.5 font-mono text-[10px] font-semibold tracking-wider uppercase"
                 >
                   Required
                 </Badge>
               </div>
               <p className="text-xs text-slate-500">
-                Essential details required to list and index your developer tool
-                on the directory.
+                Launch schedule, core identity, and access links for your{" "}
+                {typeLabel.toLowerCase()}.
               </p>
             </div>
 
-            {/* Subsection: Launch Week & Scheduling */}
-            <div className="flex flex-col gap-5 border-b border-dashed border-border px-6 py-6 md:px-8 md:py-8">
-              <div className="flex flex-col gap-1">
-                <h3 className="text-sm font-bold text-slate-900">
-                  Launch Week & Scheduling
-                </h3>
-                <p className="text-xs text-slate-500">
-                  Cohorts go live every Monday at 00:00 UTC with community voting.
-                  Select which upcoming week you want to launch.
-                </p>
+            {/* Launch Week Selector - First item in Required Information */}
+            <div className="flex flex-col gap-3 border-b border-dashed border-border px-6 py-5 md:px-8">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Label className="text-xs font-bold tracking-wider text-slate-900 uppercase">
+                    Launch Week *
+                  </Label>
+                  <span className="text-[11px] text-slate-500">
+                    Select when your launch goes live in &ldquo;This Week&apos;s
+                    Launches&rdquo; on the homepage
+                  </span>
+                </div>
               </div>
 
               <LaunchWeekPicker
                 selectedYear={form.launchYear}
                 selectedWeek={form.launchWeek}
+                compact={true}
                 onSelectWeek={(year, week) =>
                   setForm((prev) => ({
                     ...prev,
@@ -349,27 +541,22 @@ export const SubmitContent = () => {
                   }))
                 }
               />
+              {errors.launchWeek && (
+                <p className="text-xs text-red-500">{errors.launchWeek[0]}</p>
+              )}
             </div>
 
-            {/* Subsection: Core Identity & Links */}
+            {/* Name, Tagline & Website */}
             <div className="flex flex-col gap-5 border-b border-dashed border-border px-6 py-6 md:px-8 md:py-8">
-              <div className="flex flex-col gap-1">
-                <h3 className="text-sm font-bold text-slate-900">
-                  Core Identity & Links
-                </h3>
-                <p className="text-xs text-slate-500">
-                  Basic identifiers and official link for your tool.
-                </p>
-              </div>
-
-              <div className="flex flex-col gap-4">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <div className="grid gap-2">
-                  <Label htmlFor="name">Tool Name *</Label>
+                  <Label htmlFor="name">{typeLabel} Name *</Label>
                   <Input
                     id="name"
                     value={form.name}
                     onChange={set("name")}
-                    placeholder="e.g. Supabase, Docker, Prisma"
+                    placeholder={`e.g. ${activeType === "product" ? "CodeFast" : "Prisma ORM"}`}
+                    aria-invalid={Boolean(errors.name)}
                   />
                   {errors.name && (
                     <p className="text-xs text-red-500">{errors.name[0]}</p>
@@ -377,25 +564,23 @@ export const SubmitContent = () => {
                 </div>
 
                 <div className="grid gap-2">
-                  <Label htmlFor="tagline">Tool Tagline *</Label>
+                  <Label htmlFor="tagline">Tagline *</Label>
                   <Input
                     id="tagline"
                     value={form.tagline}
                     onChange={set("tagline")}
-                    placeholder="Brief, catchy description (max 60 chars)"
-                    maxLength={60}
+                    placeholder={`Short one-line pitch (10-${activeType === "product" ? "60" : "200"} characters)`}
+                    aria-invalid={Boolean(errors.tagline)}
                   />
-                  <span className="text-[11px] text-slate-400">
-                    Short summary displayed on cards and search lists (10-60
-                    characters).
-                  </span>
                   {errors.tagline && (
                     <p className="text-xs text-red-500">{errors.tagline[0]}</p>
                   )}
                 </div>
+              </div>
 
+              <div className="grid grid-cols-1 gap-4">
                 <div className="grid gap-2">
-                  <Label htmlFor="websiteUrl">Tool Website URL *</Label>
+                  <Label htmlFor="websiteUrl">Website URL *</Label>
                   <div className="relative">
                     <Globe className="absolute top-2.5 left-3 size-4 text-slate-400" />
                     <Input
@@ -427,7 +612,7 @@ export const SubmitContent = () => {
                         />
                       </div>
                       <span className="text-[11px] font-medium text-slate-600">
-                        Site favicon detected automatically
+                        Brand favicon detected automatically from your URL
                       </span>
                     </div>
                   )}
@@ -440,7 +625,7 @@ export const SubmitContent = () => {
               </div>
             </div>
 
-            {/* Subsection: Overview & Pricing Model */}
+            {/* Overview & Pricing */}
             <div className="flex flex-col gap-5 px-6 py-6 md:px-8 md:py-8">
               <div className="flex flex-col gap-1">
                 <h3 className="text-sm font-bold text-slate-900">
@@ -458,7 +643,7 @@ export const SubmitContent = () => {
                     id="description"
                     value={form.description}
                     onChange={set("description")}
-                    placeholder="What does your tool do? Why should developers use it?"
+                    placeholder={`What does your ${typeLabel.toLowerCase()} do? Why should engineers use it?`}
                     rows={4}
                   />
                   <span className="text-[11px] text-slate-400">
@@ -472,40 +657,85 @@ export const SubmitContent = () => {
                   )}
                 </div>
 
-                <div className="grid gap-2">
-                  <Label htmlFor="tier">Pricing Model *</Label>
-                  <Select
-                    value={form.pricing}
-                    onValueChange={(v) =>
-                      setForm((p) => ({
-                        ...p,
-                        pricing: v as typeof form.pricing,
-                      }))
-                    }
-                  >
-                    <SelectTrigger id="tier">
-                      <SelectValue placeholder="Select a pricing model" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {Object.values(PRICING).map((pricing) => (
-                        <SelectItem key={pricing} value={pricing}>
-                          {pricing}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                  <div className="grid gap-2">
+                    <Label htmlFor="tier">Pricing Model *</Label>
+                    <Select
+                      value={form.pricing}
+                      onValueChange={(v) =>
+                        setForm((p) => ({
+                          ...p,
+                          pricing: v as typeof form.pricing,
+                        }))
+                      }
+                    >
+                      <SelectTrigger id="tier">
+                        <SelectValue placeholder="Select a pricing model" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {Object.values(PRICING).map((pricing) => (
+                          <SelectItem key={pricing} value={pricing}>
+                            {pricing}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="grid gap-2">
+                    <Label htmlFor="category">Primary Category</Label>
+                    <Input
+                      id="category"
+                      value={form.category}
+                      onChange={set("category")}
+                      placeholder={`e.g. ${activeType === "product" ? "AI SaaS, Productivity, Fintech" : "Database, Auth, DevTools, AI"}`}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
+          {/* SECTION: DEVELOPER TECH STACK (PRODUCT ONLY) */}
+          {activeType === "product" && (
+            <div className="flex flex-col border-b border-dashed border-border">
+              <div className="flex flex-col gap-1 border-b border-dashed border-border bg-linear-to-r from-blue-100/60 via-indigo-50/50 to-white px-6 py-6 md:px-8">
+                <div className="flex items-center gap-2.5">
+                  <h2 className="text-base font-bold text-slate-900">
+                    Tech Stack & Built With
+                  </h2>
+                  <Badge
+                    variant="outline"
+                    className="rounded-md border-indigo-200 bg-indigo-50/70 px-2 py-0.5 font-mono text-[10px] font-semibold tracking-wider text-indigo-700 uppercase"
+                  >
+                    Cross-Discovery
+                  </Badge>
+                </div>
+                <p className="text-xs text-slate-500">
+                  Link developer tools, APIs, and databases powering this
+                  product. Your product will be cross-promoted on each
+                  tool&apos;s dedicated page under &ldquo;Products Built
+                  With&rdquo;.
+                </p>
+              </div>
+
+              <div className="flex flex-col gap-5 px-6 py-6 md:px-8 md:py-8">
+                <BuiltWithToolsInput
+                  value={form.builtWithTools}
+                  onChange={(tools) =>
+                    setForm((prev) => ({ ...prev, builtWithTools: tools }))
+                  }
+                />
+              </div>
+            </div>
+          )}
+
           {/* SECTION: OPTIONAL SHOWCASE & DEEP DIVE */}
           <div className="flex flex-col border-b border-dashed border-border">
-            {/* Section Header */}
             <div className={submitSectionHeaderOptional}>
               <div className="flex items-center gap-2.5">
                 <h2 className="text-base font-bold text-slate-900">
-                  Tool Showcase & Deep Dive
+                  Showcase & Value Proposition
                 </h2>
                 <Badge
                   variant="secondary"
@@ -515,20 +745,20 @@ export const SubmitContent = () => {
                 </Badge>
               </div>
               <p className="text-xs text-slate-500">
-                Add richer context on the developer bottleneck you eliminate,
-                media previews, platform availability, and community links.
+                Add richer context on the problem you eliminate, media previews,
+                store downloads, and community links.
               </p>
             </div>
 
-            {/* Subsection: Value Proposition & Deep Dive */}
+            {/* Value Proposition */}
             <div className="flex flex-col gap-5 border-b border-dashed border-border px-6 py-6 md:px-8 md:py-8">
               <div className="flex flex-col gap-1">
                 <h3 className="text-sm font-bold text-slate-900">
-                  Value Proposition & Deep Dive
+                  Problem & Solution Deep Dive
                 </h3>
                 <p className="text-xs text-slate-500">
-                  Help engineers understand your technical architecture and
-                  unique value.
+                  Help builders understand your unique technical value and
+                  workflows.
                 </p>
               </div>
 
@@ -539,7 +769,7 @@ export const SubmitContent = () => {
                     id="problem"
                     value={form.problemStatement}
                     onChange={set("problemStatement")}
-                    placeholder="What pain point or engineering bottleneck does this tool eliminate?"
+                    placeholder={`What pain point or bottleneck does this ${typeLabel.toLowerCase()} eliminate?`}
                     rows={3}
                   />
                 </div>
@@ -550,7 +780,7 @@ export const SubmitContent = () => {
                     id="solution"
                     value={form.solution}
                     onChange={set("solution")}
-                    placeholder="How does your tool solve this problem technically?"
+                    placeholder={`How does your ${typeLabel.toLowerCase()} solve this problem technically?`}
                     rows={3}
                   />
                 </div>
@@ -561,7 +791,7 @@ export const SubmitContent = () => {
                     id="unique"
                     value={form.uniqueValue}
                     onChange={set("uniqueValue")}
-                    placeholder="Why should developers choose this tool over alternatives?"
+                    placeholder={`Why should builders choose this ${typeLabel.toLowerCase()} over alternatives?`}
                     rows={3}
                   />
                 </div>
@@ -572,85 +802,33 @@ export const SubmitContent = () => {
                     id="useCases"
                     value={form.useCases}
                     onChange={set("useCases")}
-                    placeholder="Describe specific engineering workflows, use cases, or developer scenarios your tool is designed for..."
+                    placeholder={`Describe specific engineering workflows, scenarios, or personas this ${typeLabel.toLowerCase()} is designed for...`}
                     rows={3}
                   />
                 </div>
               </div>
             </div>
 
-            {/* Subsection: Frequently Asked Questions (Tool FAQs) */}
-            <div className="flex flex-col gap-5 border-b border-dashed border-border px-6 py-6 md:px-8 md:py-8">
-              <div className="flex items-center justify-between">
-                <div className="flex flex-col gap-1">
-                  <h3 className="text-sm font-bold text-slate-900">
-                    Frequently Asked Questions (Tool FAQs)
-                  </h3>
-                  <p className="text-xs text-slate-500">
-                    Address common questions developers might have about your
-                    tool, integration, or self-hosting.
-                  </p>
-                </div>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() =>
-                    setForm((prev) => ({
-                      ...prev,
-                      faqs: [...prev.faqs, { question: "", answer: "" }],
-                    }))
-                  }
-                  className="gap-1.5"
-                >
-                  <Plus className="size-3.5" />
-                  <span>Add Question</span>
-                </Button>
-              </div>
-
-              <FaqBuilder
-                faqs={form.faqs}
-                onChange={(faqs) => setForm((prev) => ({ ...prev, faqs }))}
-                questionPlaceholder="e.g. Is this tool open source or self-hostable?"
-                answerPlaceholder="e.g. Yes, you can deploy using Docker or sign up for our managed cloud."
-                emptyPrompt="No FAQs added yet. Help developers evaluate your tool faster by adding answers to common questions."
-                addFirstLabel="Add First Question"
-                addAnotherLabel="Add Another Question"
-              />
-            </div>
-
-            {/* Subsection: Categories & Platforms */}
+            {/* Platforms & Tags */}
             <div className="flex flex-col gap-5 border-b border-dashed border-border px-6 py-6 md:px-8 md:py-8">
               <div className="flex flex-col gap-1">
                 <h3 className="text-sm font-bold text-slate-900">
-                  Categories & Platforms
+                  Platforms & Tags
                 </h3>
                 <p className="text-xs text-slate-500">
-                  Classify your tool and specify supported platforms.
+                  Specify supported environments and search keywords.
                 </p>
               </div>
 
               <div className="flex flex-col gap-4">
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                  <div className="grid gap-2">
-                    <Label htmlFor="category">Primary Category</Label>
-                    <Input
-                      id="category"
-                      value={form.category}
-                      onChange={set("category")}
-                      placeholder="e.g. Database, Auth, DevTools, AI"
-                    />
-                  </div>
-
-                  <div className="grid gap-2">
-                    <Label htmlFor="tags">Tags</Label>
-                    <Input
-                      id="tags"
-                      value={form.tags}
-                      onChange={set("tags")}
-                      placeholder="e.g. Postgres, ORM, TypeScript, Cloud (comma separated)"
-                    />
-                  </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="tags">Tags</Label>
+                  <Input
+                    id="tags"
+                    value={form.tags}
+                    onChange={set("tags")}
+                    placeholder="e.g. Postgres, Next.js, TypeScript, Cloud (comma separated)"
+                  />
                 </div>
 
                 <div className="flex flex-col gap-2 pt-2">
@@ -688,52 +866,21 @@ export const SubmitContent = () => {
               </div>
             </div>
 
-            {/* Subsection: Media & Visual Showcase */}
+            {/* Media & Community / Store Links */}
             <div className="flex flex-col gap-5 border-b border-dashed border-border px-6 py-6 md:px-8 md:py-8">
               <div className="flex flex-col gap-1">
                 <h3 className="text-sm font-bold text-slate-900">
-                  Media & Visual Showcase
+                  Media & Community / Store Links
                 </h3>
                 <p className="text-xs text-slate-500">
-                  Tool demo video and visual walkthrough. Brand favicon is automatically fetched from your website URL.
+                  Video walkthrough, app stores, source repositories, and
+                  community channels.
                 </p>
               </div>
 
               <div className="flex flex-col gap-4">
-                {/* Logo upload temporarily disabled - brand favicon is automatically fetched from website URL.
                 <div className="grid gap-2">
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="logo">Logo URL</Label>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      onClick={() =>
-                        setForm((prev) => ({
-                          ...prev,
-                          logoUrl:
-                            "https://api.dicebear.com/7.x/shapes/svg?seed=" +
-                            (form.name || "logo"),
-                        }))
-                      }
-                      className="h-6 gap-1 px-2 text-[11px] font-semibold text-indigo-600 hover:text-indigo-700"
-                    >
-                      <Upload className="size-3" />
-                      Mock Upload Demo
-                    </Button>
-                  </div>
-                  <Input
-                    id="logo"
-                    type="url"
-                    value={form.logoUrl}
-                    onChange={set("logoUrl")}
-                    placeholder="https://example.com/logo.png"
-                  />
-                </div>
-                */}
-
-                <div className="grid gap-2">
-                  <Label htmlFor="video">Tool Demo Video URL</Label>
+                  <Label htmlFor="video">Demo Video URL</Label>
                   <div className="relative">
                     <Video className="absolute top-2.5 left-3 size-4 text-slate-400" />
                     <Input
@@ -747,312 +894,271 @@ export const SubmitContent = () => {
                   </div>
                 </div>
 
-                {/* Screenshot gallery upload temporarily disabled.
-                <div className="grid gap-2">
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="screenshots">
-                      Screenshots & Gallery (Max 5)
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  {/* GitHub */}
+                  <div className="grid gap-2">
+                    <Label
+                      htmlFor="githubUrl"
+                      className="flex items-center gap-1.5 text-xs font-semibold text-slate-700"
+                    >
+                      GitHub Repository
                     </Label>
-                    <span className="text-[11px] text-slate-400">
-                      {form.images.length}/5 added
-                    </span>
-                  </div>
-                  <div className="flex gap-2">
-                    <Input
-                      id="screenshots"
-                      type="url"
-                      value={screenshotInput}
-                      onChange={(e) => setScreenshotInput(e.target.value)}
-                      placeholder="Paste image URL (https://...)"
-                      disabled={form.images.length >= 5}
-                    />
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => addScreenshot()}
-                      disabled={
-                        !screenshotInput.trim() || form.images.length >= 5
-                      }
-                      className="shrink-0 gap-1"
-                    >
-                      <Plus className="size-3.5" />
-                      Add URL
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="secondary"
-                      size="sm"
-                      onClick={() =>
-                        addScreenshot(
-                          "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&auto=format&fit=crop&q=80"
-                        )
-                      }
-                      disabled={form.images.length >= 5}
-                      className="shrink-0 gap-1 text-xs"
-                      title="Simulate image upload"
-                    >
-                      <Upload className="size-3.5" />
-                      Mock Upload
-                    </Button>
+                    <div className="relative">
+                      <div className="pointer-events-none absolute top-2.5 left-3 flex size-4 items-center justify-center">
+                        <Image
+                          src="/social-logo/github.png"
+                          alt="GitHub"
+                          width={16}
+                          height={16}
+                          className="size-4 rounded-xs object-contain"
+                        />
+                      </div>
+                      <Input
+                        id="githubUrl"
+                        type="url"
+                        value={form.githubUrl}
+                        onChange={set("githubUrl")}
+                        placeholder="https://github.com/your-org/your-repo"
+                        className="pl-9"
+                      />
+                    </div>
                   </div>
 
-                  {form.images.length > 0 && (
-                    <div className="mt-2 flex flex-wrap gap-2">
-                      {form.images.map((url, i) => (
-                        <div
-                          key={i}
-                          className="flex items-center gap-1.5 rounded-md border border-slate-200 bg-white px-2.5 py-1 text-xs text-slate-700 shadow-2xs"
-                        >
-                          <span className="max-w-50 truncate">{url}</span>
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => removeScreenshot(i)}
-                            className="size-5 text-slate-400 hover:bg-transparent hover:text-red-600"
-                          >
-                            <Trash2 className="size-3" />
-                          </Button>
-                        </div>
-                      ))}
+                  {/* Twitter / X */}
+                  <div className="grid gap-2">
+                    <Label
+                      htmlFor="twitterUrl"
+                      className="flex items-center gap-1.5 text-xs font-semibold text-slate-700"
+                    >
+                      X (Twitter)
+                    </Label>
+                    <div className="relative">
+                      <div className="pointer-events-none absolute top-2.5 left-3 flex size-4 items-center justify-center">
+                        <Image
+                          src="/social-logo/twitter.png"
+                          alt="X"
+                          width={16}
+                          height={16}
+                          className="size-4 rounded-xs object-contain"
+                        />
+                      </div>
+                      <Input
+                        id="twitterUrl"
+                        type="url"
+                        value={form.twitterUrl}
+                        onChange={set("twitterUrl")}
+                        placeholder="https://x.com/your_handle"
+                        className="pl-9"
+                      />
                     </div>
-                  )}
+                  </div>
+
+                  {/* LinkedIn */}
+                  <div className="grid gap-2">
+                    <Label
+                      htmlFor="linkedinUrl"
+                      className="flex items-center gap-1.5 text-xs font-semibold text-slate-700"
+                    >
+                      LinkedIn
+                    </Label>
+                    <div className="relative">
+                      <div className="pointer-events-none absolute top-2.5 left-3 flex size-4 items-center justify-center">
+                        <Image
+                          src="/social-logo/linkedin.png"
+                          alt="LinkedIn"
+                          width={16}
+                          height={16}
+                          className="size-4 rounded-xs object-contain"
+                        />
+                      </div>
+                      <Input
+                        id="linkedinUrl"
+                        type="url"
+                        value={form.linkedinUrl}
+                        onChange={set("linkedinUrl")}
+                        placeholder="https://linkedin.com/company/your-company"
+                        className="pl-9"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Discord */}
+                  <div className="grid gap-2">
+                    <Label
+                      htmlFor="discordUrl"
+                      className="flex items-center gap-1.5 text-xs font-semibold text-slate-700"
+                    >
+                      Discord Community
+                    </Label>
+                    <div className="relative">
+                      <div className="pointer-events-none absolute top-2.5 left-3 flex size-4 items-center justify-center">
+                        <Image
+                          src="/social-logo/discord.png"
+                          alt="Discord"
+                          width={16}
+                          height={16}
+                          className="size-4 rounded-xs object-contain"
+                        />
+                      </div>
+                      <Input
+                        id="discordUrl"
+                        type="url"
+                        value={form.discordUrl}
+                        onChange={set("discordUrl")}
+                        placeholder="https://discord.gg/your-invite"
+                        className="pl-9"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Apple App Store */}
+                  <div className="grid gap-2">
+                    <Label
+                      htmlFor="appStoreUrl"
+                      className="flex items-center gap-1.5 text-xs font-semibold text-slate-700"
+                    >
+                      Apple App Store
+                    </Label>
+                    <div className="relative">
+                      <div className="pointer-events-none absolute top-2.5 left-3 flex size-4 items-center justify-center">
+                        <Image
+                          src="/social-logo/app-store.png"
+                          alt="App Store"
+                          width={16}
+                          height={16}
+                          className="size-4 rounded-xs object-contain"
+                        />
+                      </div>
+                      <Input
+                        id="appStoreUrl"
+                        type="url"
+                        value={form.appStoreUrl}
+                        onChange={set("appStoreUrl")}
+                        placeholder="https://apps.apple.com/app/your-app/id..."
+                        className="pl-9"
+                      />
+                    </div>
+                    {errors.appStoreUrl && (
+                      <p className="text-xs text-red-500">
+                        {errors.appStoreUrl[0]}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Google Play Store */}
+                  <div className="grid gap-2">
+                    <Label
+                      htmlFor="playStoreUrl"
+                      className="flex items-center gap-1.5 text-xs font-semibold text-slate-700"
+                    >
+                      Google Play Store
+                    </Label>
+                    <div className="relative">
+                      <div className="pointer-events-none absolute top-2.5 left-3 flex size-4 items-center justify-center">
+                        <Image
+                          src="/social-logo/playstore.png"
+                          alt="Google Play Store"
+                          width={16}
+                          height={16}
+                          className="size-4 rounded-xs object-contain"
+                        />
+                      </div>
+                      <Input
+                        id="playStoreUrl"
+                        type="url"
+                        value={form.playStoreUrl}
+                        onChange={set("playStoreUrl")}
+                        placeholder="https://play.google.com/store/apps/details?id=..."
+                        className="pl-9"
+                      />
+                    </div>
+                    {errors.playStoreUrl && (
+                      <p className="text-xs text-red-500">
+                        {errors.playStoreUrl[0]}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Chrome Web Store */}
+                  <div className="grid gap-2 sm:col-span-2">
+                    <Label
+                      htmlFor="chromeExtensionUrl"
+                      className="flex items-center gap-1.5 text-xs font-semibold text-slate-700"
+                    >
+                      Chrome Web Store Extension
+                    </Label>
+                    <div className="relative">
+                      <div className="pointer-events-none absolute top-2.5 left-3 flex size-4 items-center justify-center">
+                        <Image
+                          src="/social-logo/chrome.png"
+                          alt="Chrome Web Store"
+                          width={16}
+                          height={16}
+                          className="size-4 rounded-xs object-contain"
+                        />
+                      </div>
+                      <Input
+                        id="chromeExtensionUrl"
+                        type="url"
+                        value={form.chromeExtensionUrl}
+                        onChange={set("chromeExtensionUrl")}
+                        placeholder="https://chromewebstore.google.com/detail/..."
+                        className="pl-9"
+                      />
+                    </div>
+                    {errors.chromeExtensionUrl && (
+                      <p className="text-xs text-red-500">
+                        {errors.chromeExtensionUrl[0]}
+                      </p>
+                    )}
+                  </div>
                 </div>
-                */}
               </div>
             </div>
 
-            {/* Subsection: Community, Store & Social Links */}
+            {/* FAQs */}
             <div className="flex flex-col gap-5 px-6 py-6 md:px-8 md:py-8">
-              <div className="flex flex-col gap-1">
-                <h3 className="text-sm font-bold text-slate-900">
-                  Community, Store & Social Links
-                </h3>
-                <p className="text-xs text-slate-500">
-                  Connect developers directly to your repository, team, app
-                  stores, browser extensions, and community discussions.
-                </p>
+              <div className="flex items-center justify-between">
+                <div className="flex flex-col gap-1">
+                  <h3 className="text-sm font-bold text-slate-900">
+                    Frequently Asked Questions ({typeLabel} FAQs)
+                  </h3>
+                  <p className="text-xs text-slate-500">
+                    Address common questions builders might have about your{" "}
+                    {typeLabel.toLowerCase()}, integration, or pricing.
+                  </p>
+                </div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() =>
+                    setForm((prev) => ({
+                      ...prev,
+                      faqs: [...prev.faqs, { question: "", answer: "" }],
+                    }))
+                  }
+                  className="gap-1.5"
+                >
+                  <Plus className="size-3.5" />
+                  <span>Add Question</span>
+                </Button>
               </div>
 
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                <div className="grid gap-2">
-                  <Label
-                    htmlFor="github"
-                    className="flex items-center gap-1.5 text-xs font-semibold text-slate-700"
-                  >
-                    GitHub
-                  </Label>
-                  <div className="relative">
-                    <div className="pointer-events-none absolute top-2.5 left-3 flex size-4 items-center justify-center">
-                      <Image
-                        src="/social-logo/github.png"
-                        alt="GitHub"
-                        width={16}
-                        height={16}
-                        className="size-4 rounded-xs object-contain"
-                      />
-                    </div>
-                    <Input
-                      id="github"
-                      type="url"
-                      value={form.githubUrl}
-                      onChange={set("githubUrl")}
-                      placeholder="https://github.com/your-org/your-repo"
-                      className="pl-9"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid gap-2">
-                  <Label
-                    htmlFor="twitter"
-                    className="flex items-center gap-1.5 text-xs font-semibold text-slate-700"
-                  >
-                    X (Twitter)
-                  </Label>
-                  <div className="relative">
-                    <div className="pointer-events-none absolute top-2.5 left-3 flex size-4 items-center justify-center">
-                      <Image
-                        src="/social-logo/twitter.png"
-                        alt="X"
-                        width={16}
-                        height={16}
-                        className="size-4 rounded-xs object-contain"
-                      />
-                    </div>
-                    <Input
-                      id="twitter"
-                      type="url"
-                      value={form.twitterUrl}
-                      onChange={set("twitterUrl")}
-                      placeholder="https://x.com/your_handle"
-                      className="pl-9"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid gap-2">
-                  <Label
-                    htmlFor="linkedin"
-                    className="flex items-center gap-1.5 text-xs font-semibold text-slate-700"
-                  >
-                    LinkedIn
-                  </Label>
-                  <div className="relative">
-                    <div className="pointer-events-none absolute top-2.5 left-3 flex size-4 items-center justify-center">
-                      <Image
-                        src="/social-logo/linkedin.png"
-                        alt="LinkedIn"
-                        width={16}
-                        height={16}
-                        className="size-4 rounded-xs object-contain"
-                      />
-                    </div>
-                    <Input
-                      id="linkedin"
-                      type="url"
-                      value={form.linkedinUrl}
-                      onChange={set("linkedinUrl")}
-                      placeholder="https://linkedin.com/company/your-company"
-                      className="pl-9"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid gap-2">
-                  <Label
-                    htmlFor="discord"
-                    className="flex items-center gap-1.5 text-xs font-semibold text-slate-700"
-                  >
-                    Discord Community
-                  </Label>
-                  <div className="relative">
-                    <div className="pointer-events-none absolute top-2.5 left-3 flex size-4 items-center justify-center">
-                      <Image
-                        src="/social-logo/discord.png"
-                        alt="Discord"
-                        width={16}
-                        height={16}
-                        className="size-4 rounded-xs object-contain"
-                      />
-                    </div>
-                    <Input
-                      id="discord"
-                      type="url"
-                      value={form.discordUrl}
-                      onChange={set("discordUrl")}
-                      placeholder="https://discord.gg/your-invite"
-                      className="pl-9"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid gap-2">
-                  <Label
-                    htmlFor="appStore"
-                    className="flex items-center gap-1.5 text-xs font-semibold text-slate-700"
-                  >
-                    Apple App Store
-                  </Label>
-                  <div className="relative">
-                    <div className="pointer-events-none absolute top-2.5 left-3 flex size-4 items-center justify-center">
-                      <Image
-                        src="/social-logo/app-store.png"
-                        alt="App Store"
-                        width={16}
-                        height={16}
-                        className="size-4 rounded-xs object-contain"
-                      />
-                    </div>
-                    <Input
-                      id="appStore"
-                      type="url"
-                      value={form.appStoreUrl}
-                      onChange={set("appStoreUrl")}
-                      placeholder="https://apps.apple.com/app/your-app/id..."
-                      className="pl-9"
-                    />
-                  </div>
-                  {errors.appStoreUrl && (
-                    <p className="text-xs text-red-500">
-                      {errors.appStoreUrl[0]}
-                    </p>
-                  )}
-                </div>
-
-                <div className="grid gap-2">
-                  <Label
-                    htmlFor="playStore"
-                    className="flex items-center gap-1.5 text-xs font-semibold text-slate-700"
-                  >
-                    Google Play Store
-                  </Label>
-                  <div className="relative">
-                    <div className="pointer-events-none absolute top-2.5 left-3 flex size-4 items-center justify-center">
-                      <Image
-                        src="/social-logo/playstore.png"
-                        alt="Google Play Store"
-                        width={16}
-                        height={16}
-                        className="size-4 rounded-xs object-contain"
-                      />
-                    </div>
-                    <Input
-                      id="playStore"
-                      type="url"
-                      value={form.playStoreUrl}
-                      onChange={set("playStoreUrl")}
-                      placeholder="https://play.google.com/store/apps/details?id=..."
-                      className="pl-9"
-                    />
-                  </div>
-                  {errors.playStoreUrl && (
-                    <p className="text-xs text-red-500">
-                      {errors.playStoreUrl[0]}
-                    </p>
-                  )}
-                </div>
-
-                <div className="grid gap-2">
-                  <Label
-                    htmlFor="chromeExtension"
-                    className="flex items-center gap-1.5 text-xs font-semibold text-slate-700"
-                  >
-                    Chrome Web Store Extension
-                  </Label>
-                  <div className="relative">
-                    <div className="pointer-events-none absolute top-2.5 left-3 flex size-4 items-center justify-center">
-                      <Image
-                        src="/social-logo/chrome.png"
-                        alt="Chrome Web Store"
-                        width={16}
-                        height={16}
-                        className="size-4 rounded-xs object-contain"
-                      />
-                    </div>
-                    <Input
-                      id="chromeExtension"
-                      type="url"
-                      value={form.chromeExtensionUrl}
-                      onChange={set("chromeExtensionUrl")}
-                      placeholder="https://chromewebstore.google.com/detail/..."
-                      className="pl-9"
-                    />
-                  </div>
-                  {errors.chromeExtensionUrl && (
-                    <p className="text-xs text-red-500">
-                      {errors.chromeExtensionUrl[0]}
-                    </p>
-                  )}
-                </div>
-              </div>
+              <FaqBuilder
+                faqs={form.faqs}
+                onChange={(faqs) => setForm((prev) => ({ ...prev, faqs }))}
+                questionPlaceholder={`e.g. Is this ${typeLabel.toLowerCase()} self-hostable or open source?`}
+                answerPlaceholder="e.g. Yes, you can deploy using Docker or sign up for our managed cloud."
+                emptyPrompt={`No FAQs added yet. Help builders evaluate your ${typeLabel.toLowerCase()} faster by adding answers to common questions.`}
+                addFirstLabel="Add First Question"
+                addAnotherLabel="Add Another Question"
+              />
             </div>
           </div>
 
           {/* SECTION: SEO, GEO & AI DISCOVERABILITY */}
           <div className="flex flex-col border-b border-dashed border-border">
-            {/* Section Header */}
             <div className={submitSectionHeaderDiscoverability}>
               <div className="flex items-center gap-2.5">
                 <h2 className="text-base font-bold text-slate-900">
@@ -1067,24 +1173,14 @@ export const SubmitContent = () => {
               </div>
               <p className="text-xs text-slate-500">
                 Data configured strictly for search engine indexing (SEO),
-                regional query routing (GEO), and AI model citation (ChatGPT,
-                Claude, Perplexity - AEO). None of this is displayed on your
-                public tool page.
+                regional routing (GEO), and AI model citation (ChatGPT, Claude,
+                Perplexity - AEO). None of this is displayed on your public
+                page.
               </p>
             </div>
 
-            {/* Subsection: Target Audience & Regional Targeting */}
+            {/* Target Audience & GEO */}
             <div className="flex flex-col gap-5 border-b border-dashed border-border px-6 py-6 md:px-8 md:py-8">
-              <div className="flex flex-col gap-1">
-                <h3 className="text-sm font-bold text-slate-900">
-                  Target Audience & Regional Targeting
-                </h3>
-                <p className="text-xs text-slate-500">
-                  Help AI answer engines recommend your tool to specific
-                  developer personas and regional search queries.
-                </p>
-              </div>
-
               <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                 <div className="grid gap-2">
                   <Label htmlFor="audience">Target Audience</Label>
@@ -1092,7 +1188,7 @@ export const SubmitContent = () => {
                     id="audience"
                     value={form.targetAudience}
                     onChange={set("targetAudience")}
-                    placeholder="e.g. Frontend Developers, DevOps Engineers"
+                    placeholder="e.g. Frontend Developers, SaaS Founders"
                   />
                   <span className="text-[11px] text-slate-400">
                     Primary user persona.
@@ -1129,18 +1225,8 @@ export const SubmitContent = () => {
               </div>
             </div>
 
-            {/* Subsection: Organic Search Metadata (SEO) */}
+            {/* Search Metadata (SEO) */}
             <div className="flex flex-col gap-5 border-b border-dashed border-border px-6 py-6 md:px-8 md:py-8">
-              <div className="flex flex-col gap-1">
-                <h3 className="text-sm font-bold text-slate-900">
-                  Organic Search Metadata (SEO)
-                </h3>
-                <p className="text-xs text-slate-500">
-                  Custom titles, descriptions, and search terms for Google and
-                  Bing crawlers.
-                </p>
-              </div>
-
               <div className="flex flex-col gap-4">
                 <div className="grid gap-2">
                   <Label htmlFor="keywords">
@@ -1183,7 +1269,7 @@ export const SubmitContent = () => {
               </div>
             </div>
 
-            {/* Subsection: AI & Answer Engine Optimization (AEO) */}
+            {/* AI Assistant Context (AEO) */}
             <div className="flex flex-col gap-5 px-6 py-6 md:px-8 md:py-8">
               <div className="flex flex-col gap-1">
                 <h3 className="text-sm font-bold text-slate-900">
@@ -1202,7 +1288,7 @@ export const SubmitContent = () => {
                   id="aiContext"
                   value={form.aiContext}
                   onChange={set("aiContext")}
-                  placeholder="If an AI like ChatGPT, Claude, or Perplexity is asked about tools in your category, why should it recommend you? Summarize your pitch for LLMs."
+                  placeholder={`If an AI like ChatGPT, Claude, or Perplexity is asked about solutions in your category, why should it recommend you? Summarize your pitch for LLMs.`}
                   rows={3}
                 />
                 <span className="text-[11px] text-slate-400">
@@ -1214,10 +1300,11 @@ export const SubmitContent = () => {
 
           {/* Form Actions */}
           <div className="flex flex-col gap-3 bg-slate-50/50 px-6 py-6 md:px-8">
-            {isError && (
+            {submissionError && (
               <div className="flex items-center gap-2 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
                 <AlertCircle className="size-4 shrink-0" />
-                {error?.message ?? "Something went wrong. Please try again."}
+                {submissionError.message ??
+                  "Something went wrong. Please try again."}
               </div>
             )}
             <div className="flex items-center justify-end gap-3">
@@ -1229,15 +1316,17 @@ export const SubmitContent = () => {
                   setErrors({})
                 }}
               >
-                Cancel
+                Reset
               </Button>
               <Button type="submit" disabled={isSubmitting}>
                 {isSubmitting ? (
                   <>
                     <Spinner className="size-4" /> Submitting...
                   </>
+                ) : activeType === "product" ? (
+                  "Submit Product Launch"
                 ) : (
-                  "Submit Tool"
+                  "Submit Developer Tool"
                 )}
               </Button>
             </div>
