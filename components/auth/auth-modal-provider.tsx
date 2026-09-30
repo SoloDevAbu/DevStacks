@@ -44,15 +44,23 @@ const AuthQueryListener = () => {
     if (redirectPath) {
       window.history.replaceState({}, "", pathname)
 
-      const isShowcase = redirectPath.includes("showcase")
+      const isTool = redirectPath.includes("type=tool")
+      const isProduct =
+        redirectPath.includes("type=product") ||
+        redirectPath.includes("showcase")
+
       openAuthModal({
         redirectTo: redirectPath,
-        title: isShowcase
-          ? "Sign in with Google to showcase your build"
-          : "Sign in with Google to list a product",
-        description: isShowcase
-          ? "Connect with your Google account to showcase your projects to the developer community."
-          : "Connect with your Google account to list your developer tool or API.",
+        title: isTool
+          ? "Sign in with Google to launch a developer tool"
+          : isProduct
+            ? "Sign in with Google to launch a product"
+            : "Sign in with Google to launch",
+        description: isTool
+          ? "Connect with your Google account to list your developer tool, API, or infrastructure."
+          : isProduct
+            ? "Connect with your Google account to launch your product and declare your tech stack."
+            : "Connect with your Google account to launch your product or developer tool.",
       })
     }
   }, [searchParams, isPending, session?.user, openAuthModal, pathname])

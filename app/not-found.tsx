@@ -44,9 +44,10 @@ const QUICK_EXPLORE_LINKS = [
     icon: TrendingUp,
   },
   {
-    title: "Showcase a Build",
-    description: "Submit your developer tool or project to be discovered.",
-    href: ROUTES.SHOWCASE,
+    title: "New Launch",
+    description:
+      "Submit your software product or developer tool to be discovered.",
+    href: ROUTES.SUBMIT,
     icon: PlusCircle,
   },
 ] as const

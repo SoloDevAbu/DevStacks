@@ -146,7 +146,7 @@ export const ProductsList = ({ products }: ProductsListProps) => {
               <Button
                 size="sm"
                 className="text-xs"
-                render={<Link href={ROUTES.SHOWCASE} />}
+                render={<Link href={ROUTES.SUBMIT_PRODUCT} />}
               >
                 <PlusCircle className="mr-1.5 size-3.5" />
                 Submit Your First Product

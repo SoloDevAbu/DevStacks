@@ -24,16 +24,18 @@ import {
 
 const DIRECTORY_LINKS = [
   { label: "Tools Directory", href: ROUTES.TOOLS },
-  { label: "Products Showcase", href: ROUTES.PRODUCTS },
+  { label: "Products Directory", href: ROUTES.PRODUCTS },
   { label: "Trending Stacks", href: ROUTES.TRENDING },
-  { label: "Showcase a Build", href: ROUTES.SHOWCASE },
+  { label: "Weekly Launches", href: ROUTES.DISCOVER_WEEKLY_LAUNCHES },
+  { label: "Building Blocks", href: ROUTES.DISCOVER_POPULAR_BUILDING_BLOCKS },
   { label: "FAQs", href: ROUTES.FAQ },
 ] as const
 
 const BUILDER_LINKS = [
-  { label: "List a Product", href: ROUTES.SUBMIT },
+  { label: "New Launch", href: ROUTES.SUBMIT },
+  { label: "Launch a Product", href: ROUTES.SUBMIT_PRODUCT },
+  { label: "Launch a Dev Tool", href: ROUTES.SUBMIT_TOOL },
   { label: "Sponsor & Pricing", href: ROUTES.PRICING },
-  { label: "Showcase Build", href: ROUTES.SHOWCASE },
   { label: "Developer Guidelines", href: "/llms.txt" },
 ] as const
 

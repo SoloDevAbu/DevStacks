@@ -239,20 +239,20 @@ export const CreateAdDialog = ({
                     size="sm"
                     className="text-xs"
                     nativeButton={false}
-                    render={<Link href={ROUTES.SUBMIT} />}
+                    render={<Link href={ROUTES.SUBMIT_TOOL} />}
                   >
                     <Wrench className="mr-1.5 size-3" />
-                    Submit Tool
+                    Launch Dev Tool
                   </Button>
                   <Button
                     variant="outline"
                     size="sm"
                     className="text-xs"
                     nativeButton={false}
-                    render={<Link href={ROUTES.SHOWCASE} />}
+                    render={<Link href={ROUTES.SUBMIT_PRODUCT} />}
                   >
                     <Package className="mr-1.5 size-3" />
-                    Showcase Product
+                    Launch Product
                   </Button>
                 </div>
               </div>

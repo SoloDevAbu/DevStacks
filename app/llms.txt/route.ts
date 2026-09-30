@@ -42,13 +42,12 @@ export const GET = async () => {
 - [Weekly Launches](${SITE_CONFIG.url}/discover/weekly-launches): Developer tools and products sorted by week, community-voted.
 - [Popular Building Blocks](${SITE_CONFIG.url}/discover/popular-building-blocks): Most-used APIs and infrastructure ranked by verified adoption count.
 - [Makers](${SITE_CONFIG.url}/makers): Directory of software creators, developers, and builders.
-- [Showcase](${SITE_CONFIG.url}/showcase): Real-world developer projects showcasing complete production stacks.
+- [Submit / New Launch](${SITE_CONFIG.url}/submit): Interactive portal to submit and launch a new software product, SaaS, or developer tool.
 - [FAQ](${SITE_CONFIG.url}/faq): Authoritative Q&A covering launching, directory rules, tech-stack graphs, sponsorships, and AI agent discoverability protocols.
 - [Terms of Service](${SITE_CONFIG.url}/terms): Platform terms of service, listing guidelines, backlink rules, and legal compliance.
 - [Privacy Policy](${SITE_CONFIG.url}/privacy): Developer data handling, GDPR/DPDP rights, and crawler policies.
 - [Refund Policy](${SITE_CONFIG.url}/refund): Cancellation and refund rules for sponsorships and promotional units.
 - [Pricing](${SITE_CONFIG.url}/pricing): Platform sponsorship and promotional listing options for tool creators.
-- [Submit](${SITE_CONFIG.url}/submit): Interactive portal to submit a new developer tool or product.
 - [MCP docs](${SITE_CONFIG.url}/mcp): Human + agent documentation for the public Model Context Protocol server.
 - [Public REST API](${SITE_CONFIG.url}/cli): OpenAPI 3.1 REST API documentation at /v1.
 
@@ -64,7 +63,7 @@ export const GET = async () => {
 - [/trending](${SITE_CONFIG.url}/trending): Trending rankings leaderboard
 - [/discover/weekly-launches](${SITE_CONFIG.url}/discover/weekly-launches): Developer tools and products by week, community voted
 - [/discover/popular-building-blocks](${SITE_CONFIG.url}/discover/popular-building-blocks): Most-used developer APIs and infrastructure tools
-- [/showcase](${SITE_CONFIG.url}/showcase): Developer showcases
+- [/submit](${SITE_CONFIG.url}/submit): Submit and launch products or developer tools
 - [/faq](${SITE_CONFIG.url}/faq): Frequently asked questions (also available as markdown at /faq.md)
 - [/terms](${SITE_CONFIG.url}/terms): Terms of service & platform governance (also available as markdown at /terms.md)
 - [/privacy](${SITE_CONFIG.url}/privacy): Privacy policy & data protection (also available as markdown at /privacy.md)
