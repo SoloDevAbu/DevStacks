@@ -96,8 +96,12 @@ export const generateMetadata = async ({
 
   if (!product) {
     return {
-      title: "Product Not Found",
+      title: `Product Not Found | ${SITE_CONFIG.name}`,
       description: "The requested developer product could not be found.",
+      robots: {
+        index: false,
+        follow: false,
+      },
     }
   }
 

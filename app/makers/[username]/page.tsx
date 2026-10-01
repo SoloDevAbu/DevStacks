@@ -48,8 +48,17 @@ export const generateMetadata = async ({
   if (!maker) {
     return {
       title: `Maker Not Found — ${SITE_CONFIG.name}`,
+      robots: {
+        index: false,
+        follow: false,
+      },
     }
   }
+
+  const isSubstantive =
+    maker.toolsCount > 0 ||
+    maker.productsCount > 0 ||
+    Boolean(maker.bio && maker.bio.trim().length > 50)
 
   const displayName = maker.name || `@${maker.username}`
   const flag = countryCodeToFlag(maker.country)
@@ -78,6 +87,15 @@ export const generateMetadata = async ({
     alternates: {
       canonical: profileUrl,
     },
+    robots: isSubstantive
+      ? {
+          index: true,
+          follow: true,
+        }
+      : {
+          index: false,
+          follow: true,
+        },
     other: Object.keys(geoTags).length > 0 ? geoTags : undefined,
     openGraph: {
       title,

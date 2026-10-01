@@ -12,6 +12,7 @@ import { getTools, getToolsStats } from "@/db/queries/tools/list"
 import type { DbTool } from "@/types/entities"
 import { ToolsDirectoryContent } from "./tools-content"
 import type { SortOption } from "@/components/tools/tools-filter-bar"
+import { CrawlablePagination } from "@/components/shared/crawlable-pagination"
 
 export const revalidate = 60
 
@@ -21,6 +22,7 @@ export const generateMetadata = async (props: {
     q?: string
     pricing?: string
     sortBy?: SortOption
+    page?: string
   }>
 }): Promise<Metadata> => {
   const searchParams = await props.searchParams
@@ -28,17 +30,21 @@ export const generateMetadata = async (props: {
   const q = searchParams?.q
   const pricing = searchParams?.pricing
   const sortBy = searchParams?.sortBy
+  const pageStr = searchParams?.page
+  const parsedPage = pageStr ? parseInt(pageStr, 10) : 1
+  const currentPage = Number.isInteger(parsedPage) && parsedPage > 1 ? parsedPage : 1
 
   const filterSuffix = [
     category ? `Category: ${category}` : null,
     pricing && pricing.toLowerCase() !== "all" ? `Pricing: ${pricing}` : null,
     sortBy ? `Sorted by: ${sortBy}` : null,
+    currentPage > 1 ? `Page ${currentPage}` : null,
   ]
     .filter(Boolean)
     .join(" • ")
 
   const title = category
-    ? `${category} Developer Tools, APIs & Infrastructure | ${SITE_CONFIG.name}`
+    ? `${category} Developer Tools, APIs & Infrastructure${currentPage > 1 ? ` (Page ${currentPage})` : ""} | ${SITE_CONFIG.name}`
     : q
       ? `Search "${q}" Developer Tools | ${SITE_CONFIG.name}`
       : filterSuffix.length > 0
@@ -50,9 +56,17 @@ export const generateMetadata = async (props: {
     : `Browse the complete directory of developer tools, APIs, and infrastructure on ${SITE_CONFIG.name}.`
 
   const cleanCategory = category?.trim()
-  const canonicalUrl = cleanCategory
-    ? `${SITE_CONFIG.url}/tools?category=${encodeURIComponent(cleanCategory)}`
-    : `${SITE_CONFIG.url}/tools`
+  const hasSearchQuery = Boolean(q && q.trim())
+
+  let canonicalUrl = `${SITE_CONFIG.url}/tools`
+  if (cleanCategory) {
+    canonicalUrl = `${SITE_CONFIG.url}/tools?category=${encodeURIComponent(cleanCategory)}`
+    if (currentPage > 1) {
+      canonicalUrl += `&page=${currentPage}`
+    }
+  } else if (currentPage > 1) {
+    canonicalUrl = `${SITE_CONFIG.url}/tools?page=${currentPage}`
+  }
 
   return {
     title,
@@ -68,6 +82,12 @@ export const generateMetadata = async (props: {
     alternates: {
       canonical: canonicalUrl,
     },
+    robots: hasSearchQuery
+      ? {
+          index: false,
+          follow: true,
+        }
+      : undefined,
     openGraph: {
       title,
       description,
@@ -98,6 +118,7 @@ const ToolsPage = async (props: {
     q?: string
     pricing?: string
     sortBy?: SortOption
+    page?: string
   }>
 }) => {
   const searchParams = await props.searchParams
@@ -105,6 +126,10 @@ const ToolsPage = async (props: {
   const q = searchParams?.q
   const pricing = searchParams?.pricing
   const sortBy = searchParams?.sortBy ?? "upvotes"
+  const pageStr = searchParams?.page
+  const parsedPage = pageStr ? parseInt(pageStr, 10) : 1
+  const currentPage = Number.isInteger(parsedPage) && parsedPage > 1 ? parsedPage : 1
+  const pageSize = 20
 
   const breadcrumbs = breadcrumbSchema([
     { name: "Home", url: SITE_CONFIG.url },
@@ -117,11 +142,13 @@ const ToolsPage = async (props: {
       q,
       pricing: pricing && pricing.toLowerCase() !== "all" ? pricing : undefined,
       sortBy,
-      limit: 20,
-      page: 1,
+      limit: pageSize,
+      page: currentPage,
     }).catch(() => []),
     getToolsStats().catch(() => ({ totalCount: 0, totalBuilds: 0 })),
   ])
+
+  const totalPages = Math.ceil(stats.totalCount / pageSize)
 
   const collectionJsonLd = collectionPageSchema({
     name: category ? `${category} Tools` : "Developer Tools Directory",
@@ -164,12 +191,23 @@ const ToolsPage = async (props: {
         />
 
         <ToolsDirectoryContent
-          key={`${category ?? "all"}-${q ?? ""}-${pricing ?? "all"}-${sortBy}`}
+          key={`${category ?? "all"}-${q ?? ""}-${pricing ?? "all"}-${sortBy}-${currentPage}`}
           initialCategory={category}
           initialQuery={q}
           initialPricing={pricing ?? "all"}
           initialSortBy={sortBy}
           initialTools={toolsList}
+        />
+
+        <CrawlablePagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          basePath={ROUTES.TOOLS}
+          params={{
+            category,
+            pricing: pricing && pricing.toLowerCase() !== "all" ? pricing : undefined,
+            sortBy: sortBy !== "upvotes" ? sortBy : undefined,
+          }}
         />
       </div>
     </>

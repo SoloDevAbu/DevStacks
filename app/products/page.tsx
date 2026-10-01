@@ -8,6 +8,7 @@ import { getProducts, getProductsStats } from "@/db/queries/products/list"
 import type { DbProduct } from "@/types/entities"
 import { ProductsDirectoryContent } from "./products-content"
 import type { ProductSortOption } from "@/components/products/products-filter-bar"
+import { CrawlablePagination } from "@/components/shared/crawlable-pagination"
 
 export const revalidate = 60
 
@@ -17,6 +18,7 @@ export const generateMetadata = async (props: {
     q?: string
     pricing?: string
     sortBy?: ProductSortOption
+    page?: string
   }>
 }): Promise<Metadata> => {
   const searchParams = await props.searchParams
@@ -24,17 +26,21 @@ export const generateMetadata = async (props: {
   const q = searchParams?.q
   const pricing = searchParams?.pricing
   const sortBy = searchParams?.sortBy
+  const pageStr = searchParams?.page
+  const parsedPage = pageStr ? parseInt(pageStr, 10) : 1
+  const currentPage = Number.isInteger(parsedPage) && parsedPage > 1 ? parsedPage : 1
 
   const filterSuffix = [
     category ? `Category: ${category}` : null,
     pricing && pricing.toLowerCase() !== "all" ? `Pricing: ${pricing}` : null,
     sortBy ? `Sorted by: ${sortBy}` : null,
+    currentPage > 1 ? `Page ${currentPage}` : null,
   ]
     .filter(Boolean)
     .join(" • ")
 
   const title = category
-    ? `${category} Developer Products & Software | ${SITE_CONFIG.name}`
+    ? `${category} Developer Products & Software${currentPage > 1 ? ` (Page ${currentPage})` : ""} | ${SITE_CONFIG.name}`
     : q
       ? `Search "${q}" Developer Products | ${SITE_CONFIG.name}`
       : filterSuffix.length > 0
@@ -46,9 +52,17 @@ export const generateMetadata = async (props: {
     : `Browse the complete directory of developer products, software, and tools on ${SITE_CONFIG.name}.`
 
   const cleanCategory = category?.trim()
-  const canonicalUrl = cleanCategory
-    ? `${SITE_CONFIG.url}/products?category=${encodeURIComponent(cleanCategory)}`
-    : `${SITE_CONFIG.url}/products`
+  const hasSearchQuery = Boolean(q && q.trim())
+
+  let canonicalUrl = `${SITE_CONFIG.url}/products`
+  if (cleanCategory) {
+    canonicalUrl = `${SITE_CONFIG.url}/products?category=${encodeURIComponent(cleanCategory)}`
+    if (currentPage > 1) {
+      canonicalUrl += `&page=${currentPage}`
+    }
+  } else if (currentPage > 1) {
+    canonicalUrl = `${SITE_CONFIG.url}/products?page=${currentPage}`
+  }
 
   return {
     title,
@@ -64,6 +78,12 @@ export const generateMetadata = async (props: {
     alternates: {
       canonical: canonicalUrl,
     },
+    robots: hasSearchQuery
+      ? {
+          index: false,
+          follow: true,
+        }
+      : undefined,
     openGraph: {
       title,
       description,
@@ -94,6 +114,7 @@ const ProductsPage = async (props: {
     q?: string
     pricing?: string
     sortBy?: ProductSortOption
+    page?: string
   }>
 }) => {
   const searchParams = await props.searchParams
@@ -101,6 +122,10 @@ const ProductsPage = async (props: {
   const q = searchParams?.q
   const pricing = searchParams?.pricing
   const sortBy = searchParams?.sortBy ?? "upvotes"
+  const pageStr = searchParams?.page
+  const parsedPage = pageStr ? parseInt(pageStr, 10) : 1
+  const currentPage = Number.isInteger(parsedPage) && parsedPage > 1 ? parsedPage : 1
+  const pageSize = 20
 
   const breadcrumbs = breadcrumbSchema([
     { name: "Home", url: SITE_CONFIG.url },
@@ -113,11 +138,13 @@ const ProductsPage = async (props: {
       q,
       pricing: pricing && pricing.toLowerCase() !== "all" ? pricing : undefined,
       sortBy: sortBy === "upvotes" ? "likes" : sortBy,
-      limit: 20,
-      page: 1,
+      limit: pageSize,
+      page: currentPage,
     }).catch(() => []),
     getProductsStats().catch(() => ({ totalCount: 0, totalLikes: 0 })),
   ])
+
+  const totalPages = Math.ceil(stats.totalCount / pageSize)
 
   const collectionJsonLd = collectionPageSchema({
     name: category ? `${category} Products` : "Products Directory",
@@ -158,12 +185,23 @@ const ProductsPage = async (props: {
         />
 
         <ProductsDirectoryContent
-          key={`${category ?? "all"}-${q ?? ""}-${pricing ?? "all"}-${sortBy}`}
+          key={`${category ?? "all"}-${q ?? ""}-${pricing ?? "all"}-${sortBy}-${currentPage}`}
           initialCategory={category}
           initialQuery={q}
           initialPricing={pricing ?? "all"}
           initialSortBy={sortBy}
           initialProducts={initialProducts as DbProduct[]}
+        />
+
+        <CrawlablePagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          basePath={ROUTES.PRODUCTS}
+          params={{
+            category,
+            pricing: pricing && pricing.toLowerCase() !== "all" ? pricing : undefined,
+            sortBy: sortBy !== "upvotes" ? sortBy : undefined,
+          }}
         />
       </div>
     </>

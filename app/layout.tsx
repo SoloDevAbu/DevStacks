@@ -93,13 +93,6 @@ export const metadata: Metadata = {
     types: {
       "application/rss+xml": `${SITE_CONFIG.url}/feed.xml`,
     },
-    languages: {
-      "x-default": SITE_CONFIG.url,
-      "en-US": SITE_CONFIG.url,
-      en: SITE_CONFIG.url,
-      "en-GB": SITE_CONFIG.url,
-      "en-IN": SITE_CONFIG.url,
-    },
   },
   other: {
     "ai-agent":

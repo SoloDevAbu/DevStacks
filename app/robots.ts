@@ -1,13 +1,28 @@
 import type { MetadataRoute } from "next"
 import { SITE_CONFIG } from "@/constants/site"
 
+const DISALLOWED_PATHS = [
+  "/api/auth/",
+  "/api/checkout/",
+  "/api/webhook/",
+  "/api/track/",
+  "/api/migrate/",
+  "/api/seed/",
+  "/api/users",
+  "/admin/",
+  "/dashboard/",
+  "/*?*q=*",
+  "/*?*sortBy=*",
+  "/*?*pricing=*",
+]
+
 const robots = (): MetadataRoute.Robots => {
   return {
     rules: [
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/api/users", "/api/auth/", "/admin/", "/dashboard/"],
+        disallow: DISALLOWED_PATHS,
       },
       {
         userAgent: [
@@ -19,7 +34,7 @@ const robots = (): MetadataRoute.Robots => {
           "YandexBot",
         ],
         allow: "/",
-        disallow: ["/api/users", "/api/auth/", "/admin/", "/dashboard/"],
+        disallow: DISALLOWED_PATHS,
       },
       // AI Crawlers, Answer Engines & LLM Agents
       {
@@ -51,7 +66,7 @@ const robots = (): MetadataRoute.Robots => {
           "Omgilibot",
         ],
         allow: "/",
-        disallow: ["/api/users", "/api/auth/", "/admin/", "/dashboard/"],
+        disallow: DISALLOWED_PATHS,
       },
     ],
     sitemap: `${SITE_CONFIG.url}/sitemap.xml`,

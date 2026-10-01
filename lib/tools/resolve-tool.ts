@@ -1,3 +1,4 @@
+import { cache } from "react"
 import { db } from "@/db"
 import { products, productTools, tools, categories } from "@/db/schema"
 import { and, eq, ilike, or } from "drizzle-orm"
@@ -29,7 +30,7 @@ export interface FullTool extends DbTool {
   updatedAt?: Date
 }
 
-export const resolveTool = async (slug: string): Promise<FullTool | null> => {
+export const resolveTool = cache(async (slug: string): Promise<FullTool | null> => {
   try {
     const dbTool = await getToolBySlug(slug)
     if (dbTool) {
@@ -46,7 +47,7 @@ export const resolveTool = async (slug: string): Promise<FullTool | null> => {
   }
 
   return null
-}
+})
 
 export const getProductsBuiltWithTool = async (
   toolSlug: string,

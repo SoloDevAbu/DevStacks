@@ -1,6 +1,7 @@
+import { cache } from "react"
 import { db } from "@/db"
 import { users, makerFaqs, tools, products, categories } from "@/db/schema"
-import { eq, desc, asc, and, isNotNull, sql, inArray } from "drizzle-orm"
+import { eq, desc, asc, and, isNotNull, sql, inArray, or } from "drizzle-orm"
 import type { MakerProfile, DbTool, DbProduct } from "@/types/entities"
 
 export const generateUniqueUsername = async (
@@ -35,15 +36,14 @@ export const generateUniqueUsername = async (
   return `${seed}_${Date.now().toString(36).slice(-4)}`
 }
 
-export const getMakerProfile = async (
-  username: string
-): Promise<MakerProfile | null> => {
-  const cleanUsername = decodeURIComponent(username)
-    .replace(/^@/, "")
-    .trim()
-    .toLowerCase()
+export const getMakerProfile = cache(
+  async (username: string): Promise<MakerProfile | null> => {
+    const cleanUsername = decodeURIComponent(username)
+      .replace(/^@/, "")
+      .trim()
+      .toLowerCase()
 
-  if (!cleanUsername) return null
+    if (!cleanUsername) return null
 
   const [user] = await db
     .select()
@@ -160,7 +160,7 @@ export const getMakerProfile = async (
     toolsCount: userTools.length,
     productsCount: userProducts.length,
   }
-}
+})
 
 export const getCurrentUserProfile = async (userId: string) => {
   const [user] = await db
@@ -188,7 +188,7 @@ export const getCurrentUserProfile = async (userId: string) => {
   }
 }
 
-export const getAllMakers = async (limit = 5000) => {
+export const getActiveMakersForSitemap = async (limit = 5000) => {
   return db
     .select({
       username: users.username,
@@ -196,9 +196,20 @@ export const getAllMakers = async (limit = 5000) => {
       createdAt: users.createdAt,
     })
     .from(users)
-    .where(isNotNull(users.username))
+    .where(
+      and(
+        isNotNull(users.username),
+        or(
+          sql`EXISTS (SELECT 1 FROM ${tools} WHERE ${tools.submitterId} = ${users.id} AND ${tools.status} = 'approved')`,
+          sql`EXISTS (SELECT 1 FROM ${products} WHERE ${products.submitterId} = ${users.id} AND ${products.status} = 'approved')`,
+          and(isNotNull(users.bio), sql`length(trim(${users.bio})) > 50`)
+        )
+      )
+    )
     .limit(limit)
 }
+
+export const getAllMakers = getActiveMakersForSitemap
 
 export interface MakerDirectoryItem {
   id: string
@@ -240,7 +251,16 @@ export const getMakersDirectory = async (
       createdAt: users.createdAt,
     })
     .from(users)
-    .where(isNotNull(users.username))
+    .where(
+      and(
+        isNotNull(users.username),
+        or(
+          sql`EXISTS (SELECT 1 FROM ${tools} WHERE ${tools.submitterId} = ${users.id} AND ${tools.status} = 'approved')`,
+          sql`EXISTS (SELECT 1 FROM ${products} WHERE ${products.submitterId} = ${users.id} AND ${products.status} = 'approved')`,
+          and(isNotNull(users.bio), sql`length(trim(${users.bio})) > 50`)
+        )
+      )
+    )
     .orderBy(desc(users.createdAt))
     .limit(limit)
 

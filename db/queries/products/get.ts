@@ -86,12 +86,6 @@ export const getProductBySlug = async (slug: string) => {
     toolId: t.toolId ?? null,
   }))
 
-  // Increment view count (fire-and-forget)
-  db.update(products)
-    .set({ viewsCount: sql`${products.viewsCount} + 1` })
-    .where(eq(products.slug, slug))
-    .catch(() => {})
-
   return {
     ...product,
     builtWithTools,

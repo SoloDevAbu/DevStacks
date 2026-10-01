@@ -100,8 +100,12 @@ export const generateMetadata = async ({
 
   if (!tool) {
     return {
-      title: "Tool Not Found",
+      title: `Tool Not Found | ${SITE_CONFIG.name}`,
       description: "The requested developer tool could not be found.",
+      robots: {
+        index: false,
+        follow: false,
+      },
     }
   }
 

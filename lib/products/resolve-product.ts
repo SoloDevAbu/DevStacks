@@ -1,3 +1,4 @@
+import { cache } from "react"
 import { getProductBySlug } from "@/db/queries/products/get"
 import type { DbProduct } from "@/types/entities"
 
@@ -27,9 +28,8 @@ export interface FullProduct extends DbProduct {
   updatedAt?: Date
 }
 
-export const resolveProduct = async (
-  slug: string
-): Promise<FullProduct | null> => {
+export const resolveProduct = cache(
+  async (slug: string): Promise<FullProduct | null> => {
   try {
     const dbProduct = await getProductBySlug(slug)
     if (dbProduct) {
@@ -46,4 +46,4 @@ export const resolveProduct = async (
   }
 
   return null
-}
+})

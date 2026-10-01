@@ -44,13 +44,13 @@ const nextConfig: NextConfig = {
     },
     {
       source: "/opengraph-image",
-      destination: "/LaunchNests%20OG.png",
-      permanent: false,
+      destination: "/og-image.png",
+      permanent: true,
     },
     {
       source: "/twitter-image",
-      destination: "/LaunchNests%20OG.png",
-      permanent: false,
+      destination: "/og-image.png",
+      permanent: true,
     },
   ],
   headers: async () => [
