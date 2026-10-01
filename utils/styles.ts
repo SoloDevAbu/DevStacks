@@ -292,11 +292,20 @@ export const heroStatPill = toolHeroStatPill
 export const toolFilterButton =
   "relative z-10 h-7.5 gap-1.5 rounded-lg px-2.5 text-xs transition-colors"
 
+export const sidebarContainer =
+  "flex h-full flex-col overflow-hidden p-3.5 xl:p-5 2xl:p-6 [@media(max-height:720px)]:p-2.5 select-none"
+
+export const sidebarNavGroup =
+  "flex flex-col gap-3.5 xl:gap-5 [@media(max-height:720px)]:gap-2"
+
+export const sidebarNavSection =
+  "flex flex-col gap-1 xl:gap-1.5"
+
 export const sidebarHeading =
-  "font-mono text-[11px] font-bold tracking-wider text-slate-400 uppercase"
+  "font-mono text-[10px] xl:text-[11px] font-bold tracking-wider text-slate-400 uppercase select-none"
 
 export const sidebarNavItem =
-  "group relative flex w-full items-center justify-between rounded-lg px-3 py-2 text-xs font-medium transition-all"
+  "group relative flex w-full items-center justify-between rounded-lg px-2.5 py-1.5 xl:py-2 text-xs font-medium transition-all"
 
 export const sidebarNavItemActive =
   "bg-slate-100 text-slate-900 font-semibold border border-slate-200/80 shadow-2xs"
@@ -317,10 +326,19 @@ export const sidebarBadgeNeutral =
   "rounded bg-slate-100 px-1.5 py-0.5 font-mono text-[10px] font-bold text-slate-600 border border-slate-200"
 
 export const quickStackChip =
-  "inline-flex items-center gap-1.5 rounded-md border border-slate-200/80 bg-white px-2 py-1 text-[11px] font-medium text-slate-700 hover:border-slate-300 hover:bg-slate-50 transition-colors shadow-2xs"
+  "inline-flex items-center gap-1 rounded-md border border-slate-200/80 bg-white px-2 py-0.5 xl:py-1 text-[11px] font-medium text-slate-700 hover:border-slate-300 hover:bg-slate-50 transition-colors shadow-2xs"
 
 export const quickStackChipActive =
   "border-indigo-200 bg-indigo-50 font-semibold text-indigo-700"
+
+export const sidebarPromoWrapper =
+  "mt-4 xl:mt-5 [@media(max-height:720px)]:mt-2.5 flex flex-col gap-2 xl:gap-2.5 border-t border-dashed border-border pt-3 xl:pt-3.5 [@media(max-height:720px)]:pt-2"
+
+export const sidebarPromoCard =
+  "relative overflow-hidden rounded-xl border border-dashed border-border bg-linear-to-b from-slate-50/90 to-white p-3 xl:p-3.5 [@media(max-height:720px)]:p-2.5 transition-all"
+
+export const sidebarSocialsWrapper =
+  "mt-auto flex items-center justify-end px-1 pt-2"
 
 export const spotlightCard =
   "group relative rounded-xl border border-dashed border-border bg-linear-to-b from-slate-50/60 via-white to-white p-4 transition-all hover:border-slate-300 hover:shadow-2xs"

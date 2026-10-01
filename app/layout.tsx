@@ -183,7 +183,7 @@ const RootLayout = ({
             {/* --- BOTTOM ROW (Content) --- */}
             <div className="grid flex-1 grid-cols-1 lg:grid-cols-[320px_1fr] xl:grid-cols-[320px_1fr_380px]">
               {/* Bottom Left (Sidebar) */}
-              <aside className="sticky top-16 hidden h-[calc(100vh-64px)] scrollbar-thin flex-col overflow-y-auto border-r border-dashed border-border bg-white lg:flex">
+              <aside className="sticky top-16 hidden h-[calc(100dvh-4rem)] flex-col overflow-hidden border-r border-dashed border-border bg-white lg:flex">
                 <LeftSidebar />
               </aside>
 

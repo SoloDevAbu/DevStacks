@@ -19,6 +19,9 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import {
+  sidebarContainer,
+  sidebarNavGroup,
+  sidebarNavSection,
   sidebarHeading,
   sidebarNavItem,
   sidebarNavItemActive,
@@ -29,6 +32,9 @@ import {
   sidebarBadgeNeutral,
   quickStackChip,
   quickStackChipActive,
+  sidebarPromoWrapper,
+  sidebarPromoCard,
+  sidebarSocialsWrapper,
 } from "@/utils/styles"
 
 const renderBadge = (badge?: NavItemBadge) => {
@@ -46,12 +52,12 @@ export const LeftSidebar = () => {
   const pathname = usePathname()
 
   return (
-    <div className="flex h-full flex-col justify-between p-6 xl:p-7">
-      <div className="flex flex-col gap-7">
+    <div className={sidebarContainer}>
+      <div className={sidebarNavGroup}>
         {SIDEBAR_NAV.map((section) => (
-          <div key={section.label} className="flex flex-col gap-2">
+          <div key={section.label} className={sidebarNavSection}>
             <h3 className={sidebarHeading}>{section.label}</h3>
-            <nav className="flex flex-col gap-1">
+            <nav className="flex flex-col gap-0.5 xl:gap-1">
               {section.items.map((item) => {
                 const isActive =
                   pathname === item.href ||
@@ -66,10 +72,10 @@ export const LeftSidebar = () => {
                       isActive ? sidebarNavItemActive : sidebarNavItemInactive
                     )}
                   >
-                    <span className="flex items-center gap-2.5">
+                    <span className="flex items-center gap-2 xl:gap-2.5">
                       <item.icon
                         className={cn(
-                          "size-4 shrink-0 transition-colors",
+                          "size-3.5 xl:size-4 shrink-0 transition-colors",
                           isActive
                             ? "text-slate-900"
                             : "text-slate-400 group-hover:text-slate-700"
@@ -86,9 +92,9 @@ export const LeftSidebar = () => {
         ))}
 
         {/* Popular Stacks Quick-Filter */}
-        <div className="flex flex-col gap-2.5 pt-2">
+        <div className="flex flex-col gap-1.5 xl:gap-2">
           <h3 className={sidebarHeading}>Popular Stacks</h3>
-          <div className="flex flex-wrap gap-1.5">
+          <div className="flex flex-wrap gap-1 xl:gap-1.5">
             {QUICK_STACKS.map((stack) => {
               const isStackActive = pathname.includes(
                 encodeURIComponent(stack.name)
@@ -110,70 +116,75 @@ export const LeftSidebar = () => {
         </div>
       </div>
 
-      {/* Bottom Ecosystem Promo & Status */}
-      <div className="mt-8 flex flex-col gap-4 border-t border-dashed border-border pt-6">
-        <div className="relative overflow-hidden rounded-xl border border-dashed border-border bg-linear-to-b from-slate-50/90 to-white p-4">
-          <div className="flex items-start justify-between gap-2">
-            <div className="flex size-7 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600">
-              <Sparkles className="size-3.5" />
+      {/* Launch Promo Card */}
+      <div className={sidebarPromoWrapper}>
+        <div className={sidebarPromoCard}>
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <div className="flex size-5.5 xl:size-6 shrink-0 items-center justify-center rounded-md bg-indigo-50 text-indigo-600">
+                <Sparkles className="size-3" />
+              </div>
+              <p className="text-xs font-bold text-slate-900">
+                Ready to Launch?
+              </p>
             </div>
-            <span className="rounded-md border border-indigo-200/80 bg-indigo-50/80 px-1.5 py-0.5 font-mono text-[10px] font-bold text-indigo-700">
+            <span className="shrink-0 rounded-md border border-indigo-200/80 bg-indigo-50/80 px-1.5 py-0.5 font-mono text-[10px] font-bold text-indigo-700">
               FREE
             </span>
           </div>
-          <p className="mt-2 text-xs font-bold text-slate-900">
-            Ready to Launch?
-          </p>
-          <p className="mt-1 text-[11px] leading-relaxed text-slate-500">
+
+          <p className="mt-1 text-[11px] leading-snug text-slate-500 [@media(max-height:680px)]:hidden">
             Submit your product or developer tool to be discovered by engineers and AI.
           </p>
+
           <Link
             href={ROUTES.SUBMIT}
-            className="mt-3 inline-flex items-center gap-1 font-mono text-xs font-semibold text-indigo-600 hover:text-indigo-800"
+            className="mt-2 inline-flex items-center gap-1 font-mono text-xs font-semibold text-indigo-600 hover:text-indigo-800"
           >
             Start Launch
             <ArrowUpRight className="size-3" />
           </Link>
         </div>
+      </div>
 
-        <div className="flex items-center justify-end px-1">
-          <div className="flex items-center gap-1">
-            <TooltipProvider delay={150}>
-              <Tooltip>
-                <TooltipTrigger
-                  render={
-                    <a
-                      href={CREATOR_SOCIALS.x}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label="Follow Abu Bakkar on X"
-                      className={sidebarSocialLink}
-                    />
-                  }
-                >
-                  <XIcon className="size-3.5" />
-                </TooltipTrigger>
-                <TooltipContent side="top">X</TooltipContent>
-              </Tooltip>
+      {/* Creator Socials at Bottom of Left Sidebar */}
+      <div className={sidebarSocialsWrapper}>
+        <div className="flex items-center gap-1">
+          <TooltipProvider delay={150}>
+            <Tooltip>
+              <TooltipTrigger
+                render={
+                  <a
+                    href={CREATOR_SOCIALS.x}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Follow Abu Bakkar on X"
+                    className={sidebarSocialLink}
+                  />
+                }
+              >
+                <XIcon className="size-3.5" />
+              </TooltipTrigger>
+              <TooltipContent side="top">X</TooltipContent>
+            </Tooltip>
 
-              <Tooltip>
-                <TooltipTrigger
-                  render={
-                    <a
-                      href={CREATOR_SOCIALS.linkedin}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label="Connect with Abu Bakkar on LinkedIn"
-                      className={sidebarSocialLink}
-                    />
-                  }
-                >
-                  <LinkedInIcon className="size-3.5" />
-                </TooltipTrigger>
-                <TooltipContent side="top">LinkedIn</TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
+            <Tooltip>
+              <TooltipTrigger
+                render={
+                  <a
+                    href={CREATOR_SOCIALS.linkedin}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Connect with Abu Bakkar on LinkedIn"
+                    className={sidebarSocialLink}
+                  />
+                }
+              >
+                <LinkedInIcon className="size-3.5" />
+              </TooltipTrigger>
+              <TooltipContent side="top">LinkedIn</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
       </div>
     </div>
