@@ -497,11 +497,24 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
           </div>
         </header>
 
-        {/* Section 1: About */}
+        {/* Section 1: What is {tool.name}? */}
         <section className="border-b border-dashed border-border bg-white">
-          <DetailSectionHeader title="About" icon={Info} theme="blue" />
+          <DetailSectionHeader
+            title={`What is ${tool.name}?`}
+            subtitle="Overview, core features, and developer capabilities"
+            icon={Info}
+            theme="blue"
+          />
           <div className={sectionContentBox}>
-            <p className={detailSectionText}>{tool.description}</p>
+            <p
+              className={cn(
+                detailSectionText,
+                "text-base font-normal leading-relaxed text-slate-700"
+              )}
+            >
+              {tool.description ??
+                `${tool.name} is a developer tool and software building block cataloged on ${SITE_CONFIG.name}.`}
+            </p>
           </div>
         </section>
 
@@ -781,6 +794,39 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
                 )}
               </div>
             </div>
+
+            {(tool.websiteUrl || tool.githubUrl) && (
+              <div className={specRow}>
+                <div className={specRowHeader}>
+                  <span className={specBadge}>
+                    <Globe className="size-3 text-slate-600" />
+                  </span>
+                  <h3 className={specRowTitle}>Official Resources</h3>
+                </div>
+                <div className="flex flex-wrap items-center gap-3 text-xs sm:text-sm">
+                  {tool.websiteUrl && (
+                    <a
+                      href={tool.websiteUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-medium text-blue-600 hover:underline"
+                    >
+                      Official Website ↗
+                    </a>
+                  )}
+                  {tool.githubUrl && (
+                    <a
+                      href={tool.githubUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-medium text-slate-700 hover:text-slate-900 hover:underline"
+                    >
+                      GitHub Repository ↗
+                    </a>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
         </section>
 

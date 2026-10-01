@@ -4,23 +4,36 @@ import { PLATFORMS } from "@/constants/platforms"
 import { LAUNCHNESTS_FAQS, FAQ_CATEGORIES } from "@/constants/faqs"
 import { getTools } from "@/db/queries/tools/list"
 import { getTrending } from "@/lib/rankings/trending"
+import {
+  getToolCategories,
+  getProductCategories,
+  type DbCategoryItem,
+} from "@/db/queries/categories/list"
 
 export const revalidate = 86400
 
 export const GET = async () => {
   let trendingItems: Awaited<ReturnType<typeof getTrending>> = []
   let buildingBlocks: Awaited<ReturnType<typeof getTools>> = []
+  let toolCats: DbCategoryItem[] = []
+  let productCats: DbCategoryItem[] = []
 
   try {
-    const [trending, blocks] = await Promise.all([
+    const [trending, blocks, tCats, pCats] = await Promise.all([
       getTrending(15),
       getTools({ sortBy: "builds", limit: 10 }),
+      getToolCategories().catch(() => []),
+      getProductCategories().catch(() => []),
     ])
     trendingItems = trending ?? []
     buildingBlocks = blocks ?? []
+    toolCats = tCats ?? []
+    productCats = pCats ?? []
   } catch {
     trendingItems = []
     buildingBlocks = []
+    toolCats = []
+    productCats = []
   }
 
   const content = `# ${SITE_CONFIG.name} — Comprehensive Directory & Ecosystem Specification
@@ -28,6 +41,8 @@ export const GET = async () => {
 > Platform: ${SITE_CONFIG.name} (${SITE_CONFIG.domain})
 > Canonical URL: ${SITE_CONFIG.url}
 > Mission: High-visibility discovery directory for developer tools, APIs, infrastructure, and developer-built products.
+> Last Updated: 2026-10-01
+> Catalog Freshness: Updated daily
 
 ---
 
@@ -46,16 +61,11 @@ ${SITE_CONFIG.name} is a developer-focused platform cataloging modern tools, lib
 ### Supported Platforms
 ${PLATFORMS.map((p) => `- **${p.label}**`).join("\n")}
 
-### Key Product Categories
-- Artificial Intelligence & Machine Learning
-- Databases & Backend as a Service (BaaS)
-- Developer Tools & Productivity
-- API & Infrastructure
-- Hosting & Edge Cloud
-- Authentication & Security
-- Analytics & Telemetry
-- Payments & Billing APIs
-- Email & Communications
+### Developer Tool Categories (${toolCats.length} Active Categories)
+${toolCats.map((c) => `- **${c.name}**: ${c.count} verified tools (${SITE_CONFIG.url}/tools?category=${encodeURIComponent(c.name)})`).join("\n")}
+
+### Developer Product Categories (${productCats.length} Active Categories)
+${productCats.map((c) => `- **${c.name}**: ${c.count} verified products (${SITE_CONFIG.url}/products?category=${encodeURIComponent(c.name)})`).join("\n")}
 
 ---
 
@@ -67,11 +77,13 @@ ${trendingItems
     const entityPath = isTool ? `/tools/${p.slug}` : `/products/${p.slug}`
     return `### ${p.name}
 - Slug: ${p.slug}
+- Type: ${p.itemKind}
+- Category: ${p.category ?? "Developer Tools"}
+- Pricing: ${p.pricing ?? "Free / Freemium"}
 - Canonical URL: ${SITE_CONFIG.url}${entityPath}
 - Markdown Twin: ${SITE_CONFIG.url}${entityPath}.md
 - Tagline: ${p.tagline}
 - Tags: ${(p.tags ?? []).join(", ")}
-- Type: ${p.itemKind}
 `
   })
   .join("\n")}
@@ -89,9 +101,10 @@ ${buildingBlocks.map((b) => `- **${b.name}** (${b.category ?? "Tool"}): Used in 
 The following live statistics reflect the current state of the ${SITE_CONFIG.name} catalog:
 - Canonical URL: ${SITE_CONFIG.url}
 - Directory scope: developer tools, APIs, SDKs, infrastructure services, and developer-built software products
+- Active taxonomy: ${toolCats.length} tool categories, ${productCats.length} product categories
 - Community signals: upvotes on tools, likes on products, and verified "Built With" cross-links
 - Supported pricing tiers: Free, Freemium, Paid, Open Source
-- AI agent access: JSON API at /api/ai, MCP tools at /api/mcp, REST catalog at /v1
+- AI agent access: JSON API at /api/ai, MCP tools at /api/mcp, REST catalog at /v1, pricing at /pricing.md
 - Machine-readable: llms.txt and llms-full.txt updated daily; every entity page available as text/markdown
 
 ---
@@ -140,6 +153,7 @@ ${faq.answer}`
 - GET ${SITE_CONFIG.url}/api/tools: Filter tools by category, pricing, or search query.
 - GET ${SITE_CONFIG.url}/api/tools/[slug]: Complete tool JSON data including buildsCount and upvotesCount.
 - GET ${SITE_CONFIG.url}/api/trending: Real-time ranked list of developer tools and products.
+- GET ${SITE_CONFIG.url}/pricing.md: Machine-readable pricing specification for autonomous agents.
 
 ---
 
@@ -149,6 +163,7 @@ ${faq.answer}`
 - Model Context Protocol: ${SITE_CONFIG.url}/api/mcp (Streamable HTTP, JSON-RPC 2.0)
 - MCP Docs & Guides: ${SITE_CONFIG.url}/mcp and ${SITE_CONFIG.url}/mcp.md
 - CLI Documentation: ${SITE_CONFIG.url}/cli and ${SITE_CONFIG.url}/cli.md
+- Pricing Specification: ${SITE_CONFIG.url}/pricing.md
 - FAQ Markdown Twin: ${SITE_CONFIG.url}/faq.md
 - Terms Markdown Twin: ${SITE_CONFIG.url}/terms.md
 - Privacy Markdown Twin: ${SITE_CONFIG.url}/privacy.md

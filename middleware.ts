@@ -37,6 +37,42 @@ export const middleware = (request: NextRequest) => {
     })
     if (userCountry) res.headers.set("x-user-country", userCountry)
     if (userRegion) res.headers.set("x-user-region", userRegion)
+
+    const origin = request.nextUrl.origin
+    const toolMatch = pathname.match(/^\/tools\/([^/]+)$/)
+    if (toolMatch && toolMatch[1]) {
+      res.headers.set(
+        "Link",
+        `<${origin}/tools/${toolMatch[1]}.md>; rel="alternate"; type="text/markdown"`
+      )
+    } else {
+      const productMatch = pathname.match(/^\/products\/([^/]+)$/)
+      if (productMatch && productMatch[1]) {
+        res.headers.set(
+          "Link",
+          `<${origin}/products/${productMatch[1]}.md>; rel="alternate"; type="text/markdown"`
+        )
+      } else {
+        const makerMatch = pathname.match(/^\/makers\/([^/]+)$/)
+        if (makerMatch && makerMatch[1]) {
+          res.headers.set(
+            "Link",
+            `<${origin}/makers/${makerMatch[1]}.md>; rel="alternate"; type="text/markdown"`
+          )
+        } else if (pathname === "/pricing") {
+          res.headers.set(
+            "Link",
+            `<${origin}/pricing.md>; rel="alternate"; type="text/markdown"`
+          )
+        } else if (pathname === "/faq") {
+          res.headers.set(
+            "Link",
+            `<${origin}/faq.md>; rel="alternate"; type="text/markdown"`
+          )
+        }
+      }
+    }
+
     return res
   }
 
@@ -149,6 +185,10 @@ export const middleware = (request: NextRequest) => {
       return rewriteWithHeaders(`/api/md/makers/${makerMatch[1]}`)
     }
 
+    if (pathname === "/pricing") {
+      return rewriteWithHeaders("/pricing.md")
+    }
+
     if (pathname === "/faq") {
       return rewriteWithHeaders("/faq.md")
     }
@@ -182,6 +222,7 @@ export const config = {
     "/makers/:path*",
     "/categories/:path*",
     "/trending/:path*",
+    "/pricing",
     "/faq",
     "/terms",
     "/privacy",

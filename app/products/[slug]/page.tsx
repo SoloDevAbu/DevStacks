@@ -16,6 +16,7 @@ import {
   Sliders,
   DollarSign,
   FolderGit2,
+  Globe,
   Laptop,
   HelpCircle,
 } from "lucide-react"
@@ -494,11 +495,24 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
           </div>
         </header>
 
-        {/* Section 1: About */}
+        {/* Section 1: What is {product.name}? */}
         <section className="border-b border-dashed border-border bg-white">
-          <DetailSectionHeader title="About" icon={Info} theme="blue" />
+          <DetailSectionHeader
+            title={`What is ${product.name}?`}
+            subtitle="Overview, problem solved, and key features"
+            icon={Info}
+            theme="blue"
+          />
           <div className={sectionContentBox}>
-            <p className={detailSectionText}>{product.description}</p>
+            <p
+              className={cn(
+                detailSectionText,
+                "text-base font-normal leading-relaxed text-slate-700"
+              )}
+            >
+              {product.description ??
+                `${product.name} is a developer product cataloged on ${SITE_CONFIG.name}.`}
+            </p>
           </div>
         </section>
 
@@ -787,6 +801,39 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
                 )}
               </div>
             </div>
+
+            {(product.websiteUrl || product.githubUrl) && (
+              <div className={specRow}>
+                <div className={specRowHeader}>
+                  <span className={specBadge}>
+                    <Globe className="size-3 text-slate-600" />
+                  </span>
+                  <h3 className={specRowTitle}>Official Resources</h3>
+                </div>
+                <div className="flex flex-wrap items-center gap-3 text-xs sm:text-sm">
+                  {product.websiteUrl && (
+                    <a
+                      href={product.websiteUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-medium text-blue-600 hover:underline"
+                    >
+                      Official Website ↗
+                    </a>
+                  )}
+                  {product.githubUrl && (
+                    <a
+                      href={product.githubUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-medium text-slate-700 hover:text-slate-900 hover:underline"
+                    >
+                      GitHub Repository ↗
+                    </a>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
         </section>
 

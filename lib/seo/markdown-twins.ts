@@ -12,6 +12,11 @@ interface ToolTwinInput {
   slug: string
   tagline?: string | null
   description?: string | null
+  problemStatement?: string | null
+  solution?: string | null
+  uniqueValue?: string | null
+  targetAudience?: string | null
+  useCases?: string | string[] | null
   websiteUrl?: string | null
   logoUrl?: string | null
   appStoreUrl?: string | null
@@ -23,7 +28,19 @@ interface ToolTwinInput {
   upvotesCount?: number | null
   viewsCount?: number | null
   createdAt?: Date | string | null
+  updatedAt?: Date | string | null
   faqs?: Array<{ question: string; answer: string }> | null
+  builtWithProducts?: Array<{
+    name: string
+    slug: string
+    tagline?: string | null
+  }> | null
+  relatedTools?: Array<{
+    name: string
+    slug: string
+    tagline?: string | null
+    pricing?: string | null
+  }> | null
 }
 
 interface ProductTwinInput {
@@ -51,10 +68,16 @@ interface ProductTwinInput {
   likesCount?: number | null
   viewsCount?: number | null
   createdAt?: Date | string | null
+  updatedAt?: Date | string | null
   faqs?: Array<{ question: string; answer: string }> | null
   submitter?: {
     name?: string | null
   } | null
+  relatedProducts?: Array<{
+    name: string
+    slug: string
+    tagline?: string | null
+  }> | null
 }
 
 export const generateToolMarkdown = (
@@ -65,6 +88,33 @@ export const generateToolMarkdown = (
   const createdDate = tool.createdAt
     ? new Date(tool.createdAt).toISOString().split("T")[0]
     : "2026-01-01"
+  const updatedDate = tool.updatedAt
+    ? new Date(tool.updatedAt).toISOString().split("T")[0]
+    : createdDate
+
+  const hasOverviewBlocks = Boolean(
+    tool.problemStatement || tool.solution || tool.uniqueValue
+  )
+
+  const builtWithSection =
+    tool.builtWithProducts && tool.builtWithProducts.length > 0
+      ? tool.builtWithProducts
+          .map(
+            (p) =>
+              `- [${p.name}](${SITE_CONFIG.url}/products/${p.slug}) — ${p.tagline ?? "Developer product"}`
+          )
+          .join("\n")
+      : `- No verified products built with ${tool.name} cataloged yet. Submit your product stack on ${SITE_CONFIG.name}.`
+
+  const relatedToolsSection =
+    tool.relatedTools && tool.relatedTools.length > 0
+      ? `\n## Related Developer Tools in ${tool.category ?? "Developer Tools"}\n\n${tool.relatedTools
+          .map(
+            (t) =>
+              `- [${t.name}](${SITE_CONFIG.url}/tools/${t.slug}) — ${t.tagline ?? "Developer tool"}`
+          )
+          .join("\n")}\n`
+      : ""
 
   return `# ${tool.name} — ${tool.tagline ?? "Developer Infrastructure & API"}
 
@@ -78,18 +128,26 @@ pricing: "${tool.pricing ?? "Free / Paid"}"
 builds_count: ${tool.buildsCount ?? relatedBuildsCount}
 upvotes: ${tool.upvotesCount ?? 0}
 created: "${createdDate}"
+updated: "${updatedDate}"
 logo: "${tool.logoUrl ?? ""}"
 \`\`\`
 
 ## About ${tool.name}
 
 ${tool.description ?? `${tool.name} is a developer tool and software building block cataloged on ${SITE_CONFIG.name}.`}
-
+${
+  hasOverviewBlocks
+    ? `\n## Key Features & Value Proposition\n\n### Problem Solved\n${tool.problemStatement ?? "Simplifies developer infrastructure and accelerates build cycles."}\n\n### Solution\n${tool.solution ?? `${tool.name} provides modern APIs and developer tooling.`}\n\n### Unique Advantage\n${tool.uniqueValue ?? `${tool.name} offers fast setup, reliability, and active community adoption.`}\n`
+    : ""
+}
 ## Community Impact & Usage
 - **Verified Builds**: ${tool.buildsCount ?? relatedBuildsCount} developer products actively declare ${tool.name} in their tech stack.
 - **Community Upvotes**: ${tool.upvotesCount ?? 0} upvotes on ${SITE_CONFIG.name}.
 - **Pricing Model**: ${tool.pricing ?? "Not specified"}.
 
+## Verified Products Built With ${tool.name}
+${builtWithSection}
+${relatedToolsSection}
 ## Integration & Official Links
 - **Website**: ${tool.websiteUrl ?? canonical}
 ${tool.appStoreUrl ? `- **iOS App Store**: ${tool.appStoreUrl}\n` : ""}${tool.playStoreUrl ? `- **Google Play Store**: ${tool.playStoreUrl}\n` : ""}${tool.chromeExtensionUrl ? `- **Chrome Extension**: ${tool.chromeExtensionUrl}\n` : ""}- **${SITE_CONFIG.name} Profile**: ${canonical}
@@ -106,12 +164,25 @@ export const generateProductMarkdown = (product: ProductTwinInput): string => {
   const createdDate = product.createdAt
     ? new Date(product.createdAt).toISOString().split("T")[0]
     : "2026-01-01"
+  const updatedDate = product.updatedAt
+    ? new Date(product.updatedAt).toISOString().split("T")[0]
+    : createdDate
 
   const toolsList = (product.builtWithTools ?? [])
     .map((t) => (typeof t === "string" ? t : t.name))
     .join(", ")
   const tagsList = (product.tags ?? []).join(", ")
   const platformsList = (product.platforms ?? []).join(", ")
+
+  const relatedProductsSection =
+    product.relatedProducts && product.relatedProducts.length > 0
+      ? `\n## Related Products in ${product.category ?? "Developer Tools"}\n\n${product.relatedProducts
+          .map(
+            (p) =>
+              `- [${p.name}](${SITE_CONFIG.url}/products/${p.slug}) — ${p.tagline ?? "Developer product"}`
+          )
+          .join("\n")}\n`
+      : ""
 
   return `# ${product.name} — ${product.tagline ?? "Developer Product"}
 
@@ -130,6 +201,7 @@ pricing: "${product.pricing ?? "Free"}"
 built_with: "${toolsList}"
 maker: "${product.submitter?.name ?? "Independent Developer"}"
 created: "${createdDate}"
+updated: "${updatedDate}"
 github: "${product.githubUrl ?? ""}"
 logo: "${product.logoUrl ?? ""}"
 \`\`\`
@@ -164,7 +236,7 @@ ${
         .join("\n")
     : "- Tech stack details available on the canonical product page."
 }
-
+${relatedProductsSection}
 ## Canonical & Machine Links
 - **Product Page**: ${canonical}
 - **Official Website**: ${product.websiteUrl ?? canonical}

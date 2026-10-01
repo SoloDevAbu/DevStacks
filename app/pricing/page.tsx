@@ -73,6 +73,26 @@ const PricingPage = () => {
           variant="pricing"
         />
 
+        {/* Breadcrumb & Markdown discovery strip */}
+        <div className="flex items-center justify-between border-b border-dashed border-border bg-slate-50/40 px-6 py-2.5 text-xs text-slate-500 md:px-8">
+          <div className="flex items-center gap-2">
+            <Link
+              href={ROUTES.HOME}
+              className="transition-colors hover:text-slate-900"
+            >
+              Home
+            </Link>
+            <span>/</span>
+            <span className="font-semibold text-slate-900">Pricing</span>
+          </div>
+          <Link
+            href="/pricing.md"
+            className="text-xs font-medium text-indigo-600 hover:underline"
+          >
+            View as Markdown (/pricing.md)
+          </Link>
+        </div>
+
         {/* Launch Promo Full Width Section */}
         {LAUNCH_PROMO.IS_ACTIVE && (
           <section className={launchPromoFullWidthSection}>
