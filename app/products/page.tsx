@@ -10,10 +10,12 @@ import { SITE_CONFIG } from "@/constants/site"
 import { ROUTES } from "@/constants/routes"
 import { AI_PROMPTS } from "@/lib/prompts"
 import { getProducts, getProductsStats } from "@/db/queries/products/list"
+import { getProductCategories } from "@/db/queries/categories/list"
 import type { DbProduct } from "@/types/entities"
 import { ProductsDirectoryContent } from "./products-content"
 import type { ProductSortOption } from "@/components/products/products-filter-bar"
 import { CrawlablePagination } from "@/components/shared/crawlable-pagination"
+import { CrawlableCategoryBar } from "@/components/shared/crawlable-category-bar"
 
 export const revalidate = 60
 
@@ -33,7 +35,8 @@ export const generateMetadata = async (props: {
   const sortBy = searchParams?.sortBy
   const pageStr = searchParams?.page
   const parsedPage = pageStr ? parseInt(pageStr, 10) : 1
-  const currentPage = Number.isInteger(parsedPage) && parsedPage > 1 ? parsedPage : 1
+  const currentPage =
+    Number.isInteger(parsedPage) && parsedPage > 1 ? parsedPage : 1
 
   const filterSuffix = [
     category ? `Category: ${category}` : null,
@@ -133,7 +136,8 @@ const ProductsPage = async (props: {
   const sortBy = searchParams?.sortBy ?? "upvotes"
   const pageStr = searchParams?.page
   const parsedPage = pageStr ? parseInt(pageStr, 10) : 1
-  const currentPage = Number.isInteger(parsedPage) && parsedPage > 1 ? parsedPage : 1
+  const currentPage =
+    Number.isInteger(parsedPage) && parsedPage > 1 ? parsedPage : 1
   const pageSize = 20
 
   const breadcrumbItems = [
@@ -148,7 +152,7 @@ const ProductsPage = async (props: {
   }
   const breadcrumbs = breadcrumbSchema(breadcrumbItems)
 
-  const [initialProducts, stats] = await Promise.all([
+  const [initialProducts, stats, categories] = await Promise.all([
     getProducts({
       category,
       q,
@@ -158,6 +162,7 @@ const ProductsPage = async (props: {
       page: currentPage,
     }).catch(() => []),
     getProductsStats().catch(() => ({ totalCount: 0, totalLikes: 0 })),
+    getProductCategories().catch(() => []),
   ])
 
   const totalPages = Math.ceil(stats.totalCount / pageSize)
@@ -187,7 +192,11 @@ const ProductsPage = async (props: {
       />
       <div className="relative flex min-h-full flex-col bg-slate-50/50">
         <ProductsHero
-          heading={category ? `${category} Products & Software` : "Developer Products Directory"}
+          heading={
+            category
+              ? `${category} Products & Software`
+              : "Developer Products Directory"
+          }
           description={
             category
               ? `Browse all verified developer products and software tools in the ${category} category.`
@@ -196,6 +205,12 @@ const ProductsPage = async (props: {
           aiPrompt={AI_PROMPTS.products}
           totalCount={stats.totalCount}
           totalLikes={stats.totalLikes}
+        />
+
+        <CrawlableCategoryBar
+          type="products"
+          categories={categories}
+          activeCategory={category}
         />
 
         <ProductsDirectoryContent
@@ -213,7 +228,8 @@ const ProductsPage = async (props: {
           basePath={ROUTES.PRODUCTS}
           params={{
             category,
-            pricing: pricing && pricing.toLowerCase() !== "all" ? pricing : undefined,
+            pricing:
+              pricing && pricing.toLowerCase() !== "all" ? pricing : undefined,
             sortBy: sortBy !== "upvotes" ? sortBy : undefined,
           }}
         />

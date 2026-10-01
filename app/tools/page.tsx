@@ -10,10 +10,12 @@ import { SITE_CONFIG } from "@/constants/site"
 import { ROUTES } from "@/constants/routes"
 import { AI_PROMPTS } from "@/lib/prompts"
 import { getTools, getToolsStats } from "@/db/queries/tools/list"
+import { getToolCategories } from "@/db/queries/categories/list"
 import type { DbTool } from "@/types/entities"
 import { ToolsDirectoryContent } from "./tools-content"
 import type { SortOption } from "@/components/tools/tools-filter-bar"
 import { CrawlablePagination } from "@/components/shared/crawlable-pagination"
+import { CrawlableCategoryBar } from "@/components/shared/crawlable-category-bar"
 
 export const revalidate = 60
 
@@ -33,7 +35,8 @@ export const generateMetadata = async (props: {
   const sortBy = searchParams?.sortBy
   const pageStr = searchParams?.page
   const parsedPage = pageStr ? parseInt(pageStr, 10) : 1
-  const currentPage = Number.isInteger(parsedPage) && parsedPage > 1 ? parsedPage : 1
+  const currentPage =
+    Number.isInteger(parsedPage) && parsedPage > 1 ? parsedPage : 1
 
   const filterSuffix = [
     category ? `Category: ${category}` : null,
@@ -133,7 +136,8 @@ const ToolsPage = async (props: {
   const sortBy = searchParams?.sortBy ?? "upvotes"
   const pageStr = searchParams?.page
   const parsedPage = pageStr ? parseInt(pageStr, 10) : 1
-  const currentPage = Number.isInteger(parsedPage) && parsedPage > 1 ? parsedPage : 1
+  const currentPage =
+    Number.isInteger(parsedPage) && parsedPage > 1 ? parsedPage : 1
   const pageSize = 20
 
   const breadcrumbItems = [
@@ -148,7 +152,7 @@ const ToolsPage = async (props: {
   }
   const breadcrumbs = breadcrumbSchema(breadcrumbItems)
 
-  const [initialTools, stats] = await Promise.all([
+  const [initialTools, stats, categories] = await Promise.all([
     getTools({
       category,
       q,
@@ -158,6 +162,7 @@ const ToolsPage = async (props: {
       page: currentPage,
     }).catch(() => []),
     getToolsStats().catch(() => ({ totalCount: 0, totalBuilds: 0 })),
+    getToolCategories().catch(() => []),
   ])
 
   const totalPages = Math.ceil(stats.totalCount / pageSize)
@@ -188,7 +193,9 @@ const ToolsPage = async (props: {
       />
       <div className="relative flex min-h-full flex-col bg-slate-50/50">
         <ToolsHero
-          heading={category ? `${category} Tools & APIs` : "Developer Tools Directory"}
+          heading={
+            category ? `${category} Tools & APIs` : "Developer Tools Directory"
+          }
           description={
             category
               ? `Browse all verified developer tools, APIs, and infrastructure in the ${category} category.`
@@ -197,6 +204,12 @@ const ToolsPage = async (props: {
           aiPrompt={AI_PROMPTS.tools}
           totalCount={stats.totalCount}
           totalBuilds={stats.totalBuilds}
+        />
+
+        <CrawlableCategoryBar
+          type="tools"
+          categories={categories}
+          activeCategory={category}
         />
 
         <ToolsDirectoryContent
@@ -214,7 +227,8 @@ const ToolsPage = async (props: {
           basePath={ROUTES.TOOLS}
           params={{
             category,
-            pricing: pricing && pricing.toLowerCase() !== "all" ? pricing : undefined,
+            pricing:
+              pricing && pricing.toLowerCase() !== "all" ? pricing : undefined,
             sortBy: sortBy !== "upvotes" ? sortBy : undefined,
           }}
         />

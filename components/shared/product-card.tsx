@@ -176,13 +176,10 @@ export const ProductCard = ({
         </div>
 
         {/* Logo */}
-        <a
-          href={outboundUrl}
-          target="_blank"
-          rel={linkRel}
-          onClick={(e) => e.stopPropagation()}
+        <Link
+          href={ROUTES.PRODUCT(product.slug)}
           className="shrink-0 transition-opacity hover:opacity-80"
-          title={`Visit ${product.name}`}
+          title={`View ${product.name}`}
         >
           <ProductLogo
             text={product.name.slice(0, 2).toUpperCase()}
@@ -193,26 +190,40 @@ export const ProductCard = ({
             alt={product.name}
             className="size-12 shrink-0 overflow-hidden rounded-lg border border-slate-200 text-lg sm:size-14 sm:rounded-xl sm:text-xl"
           />
-        </a>
+        </Link>
 
         {/* Product Details */}
         <div className="flex min-w-0 flex-1 flex-col gap-0.5 sm:gap-1">
-          <div className="flex min-w-0 items-center gap-1.5 overflow-hidden flex-nowrap sm:gap-2">
+          <div className="flex min-w-0 flex-nowrap items-center gap-1.5 overflow-hidden sm:gap-2">
             <h3 className="min-w-0 truncate text-sm font-bold text-slate-900 sm:text-base">
+              <Link
+                href={ROUTES.PRODUCT(product.slug)}
+                className="inline-flex min-w-0 items-center gap-1.5 transition-colors hover:text-indigo-600"
+                title={`View ${product.name}`}
+              >
+                <span className="truncate">{product.name}</span>
+                <VerifiedBadge
+                  tier={tier}
+                  className="size-3.5 shrink-0 sm:size-4"
+                />
+              </Link>
               <a
                 href={outboundUrl}
                 target="_blank"
                 rel={linkRel}
                 onClick={(e) => e.stopPropagation()}
-                className="inline-flex min-w-0 items-center gap-1.5 transition-colors hover:text-indigo-600"
-                title={`Visit ${product.name}`}
+                className="ml-1.5 inline-flex items-center text-slate-400 transition-colors hover:text-slate-600"
+                title={`Visit ${product.name} website`}
               >
-                <span className="truncate">{product.name}</span>
-                <VerifiedBadge tier={tier} className="size-3.5 shrink-0 sm:size-4" />
-                <ExternalLink className="hidden size-3 shrink-0 text-slate-400 opacity-0 transition-opacity group-hover:opacity-100 sm:inline" />
+                <ExternalLink className="hidden size-3 shrink-0 opacity-0 transition-opacity group-hover:opacity-100 sm:inline" />
               </a>
             </h3>
-            {showTypeBadge && <ItemTypeBadge kind={ITEM_KIND.PRODUCT} className="shrink-0 text-[10px]" />}
+            {showTypeBadge && (
+              <ItemTypeBadge
+                kind={ITEM_KIND.PRODUCT}
+                className="shrink-0 text-[10px]"
+              />
+            )}
             {showTrendingBadge && isTrending && (
               <Badge
                 variant="outline"
@@ -238,8 +249,10 @@ export const ProductCard = ({
           </p>
 
           {/* Comments, tags + Built with row */}
-          {((product.commentsCount ?? 0) >= 0 || (product.tags ?? []).length > 0 || builtWithTools.length > 0) && (
-            <div className="mt-0.5 flex min-w-0 items-center gap-2 overflow-hidden flex-nowrap sm:mt-1.5 sm:gap-2.5">
+          {((product.commentsCount ?? 0) >= 0 ||
+            (product.tags ?? []).length > 0 ||
+            builtWithTools.length > 0) && (
+            <div className="mt-0.5 flex min-w-0 flex-nowrap items-center gap-2 overflow-hidden sm:mt-1.5 sm:gap-2.5">
               <Link
                 href={`${ROUTES.PRODUCT(product.slug)}#comments`}
                 onClick={(e) => e.stopPropagation()}
@@ -254,7 +267,7 @@ export const ProductCard = ({
               {(product.tags ?? []).length > 0 && (
                 <div className={cardTagsGroup}>
                   <Tag className={cardTagIcon} />
-                  <div className="flex min-w-0 items-center gap-1 overflow-hidden flex-nowrap sm:gap-1.5">
+                  <div className="flex min-w-0 flex-nowrap items-center gap-1 overflow-hidden sm:gap-1.5">
                     {(product.tags ?? []).map((tag, tagIdx) => (
                       <Badge
                         key={tag}
@@ -324,7 +337,7 @@ export const ProductCard = ({
                 onClick={handleLike}
                 disabled={isLiking}
                 className={cn(
-                  "h-7.5 sm:h-8 gap-1 sm:gap-1.5 rounded-none border-slate-200 px-2 sm:px-3 text-xs sm:text-sm font-semibold transition-all",
+                  "h-7.5 gap-1 rounded-none border-slate-200 px-2 text-xs font-semibold transition-all sm:h-8 sm:gap-1.5 sm:px-3 sm:text-sm",
                   isLiked
                     ? "border-pink-200 bg-pink-50 text-pink-600 hover:bg-pink-50"
                     : "text-slate-500 hover:border-pink-200 hover:bg-pink-50 hover:text-pink-600"

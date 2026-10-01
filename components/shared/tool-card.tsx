@@ -178,13 +178,10 @@ export const ToolCard = ({
         </div>
 
         {/* Logo */}
-        <a
-          href={outboundUrl}
-          target="_blank"
-          rel={linkRel}
-          onClick={(e) => e.stopPropagation()}
+        <Link
+          href={ROUTES.TOOL(tool.slug)}
           className="shrink-0 transition-opacity hover:opacity-80"
-          title={`Visit ${tool.name}`}
+          title={`View ${tool.name}`}
         >
           <ProductLogo
             text={tool.name.slice(0, 2).toUpperCase()}
@@ -195,26 +192,40 @@ export const ToolCard = ({
             alt={tool.name}
             className="size-12 shrink-0 overflow-hidden rounded-lg border border-slate-200 text-lg sm:size-14 sm:rounded-xl sm:text-xl"
           />
-        </a>
+        </Link>
 
         {/* Tool Details */}
         <div className="flex min-w-0 flex-1 flex-col gap-0.5 sm:gap-1">
-          <div className="flex min-w-0 items-center gap-1.5 overflow-hidden flex-nowrap sm:gap-2">
+          <div className="flex min-w-0 flex-nowrap items-center gap-1.5 overflow-hidden sm:gap-2">
             <h3 className="min-w-0 truncate text-sm font-bold text-slate-900 sm:text-base">
+              <Link
+                href={ROUTES.TOOL(tool.slug)}
+                className="inline-flex min-w-0 items-center gap-1.5 transition-colors hover:text-indigo-600"
+                title={`View ${tool.name}`}
+              >
+                <span className="truncate">{tool.name}</span>
+                <VerifiedBadge
+                  tier={tier}
+                  className="size-3.5 shrink-0 sm:size-4"
+                />
+              </Link>
               <a
                 href={outboundUrl}
                 target="_blank"
                 rel={linkRel}
                 onClick={(e) => e.stopPropagation()}
-                className="inline-flex min-w-0 items-center gap-1.5 transition-colors hover:text-indigo-600"
-                title={`Visit ${tool.name}`}
+                className="ml-1.5 inline-flex items-center text-slate-400 transition-colors hover:text-slate-600"
+                title={`Visit ${tool.name} website`}
               >
-                <span className="truncate">{tool.name}</span>
-                <VerifiedBadge tier={tier} className="size-3.5 shrink-0 sm:size-4" />
-                <ExternalLink className="hidden size-3 shrink-0 text-slate-400 opacity-0 transition-opacity group-hover:opacity-100 sm:inline" />
+                <ExternalLink className="hidden size-3 shrink-0 opacity-0 transition-opacity group-hover:opacity-100 sm:inline" />
               </a>
             </h3>
-            {showTypeBadge && <ItemTypeBadge kind={ITEM_KIND.TOOL} className="shrink-0 text-[10px]" />}
+            {showTypeBadge && (
+              <ItemTypeBadge
+                kind={ITEM_KIND.TOOL}
+                className="shrink-0 text-[10px]"
+              />
+            )}
             {showTrendingBadge && isTrending && (
               <Badge
                 variant="outline"
@@ -240,8 +251,10 @@ export const ToolCard = ({
           </p>
 
           {/* Comments, tags, and stats row */}
-          {((tool.commentsCount ?? 0) >= 0 || (tool.tags ?? []).length > 0 || tool.buildsCount > 0) && (
-            <div className="mt-0.5 flex min-w-0 items-center gap-2 overflow-hidden flex-nowrap sm:mt-1.5 sm:gap-2.5">
+          {((tool.commentsCount ?? 0) >= 0 ||
+            (tool.tags ?? []).length > 0 ||
+            tool.buildsCount > 0) && (
+            <div className="mt-0.5 flex min-w-0 flex-nowrap items-center gap-2 overflow-hidden sm:mt-1.5 sm:gap-2.5">
               <Link
                 href={`${ROUTES.TOOL(tool.slug)}#comments`}
                 onClick={(e) => e.stopPropagation()}
@@ -256,7 +269,7 @@ export const ToolCard = ({
               {(tool.tags ?? []).length > 0 && (
                 <div className={cardTagsGroup}>
                   <Tag className={cardTagIcon} />
-                  <div className="flex min-w-0 items-center gap-1 overflow-hidden flex-nowrap sm:gap-1.5">
+                  <div className="flex min-w-0 flex-nowrap items-center gap-1 overflow-hidden sm:gap-1.5">
                     {(tool.tags ?? []).map((tag, tagIdx) => (
                       <Badge
                         key={tag}
@@ -273,7 +286,13 @@ export const ToolCard = ({
                 </div>
               )}
               {tool.buildsCount > 0 && (
-                <Badge variant="outline" className={cn(toolBuildsBadge, "hidden shrink-0 py-0 text-[10px] sm:inline-flex sm:py-0.5 sm:text-xs")}>
+                <Badge
+                  variant="outline"
+                  className={cn(
+                    toolBuildsBadge,
+                    "hidden shrink-0 py-0 text-[10px] sm:inline-flex sm:py-0.5 sm:text-xs"
+                  )}
+                >
                   <Layers className="size-3" />
                   <span>{tool.buildsCount} builds</span>
                 </Badge>

@@ -230,9 +230,35 @@ export interface MakerDirectoryItem {
   productsCount: number
 }
 
+export const getMakersCount = async (): Promise<number> => {
+  try {
+    const [result] = await db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(users)
+      .where(
+        and(
+          isNotNull(users.username),
+          or(
+            sql`EXISTS (SELECT 1 FROM ${tools} WHERE ${tools.submitterId} = ${users.id} AND ${tools.status} = 'approved')`,
+            sql`EXISTS (SELECT 1 FROM ${products} WHERE ${products.submitterId} = ${users.id} AND ${products.status} = 'approved')`,
+            and(isNotNull(users.bio), sql`length(trim(${users.bio})) > 50`)
+          )
+        )
+      )
+    return Number(result?.count ?? 0)
+  } catch {
+    return 0
+  }
+}
+
 export const getMakersDirectory = async (
-  limit = 100
+  limit = 48,
+  page = 1
 ): Promise<MakerDirectoryItem[]> => {
+  const safePage = Math.max(1, page)
+  const safeLimit = Math.max(1, limit)
+  const offset = (safePage - 1) * safeLimit
+
   const makers = await db
     .select({
       id: users.id,
@@ -262,7 +288,8 @@ export const getMakersDirectory = async (
       )
     )
     .orderBy(desc(users.createdAt))
-    .limit(limit)
+    .limit(safeLimit)
+    .offset(offset)
 
   const makerIds = makers.map((m) => m.id)
   if (makerIds.length === 0) return []

@@ -23,8 +23,10 @@ import {
   HelpCircle,
 } from "lucide-react"
 import { resolveTool, getProductsBuiltWithTool } from "@/lib/tools/resolve-tool"
+import { getRelatedTools } from "@/db/queries/tools/get"
 import { getToolFaqs } from "@/db/queries/faqs/get-faqs"
 import { MakerDetailSection } from "@/components/shared/maker-detail-section"
+import { RelatedToolsSection } from "@/components/tools/related-tools-section"
 import { SITE_CONFIG } from "@/constants/site"
 import { LAUNCH_PROMO } from "@/constants/promo"
 import { ROUTES } from "@/constants/routes"
@@ -185,6 +187,10 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
     10
   )
 
+  const relatedTools = tool.categoryId
+    ? await getRelatedTools(tool.categoryId, tool.id, 4)
+    : []
+
   const siteUrl = SITE_CONFIG.url
   const toolUrl = `${siteUrl}/tools/${tool.slug}`
 
@@ -231,6 +237,14 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
   const breadcrumbJsonLd = breadcrumbSchema([
     { name: "Home", url: siteUrl },
     { name: "Tools", url: `${siteUrl}/tools` },
+    ...(tool.category
+      ? [
+          {
+            name: tool.category,
+            url: `${siteUrl}/tools?category=${encodeURIComponent(tool.category)}`,
+          },
+        ]
+      : []),
     { name: tool.name, url: toolUrl },
   ])
 
@@ -310,11 +324,32 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
                 Tools
               </Link>
             </li>
+            {tool.category && (
+              <>
+                <li
+                  className="flex items-center text-slate-400"
+                  aria-hidden="true"
+                >
+                  <ChevronRight className="size-3" />
+                </li>
+                <li className="flex items-center">
+                  <Link
+                    href={`/tools?category=${encodeURIComponent(tool.category)}`}
+                    className="hover:text-slate-900"
+                  >
+                    {tool.category}
+                  </Link>
+                </li>
+              </>
+            )}
             <li className="flex items-center text-slate-400" aria-hidden="true">
               <ChevronRight className="size-3" />
             </li>
             <li className="flex items-center">
-              <span className="font-semibold text-slate-900" aria-current="page">
+              <span
+                className="font-semibold text-slate-900"
+                aria-current="page"
+              >
                 {tool.name}
               </span>
             </li>
@@ -552,7 +587,6 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
           </section>
         )}
 
-
         {/* Section 3: Value Proposition & Deep Dive */}
         {(tool.problemStatement || tool.solution || tool.uniqueValue) && (
           <section className="border-b border-dashed border-border bg-white">
@@ -699,9 +733,19 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
                 </span>
                 <h3 className={specRowTitle}>Category</h3>
               </div>
-              <span className={specRowValue}>
-                {tool.category ?? "Developer Tool"}
-              </span>
+              {tool.category ? (
+                <Link
+                  href={`/tools?category=${encodeURIComponent(tool.category)}`}
+                  className={cn(
+                    specRowValue,
+                    "hover:text-blue-600 hover:underline"
+                  )}
+                >
+                  {tool.category}
+                </Link>
+              ) : (
+                <span className={specRowValue}>Developer Tool</span>
+              )}
             </div>
 
             <div className={specRow}>
@@ -811,6 +855,12 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
             </div>
           )}
         </section>
+
+        {/* Section: Related Tools in the same category */}
+        <RelatedToolsSection
+          tools={relatedTools}
+          categoryName={tool.category}
+        />
 
         {/* Section 7: Ecosystem Callout */}
         <section className="border-b border-dashed border-border bg-slate-50/70 px-6 py-10 md:px-8 md:py-12">

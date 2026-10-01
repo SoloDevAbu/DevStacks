@@ -1,6 +1,7 @@
 import { db } from "@/db"
 import { tools, categories, users } from "@/db/schema"
-import { eq, ilike, or, sql } from "drizzle-orm"
+import { and, desc, eq, ilike, ne, or, sql } from "drizzle-orm"
+import type { DbTool } from "@/types/entities"
 
 export const getToolBySlugOrName = async (slugOrName: string) => {
   const [row] = await db
@@ -74,4 +75,49 @@ export const getToolBySlug = async (slug: string) => {
     .limit(1)
 
   return row ?? null
+}
+
+export const getRelatedTools = async (
+  categoryId: string | null | undefined,
+  currentToolId: string,
+  limit = 4
+): Promise<DbTool[]> => {
+  if (!categoryId) return []
+  try {
+    const rows = await db
+      .select({
+        id: tools.id,
+        slug: tools.slug,
+        name: tools.name,
+        tagline: tools.tagline,
+        description: tools.description,
+        websiteUrl: tools.websiteUrl,
+        logoUrl: tools.logoUrl,
+        pricing: tools.pricing,
+        tier: tools.tier,
+        upvotesCount: tools.upvotesCount,
+        buildsCount: tools.buildsCount,
+        categoryId: tools.categoryId,
+        category: categories.name,
+        categorySlug: categories.slug,
+        createdAt: tools.createdAt,
+        tags: tools.tags,
+        platforms: tools.platforms,
+      })
+      .from(tools)
+      .leftJoin(categories, eq(tools.categoryId, categories.id))
+      .where(
+        and(
+          eq(tools.status, "approved"),
+          eq(tools.categoryId, categoryId),
+          ne(tools.id, currentToolId)
+        )
+      )
+      .orderBy(desc(tools.upvotesCount))
+      .limit(limit)
+
+    return rows as unknown as DbTool[]
+  } catch {
+    return []
+  }
 }

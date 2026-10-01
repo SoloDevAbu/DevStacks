@@ -31,8 +31,10 @@ import { AI_PROMPTS } from "@/lib/prompts"
 import { PLATFORMS } from "@/constants/platforms"
 import { EntitySocialLinks } from "@/components/shared/entity-social-links"
 import { getProducts } from "@/db/queries/products/list"
+import { getRelatedProducts } from "@/db/queries/products/get"
 import { getProductFaqs } from "@/db/queries/faqs/get-faqs"
 import { MakerDetailSection } from "@/components/shared/maker-detail-section"
+import { RelatedProductsSection } from "@/components/products/related-products-section"
 import {
   productSchema,
   breadcrumbSchema,
@@ -184,6 +186,10 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
   const siteUrl = SITE_CONFIG.url
   const productUrl = `${siteUrl}/products/${product.slug}`
 
+  const relatedProducts = product.categoryId
+    ? await getRelatedProducts(product.categoryId, product.id, 4)
+    : []
+
   const customFaqs = await getProductFaqs(product.id)
 
   const prodJsonLd = productSchema({
@@ -235,6 +241,14 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
   const breadcrumbJsonLd = breadcrumbSchema([
     { name: "Home", url: siteUrl },
     { name: "Products", url: `${siteUrl}${ROUTES.PRODUCTS}` },
+    ...(product.category
+      ? [
+          {
+            name: product.category,
+            url: `${siteUrl}/products?category=${encodeURIComponent(product.category)}`,
+          },
+        ]
+      : []),
     { name: product.name, url: productUrl },
   ])
 
@@ -253,11 +267,9 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
     `${productUrl}.md`
   )
 
-  const entitySchemas = [
-    prodJsonLd,
-    breadcrumbJsonLd,
-    faqJsonLd,
-  ].filter(Boolean) as Record<string, unknown>[]
+  const entitySchemas = [prodJsonLd, breadcrumbJsonLd, faqJsonLd].filter(
+    Boolean
+  ) as Record<string, unknown>[]
   const unifiedJsonLd = buildEntityGraph(entitySchemas)
 
   const hasSocialLinks = Boolean(
@@ -302,11 +314,32 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
                 Products
               </Link>
             </li>
+            {product.category && (
+              <>
+                <li
+                  className="flex items-center text-slate-400"
+                  aria-hidden="true"
+                >
+                  <ChevronRight className="size-3" />
+                </li>
+                <li className="flex items-center">
+                  <Link
+                    href={`/products?category=${encodeURIComponent(product.category)}`}
+                    className="hover:text-slate-900"
+                  >
+                    {product.category}
+                  </Link>
+                </li>
+              </>
+            )}
             <li className="flex items-center text-slate-400" aria-hidden="true">
               <ChevronRight className="size-3" />
             </li>
             <li className="flex items-center">
-              <span className="font-semibold text-slate-900" aria-current="page">
+              <span
+                className="font-semibold text-slate-900"
+                aria-current="page"
+              >
                 {product.name}
               </span>
             </li>
@@ -363,24 +396,34 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
                   {product.createdAt && (
                     <span className="text-xs text-slate-500">
                       Added{" "}
-                      <time dateTime={new Date(product.createdAt).toISOString()}>
-                        {new Date(product.createdAt).toLocaleDateString("en-US", {
-                          month: "short",
-                          day: "numeric",
-                          year: "numeric",
-                        })}
+                      <time
+                        dateTime={new Date(product.createdAt).toISOString()}
+                      >
+                        {new Date(product.createdAt).toLocaleDateString(
+                          "en-US",
+                          {
+                            month: "short",
+                            day: "numeric",
+                            year: "numeric",
+                          }
+                        )}
                       </time>
                     </span>
                   )}
                   {product.updatedAt && (
                     <span className="text-xs text-slate-500">
                       · Updated{" "}
-                      <time dateTime={new Date(product.updatedAt).toISOString()}>
-                        {new Date(product.updatedAt).toLocaleDateString("en-US", {
-                          month: "short",
-                          day: "numeric",
-                          year: "numeric",
-                        })}
+                      <time
+                        dateTime={new Date(product.updatedAt).toISOString()}
+                      >
+                        {new Date(product.updatedAt).toLocaleDateString(
+                          "en-US",
+                          {
+                            month: "short",
+                            day: "numeric",
+                            year: "numeric",
+                          }
+                        )}
                       </time>
                     </span>
                   )}
@@ -614,13 +657,14 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
                     <span>{t.name}</span>
                   </Link>
                 ) : (
-                  <div
+                  <Link
                     key={t.name}
-                    className="inline-flex items-center gap-2 rounded-lg border border-dashed border-border bg-slate-50/50 px-3.5 py-2 text-xs font-medium text-slate-700"
+                    href={`/tools?q=${encodeURIComponent(t.name)}`}
+                    className="inline-flex items-center gap-2 rounded-lg border border-dashed border-border bg-slate-50/50 px-3.5 py-2 text-xs font-medium text-slate-700 transition-all hover:border-indigo-300 hover:bg-indigo-50/60 hover:text-indigo-900"
                   >
                     <Wrench className="size-3.5 text-slate-400" />
                     <span>{t.name}</span>
-                  </div>
+                  </Link>
                 )
               )}
             </div>
@@ -695,9 +739,19 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
                 </span>
                 <h3 className={specRowTitle}>Category</h3>
               </div>
-              <span className={specRowValue}>
-                {product.category ?? "Developer Tools"}
-              </span>
+              {product.category ? (
+                <Link
+                  href={`/products?category=${encodeURIComponent(product.category)}`}
+                  className={cn(
+                    specRowValue,
+                    "hover:text-blue-600 hover:underline"
+                  )}
+                >
+                  {product.category}
+                </Link>
+              ) : (
+                <span className={specRowValue}>Developer Tools</span>
+              )}
             </div>
 
             <div className={specRow}>
@@ -751,6 +805,12 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
           entityType="product"
           slug={product.slug}
           entityName={product.name}
+        />
+
+        {/* Section: Related Products in the same category */}
+        <RelatedProductsSection
+          products={relatedProducts}
+          categoryName={product.category}
         />
 
         {/* Section 7: Ecosystem Showcase */}

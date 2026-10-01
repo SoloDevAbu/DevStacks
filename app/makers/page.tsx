@@ -17,63 +17,109 @@ import { AI_PROMPTS } from "@/lib/prompts"
 import { heroStatPill } from "@/utils/styles"
 import {
   getMakersDirectory,
+  getMakersCount,
   type MakerDirectoryItem,
 } from "@/db/queries/users/get-profile"
+import { CrawlablePagination } from "@/components/shared/crawlable-pagination"
 import { countryCodeToFlag, formatLocation } from "@/utils/country"
 
 export const revalidate = 60
 
-export const metadata: Metadata = {
-  title: "Developers & Makers Directory",
-  description: `Discover developers, software engineers, and indie makers building tools, APIs, and products on ${SITE_CONFIG.name}. Explore maker tech stacks and launches.`,
-  keywords: [
-    "developer directory",
-    "software makers",
-    "indie developers",
-    "creator profiles",
-    "tool builders",
-    SITE_CONFIG.name,
-  ],
-  alternates: {
-    canonical: `${SITE_CONFIG.url}/makers`,
-  },
-  openGraph: {
-    title: `Developers & Makers Directory | ${SITE_CONFIG.name}`,
-    description: `Discover developers, software engineers, and indie makers building tools, APIs, and products on ${SITE_CONFIG.name}.`,
-    type: "website",
-    url: `${SITE_CONFIG.url}/makers`,
-    siteName: SITE_CONFIG.name,
-    images: [
-      {
-        url: `${SITE_CONFIG.url}${SITE_CONFIG.ogImage}`,
-        width: 1200,
-        height: 630,
-        alt: `Developers & Makers Directory | ${SITE_CONFIG.name}`,
-      },
+export const generateMetadata = async (props: {
+  searchParams: Promise<{ page?: string }>
+}): Promise<Metadata> => {
+  const searchParams = await props.searchParams
+  const pageStr = searchParams?.page
+  const parsedPage = pageStr ? parseInt(pageStr, 10) : 1
+  const currentPage =
+    Number.isInteger(parsedPage) && parsedPage > 1 ? parsedPage : 1
+
+  const title = `Developers & Makers Directory${currentPage > 1 ? ` (Page ${currentPage})` : ""}`
+  const description = `Discover developers, software engineers, and indie makers building tools, APIs, and products on ${SITE_CONFIG.name}. Explore maker tech stacks and launches.`
+  const canonicalUrl =
+    currentPage > 1
+      ? `${SITE_CONFIG.url}/makers?page=${currentPage}`
+      : `${SITE_CONFIG.url}/makers`
+
+  return {
+    title,
+    description,
+    keywords: [
+      "developer directory",
+      "software makers",
+      "indie developers",
+      "creator profiles",
+      "tool builders",
+      SITE_CONFIG.name,
     ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: `Developers & Makers Directory | ${SITE_CONFIG.name}`,
-    description: `Discover developers, software engineers, and indie makers building tools, APIs, and products on ${SITE_CONFIG.name}.`,
-    images: [`${SITE_CONFIG.url}${SITE_CONFIG.ogImage}`],
-  },
+    alternates: {
+      canonical: canonicalUrl,
+    },
+    openGraph: {
+      title: `${title} | ${SITE_CONFIG.name}`,
+      description,
+      type: "website",
+      url: canonicalUrl,
+      siteName: SITE_CONFIG.name,
+      images: [
+        {
+          url: `${SITE_CONFIG.url}${SITE_CONFIG.ogImage}`,
+          width: 1200,
+          height: 630,
+          alt: `${title} | ${SITE_CONFIG.name}`,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${title} | ${SITE_CONFIG.name}`,
+      description,
+      images: [`${SITE_CONFIG.url}${SITE_CONFIG.ogImage}`],
+    },
+  }
 }
 
-const MakersPage = async () => {
-  const makers = await getMakersDirectory(120).catch(
-    () => [] as MakerDirectoryItem[]
-  )
+interface MakersPageProps {
+  searchParams: Promise<{ page?: string }>
+}
+
+const MakersPage = async ({ searchParams }: MakersPageProps) => {
+  const resolvedParams = await searchParams
+  const pageStr = resolvedParams?.page
+  const parsedPage = pageStr ? parseInt(pageStr, 10) : 1
+  const currentPage =
+    Number.isInteger(parsedPage) && parsedPage > 1 ? parsedPage : 1
+  const pageSize = 48
+
+  const [makers, totalCount] = await Promise.all([
+    getMakersDirectory(pageSize, currentPage).catch(
+      () => [] as MakerDirectoryItem[]
+    ),
+    getMakersCount().catch(() => 0),
+  ])
+
+  const totalPages = Math.ceil(totalCount / pageSize)
 
   const breadcrumbs = breadcrumbSchema([
     { name: "Home", url: SITE_CONFIG.url },
     { name: "Makers", url: `${SITE_CONFIG.url}/makers` },
+    ...(currentPage > 1
+      ? [
+          {
+            name: `Page ${currentPage}`,
+            url: `${SITE_CONFIG.url}/makers?page=${currentPage}`,
+          },
+        ]
+      : []),
   ])
 
   const collectionJsonLd = collectionPageSchema({
     name: "Developers & Makers Directory",
     description: `Developers, software engineers, and indie makers creating tools and products on ${SITE_CONFIG.name}.`,
-    url: `${SITE_CONFIG.url}/makers`,
+    url:
+      currentPage > 1
+        ? `${SITE_CONFIG.url}/makers?page=${currentPage}`
+        : `${SITE_CONFIG.url}/makers`,
     items: makers.map((maker) => ({
       name: maker.name || `@${maker.username}`,
       url: `${SITE_CONFIG.url}/makers/${maker.username}`,
@@ -100,7 +146,7 @@ const MakersPage = async () => {
           metrics={
             <div className={heroStatPill}>
               <Users className="size-3.5 text-indigo-600" />
-              <span className="font-bold text-slate-900">{makers.length}</span>
+              <span className="font-bold text-slate-900">{totalCount}</span>
               <span className="text-slate-500">Makers Listed</span>
             </div>
           }
@@ -115,7 +161,22 @@ const MakersPage = async () => {
             Home
           </Link>
           <span>/</span>
-          <span className="font-semibold text-slate-900">Makers</span>
+          {currentPage > 1 ? (
+            <>
+              <Link
+                href={ROUTES.MAKERS}
+                className="transition-colors hover:text-slate-900"
+              >
+                Makers
+              </Link>
+              <span>/</span>
+              <span className="font-semibold text-slate-900">
+                Page {currentPage}
+              </span>
+            </>
+          ) : (
+            <span className="font-semibold text-slate-900">Makers</span>
+          )}
         </div>
 
         {/* Directory Grid */}
@@ -234,6 +295,12 @@ const MakersPage = async () => {
             </div>
           )}
         </div>
+
+        <CrawlablePagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          basePath={ROUTES.MAKERS}
+        />
       </div>
     </>
   )

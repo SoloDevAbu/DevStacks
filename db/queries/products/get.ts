@@ -1,7 +1,7 @@
 import { db } from "@/db"
 import { products, users, categories, productTools, tools } from "@/db/schema"
-import { eq, sql } from "drizzle-orm"
-import type { ProductBuiltWith } from "@/types/entities"
+import { and, desc, eq, ne, sql } from "drizzle-orm"
+import type { DbProduct, ProductBuiltWith } from "@/types/entities"
 
 export const getProductBySlug = async (slug: string) => {
   const [product] = await db
@@ -89,5 +89,51 @@ export const getProductBySlug = async (slug: string) => {
   return {
     ...product,
     builtWithTools,
+  }
+}
+
+export const getRelatedProducts = async (
+  categoryId: string | null | undefined,
+  currentProductId: string,
+  limit = 4
+): Promise<DbProduct[]> => {
+  if (!categoryId) return []
+  try {
+    const rows = await db
+      .select({
+        id: products.id,
+        slug: products.slug,
+        name: products.name,
+        tagline: products.tagline,
+        description: products.description,
+        websiteUrl: products.websiteUrl,
+        logoUrl: products.logoUrl,
+        pricing: products.pricing,
+        tier: products.tier,
+        likesCount: products.likesCount,
+        commentsCount: products.commentsCount,
+        viewsCount: products.viewsCount,
+        categoryId: products.categoryId,
+        category: categories.name,
+        categorySlug: categories.slug,
+        createdAt: products.createdAt,
+        tags: products.tags,
+        platforms: products.platforms,
+      })
+      .from(products)
+      .leftJoin(categories, eq(products.categoryId, categories.id))
+      .where(
+        and(
+          eq(products.status, "approved"),
+          eq(products.categoryId, categoryId),
+          ne(products.id, currentProductId)
+        )
+      )
+      .orderBy(desc(products.likesCount))
+      .limit(limit)
+
+    return rows as unknown as DbProduct[]
+  } catch {
+    return []
   }
 }
