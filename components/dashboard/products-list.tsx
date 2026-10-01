@@ -14,6 +14,7 @@ import {
   Search,
   PlusCircle,
   TrendingUp,
+  Code,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -28,6 +29,7 @@ import {
 } from "@/components/ui/empty"
 import { ProductLogo } from "@/components/shared/product-logo"
 import { UpgradeTierDialog } from "@/components/dashboard/upgrade-tier-dialog"
+import { EmbedBadgeDialog } from "@/components/shared/embed-badge-dialog"
 import { ROUTES } from "@/constants/routes"
 import { TIER } from "@/constants/plans"
 import {
@@ -48,6 +50,7 @@ export const ProductsList = ({ products }: ProductsListProps) => {
   const [searchQuery, setSearchQuery] = useState("")
   const [statusFilter, setStatusFilter] = useState<"all" | "approved" | "pending">("all")
   const [upgradingProduct, setUpgradingProduct] = useState<UserDashboardProduct | null>(null)
+  const [badgeProduct, setBadgeProduct] = useState<UserDashboardProduct | null>(null)
 
   const filteredProducts = useMemo(() => {
     return products.filter((product) => {
@@ -237,6 +240,17 @@ export const ProductsList = ({ products }: ProductsListProps) => {
                       <span>Edit</span>
                     </Button>
 
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => setBadgeProduct(product)}
+                      className="h-8 gap-1.5 border-slate-200 text-xs font-medium text-slate-700 hover:bg-slate-50"
+                      title="Get embed badge and AI prompt"
+                    >
+                      <Code className="size-3.5 text-slate-500" />
+                      <span>Badge</span>
+                    </Button>
+
                     {!isTopTier && (
                       <Button
                         size="sm"
@@ -328,6 +342,18 @@ export const ProductsList = ({ products }: ProductsListProps) => {
             tier: upgradingProduct.tier as "free" | "premium" | "premium+",
             itemType: "product",
           }}
+        />
+      )}
+
+      {/* Embed Badge Dialog for Owner */}
+      {badgeProduct && (
+        <EmbedBadgeDialog
+          isOpen={Boolean(badgeProduct)}
+          onClose={() => setBadgeProduct(null)}
+          name={badgeProduct.name}
+          slug={badgeProduct.slug}
+          type="product"
+          websiteUrl={badgeProduct.websiteUrl}
         />
       )}
     </div>

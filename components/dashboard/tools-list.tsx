@@ -14,6 +14,7 @@ import {
   Search,
   PlusCircle,
   TrendingUp,
+  Code,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -28,6 +29,7 @@ import {
 } from "@/components/ui/empty"
 import { ProductLogo } from "@/components/shared/product-logo"
 import { UpgradeTierDialog } from "@/components/dashboard/upgrade-tier-dialog"
+import { EmbedBadgeDialog } from "@/components/shared/embed-badge-dialog"
 import { ROUTES } from "@/constants/routes"
 import { TIER } from "@/constants/plans"
 import {
@@ -48,6 +50,7 @@ export const ToolsList = ({ tools }: ToolsListProps) => {
   const [searchQuery, setSearchQuery] = useState("")
   const [statusFilter, setStatusFilter] = useState<"all" | "approved" | "pending">("all")
   const [upgradingTool, setUpgradingTool] = useState<UserDashboardTool | null>(null)
+  const [badgeTool, setBadgeTool] = useState<UserDashboardTool | null>(null)
 
   const filteredTools = useMemo(() => {
     return tools.filter((tool) => {
@@ -235,6 +238,17 @@ export const ToolsList = ({ tools }: ToolsListProps) => {
                       <span>Edit</span>
                     </Button>
 
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => setBadgeTool(tool)}
+                      className="h-8 gap-1.5 border-slate-200 text-xs font-medium text-slate-700 hover:bg-slate-50"
+                      title="Get embed badge and AI prompt"
+                    >
+                      <Code className="size-3.5 text-slate-500" />
+                      <span>Badge</span>
+                    </Button>
+
                     {!isTopTier && (
                       <Button
                         size="sm"
@@ -324,6 +338,18 @@ export const ToolsList = ({ tools }: ToolsListProps) => {
             tier: upgradingTool.tier as "free" | "premium" | "premium+",
             itemType: "tool",
           }}
+        />
+      )}
+
+      {/* Embed Badge Dialog for Owner */}
+      {badgeTool && (
+        <EmbedBadgeDialog
+          isOpen={Boolean(badgeTool)}
+          onClose={() => setBadgeTool(null)}
+          name={badgeTool.name}
+          slug={badgeTool.slug}
+          type="tool"
+          websiteUrl={badgeTool.websiteUrl}
         />
       )}
     </div>

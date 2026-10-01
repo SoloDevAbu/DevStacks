@@ -708,5 +708,32 @@ export const commentAuthSubtitle =
 export const commentAuthButton =
   "mt-2 cursor-pointer gap-2 text-xs font-semibold"
 
+export const scheduleModalContainer =
+  "w-[92vw] max-w-md sm:max-w-md overflow-hidden border border-slate-200/90 shadow-2xl rounded-2xl p-6 font-sans"
+
+export const embedModalContainer =
+  "w-[94vw] max-w-[560px] sm:max-w-[560px] p-0 overflow-hidden border border-slate-200/90 shadow-2xl rounded-2xl bg-white font-sans flex flex-col max-h-[88vh]"
+
+export const scheduleIconBox =
+  "flex size-11 shrink-0 items-center justify-center rounded-xl bg-pink-50 text-pink-600 border border-pink-100"
+
+export const badgeShieldIconBox =
+  "flex size-12 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 border border-blue-100/90 shadow-2xs"
+
+export const scheduleEntitySummaryBox =
+  "flex items-center gap-3.5 rounded-xl border border-slate-200/80 bg-slate-50/60 p-3.5"
+
+export const schedulePromoBox =
+  "flex flex-col gap-2.5 rounded-xl border border-slate-200/90 bg-white p-4 shadow-2xs"
+
+export const badgePreviewContainer =
+  "flex items-center justify-center rounded-2xl border border-slate-200/80 bg-slate-50/70 py-6 px-4 w-full overflow-hidden"
+
+export const badgeCodeContainer =
+  "w-full min-w-0 max-w-full overflow-x-auto rounded-xl border border-slate-200/90 bg-slate-50/90 p-3 font-mono text-[11px] leading-relaxed text-slate-800 whitespace-pre"
+
+export const badgePromptContainer =
+  "w-full min-w-0 max-w-full max-h-28 overflow-y-auto overflow-x-auto rounded-xl border border-slate-200/90 bg-slate-50/90 p-3 font-mono text-[11px] leading-relaxed text-slate-800 whitespace-pre"
+
 
 

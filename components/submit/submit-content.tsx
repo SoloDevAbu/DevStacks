@@ -57,6 +57,8 @@ import {
 import { toast } from "@/components/ui/toast"
 import { getFaviconUrl, getDuckDuckGoFaviconUrl } from "@/utils/urls"
 import { LaunchWeekPicker } from "@/components/shared/launch-week-picker"
+import { ScheduleConfirmDialog } from "./schedule-confirm-dialog"
+import { EmbedBadgeDialog } from "@/components/shared/embed-badge-dialog"
 import type { DbProduct, DbTool } from "@/types/entities"
 
 const emptyForm = {
@@ -145,11 +147,14 @@ export const SubmitContent = ({
     builtWithTools: initialTool ? [initialTool] : [],
   }))
   const [errors, setErrors] = useState<Record<string, string[]>>({})
-  const [submitted, setSubmitted] = useState(false)
-  const [submittedProduct, setSubmittedProduct] = useState<DbProduct | null>(
-    null
-  )
-  const [submittedTool, setSubmittedTool] = useState<DbTool | null>(null)
+  const [isScheduleConfirmOpen, setIsScheduleConfirmOpen] = useState(false)
+  const [isBadgeDialogOpen, setIsBadgeDialogOpen] = useState(false)
+  const [scheduledEntity, setScheduledEntity] = useState<{
+    name: string
+    slug: string
+    type: "product" | "tool"
+    websiteUrl: string
+  } | null>(null)
 
   const { data: session, isPending: isSessionPending } = useSession()
   const {
@@ -224,7 +229,7 @@ export const SubmitContent = ({
     }))
   }
 
-  const executeSubmit = async (userId: string) => {
+  const validateForm = (userId: string) => {
     const nonBlankFaqs = form.faqs
       .map((f) => ({
         id: f.id,
@@ -239,7 +244,7 @@ export const SubmitContent = ({
         "Incomplete FAQ",
         "Every added FAQ must have both a question and an answer."
       )
-      return
+      return null
     }
 
     const faviconUrl = getFaviconUrl(form.websiteUrl)
@@ -266,25 +271,10 @@ export const SubmitContent = ({
           "Validation Error",
           "Please review the required fields highlighted in red."
         )
-        return
+        return null
       }
 
-      try {
-        const { submitterId: _unused, ...clientPayload } = parsed.data
-        const res = await submitProductMutation(clientPayload)
-        setSubmittedProduct(res as DbProduct)
-        setSubmitted(true)
-        setForm(emptyForm)
-        setErrors({})
-        toast.success(
-          "Product Submitted!",
-          "Your product has been submitted for review."
-        )
-      } catch (err: unknown) {
-        const msg =
-          err instanceof Error ? err.message : "Failed to submit product"
-        toast.error("Submission Failed", msg)
-      }
+      return { type: "product" as const, data: parsed.data }
     } else {
       const payload = {
         ...form,
@@ -302,94 +292,70 @@ export const SubmitContent = ({
           "Validation Error",
           "Please review the required fields highlighted in red."
         )
-        return
+        return null
       }
 
-      try {
-        const res = await submitToolMutation(parsed.data)
-        setSubmittedTool(res as DbTool)
-        setSubmitted(true)
-        setForm(emptyForm)
-        setErrors({})
-        toast.success(
-          "Developer Tool Submitted!",
-          "Your developer tool has been submitted for review."
-        )
-      } catch (err: unknown) {
-        const msg = err instanceof Error ? err.message : "Failed to submit tool"
-        toast.error("Submission Failed", msg)
-      }
+      return { type: "tool" as const, data: parsed.data }
     }
   }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    executeSubmit(user.id)
+    if (!user?.id) return
+    const valid = validateForm(user.id)
+    if (valid) {
+      setIsScheduleConfirmOpen(true)
+    }
   }
 
-  if (submitted) {
-    const isProduct = activeType === "product"
-    const viewUrl = isProduct
-      ? submittedProduct?.slug
-        ? ROUTES.PRODUCT(submittedProduct.slug)
-        : ROUTES.PRODUCTS
-      : submittedTool?.slug
-        ? ROUTES.TOOL(submittedTool.slug)
-        : ROUTES.TOOLS
+  const handleConfirmSchedule = async () => {
+    if (!user?.id) return
+    const valid = validateForm(user.id)
+    if (!valid) {
+      setIsScheduleConfirmOpen(false)
+      return
+    }
 
-    return (
-      <div className="relative flex min-h-full flex-col items-center justify-center gap-6 bg-slate-50/50 p-12 text-center">
-        <CheckCircle2 className="size-16 text-emerald-500" />
-        <div className="max-w-md">
-          <h2 className="text-2xl font-bold text-slate-900">
-            {isProduct
-              ? "Product Submitted for Review!"
-              : "Developer Tool Submitted for Review!"}
-          </h2>
-          <p className="mt-2 text-sm text-slate-600">
-            Your {isProduct ? "product" : "developer tool"} has been submitted
-            for review. As part of our launch celebration, your listing will
-            receive a complimentary upgrade to{" "}
-            <strong className="text-slate-900">
-              Premium for free ({LAUNCH_PROMO.VALUE_GIFTED} value)
-            </strong>{" "}
-            with a permanent Do-Follow SEO backlink upon approval.
-          </p>
-          <p className="mt-2 text-xs text-slate-500">
-            Our moderation team will review your submission for authenticity and
-            technical relevance before it goes live. You can monitor its status
-            from your Dashboard.
-          </p>
-        </div>
-        <div className="flex flex-wrap items-center justify-center gap-3">
-          <Button
-            onClick={() => {
-              setSubmitted(false)
-              setSubmittedProduct(null)
-              setSubmittedTool(null)
-            }}
-          >
-            Submit Another Launch
-          </Button>
-          <Button
-            variant="outline"
-            nativeButton={false}
-            render={<Link href={ROUTES.DASHBOARD} />}
-          >
-            Go to Dashboard
-          </Button>
-          {viewUrl && (
-            <Button
-              variant="secondary"
-              nativeButton={false}
-              render={<Link href={viewUrl} />}
-            >
-              View Listing
-            </Button>
-          )}
-        </div>
-      </div>
-    )
+    try {
+      if (valid.type === "product") {
+        const { submitterId: _unused, ...clientPayload } = valid.data
+        const res = (await submitProductMutation(clientPayload)) as DbProduct
+        setIsScheduleConfirmOpen(false)
+        setScheduledEntity({
+          name: form.name,
+          slug: res.slug,
+          type: "product",
+          websiteUrl: form.websiteUrl,
+        })
+        setIsBadgeDialogOpen(true)
+        setForm(emptyForm)
+        setErrors({})
+        toast.success(
+          "Product Scheduled!",
+          "Your product has been scheduled for launch."
+        )
+      } else {
+        const res = (await submitToolMutation(valid.data)) as DbTool
+        setIsScheduleConfirmOpen(false)
+        setScheduledEntity({
+          name: form.name,
+          slug: res.slug,
+          type: "tool",
+          websiteUrl: form.websiteUrl,
+        })
+        setIsBadgeDialogOpen(true)
+        setForm(emptyForm)
+        setErrors({})
+        toast.success(
+          "Developer Tool Scheduled!",
+          "Your developer tool has been scheduled for launch."
+        )
+      }
+    } catch (err: unknown) {
+      const msg =
+        err instanceof Error ? err.message : "Failed to schedule launch"
+      toast.error("Scheduling Failed", msg)
+    }
   }
 
   const typeLabel = activeType === "product" ? "Product" : "Tool"
@@ -1321,18 +1287,47 @@ export const SubmitContent = ({
               <Button type="submit" disabled={isSubmitting}>
                 {isSubmitting ? (
                   <>
-                    <Spinner className="size-4" /> Submitting...
+                    <Spinner className="size-4" /> Scheduling...
                   </>
                 ) : activeType === "product" ? (
-                  "Submit Product Launch"
+                  "Schedule Product Launch"
                 ) : (
-                  "Submit Developer Tool"
+                  "Schedule Tool Launch"
                 )}
               </Button>
             </div>
           </div>
         </form>
       </div>
+
+      <ScheduleConfirmDialog
+        isOpen={isScheduleConfirmOpen}
+        onClose={() => setIsScheduleConfirmOpen(false)}
+        onConfirm={handleConfirmSchedule}
+        isSubmitting={isSubmitting}
+        type={activeType}
+        name={form.name}
+        launchYear={form.launchYear}
+        launchWeek={form.launchWeek}
+      />
+
+      {scheduledEntity && (
+        <EmbedBadgeDialog
+          isOpen={isBadgeDialogOpen}
+          onClose={() => {
+            setIsBadgeDialogOpen(false)
+            setScheduledEntity(null)
+          }}
+          name={scheduledEntity.name}
+          slug={scheduledEntity.slug}
+          type={scheduledEntity.type}
+          websiteUrl={scheduledEntity.websiteUrl}
+          onBackToSubmit={() => {
+            setIsBadgeDialogOpen(false)
+            setScheduledEntity(null)
+          }}
+        />
+      )}
     </div>
   )
 }
