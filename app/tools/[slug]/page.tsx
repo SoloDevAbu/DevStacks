@@ -40,8 +40,10 @@ import {
   breadcrumbSchema,
   faqSchema,
   itemListSchema,
+  buildEntityGraph,
   safeJsonLd,
 } from "@/lib/seo/schema"
+import { formatTitle, formatMetaDescription } from "@/utils/seo"
 import { ProductLogo } from "@/components/shared/product-logo"
 import { getFaviconUrl } from "@/utils/urls"
 import { VerifiedBadge } from "@/components/shared/verified-badge"
@@ -100,7 +102,7 @@ export const generateMetadata = async ({
 
   if (!tool) {
     return {
-      title: `Tool Not Found | ${SITE_CONFIG.name}`,
+      title: "Tool Not Found",
       description: "The requested developer tool could not be found.",
       robots: {
         index: false,
@@ -109,11 +111,16 @@ export const generateMetadata = async ({
     }
   }
 
-  const title = tool.metaTitle ?? `${tool.name} — ${tool.tagline}`
-  const description =
+  const title = tool.metaTitle
+    ? formatTitle(tool.metaTitle)
+    : formatTitle(tool.name, tool.tagline)
+  const description = formatMetaDescription(
     tool.metaDescription ??
-    tool.description ??
-    `Explore ${tool.name} — ${tool.tagline} on ${SITE_CONFIG.name}. Verified Premium developer tool listing with features, pricing, and developer builds.`
+      tool.description ??
+      tool.tagline ??
+      `Explore ${tool.name} on ${SITE_CONFIG.name}. Verified developer tool listing with features, pricing, and developer builds.`,
+    155
+  )
   const canonicalUrl = `${SITE_CONFIG.url}/tools/${tool.slug}`
   const keywords = tool.keywords
     ? tool.keywords.split(",").map((k) => k.trim())
@@ -197,6 +204,8 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
     platforms: tool.platforms,
     upvotesCount: tool.upvotesCount,
     createdAt: tool.createdAt,
+    updatedAt: tool.updatedAt,
+    targetAudience: tool.targetAudience,
     problemStatement: tool.problemStatement,
     solution: tool.solution,
     uniqueValue: tool.uniqueValue,
@@ -251,6 +260,14 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
         )
       : null
 
+  const entitySchemas = [
+    prodJsonLd,
+    breadcrumbJsonLd,
+    faqJsonLd,
+    builtWithJsonLd,
+  ].filter(Boolean) as Record<string, unknown>[]
+  const unifiedJsonLd = buildEntityGraph(entitySchemas)
+
   const hasSocialLinks = Boolean(
     tool.websiteUrl ||
     tool.githubUrl ||
@@ -266,44 +283,42 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: safeJsonLd(prodJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(unifiedJsonLd) }}
       />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbJsonLd) }}
-      />
-      {faqJsonLd && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: safeJsonLd(faqJsonLd) }}
-        />
-      )}
-      {builtWithJsonLd && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: safeJsonLd(builtWithJsonLd) }}
-        />
-      )}
 
       <article className="relative flex min-h-full flex-col bg-white">
         {/* Top Breadcrumbs */}
         <nav
           aria-label="Breadcrumb"
-          className="flex items-center gap-2 border-b border-dashed border-border bg-white px-6 py-3 text-xs font-medium text-slate-500 md:px-8"
+          className="border-b border-dashed border-border bg-white px-6 py-3 text-xs font-medium text-slate-500 md:px-8"
         >
-          <Link
-            href={ROUTES.HOME}
-            className="flex items-center gap-1 hover:text-slate-900"
-          >
-            <ArrowLeft className="size-3" />
-            Home
-          </Link>
-          <ChevronRight className="size-3 text-slate-400" />
-          <Link href={ROUTES.TOOLS} className="hover:text-slate-900">
-            Tools
-          </Link>
-          <ChevronRight className="size-3 text-slate-400" />
-          <span className="font-semibold text-slate-900">{tool.name}</span>
+          <ol className="flex flex-wrap items-center gap-2">
+            <li className="flex items-center gap-1">
+              <Link
+                href={ROUTES.HOME}
+                className="flex items-center gap-1 hover:text-slate-900"
+              >
+                <ArrowLeft className="size-3" />
+                Home
+              </Link>
+            </li>
+            <li className="flex items-center text-slate-400" aria-hidden="true">
+              <ChevronRight className="size-3" />
+            </li>
+            <li className="flex items-center">
+              <Link href={ROUTES.TOOLS} className="hover:text-slate-900">
+                Tools
+              </Link>
+            </li>
+            <li className="flex items-center text-slate-400" aria-hidden="true">
+              <ChevronRight className="size-3" />
+            </li>
+            <li className="flex items-center">
+              <span className="font-semibold text-slate-900" aria-current="page">
+                {tool.name}
+              </span>
+            </li>
+          </ol>
         </nav>
 
         {/* Hero Header */}
@@ -356,6 +371,30 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
                   <span className="text-xs font-semibold text-blue-600">
                     {tool.buildsCount} builds
                   </span>
+                  {tool.createdAt && (
+                    <span className="text-xs text-slate-500">
+                      Added{" "}
+                      <time dateTime={new Date(tool.createdAt).toISOString()}>
+                        {new Date(tool.createdAt).toLocaleDateString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
+                        })}
+                      </time>
+                    </span>
+                  )}
+                  {tool.updatedAt && (
+                    <span className="text-xs text-slate-500">
+                      · Updated{" "}
+                      <time dateTime={new Date(tool.updatedAt).toISOString()}>
+                        {new Date(tool.updatedAt).toLocaleDateString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
+                        })}
+                      </time>
+                    </span>
+                  )}
                 </div>
               </div>
             </div>
@@ -619,6 +658,18 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
           />
 
           <div className={specContainer}>
+            {tool.targetAudience && (
+              <div className={specRow}>
+                <div className={specRowHeader}>
+                  <span className={specBadge}>
+                    <Target className="size-3 text-slate-600" />
+                  </span>
+                  <h3 className={specRowTitle}>Target Audience</h3>
+                </div>
+                <span className={specRowValue}>{tool.targetAudience}</span>
+              </div>
+            )}
+
             <div className={specRow}>
               <div className={specRowHeader}>
                 <span className={specBadge}>

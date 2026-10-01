@@ -1,7 +1,12 @@
 import type { Metadata } from "next"
 import { Cpu } from "lucide-react"
 import { PageHeader } from "@/components/shared/page-header"
-import { breadcrumbSchema, collectionPageSchema, safeJsonLd } from "@/lib/seo/schema"
+import {
+  breadcrumbSchema,
+  collectionPageSchema,
+  buildEntityGraph,
+  safeJsonLd,
+} from "@/lib/seo/schema"
 import { SITE_CONFIG } from "@/constants/site"
 import { AI_PROMPTS } from "@/lib/prompts"
 import { DISCOVER_PAGE_LIMIT } from "@/constants/rankings"
@@ -33,7 +38,7 @@ export const metadata: Metadata = {
     siteName: SITE_CONFIG.name,
     images: [
       {
-        url: `${SITE_CONFIG.url}/opengraph-image`,
+        url: `${SITE_CONFIG.url}${SITE_CONFIG.ogImage}`,
         width: 1200,
         height: 630,
         alt: `Popular Building Blocks | ${SITE_CONFIG.name}`,
@@ -44,7 +49,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: `Popular Building Blocks | ${SITE_CONFIG.name}`,
     description: `Explore the most-used developer tools, APIs, and infrastructure layers on ${SITE_CONFIG.name}, ranked by verified developer builds.`,
-    images: [`${SITE_CONFIG.url}/twitter-image`],
+    images: [`${SITE_CONFIG.url}${SITE_CONFIG.ogImage}`],
   },
 }
 
@@ -74,15 +79,13 @@ const PopularBuildingBlocksPage = async () => {
     })),
   })
 
+  const unifiedJsonLd = buildEntityGraph([breadcrumbs, collectionJsonLd])
+
   return (
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbs) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: safeJsonLd(collectionJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(unifiedJsonLd) }}
       />
       <div className="relative flex min-h-full flex-col bg-slate-50/50">
         <PageHeader

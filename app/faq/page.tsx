@@ -13,7 +13,12 @@ import { FAQ_CATEGORIES, LAUNCHNESTS_FAQS } from "@/constants/faqs"
 import { SITE_CONFIG } from "@/constants/site"
 import { ROUTES } from "@/constants/routes"
 import { AI_PROMPTS } from "@/lib/prompts"
-import { breadcrumbSchema, faqSchema, safeJsonLd } from "@/lib/seo/schema"
+import {
+  breadcrumbSchema,
+  faqSchema,
+  buildEntityGraph,
+  safeJsonLd,
+} from "@/lib/seo/schema"
 import {
   faqCategoryHeaders,
   faqSectionTitle,
@@ -26,7 +31,7 @@ import {
 } from "@/utils/styles"
 
 export const metadata: Metadata = {
-  title: `Frequently Asked Questions — ${SITE_CONFIG.name}`,
+  title: "Frequently Asked Questions",
   description: `Answers to common questions about ${SITE_CONFIG.name}, developer tool submissions, community rankings, sponsorship, and autonomous AI search indexing.`,
   keywords: [
     "FAQ",
@@ -51,7 +56,7 @@ export const metadata: Metadata = {
     siteName: SITE_CONFIG.name,
     images: [
       {
-        url: `${SITE_CONFIG.url}/opengraph-image`,
+        url: `${SITE_CONFIG.url}${SITE_CONFIG.ogImage}`,
         width: 1200,
         height: 630,
         alt: `Frequently Asked Questions — ${SITE_CONFIG.name}`,
@@ -62,7 +67,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: `Frequently Asked Questions | ${SITE_CONFIG.name}`,
     description: `Answers to common questions about ${SITE_CONFIG.name}, developer tool submissions, and the tech stack directory.`,
-    images: [`${SITE_CONFIG.url}/twitter-image`],
+    images: [`${SITE_CONFIG.url}${SITE_CONFIG.ogImage}`],
   },
   robots: {
     index: true,
@@ -76,33 +81,40 @@ const FaqPage = () => {
     { name: "FAQs", url: `${SITE_CONFIG.url}${ROUTES.FAQ}` },
   ])
   const faqJsonLd = faqSchema(LAUNCHNESTS_FAQS)
+  const unifiedJsonLd = buildEntityGraph([breadcrumbsJsonLd, faqJsonLd])
 
   return (
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbsJsonLd) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: safeJsonLd(faqJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(unifiedJsonLd) }}
       />
 
       <div className="relative flex min-h-full flex-col bg-slate-50/50">
         {/* Top Breadcrumbs */}
         <nav
           aria-label="Breadcrumb"
-          className="flex items-center gap-2 border-b border-dashed border-border bg-white px-6 py-3 text-xs font-medium text-slate-500 md:px-8"
+          className="border-b border-dashed border-border bg-white px-6 py-3 text-xs font-medium text-slate-500 md:px-8"
         >
-          <Link
-            href={ROUTES.HOME}
-            className="flex items-center gap-1 transition-colors hover:text-slate-900"
-          >
-            <ArrowLeft className="size-3" />
-            Home
-          </Link>
-          <ChevronRight className="size-3 text-slate-400" />
-          <span className="font-semibold text-slate-900">FAQs</span>
+          <ol className="flex flex-wrap items-center gap-2">
+            <li className="flex items-center gap-1">
+              <Link
+                href={ROUTES.HOME}
+                className="flex items-center gap-1 transition-colors hover:text-slate-900"
+              >
+                <ArrowLeft className="size-3" />
+                Home
+              </Link>
+            </li>
+            <li className="flex items-center text-slate-400" aria-hidden="true">
+              <ChevronRight className="size-3" />
+            </li>
+            <li className="flex items-center">
+              <span className="font-semibold text-slate-900" aria-current="page">
+                FAQs
+              </span>
+            </li>
+          </ol>
         </nav>
 
         {/* Page Header with Ask AI prompt */}

@@ -1,7 +1,12 @@
 import type { Metadata } from "next"
 import { CalendarDays } from "lucide-react"
 import { PageHeader } from "@/components/shared/page-header"
-import { breadcrumbSchema, collectionPageSchema, safeJsonLd } from "@/lib/seo/schema"
+import {
+  breadcrumbSchema,
+  collectionPageSchema,
+  buildEntityGraph,
+  safeJsonLd,
+} from "@/lib/seo/schema"
 import { SITE_CONFIG } from "@/constants/site"
 import { HOMEPAGE_LIMITS } from "@/constants/rankings"
 import { heroStatPill } from "@/utils/styles"
@@ -35,7 +40,7 @@ export const metadata: Metadata = {
     siteName: SITE_CONFIG.name,
     images: [
       {
-        url: `${SITE_CONFIG.url}/opengraph-image`,
+        url: `${SITE_CONFIG.url}${SITE_CONFIG.ogImage}`,
         width: 1200,
         height: 630,
         alt: `Weekly Launches | ${SITE_CONFIG.name}`,
@@ -47,7 +52,7 @@ export const metadata: Metadata = {
     title: `Weekly Launches | ${SITE_CONFIG.name}`,
     description:
       "Browse developer tools and products launched each week, ranked by community votes.",
-    images: [`${SITE_CONFIG.url}/twitter-image`],
+    images: [`${SITE_CONFIG.url}${SITE_CONFIG.ogImage}`],
   },
 }
 
@@ -80,15 +85,13 @@ const WeeklyLaunchesPage = async () => {
     })),
   })
 
+  const unifiedJsonLd = buildEntityGraph([breadcrumbs, collectionJsonLd])
+
   return (
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbs) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: safeJsonLd(collectionJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(unifiedJsonLd) }}
       />
       <div className="relative flex min-h-full flex-col bg-slate-50/50">
         <PageHeader

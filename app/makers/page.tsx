@@ -5,7 +5,12 @@ import { PageHeader } from "@/components/shared/page-header"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
-import { breadcrumbSchema, collectionPageSchema, safeJsonLd } from "@/lib/seo/schema"
+import {
+  breadcrumbSchema,
+  collectionPageSchema,
+  buildEntityGraph,
+  safeJsonLd,
+} from "@/lib/seo/schema"
 import { SITE_CONFIG } from "@/constants/site"
 import { ROUTES } from "@/constants/routes"
 import { AI_PROMPTS } from "@/lib/prompts"
@@ -19,7 +24,7 @@ import { countryCodeToFlag, formatLocation } from "@/utils/country"
 export const revalidate = 60
 
 export const metadata: Metadata = {
-  title: `Developers & Makers Directory — ${SITE_CONFIG.name}`,
+  title: "Developers & Makers Directory",
   description: `Discover developers, software engineers, and indie makers building tools, APIs, and products on ${SITE_CONFIG.name}. Explore maker tech stacks and launches.`,
   keywords: [
     "developer directory",
@@ -40,7 +45,7 @@ export const metadata: Metadata = {
     siteName: SITE_CONFIG.name,
     images: [
       {
-        url: `${SITE_CONFIG.url}/opengraph-image`,
+        url: `${SITE_CONFIG.url}${SITE_CONFIG.ogImage}`,
         width: 1200,
         height: 630,
         alt: `Developers & Makers Directory | ${SITE_CONFIG.name}`,
@@ -51,7 +56,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: `Developers & Makers Directory | ${SITE_CONFIG.name}`,
     description: `Discover developers, software engineers, and indie makers building tools, APIs, and products on ${SITE_CONFIG.name}.`,
-    images: [`${SITE_CONFIG.url}/twitter-image`],
+    images: [`${SITE_CONFIG.url}${SITE_CONFIG.ogImage}`],
   },
 }
 
@@ -77,15 +82,13 @@ const MakersPage = async () => {
     })),
   })
 
+  const unifiedJsonLd = buildEntityGraph([breadcrumbs, collectionJsonLd])
+
   return (
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbs) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: safeJsonLd(collectionJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(unifiedJsonLd) }}
       />
 
       <div className="relative flex min-h-full flex-col bg-slate-50/50">

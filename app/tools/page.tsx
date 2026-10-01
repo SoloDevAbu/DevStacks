@@ -3,6 +3,7 @@ import { ToolsHero } from "@/components/tools/tools-hero"
 import {
   collectionPageSchema,
   breadcrumbSchema,
+  buildEntityGraph,
   safeJsonLd,
 } from "@/lib/seo/schema"
 import { SITE_CONFIG } from "@/constants/site"
@@ -43,13 +44,15 @@ export const generateMetadata = async (props: {
     .filter(Boolean)
     .join(" • ")
 
-  const title = category
-    ? `${category} Developer Tools, APIs & Infrastructure${currentPage > 1 ? ` (Page ${currentPage})` : ""} | ${SITE_CONFIG.name}`
+  const baseTitle = category
+    ? `${category} Developer Tools, APIs & Infrastructure${currentPage > 1 ? ` (Page ${currentPage})` : ""}`
     : q
-      ? `Search "${q}" Developer Tools | ${SITE_CONFIG.name}`
+      ? `Search "${q}" Developer Tools`
       : filterSuffix.length > 0
-        ? `Developer Tools (${filterSuffix}) | ${SITE_CONFIG.name}`
-        : `Developer Tools Directory — APIs, Infrastructure & SDKs | ${SITE_CONFIG.name}`
+        ? `Developer Tools (${filterSuffix})`
+        : `Developer Tools Directory — APIs, Infrastructure & SDKs`
+
+  const title = baseTitle
 
   const description = category
     ? `Browse verified developer tools, infrastructure, and APIs in the ${category} category on ${SITE_CONFIG.name}. Explore upvotes and products built with them.`
@@ -67,6 +70,8 @@ export const generateMetadata = async (props: {
   } else if (currentPage > 1) {
     canonicalUrl = `${SITE_CONFIG.url}/tools?page=${currentPage}`
   }
+
+  const ogImageUrl = `${SITE_CONFIG.url}${SITE_CONFIG.ogImage}`
 
   return {
     title,
@@ -89,25 +94,25 @@ export const generateMetadata = async (props: {
         }
       : undefined,
     openGraph: {
-      title,
+      title: `${baseTitle} | ${SITE_CONFIG.name}`,
       description,
       url: canonicalUrl,
       siteName: SITE_CONFIG.name,
       type: "website",
       images: [
         {
-          url: `${SITE_CONFIG.url}/opengraph-image`,
+          url: ogImageUrl,
           width: 1200,
           height: 630,
-          alt: title,
+          alt: `${baseTitle} | ${SITE_CONFIG.name}`,
         },
       ],
     },
     twitter: {
       card: "summary_large_image",
-      title,
+      title: `${baseTitle} | ${SITE_CONFIG.name}`,
       description,
-      images: [`${SITE_CONFIG.url}/twitter-image`],
+      images: [ogImageUrl],
     },
   }
 }
@@ -131,10 +136,17 @@ const ToolsPage = async (props: {
   const currentPage = Number.isInteger(parsedPage) && parsedPage > 1 ? parsedPage : 1
   const pageSize = 20
 
-  const breadcrumbs = breadcrumbSchema([
+  const breadcrumbItems = [
     { name: "Home", url: SITE_CONFIG.url },
     { name: "Tools", url: `${SITE_CONFIG.url}/tools` },
-  ])
+  ]
+  if (category) {
+    breadcrumbItems.push({
+      name: `${category} Tools`,
+      url: `${SITE_CONFIG.url}/tools?category=${encodeURIComponent(category)}`,
+    })
+  }
+  const breadcrumbs = breadcrumbSchema(breadcrumbItems)
 
   const [initialTools, stats] = await Promise.all([
     getTools({
@@ -165,21 +177,18 @@ const ToolsPage = async (props: {
     })),
   })
 
+  const unifiedJsonLd = buildEntityGraph([breadcrumbs, collectionJsonLd])
   const toolsList = (initialTools ?? []) as DbTool[]
 
   return (
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbs) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: safeJsonLd(collectionJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(unifiedJsonLd) }}
       />
       <div className="relative flex min-h-full flex-col bg-slate-50/50">
         <ToolsHero
-          heading="Tools Directory"
+          heading={category ? `${category} Tools & APIs` : "Developer Tools Directory"}
           description={
             category
               ? `Browse all verified developer tools, APIs, and infrastructure in the ${category} category.`

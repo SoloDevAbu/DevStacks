@@ -37,8 +37,10 @@ import {
   productSchema,
   breadcrumbSchema,
   faqSchema,
+  buildEntityGraph,
   safeJsonLd,
 } from "@/lib/seo/schema"
+import { formatTitle, formatMetaDescription } from "@/utils/seo"
 import { ProductLogo } from "@/components/shared/product-logo"
 import { getFaviconUrl } from "@/utils/urls"
 import { VerifiedBadge } from "@/components/shared/verified-badge"
@@ -96,7 +98,7 @@ export const generateMetadata = async ({
 
   if (!product) {
     return {
-      title: `Product Not Found | ${SITE_CONFIG.name}`,
+      title: "Product Not Found",
       description: "The requested developer product could not be found.",
       robots: {
         index: false,
@@ -105,11 +107,16 @@ export const generateMetadata = async ({
     }
   }
 
-  const title = product.metaTitle ?? `${product.name} — ${product.tagline}`
-  const description =
+  const title = product.metaTitle
+    ? formatTitle(product.metaTitle)
+    : formatTitle(product.name, product.tagline)
+  const description = formatMetaDescription(
     product.metaDescription ??
-    product.description ??
-    `Explore ${product.name} — ${product.tagline} on ${SITE_CONFIG.name}. Verified Premium launch featuring architecture breakdown, live demo, and maker insights.`
+      product.description ??
+      product.tagline ??
+      `Explore ${product.name} on ${SITE_CONFIG.name}. Verified developer product launch featuring architecture breakdown, live demo, and maker insights.`,
+    155
+  )
   const canonicalUrl = `${SITE_CONFIG.url}/products/${product.slug}`
   const keywords = product.keywords
     ? product.keywords.split(",").map((k) => k.trim())
@@ -193,6 +200,8 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
     platforms: product.platforms,
     likesCount: product.likesCount,
     createdAt: product.createdAt,
+    updatedAt: product.updatedAt,
+    targetAudience: product.targetAudience,
     problemStatement: product.problemStatement,
     solution: product.solution,
     uniqueValue: product.uniqueValue,
@@ -244,6 +253,13 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
     `${productUrl}.md`
   )
 
+  const entitySchemas = [
+    prodJsonLd,
+    breadcrumbJsonLd,
+    faqJsonLd,
+  ].filter(Boolean) as Record<string, unknown>[]
+  const unifiedJsonLd = buildEntityGraph(entitySchemas)
+
   const hasSocialLinks = Boolean(
     product.websiteUrl ||
     product.githubUrl ||
@@ -259,38 +275,42 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: safeJsonLd(prodJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(unifiedJsonLd) }}
       />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbJsonLd) }}
-      />
-      {faqJsonLd && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: safeJsonLd(faqJsonLd) }}
-        />
-      )}
 
       <article className="relative flex min-h-full flex-col bg-white">
         {/* Top Breadcrumbs */}
         <nav
           aria-label="Breadcrumb"
-          className="flex items-center gap-2 border-b border-dashed border-border bg-white px-6 py-3 text-xs font-medium text-slate-500 md:px-8"
+          className="border-b border-dashed border-border bg-white px-6 py-3 text-xs font-medium text-slate-500 md:px-8"
         >
-          <Link
-            href={ROUTES.HOME}
-            className="flex items-center gap-1 hover:text-slate-900"
-          >
-            <ArrowLeft className="size-3" />
-            Home
-          </Link>
-          <ChevronRight className="size-3 text-slate-400" />
-          <Link href={ROUTES.PRODUCTS} className="hover:text-slate-900">
-            Products
-          </Link>
-          <ChevronRight className="size-3 text-slate-400" />
-          <span className="font-semibold text-slate-900">{product.name}</span>
+          <ol className="flex flex-wrap items-center gap-2">
+            <li className="flex items-center gap-1">
+              <Link
+                href={ROUTES.HOME}
+                className="flex items-center gap-1 hover:text-slate-900"
+              >
+                <ArrowLeft className="size-3" />
+                Home
+              </Link>
+            </li>
+            <li className="flex items-center text-slate-400" aria-hidden="true">
+              <ChevronRight className="size-3" />
+            </li>
+            <li className="flex items-center">
+              <Link href={ROUTES.PRODUCTS} className="hover:text-slate-900">
+                Products
+              </Link>
+            </li>
+            <li className="flex items-center text-slate-400" aria-hidden="true">
+              <ChevronRight className="size-3" />
+            </li>
+            <li className="flex items-center">
+              <span className="font-semibold text-slate-900" aria-current="page">
+                {product.name}
+              </span>
+            </li>
+          </ol>
         </nav>
 
         {/* Hero Header */}
@@ -340,6 +360,30 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
                       {tag}
                     </Badge>
                   ))}
+                  {product.createdAt && (
+                    <span className="text-xs text-slate-500">
+                      Added{" "}
+                      <time dateTime={new Date(product.createdAt).toISOString()}>
+                        {new Date(product.createdAt).toLocaleDateString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
+                        })}
+                      </time>
+                    </span>
+                  )}
+                  {product.updatedAt && (
+                    <span className="text-xs text-slate-500">
+                      · Updated{" "}
+                      <time dateTime={new Date(product.updatedAt).toISOString()}>
+                        {new Date(product.updatedAt).toLocaleDateString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
+                        })}
+                      </time>
+                    </span>
+                  )}
                 </div>
               </div>
             </div>
@@ -622,6 +666,18 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
           />
 
           <div className={specContainer}>
+            {product.targetAudience && (
+              <div className={specRow}>
+                <div className={specRowHeader}>
+                  <span className={specBadge}>
+                    <Target className="size-3 text-slate-600" />
+                  </span>
+                  <h3 className={specRowTitle}>Target Audience</h3>
+                </div>
+                <span className={specRowValue}>{product.targetAudience}</span>
+              </div>
+            )}
+
             <div className={specRow}>
               <div className={specRowHeader}>
                 <span className={specBadge}>

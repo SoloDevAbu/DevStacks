@@ -18,6 +18,8 @@ export type ProductSchemaInput = {
   upvotesCount?: number
   likesCount?: number
   createdAt?: Date | null
+  updatedAt?: Date | null
+  targetAudience?: string | null
   problemStatement?: string | null
   solution?: string | null
   uniqueValue?: string | null
@@ -54,6 +56,7 @@ export type PersonSchemaInput = {
 export const websiteSchema = () => ({
   "@context": "https://schema.org",
   "@type": "WebSite",
+  "@id": `${SITE_CONFIG.url}/#website`,
   name: SITE_CONFIG.name,
   alternateName: [...SITE_CONFIG.alternateNames],
   url: SITE_CONFIG.url,
@@ -61,6 +64,7 @@ export const websiteSchema = () => ({
   inLanguage: "en-US",
   publisher: {
     "@type": "Organization",
+    "@id": `${SITE_CONFIG.url}/#organization`,
     name: SITE_CONFIG.name,
     url: SITE_CONFIG.url,
   },
@@ -77,10 +81,11 @@ export const websiteSchema = () => ({
 export const organizationSchema = () => ({
   "@context": "https://schema.org",
   "@type": "Organization",
+  "@id": `${SITE_CONFIG.url}/#organization`,
   name: SITE_CONFIG.name,
   alternateName: [...SITE_CONFIG.alternateNames],
   url: SITE_CONFIG.url,
-  logo: `${SITE_CONFIG.url}/favicon.png`,
+  logo: `${SITE_CONFIG.url}/og-image.png`,
   description: SITE_CONFIG.description,
   disambiguatingDescription:
     "The premier developer tools discovery directory, APIs database, and tech-stack ecosystem platform.",
@@ -109,6 +114,13 @@ export const organizationSchema = () => ({
 
 export const safeJsonLd = (data: unknown): string =>
   JSON.stringify(data).replace(/</g, "\\u003c")
+
+export const buildEntityGraph = (
+  nodes: Array<Record<string, unknown> | null | undefined>
+) => ({
+  "@context": "https://schema.org",
+  "@graph": nodes.filter(Boolean),
+})
 
 export const productSchema = (product: ProductSchemaInput) => {
   const count = product.likesCount ?? product.upvotesCount ?? 0
@@ -139,6 +151,7 @@ export const productSchema = (product: ProductSchemaInput) => {
   return {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
+    "@id": `${product.url}#software`,
     name: product.name,
     description: product.description,
     url: product.url,
@@ -153,6 +166,12 @@ export const productSchema = (product: ProductSchemaInput) => {
     keywords: product.keywords ?? undefined,
     featureList: featureList.length > 0 ? featureList : undefined,
     sameAs: sameAs.length > 0 ? sameAs : undefined,
+    audience: product.targetAudience
+      ? {
+          "@type": "Audience",
+          audienceType: product.targetAudience,
+        }
+      : undefined,
     downloadUrl:
       downloadUrls.length > 0
         ? downloadUrls.length === 1
@@ -184,41 +203,20 @@ export const productSchema = (product: ProductSchemaInput) => {
       priceCurrency: "USD",
       availability: "https://schema.org/InStock",
       category: product.pricing ?? "Free",
-      description:
-        product.tier === TIER.PREMIUM || product.tier === TIER.PREMIUM_PLUS
-          ? LAUNCH_PROMO.SEO_OFFER_DESCRIPTION
-          : undefined,
     },
-    award:
-      product.tier === TIER.PREMIUM || product.tier === TIER.PREMIUM_PLUS
-        ? LAUNCH_PROMO.SEO_AWARD
-        : undefined,
-    additionalProperty:
-      product.tier === TIER.PREMIUM || product.tier === TIER.PREMIUM_PLUS
-        ? [
-            {
-              "@type": "PropertyValue",
-              name: "ListingTier",
-              value:
-                product.tier === TIER.PREMIUM_PLUS
-                  ? "Premium+ Partner"
-                  : "Premium Verified",
-            },
-            {
-              "@type": "PropertyValue",
-              name: "LaunchBatch",
-              value: "First 50 Launches",
-            },
-            {
-              "@type": "PropertyValue",
-              name: "BacklinkType",
-              value: "Permanent Do-Follow",
-            },
-          ]
-        : undefined,
-    datePublished: product.createdAt?.toISOString(),
+    datePublished: product.createdAt
+      ? new Date(product.createdAt).toISOString()
+      : undefined,
+    dateModified: product.updatedAt
+      ? new Date(product.updatedAt).toISOString()
+      : undefined,
+    isPartOf: {
+      "@type": "WebSite",
+      "@id": `${SITE_CONFIG.url}/#website`,
+    },
     publisher: {
       "@type": "Organization",
+      "@id": `${SITE_CONFIG.url}/#organization`,
       name: SITE_CONFIG.name,
       url: SITE_CONFIG.url,
     },
@@ -315,10 +313,12 @@ export const profilePageSchema = ({
 })
 
 export const breadcrumbSchema = (
-  crumbs: ReadonlyArray<{ readonly name: string; readonly url: string }>
+  crumbs: ReadonlyArray<{ readonly name: string; readonly url: string }>,
+  id?: string
 ) => ({
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
+  "@id": id ?? `${crumbs[crumbs.length - 1]?.url || SITE_CONFIG.url}#breadcrumb`,
   itemListElement: crumbs.map((crumb, i) => ({
     "@type": "ListItem",
     position: i + 1,
@@ -332,10 +332,12 @@ export const itemListSchema = (
     readonly name: string
     readonly url: string
     readonly description: string
-  }>
+  }>,
+  id?: string
 ) => ({
   "@context": "https://schema.org",
   "@type": "ItemList",
+  ...(id ? { "@id": id } : {}),
   itemListElement: items.map((item, i) => ({
     "@type": "ListItem",
     position: i + 1,
@@ -362,17 +364,20 @@ export const collectionPageSchema = ({
 }) => ({
   "@context": "https://schema.org",
   "@type": "CollectionPage",
+  "@id": `${url}#collection`,
   name,
   description,
   url,
-  mainEntity: itemListSchema(items),
+  mainEntity: itemListSchema(items, `${url}#itemlist`),
 })
 
 export const faqSchema = (
-  faqs: ReadonlyArray<{ readonly question: string; readonly answer: string }>
+  faqs: ReadonlyArray<{ readonly question: string; readonly answer: string }>,
+  id?: string
 ) => ({
   "@context": "https://schema.org",
   "@type": "FAQPage",
+  ...(id ? { "@id": id } : {}),
   mainEntity: faqs.map((faq) => ({
     "@type": "Question",
     name: faq.question,
@@ -412,10 +417,11 @@ export const toolSchema = (tool: ToolSchemaInput) => {
   return {
     "@context": "https://schema.org",
     "@type": ["SoftwareApplication", "WebAPI"],
+    "@id": `${tool.url}#software`,
     name: tool.name,
     description: tool.description,
     url: tool.url,
-    image: tool.logoUrl ?? `${SITE_CONFIG.url}/favicon.png`,
+    image: tool.logoUrl ?? SITE_CONFIG.ogImage,
     applicationCategory:
       tool.asoCategory ?? tool.category ?? "DeveloperApplication",
     applicationSubCategory: tool.category ?? undefined,
@@ -426,6 +432,12 @@ export const toolSchema = (tool: ToolSchemaInput) => {
     keywords: tool.keywords ?? undefined,
     featureList: featureList.length > 0 ? featureList : undefined,
     sameAs: sameAs.length > 0 ? sameAs : undefined,
+    audience: tool.targetAudience
+      ? {
+          "@type": "Audience",
+          audienceType: tool.targetAudience,
+        }
+      : undefined,
     interactionStatistic:
       count > 0
         ? [
@@ -445,41 +457,20 @@ export const toolSchema = (tool: ToolSchemaInput) => {
       priceCurrency: "USD",
       availability: "https://schema.org/InStock",
       category: tool.pricing ?? "Free",
-      description:
-        tool.tier === TIER.PREMIUM || tool.tier === TIER.PREMIUM_PLUS
-          ? LAUNCH_PROMO.SEO_OFFER_DESCRIPTION
-          : undefined,
     },
-    award:
-      tool.tier === TIER.PREMIUM || tool.tier === TIER.PREMIUM_PLUS
-        ? LAUNCH_PROMO.SEO_AWARD
-        : undefined,
-    additionalProperty:
-      tool.tier === TIER.PREMIUM || tool.tier === TIER.PREMIUM_PLUS
-        ? [
-            {
-              "@type": "PropertyValue",
-              name: "ListingTier",
-              value:
-                tool.tier === TIER.PREMIUM_PLUS
-                  ? "Premium+ Partner"
-                  : "Premium Verified",
-            },
-            {
-              "@type": "PropertyValue",
-              name: "LaunchBatch",
-              value: "First 50 Launches",
-            },
-            {
-              "@type": "PropertyValue",
-              name: "BacklinkType",
-              value: "Permanent Do-Follow",
-            },
-          ]
-        : undefined,
-    datePublished: tool.createdAt?.toISOString(),
+    datePublished: tool.createdAt
+      ? new Date(tool.createdAt).toISOString()
+      : undefined,
+    dateModified: tool.updatedAt
+      ? new Date(tool.updatedAt).toISOString()
+      : undefined,
+    isPartOf: {
+      "@type": "WebSite",
+      "@id": `${SITE_CONFIG.url}/#website`,
+    },
     publisher: {
       "@type": "Organization",
+      "@id": `${SITE_CONFIG.url}/#organization`,
       name: SITE_CONFIG.name,
       url: SITE_CONFIG.url,
     },

@@ -32,6 +32,7 @@ import {
   profilePageSchema,
   breadcrumbSchema,
   faqSchema,
+  buildEntityGraph,
   safeJsonLd,
 } from "@/lib/seo/schema"
 
@@ -47,7 +48,7 @@ export const generateMetadata = async ({
 
   if (!maker) {
     return {
-      title: `Maker Not Found — ${SITE_CONFIG.name}`,
+      title: "Maker Not Found",
       robots: {
         index: false,
         follow: false,
@@ -63,7 +64,8 @@ export const generateMetadata = async ({
   const displayName = maker.name || `@${maker.username}`
   const flag = countryCodeToFlag(maker.country)
   const locationText = formatLocation(maker.country, maker.state)
-  const title = `${displayName} ${flag} — Maker & Developer on ${SITE_CONFIG.name}`
+  const baseTitle = `${displayName} ${flag} — Developer Profile`
+  const title = baseTitle
   const description =
     maker.bio ||
     maker.description?.slice(0, 160) ||
@@ -98,14 +100,14 @@ export const generateMetadata = async ({
         },
     other: Object.keys(geoTags).length > 0 ? geoTags : undefined,
     openGraph: {
-      title,
+      title: `${baseTitle} | ${SITE_CONFIG.name}`,
       description,
       type: "profile",
       url: profileUrl,
       siteName: SITE_CONFIG.name,
       images: [
         {
-          url: maker.avatarUrl || `${SITE_CONFIG.url}/opengraph-image`,
+          url: maker.avatarUrl || `${SITE_CONFIG.url}${SITE_CONFIG.ogImage}`,
           width: 800,
           height: 800,
           alt: displayName,
@@ -114,9 +116,9 @@ export const generateMetadata = async ({
     },
     twitter: {
       card: "summary",
-      title,
+      title: `${baseTitle} | ${SITE_CONFIG.name}`,
       description,
-      images: [maker.avatarUrl || `${SITE_CONFIG.url}/twitter-image`],
+      images: [maker.avatarUrl || `${SITE_CONFIG.url}${SITE_CONFIG.ogImage}`],
     },
   }
 }
@@ -184,44 +186,56 @@ export default async function MakerPage({ params }: MakerPageProps) {
         )
       : null
 
+  const entitySchemas = [
+    profileJsonLd,
+    breadcrumbsJsonLd,
+    faqJsonLd,
+  ].filter(Boolean) as Record<string, unknown>[]
+  const unifiedJsonLd = buildEntityGraph(entitySchemas)
+
   return (
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: safeJsonLd(profileJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(unifiedJsonLd) }}
       />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbsJsonLd) }}
-      />
-      {faqJsonLd && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: safeJsonLd(faqJsonLd) }}
-        />
-      )}
 
       <div className="flex min-h-screen flex-col">
         {/* Breadcrumb strip */}
-        <div className="flex items-center gap-2 border-b border-dashed border-border bg-slate-50/40 px-6 py-2.5 text-xs text-slate-500 md:px-8">
-          <Link
-            href={ROUTES.HOME}
-            className="transition-colors hover:text-slate-900"
-          >
-            Home
-          </Link>
-          <span>/</span>
-          <Link
-            href={ROUTES.MAKERS}
-            className="transition-colors hover:text-slate-900"
-          >
-            Makers
-          </Link>
-          <span>/</span>
-          <span className="font-semibold text-slate-900">
-            @{maker.username}
-          </span>
-        </div>
+        <nav
+          aria-label="Breadcrumb"
+          className="border-b border-dashed border-border bg-slate-50/40 px-6 py-2.5 text-xs text-slate-500 md:px-8"
+        >
+          <ol className="flex flex-wrap items-center gap-2">
+            <li className="flex items-center">
+              <Link
+                href={ROUTES.HOME}
+                className="transition-colors hover:text-slate-900"
+              >
+                Home
+              </Link>
+            </li>
+            <li className="text-slate-400" aria-hidden="true">
+              /
+            </li>
+            <li className="flex items-center">
+              <Link
+                href={ROUTES.MAKERS}
+                className="transition-colors hover:text-slate-900"
+              >
+                Makers
+              </Link>
+            </li>
+            <li className="text-slate-400" aria-hidden="true">
+              /
+            </li>
+            <li className="flex items-center">
+              <span className="font-semibold text-slate-900" aria-current="page">
+                @{maker.username}
+              </span>
+            </li>
+          </ol>
+        </nav>
 
         {/* Hero Section */}
         <div className="border-b border-dashed border-border bg-linear-to-b from-slate-50/70 via-white to-white px-6 py-8 md:px-8 md:py-12">

@@ -10,9 +10,14 @@ import { RightSidebar } from "@/components/layout/right-sidebar"
 import { AgentFooter } from "@/components/layout/agent-footer"
 import { LaunchPromoBanner } from "@/components/layout/launch-promo-banner"
 import { Providers } from "@/app/providers"
-
 import { SITE_CONFIG } from "@/constants/site"
-import { organizationSchema, websiteSchema, safeJsonLd } from "@/lib/seo/schema"
+
+import {
+  organizationSchema,
+  websiteSchema,
+  safeJsonLd,
+  buildEntityGraph,
+} from "@/lib/seo/schema"
 
 import "./globals.css"
 import { cn } from "@/lib/utils"
@@ -73,7 +78,7 @@ export const metadata: Metadata = {
     description: SITE_CONFIG.description,
     images: [
       {
-        url: SITE_CONFIG.ogImage,
+        url: `${SITE_CONFIG.url}${SITE_CONFIG.ogImage}`,
         width: 1200,
         height: 630,
         alt: `${SITE_CONFIG.name} — ${SITE_CONFIG.tagline}`,
@@ -86,7 +91,7 @@ export const metadata: Metadata = {
     title: `${SITE_CONFIG.name} — ${SITE_CONFIG.tagline}`,
     description: SITE_CONFIG.description,
     creator: "@AbuBakkar2502",
-    images: [SITE_CONFIG.ogImage],
+    images: [`${SITE_CONFIG.url}${SITE_CONFIG.ogImage}`],
   },
   alternates: {
     canonical: SITE_CONFIG.url,
@@ -116,6 +121,7 @@ const RootLayout = ({
 }>) => {
   const orgSchema = organizationSchema()
   const webSchema = websiteSchema()
+  const siteGraph = buildEntityGraph([orgSchema, webSchema])
 
   return (
     <html
@@ -141,11 +147,7 @@ const RootLayout = ({
       <body>
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: safeJsonLd(orgSchema) }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: safeJsonLd(webSchema) }}
+          dangerouslySetInnerHTML={{ __html: safeJsonLd(siteGraph) }}
         />
         <Providers>
           <div className="flex min-h-dvh flex-col bg-slate-50/30">

@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     siteName: SITE_CONFIG.name,
     images: [
       {
-        url: `${SITE_CONFIG.url}/opengraph-image`,
+        url: `${SITE_CONFIG.url}${SITE_CONFIG.ogImage}`,
         width: 1200,
         height: 630,
         alt: `Launch on ${SITE_CONFIG.name}`,
@@ -46,7 +46,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: `New Launch — Submit a Product or Developer Tool | ${SITE_CONFIG.name}`,
     description: `Launch your product, SaaS, developer tool, or API on ${SITE_CONFIG.name}.`,
-    images: [`${SITE_CONFIG.url}/twitter-image`],
+    images: [`${SITE_CONFIG.url}${SITE_CONFIG.ogImage}`],
   },
   robots: {
     index: true,

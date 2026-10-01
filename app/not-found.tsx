@@ -16,7 +16,7 @@ import { AI_PROMPTS } from "@/lib/prompts"
 import { AskAiBar } from "@/components/shared/ask-ai-bar"
 
 export const metadata: Metadata = {
-  title: `Page Not Found | ${SITE_CONFIG.name}`,
+  title: "Page Not Found",
   description: "The page you are looking for does not exist or has been moved.",
   robots: {
     index: false,

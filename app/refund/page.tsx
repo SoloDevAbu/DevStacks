@@ -37,7 +37,7 @@ import {
 } from "@/utils/styles"
 
 export const metadata: Metadata = {
-  title: `Refund & Cancellation Policy | ${SITE_CONFIG.name}`,
+  title: "Refund & Cancellation Policy",
   description: `Refund, cancellation, and slot reallocation terms for free directory submissions and paid promotional sponsorships on ${SITE_CONFIG.name}.`,
   keywords: [
     "refund policy",
@@ -58,7 +58,7 @@ export const metadata: Metadata = {
     siteName: SITE_CONFIG.name,
     images: [
       {
-        url: `${SITE_CONFIG.url}/opengraph-image`,
+        url: `${SITE_CONFIG.url}${SITE_CONFIG.ogImage}`,
         width: 1200,
         height: 630,
         alt: `Refund Policy — ${SITE_CONFIG.name}`,
@@ -69,7 +69,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: `Refund & Cancellation Policy | ${SITE_CONFIG.name}`,
     description: `Refund and cancellation terms for ${SITE_CONFIG.name}.`,
-    images: [`${SITE_CONFIG.url}/twitter-image`],
+    images: [`${SITE_CONFIG.url}${SITE_CONFIG.ogImage}`],
   },
   robots: {
     index: true,

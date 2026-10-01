@@ -49,7 +49,7 @@ import {
 } from "@/utils/styles"
 
 export const metadata: Metadata = {
-  title: `Terms of Service | ${SITE_CONFIG.name}`,
+  title: "Terms of Service",
   description: `Terms and conditions governing your use of ${SITE_CONFIG.name} — directory listings, live launch voting, 'Built With' graphs, sponsorships, and AI agent protocols.`,
   keywords: [
     "terms of service",
@@ -71,7 +71,7 @@ export const metadata: Metadata = {
     siteName: SITE_CONFIG.name,
     images: [
       {
-        url: `${SITE_CONFIG.url}/opengraph-image`,
+        url: `${SITE_CONFIG.url}${SITE_CONFIG.ogImage}`,
         width: 1200,
         height: 630,
         alt: `Terms of Service — ${SITE_CONFIG.name}`,
@@ -82,7 +82,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: `Terms of Service | ${SITE_CONFIG.name}`,
     description: `Terms and conditions governing the use of ${SITE_CONFIG.name}.`,
-    images: [`${SITE_CONFIG.url}/twitter-image`],
+    images: [`${SITE_CONFIG.url}${SITE_CONFIG.ogImage}`],
   },
   robots: {
     index: true,

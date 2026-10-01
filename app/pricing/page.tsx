@@ -16,7 +16,7 @@ import { AI_PROMPTS } from "@/lib/prompts"
 import { PricingSponsorshipSection } from "@/components/pricing/pricing-sponsorship-section"
 
 export const metadata: Metadata = {
-  title: `Sidebar Sponsorship & Advertising — ${SITE_CONFIG.name}`,
+  title: "Sidebar Sponsorship & Advertising",
   description: `Promote your developer tool, API, or infrastructure with dedicated sidebar ad placements reaching thousands of engineers on ${SITE_CONFIG.name}.`,
   keywords: [
     "developer advertising",
@@ -38,7 +38,7 @@ export const metadata: Metadata = {
     siteName: SITE_CONFIG.name,
     images: [
       {
-        url: `${SITE_CONFIG.url}/opengraph-image`,
+        url: `${SITE_CONFIG.url}${SITE_CONFIG.ogImage}`,
         width: 1200,
         height: 630,
         alt: `Sidebar Advertising | ${SITE_CONFIG.name}`,
@@ -49,7 +49,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: `Sidebar Sponsorship & Advertising | ${SITE_CONFIG.name}`,
     description: `Promote your developer tool or API with high-visibility sidebar ad placements across ${SITE_CONFIG.name}.`,
-    images: [`${SITE_CONFIG.url}/twitter-image`],
+    images: [`${SITE_CONFIG.url}${SITE_CONFIG.ogImage}`],
   },
 }
 

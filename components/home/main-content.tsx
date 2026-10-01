@@ -18,7 +18,7 @@ export const MainContent = ({
   return (
     <div className="relative flex min-h-full flex-col bg-slate-50/50">
       <PageHeader
-        heading="GET DISCOVERED BY HUMANS AND AI"
+        heading="Launch & Discover Developer Tools, Products & Tech Stacks"
         description={`Launch your product once on ${SITE_CONFIG.name}. Get discovered by developers,
 search engines, and AI systems looking for tools/products like yours.`}
         aiPrompt={AI_PROMPTS.home}

@@ -1,6 +1,11 @@
 import type { Metadata } from "next"
 import { ProductsHero } from "@/components/products/products-hero"
-import { collectionPageSchema, breadcrumbSchema, safeJsonLd } from "@/lib/seo/schema"
+import {
+  collectionPageSchema,
+  breadcrumbSchema,
+  buildEntityGraph,
+  safeJsonLd,
+} from "@/lib/seo/schema"
 import { SITE_CONFIG } from "@/constants/site"
 import { ROUTES } from "@/constants/routes"
 import { AI_PROMPTS } from "@/lib/prompts"
@@ -39,13 +44,15 @@ export const generateMetadata = async (props: {
     .filter(Boolean)
     .join(" • ")
 
-  const title = category
-    ? `${category} Developer Products & Software${currentPage > 1 ? ` (Page ${currentPage})` : ""} | ${SITE_CONFIG.name}`
+  const baseTitle = category
+    ? `${category} Developer Products & Software${currentPage > 1 ? ` (Page ${currentPage})` : ""}`
     : q
-      ? `Search "${q}" Developer Products | ${SITE_CONFIG.name}`
+      ? `Search "${q}" Developer Products`
       : filterSuffix.length > 0
-        ? `Developer Products (${filterSuffix}) | ${SITE_CONFIG.name}`
-        : `Developer Products Directory — Verified Software & Tech Stacks | ${SITE_CONFIG.name}`
+        ? `Developer Products (${filterSuffix})`
+        : `Developer Products Directory — Verified Software & Tech Stacks`
+
+  const title = baseTitle
 
   const description = category
     ? `Browse developer-built products and software in the ${category} category on ${SITE_CONFIG.name}. Explore built-with tech stacks, likes, and community reviews.`
@@ -63,6 +70,8 @@ export const generateMetadata = async (props: {
   } else if (currentPage > 1) {
     canonicalUrl = `${SITE_CONFIG.url}/products?page=${currentPage}`
   }
+
+  const ogImageUrl = `${SITE_CONFIG.url}${SITE_CONFIG.ogImage}`
 
   return {
     title,
@@ -85,25 +94,25 @@ export const generateMetadata = async (props: {
         }
       : undefined,
     openGraph: {
-      title,
+      title: `${baseTitle} | ${SITE_CONFIG.name}`,
       description,
       url: canonicalUrl,
       siteName: SITE_CONFIG.name,
       type: "website",
       images: [
         {
-          url: `${SITE_CONFIG.url}/opengraph-image`,
+          url: ogImageUrl,
           width: 1200,
           height: 630,
-          alt: title,
+          alt: `${baseTitle} | ${SITE_CONFIG.name}`,
         },
       ],
     },
     twitter: {
       card: "summary_large_image",
-      title,
+      title: `${baseTitle} | ${SITE_CONFIG.name}`,
       description,
-      images: [`${SITE_CONFIG.url}/twitter-image`],
+      images: [ogImageUrl],
     },
   }
 }
@@ -127,10 +136,17 @@ const ProductsPage = async (props: {
   const currentPage = Number.isInteger(parsedPage) && parsedPage > 1 ? parsedPage : 1
   const pageSize = 20
 
-  const breadcrumbs = breadcrumbSchema([
+  const breadcrumbItems = [
     { name: "Home", url: SITE_CONFIG.url },
     { name: "Products", url: `${SITE_CONFIG.url}/products` },
-  ])
+  ]
+  if (category) {
+    breadcrumbItems.push({
+      name: `${category} Products`,
+      url: `${SITE_CONFIG.url}/products?category=${encodeURIComponent(category)}`,
+    })
+  }
+  const breadcrumbs = breadcrumbSchema(breadcrumbItems)
 
   const [initialProducts, stats] = await Promise.all([
     getProducts({
@@ -161,19 +177,17 @@ const ProductsPage = async (props: {
     })),
   })
 
+  const unifiedJsonLd = buildEntityGraph([breadcrumbs, collectionJsonLd])
+
   return (
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbs) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: safeJsonLd(collectionJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(unifiedJsonLd) }}
       />
       <div className="relative flex min-h-full flex-col bg-slate-50/50">
         <ProductsHero
-          heading="Products Directory"
+          heading={category ? `${category} Products & Software` : "Developer Products Directory"}
           description={
             category
               ? `Browse all verified developer products and software tools in the ${category} category.`

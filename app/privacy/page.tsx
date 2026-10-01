@@ -44,7 +44,7 @@ import {
 } from "@/utils/styles"
 
 export const metadata: Metadata = {
-  title: `Privacy Policy | ${SITE_CONFIG.name}`,
+  title: "Privacy Policy",
   description: `How ${SITE_CONFIG.name} collects, protects, and handles personal data for developers, creators, and autonomous AI agents. Compliant with GDPR and India's DPDP Act.`,
   keywords: [
     "privacy policy",
@@ -66,7 +66,7 @@ export const metadata: Metadata = {
     siteName: SITE_CONFIG.name,
     images: [
       {
-        url: `${SITE_CONFIG.url}/opengraph-image`,
+        url: `${SITE_CONFIG.url}${SITE_CONFIG.ogImage}`,
         width: 1200,
         height: 630,
         alt: `Privacy Policy — ${SITE_CONFIG.name}`,
@@ -77,7 +77,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: `Privacy Policy | ${SITE_CONFIG.name}`,
     description: `How ${SITE_CONFIG.name} collects and protects developer data.`,
-    images: [`${SITE_CONFIG.url}/twitter-image`],
+    images: [`${SITE_CONFIG.url}${SITE_CONFIG.ogImage}`],
   },
   robots: {
     index: true,
