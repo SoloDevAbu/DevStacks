@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next"
 import { getProducts } from "@/db/queries/products/list"
 import { getTools } from "@/db/queries/tools/list"
+import { getToolCategories } from "@/db/queries/categories/list"
 import { getActiveMakersForSitemap } from "@/db/queries/users/get-profile"
 import { SITE_CONFIG } from "@/constants/site"
 import { ROUTES } from "@/constants/routes"
@@ -103,13 +104,28 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
   ]
 
   try {
-    const [dbProducts, dbTools, dbMakers] = await Promise.all([
+    const [dbProducts, dbTools, dbMakers, toolCategories] = await Promise.all([
       getProducts({ limit: 5000 }),
       getTools({ limit: 5000 }),
       getActiveMakersForSitemap(5000).catch(() => []),
+      getToolCategories().catch(() => []),
     ])
 
     const dynamicRoutes: MetadataRoute.Sitemap = []
+
+    // Category Hubs with >= 3 approved tools
+    if (toolCategories && toolCategories.length > 0) {
+      dynamicRoutes.push(
+        ...toolCategories
+          .filter((cat) => cat.count >= 3)
+          .map((cat) => ({
+            url: `${siteUrl}/tools/category/${cat.slug}`,
+            lastModified: now,
+            changeFrequency: "daily" as const,
+            priority: 0.85,
+          }))
+      )
+    }
 
     if (dbProducts && dbProducts.length > 0) {
       dynamicRoutes.push(
@@ -123,6 +139,7 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
     }
 
     if (dbTools && dbTools.length > 0) {
+      // Base tool profile URLs
       dynamicRoutes.push(
         ...dbTools.map((tool) => ({
           url: `${siteUrl}/tools/${tool.slug}`,
@@ -130,6 +147,39 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
           changeFrequency: "weekly" as const,
           priority: 0.8,
         }))
+      )
+
+      // Dedicated Built-With showcase pages for tools with >= 3 verified builds
+      dynamicRoutes.push(
+        ...dbTools
+          .filter((tool) => (tool.buildsCount ?? 0) >= 3)
+          .map((tool) => ({
+            url: `${siteUrl}/built-with/${tool.slug}`,
+            lastModified: tool.updatedAt ?? now,
+            changeFrequency: "weekly" as const,
+            priority: 0.75,
+          }))
+      )
+
+      // Dedicated Alternatives pages for tools with >= 3 siblings in the same category
+      const categoryCountMap = new Map<string, number>()
+      for (const cat of toolCategories) {
+        categoryCountMap.set(cat.id, cat.count)
+      }
+
+      dynamicRoutes.push(
+        ...dbTools
+          .filter((tool) => {
+            if (!tool.categoryId) return false
+            const count = categoryCountMap.get(tool.categoryId) ?? 0
+            return count >= 4 // self + 3 alternatives
+          })
+          .map((tool) => ({
+            url: `${siteUrl}/alternatives/${tool.slug}`,
+            lastModified: tool.updatedAt ?? now,
+            changeFrequency: "weekly" as const,
+            priority: 0.75,
+          }))
       )
     }
 

@@ -39,36 +39,60 @@ export const middleware = (request: NextRequest) => {
     if (userRegion) res.headers.set("x-user-region", userRegion)
 
     const origin = request.nextUrl.origin
-    const toolMatch = pathname.match(/^\/tools\/([^/]+)$/)
-    if (toolMatch && toolMatch[1]) {
+    const categoryMatch = pathname.match(/^\/tools\/category\/([^/]+)$/)
+    if (categoryMatch && categoryMatch[1]) {
       res.headers.set(
         "Link",
-        `<${origin}/tools/${toolMatch[1]}.md>; rel="alternate"; type="text/markdown"`
+        `<${origin}/api/md/tools/category/${categoryMatch[1]}>; rel="alternate"; type="text/markdown"`
       )
     } else {
-      const productMatch = pathname.match(/^\/products\/([^/]+)$/)
-      if (productMatch && productMatch[1]) {
+      const altMatch = pathname.match(/^\/alternatives\/([^/]+)$/)
+      if (altMatch && altMatch[1]) {
         res.headers.set(
           "Link",
-          `<${origin}/products/${productMatch[1]}.md>; rel="alternate"; type="text/markdown"`
+          `<${origin}/api/md/alternatives/${altMatch[1]}>; rel="alternate"; type="text/markdown"`
         )
       } else {
-        const makerMatch = pathname.match(/^\/makers\/([^/]+)$/)
-        if (makerMatch && makerMatch[1]) {
+        const builtWithMatch = pathname.match(/^\/built-with\/([^/]+)$/)
+        if (builtWithMatch && builtWithMatch[1]) {
           res.headers.set(
             "Link",
-            `<${origin}/makers/${makerMatch[1]}.md>; rel="alternate"; type="text/markdown"`
+            `<${origin}/api/md/built-with/${builtWithMatch[1]}>; rel="alternate"; type="text/markdown"`
           )
-        } else if (pathname === "/pricing") {
-          res.headers.set(
-            "Link",
-            `<${origin}/pricing.md>; rel="alternate"; type="text/markdown"`
-          )
-        } else if (pathname === "/faq") {
-          res.headers.set(
-            "Link",
-            `<${origin}/faq.md>; rel="alternate"; type="text/markdown"`
-          )
+        } else {
+          const toolMatch = pathname.match(/^\/tools\/([^/]+)$/)
+          if (toolMatch && toolMatch[1]) {
+            res.headers.set(
+              "Link",
+              `<${origin}/tools/${toolMatch[1]}.md>; rel="alternate"; type="text/markdown"`
+            )
+          } else {
+            const productMatch = pathname.match(/^\/products\/([^/]+)$/)
+            if (productMatch && productMatch[1]) {
+              res.headers.set(
+                "Link",
+                `<${origin}/products/${productMatch[1]}.md>; rel="alternate"; type="text/markdown"`
+              )
+            } else {
+              const makerMatch = pathname.match(/^\/makers\/([^/]+)$/)
+              if (makerMatch && makerMatch[1]) {
+                res.headers.set(
+                  "Link",
+                  `<${origin}/makers/${makerMatch[1]}.md>; rel="alternate"; type="text/markdown"`
+                )
+              } else if (pathname === "/pricing") {
+                res.headers.set(
+                  "Link",
+                  `<${origin}/pricing.md>; rel="alternate"; type="text/markdown"`
+                )
+              } else if (pathname === "/faq") {
+                res.headers.set(
+                  "Link",
+                  `<${origin}/faq.md>; rel="alternate"; type="text/markdown"`
+                )
+              }
+            }
+          }
         }
       }
     }
@@ -170,6 +194,21 @@ export const middleware = (request: NextRequest) => {
     acceptHeader.includes("text/markdown") ||
     acceptHeader.includes("text/x-markdown")
   ) {
+    const categoryMatch = pathname.match(/^\/tools\/category\/([^/]+)$/)
+    if (categoryMatch && categoryMatch[1]) {
+      return rewriteWithHeaders(`/api/md/tools/category/${categoryMatch[1]}`)
+    }
+
+    const altMatch = pathname.match(/^\/alternatives\/([^/]+)$/)
+    if (altMatch && altMatch[1]) {
+      return rewriteWithHeaders(`/api/md/alternatives/${altMatch[1]}`)
+    }
+
+    const builtWithMatch = pathname.match(/^\/built-with\/([^/]+)$/)
+    if (builtWithMatch && builtWithMatch[1]) {
+      return rewriteWithHeaders(`/api/md/built-with/${builtWithMatch[1]}`)
+    }
+
     const toolMatch = pathname.match(/^\/tools\/([^/]+)$/)
     if (toolMatch && toolMatch[1]) {
       return rewriteWithHeaders(`/api/md/tools/${toolMatch[1]}`)
@@ -221,6 +260,8 @@ export const config = {
     "/products/:path*",
     "/makers/:path*",
     "/categories/:path*",
+    "/alternatives/:path*",
+    "/built-with/:path*",
     "/trending/:path*",
     "/pricing",
     "/faq",

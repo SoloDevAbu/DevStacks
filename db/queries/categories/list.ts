@@ -155,3 +155,54 @@ export const getOrCreateCategory = async (rawName: string): Promise<string> => {
 
   return created?.id ?? fallback[0]!.id
 }
+
+export const getCategoryBySlug = async (slug: string) => {
+  const cleanSlug = slug.trim().toLowerCase()
+  const cleanName = slug.trim().replace(/-/g, " ")
+
+  const [row] = await db
+    .select({
+      id: categories.id,
+      name: categories.name,
+      slug: categories.slug,
+      createdAt: categories.createdAt,
+    })
+    .from(categories)
+    .where(
+      or(
+        eq(categories.slug, cleanSlug),
+        ilike(categories.name, cleanName),
+        ilike(categories.name, cleanSlug)
+      )
+    )
+    .limit(1)
+
+  return row ?? null
+}
+
+export const getCategoryStats = async (categoryId: string) => {
+  const [toolStats] = await db
+    .select({
+      toolCount: sql<number>`count(${tools.id})::int`,
+      totalBuilds: sql<number>`coalesce(sum(${tools.buildsCount}), 0)::int`,
+      openSourceCount: sql<number>`count(case when ${tools.pricing} = 'Open Source' then 1 end)::int`,
+      freeCount: sql<number>`count(case when ${tools.pricing} in ('Free', 'Freemium', 'Open Source') then 1 end)::int`,
+    })
+    .from(tools)
+    .where(and(eq(tools.categoryId, categoryId), eq(tools.status, "approved")))
+
+  const [productStats] = await db
+    .select({
+      productCount: sql<number>`count(${products.id})::int`,
+    })
+    .from(products)
+    .where(and(eq(products.categoryId, categoryId), eq(products.status, "approved")))
+
+  return {
+    toolCount: Number(toolStats?.toolCount ?? 0),
+    totalBuilds: Number(toolStats?.totalBuilds ?? 0),
+    openSourceCount: Number(toolStats?.openSourceCount ?? 0),
+    freeCount: Number(toolStats?.freeCount ?? 0),
+    productCount: Number(productStats?.productCount ?? 0),
+  }
+}

@@ -241,7 +241,9 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
       ? [
           {
             name: tool.category,
-            url: `${siteUrl}/tools?category=${encodeURIComponent(tool.category)}`,
+            url: tool.categorySlug
+              ? `${siteUrl}/tools/category/${tool.categorySlug}`
+              : `${siteUrl}/tools?category=${encodeURIComponent(tool.category)}`,
           },
         ]
       : []),
@@ -334,7 +336,11 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
                 </li>
                 <li className="flex items-center">
                   <Link
-                    href={`/tools?category=${encodeURIComponent(tool.category)}`}
+                    href={
+                      tool.categorySlug
+                        ? `/tools/category/${tool.categorySlug}`
+                        : `/tools?category=${encodeURIComponent(tool.category)}`
+                    }
                     className="hover:text-slate-900"
                   >
                     {tool.category}
@@ -748,7 +754,11 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
               </div>
               {tool.category ? (
                 <Link
-                  href={`/tools?category=${encodeURIComponent(tool.category)}`}
+                  href={
+                    tool.categorySlug
+                      ? `/tools/category/${tool.categorySlug}`
+                      : `/tools?category=${encodeURIComponent(tool.category)}`
+                  }
                   className={cn(
                     specRowValue,
                     "hover:text-blue-600 hover:underline"
@@ -877,6 +887,16 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
                   showTrendingBadge={false}
                 />
               ))}
+              {builtWithProducts.length >= 3 && (
+                <div className="border-t border-dashed border-border bg-slate-50/50 px-6 py-3 text-center md:px-8">
+                  <Link
+                    href={ROUTES.BUILT_WITH(tool.slug)}
+                    className="text-xs font-semibold text-blue-600 hover:underline"
+                  >
+                    View dedicated {tool.name} production showcase ({builtWithProducts.length} builds) ↗
+                  </Link>
+                </div>
+              )}
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center bg-slate-50/40 px-6 py-12 text-center md:px-8">
@@ -907,6 +927,17 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
           tools={relatedTools}
           categoryName={tool.category}
         />
+
+        {relatedTools.length >= 3 && (
+          <div className="border-b border-dashed border-border bg-slate-50/50 px-6 py-3 text-center md:px-8">
+            <Link
+              href={ROUTES.ALTERNATIVES(tool.slug)}
+              className="text-xs font-semibold text-indigo-600 hover:underline"
+            >
+              Compare all {relatedTools.length} verified {tool.name} alternatives & competitors ↗
+            </Link>
+          </div>
+        )}
 
         {/* Section 7: Ecosystem Callout */}
         <section className="border-b border-dashed border-border bg-slate-50/70 px-6 py-10 md:px-8 md:py-12">
