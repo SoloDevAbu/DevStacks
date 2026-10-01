@@ -38,7 +38,7 @@ export const metadata: Metadata = {
     siteName: SITE_CONFIG.name,
     images: [
       {
-        url: `${SITE_CONFIG.url}${SITE_CONFIG.ogImage}`,
+        url: SITE_CONFIG.ogImageUrl,
         width: 1200,
         height: 630,
         alt: `Popular Building Blocks | ${SITE_CONFIG.name}`,
@@ -49,7 +49,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: `Popular Building Blocks | ${SITE_CONFIG.name}`,
     description: `Explore the most-used developer tools, APIs, and infrastructure layers on ${SITE_CONFIG.name}, ranked by verified developer builds.`,
-    images: [`${SITE_CONFIG.url}${SITE_CONFIG.ogImage}`],
+    images: [SITE_CONFIG.ogImageUrl],
   },
 }
 

@@ -49,10 +49,11 @@ export const metadata: Metadata = {
     siteName: SITE_CONFIG.name,
     images: [
       {
-        url: `${SITE_CONFIG.url}${SITE_CONFIG.ogImage}`,
+        url: SITE_CONFIG.ogImageUrl,
         width: 1200,
         height: 630,
         alt: `${SITE_CONFIG.name} — This Week's Launches for AI & Search Engines`,
+        type: "image/png",
       },
     ],
   },
@@ -61,7 +62,7 @@ export const metadata: Metadata = {
     title: `${SITE_CONFIG.name} — This Week's Launches for AI & Search Engines`,
     description:
       `Discover this week's developer tools, APIs, and products launching on ${SITE_CONFIG.name}. Ranked by community votes and optimized for AI search engines, ChatGPT, Claude, and Google.`,
-    images: [`${SITE_CONFIG.url}${SITE_CONFIG.ogImage}`],
+    images: [SITE_CONFIG.ogImageUrl],
   },
 }
 

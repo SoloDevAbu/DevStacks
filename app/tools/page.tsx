@@ -74,7 +74,7 @@ export const generateMetadata = async (props: {
     canonicalUrl = `${SITE_CONFIG.url}/tools?page=${currentPage}`
   }
 
-  const ogImageUrl = `${SITE_CONFIG.url}${SITE_CONFIG.ogImage}`
+  const ogImageUrl = SITE_CONFIG.ogImageUrl
 
   return {
     title,

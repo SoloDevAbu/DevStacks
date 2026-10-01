@@ -78,7 +78,7 @@ export const metadata: Metadata = {
     description: SITE_CONFIG.description,
     images: [
       {
-        url: `${SITE_CONFIG.url}${SITE_CONFIG.ogImage}`,
+        url: SITE_CONFIG.ogImageUrl,
         width: 1200,
         height: 630,
         alt: `${SITE_CONFIG.name} — ${SITE_CONFIG.tagline}`,
@@ -91,7 +91,7 @@ export const metadata: Metadata = {
     title: `${SITE_CONFIG.name} — ${SITE_CONFIG.tagline}`,
     description: SITE_CONFIG.description,
     creator: "@AbuBakkar2502",
-    images: [`${SITE_CONFIG.url}${SITE_CONFIG.ogImage}`],
+    images: [SITE_CONFIG.ogImageUrl],
   },
   alternates: {
     canonical: SITE_CONFIG.url,

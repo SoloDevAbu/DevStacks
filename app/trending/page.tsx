@@ -32,7 +32,7 @@ export const generateMetadata = async (props: {
     : `Discover the most popular developer tools and products gaining traction right now on ${SITE_CONFIG.name}. Ranked by community upvotes, views, and active developer builds.`
 
   const canonicalUrl = `${SITE_CONFIG.url}/trending`
-  const ogImageUrl = `${SITE_CONFIG.url}${SITE_CONFIG.ogImage}`
+  const ogImageUrl = SITE_CONFIG.ogImageUrl
 
   return {
     title,

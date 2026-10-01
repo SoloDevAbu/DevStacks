@@ -85,7 +85,7 @@ export const organizationSchema = () => ({
   name: SITE_CONFIG.name,
   alternateName: [...SITE_CONFIG.alternateNames],
   url: SITE_CONFIG.url,
-  logo: `${SITE_CONFIG.url}/og-image.png`,
+  logo: SITE_CONFIG.ogImageUrl,
   description: SITE_CONFIG.description,
   disambiguatingDescription:
     "The premier developer tools discovery directory, APIs database, and tech-stack ecosystem platform.",
@@ -155,7 +155,7 @@ export const productSchema = (product: ProductSchemaInput) => {
     name: product.name,
     description: product.description,
     url: product.url,
-    image: product.logoUrl ?? SITE_CONFIG.ogImage,
+    image: product.logoUrl ?? SITE_CONFIG.ogImageUrl,
     applicationCategory:
       product.asoCategory ?? product.category ?? "DeveloperApplication",
     applicationSubCategory: product.category ?? undefined,
@@ -421,7 +421,7 @@ export const toolSchema = (tool: ToolSchemaInput) => {
     name: tool.name,
     description: tool.description,
     url: tool.url,
-    image: tool.logoUrl ?? SITE_CONFIG.ogImage,
+    image: tool.logoUrl ?? SITE_CONFIG.ogImageUrl,
     applicationCategory:
       tool.asoCategory ?? tool.category ?? "DeveloperApplication",
     applicationSubCategory: tool.category ?? undefined,

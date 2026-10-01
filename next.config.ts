@@ -48,7 +48,17 @@ const nextConfig: NextConfig = {
       permanent: true,
     },
     {
+      source: "/opengraph-image.png",
+      destination: "/og-image.png",
+      permanent: true,
+    },
+    {
       source: "/twitter-image",
+      destination: "/og-image.png",
+      permanent: true,
+    },
+    {
+      source: "/twitter-image.png",
       destination: "/og-image.png",
       permanent: true,
     },

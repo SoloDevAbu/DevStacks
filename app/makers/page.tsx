@@ -63,7 +63,7 @@ export const generateMetadata = async (props: {
       siteName: SITE_CONFIG.name,
       images: [
         {
-          url: `${SITE_CONFIG.url}${SITE_CONFIG.ogImage}`,
+          url: SITE_CONFIG.ogImageUrl,
           width: 1200,
           height: 630,
           alt: `${title} | ${SITE_CONFIG.name}`,
@@ -74,7 +74,7 @@ export const generateMetadata = async (props: {
       card: "summary_large_image",
       title: `${title} | ${SITE_CONFIG.name}`,
       description,
-      images: [`${SITE_CONFIG.url}${SITE_CONFIG.ogImage}`],
+      images: [SITE_CONFIG.ogImageUrl],
     },
   }
 }

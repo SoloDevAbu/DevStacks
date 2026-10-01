@@ -19,5 +19,5 @@ export const getSocialCardImage = (
     return logoUrl
   }
 
-  return SITE_CONFIG.ogImage
+  return SITE_CONFIG.ogImageUrl
 }

@@ -67,7 +67,7 @@ export const generateMetadata = async (props: BuiltWithPageProps): Promise<Metad
       siteName: SITE_CONFIG.name,
       images: [
         {
-          url: `${SITE_CONFIG.url}${SITE_CONFIG.ogImage}`,
+          url: SITE_CONFIG.ogImageUrl,
           width: 1200,
           height: 630,
           alt: `Products Built With ${tool.name} | ${SITE_CONFIG.name}`,
@@ -78,7 +78,7 @@ export const generateMetadata = async (props: BuiltWithPageProps): Promise<Metad
       card: "summary_large_image",
       title,
       description,
-      images: [`${SITE_CONFIG.url}${SITE_CONFIG.ogImage}`],
+      images: [SITE_CONFIG.ogImageUrl],
     },
   }
 }

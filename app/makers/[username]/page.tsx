@@ -107,7 +107,7 @@ export const generateMetadata = async ({
       siteName: SITE_CONFIG.name,
       images: [
         {
-          url: maker.avatarUrl || `${SITE_CONFIG.url}${SITE_CONFIG.ogImage}`,
+          url: maker.avatarUrl || SITE_CONFIG.ogImageUrl,
           width: 800,
           height: 800,
           alt: displayName,
@@ -118,7 +118,7 @@ export const generateMetadata = async ({
       card: "summary",
       title: `${baseTitle} | ${SITE_CONFIG.name}`,
       description,
-      images: [maker.avatarUrl || `${SITE_CONFIG.url}${SITE_CONFIG.ogImage}`],
+      images: [maker.avatarUrl || SITE_CONFIG.ogImageUrl],
     },
   }
 }

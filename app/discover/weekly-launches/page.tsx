@@ -40,7 +40,7 @@ export const metadata: Metadata = {
     siteName: SITE_CONFIG.name,
     images: [
       {
-        url: `${SITE_CONFIG.url}${SITE_CONFIG.ogImage}`,
+        url: SITE_CONFIG.ogImageUrl,
         width: 1200,
         height: 630,
         alt: `Weekly Launches | ${SITE_CONFIG.name}`,
@@ -52,7 +52,7 @@ export const metadata: Metadata = {
     title: `Weekly Launches | ${SITE_CONFIG.name}`,
     description:
       "Browse developer tools and products launched each week, ranked by community votes.",
-    images: [`${SITE_CONFIG.url}${SITE_CONFIG.ogImage}`],
+    images: [SITE_CONFIG.ogImageUrl],
   },
 }
 

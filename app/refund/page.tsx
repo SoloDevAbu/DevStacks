@@ -58,7 +58,7 @@ export const metadata: Metadata = {
     siteName: SITE_CONFIG.name,
     images: [
       {
-        url: `${SITE_CONFIG.url}${SITE_CONFIG.ogImage}`,
+        url: SITE_CONFIG.ogImageUrl,
         width: 1200,
         height: 630,
         alt: `Refund Policy — ${SITE_CONFIG.name}`,
@@ -69,7 +69,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: `Refund & Cancellation Policy | ${SITE_CONFIG.name}`,
     description: `Refund and cancellation terms for ${SITE_CONFIG.name}.`,
-    images: [`${SITE_CONFIG.url}${SITE_CONFIG.ogImage}`],
+    images: [SITE_CONFIG.ogImageUrl],
   },
   robots: {
     index: true,

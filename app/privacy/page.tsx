@@ -66,7 +66,7 @@ export const metadata: Metadata = {
     siteName: SITE_CONFIG.name,
     images: [
       {
-        url: `${SITE_CONFIG.url}${SITE_CONFIG.ogImage}`,
+        url: SITE_CONFIG.ogImageUrl,
         width: 1200,
         height: 630,
         alt: `Privacy Policy — ${SITE_CONFIG.name}`,
@@ -77,7 +77,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: `Privacy Policy | ${SITE_CONFIG.name}`,
     description: `How ${SITE_CONFIG.name} collects and protects developer data.`,
-    images: [`${SITE_CONFIG.url}${SITE_CONFIG.ogImage}`],
+    images: [SITE_CONFIG.ogImageUrl],
   },
   robots: {
     index: true,
