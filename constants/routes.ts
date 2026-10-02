@@ -18,6 +18,8 @@ export const ROUTES = {
   TOOL: (slug: string) => `/tools/${slug}`,
   TOOL_CATEGORY: (slug: string) => `/tools/category/${encodeURIComponent(slug)}`,
   ALTERNATIVES: (slug: string) => `/alternatives/${encodeURIComponent(slug)}`,
+  PRODUCTHUNT_ALTERNATIVE: "/producthunt-alternative",
+  COMPARE: (slug: string) => `/compare/${encodeURIComponent(slug)}`,
   BUILT_WITH: (slug: string) => `/built-with/${encodeURIComponent(slug)}`,
   PRIVACY: "/privacy",
   TERMS: "/terms",

@@ -101,6 +101,12 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
       changeFrequency: "daily",
       priority: 0.85,
     },
+    {
+      url: `${siteUrl}${ROUTES.PRODUCTHUNT_ALTERNATIVE}`,
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.85,
+    },
   ]
 
   try {

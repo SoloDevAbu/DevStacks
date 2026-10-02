@@ -5,9 +5,7 @@ import { HeaderNav } from "@/components/layout/header-nav"
 import { HeaderActions } from "@/components/layout/header-actions"
 import { HeaderAdvertise } from "@/components/layout/header-advertise"
 import { MobileNav } from "@/components/layout/mobile-nav"
-import { LeftSidebar } from "@/components/layout/left-sidebar"
-import { RightSidebar } from "@/components/layout/right-sidebar"
-import { AgentFooter } from "@/components/layout/agent-footer"
+import { AppLayoutShell } from "@/components/layout/app-layout-shell"
 import { LaunchPromoBanner } from "@/components/layout/launch-promo-banner"
 import { Providers } from "@/app/providers"
 import { SITE_CONFIG } from "@/constants/site"
@@ -181,23 +179,7 @@ const RootLayout = ({
             </header>
 
             {/* --- BOTTOM ROW (Content) --- */}
-            <div className="grid flex-1 grid-cols-1 lg:grid-cols-[320px_1fr] xl:grid-cols-[320px_1fr_380px]">
-              {/* Bottom Left (Sidebar) */}
-              <aside className="sticky top-16 hidden h-[calc(100dvh-4rem)] flex-col overflow-hidden border-r border-dashed border-border bg-white lg:flex">
-                <LeftSidebar />
-              </aside>
-
-              {/* Bottom Center (Main) */}
-              <main className="relative flex min-h-[calc(100vh-64px)] min-w-0 flex-col justify-between bg-white">
-                <div className="flex-1">{children}</div>
-                <AgentFooter />
-              </main>
-
-              {/* Bottom Right (Sidebar) */}
-              <aside className="sticky top-16 hidden h-[calc(100vh-64px)] scrollbar-thin flex-col overflow-y-auto border-l border-dashed border-border bg-white xl:flex">
-                <RightSidebar />
-              </aside>
-            </div>
+            <AppLayoutShell>{children}</AppLayoutShell>
           </div>
         </Providers>
         <Analytics />

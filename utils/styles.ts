@@ -753,5 +753,57 @@ export const badgeCodeContainer =
 export const badgePromptContainer =
   "w-full min-w-0 max-w-full max-h-28 overflow-y-auto overflow-x-auto rounded-xl border border-slate-200/90 bg-slate-50/90 p-3 font-mono text-[11px] leading-relaxed text-slate-800 whitespace-pre"
 
+export const comparisonPageContainer =
+  "w-full max-w-6xl mx-auto px-4 sm:px-6 md:px-8 py-8 sm:py-12 flex flex-col gap-12 sm:gap-16"
+
+export const comparisonHeroWrapper =
+  "flex flex-col gap-5 border-b border-dashed border-border pb-10 md:pb-12 text-center items-center"
+
+export const comparisonCategoryPill =
+  "inline-flex items-center gap-1.5 rounded-full border border-indigo-200/80 bg-indigo-50/80 px-3 py-1 font-mono text-[11px] font-bold text-indigo-700 tracking-wider uppercase"
+
+export const comparisonH1 =
+  "text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl md:text-4xl max-w-3xl leading-tight"
+
+export const comparisonLeadParagraph =
+  "max-w-3xl text-sm leading-relaxed text-slate-600 sm:text-base font-normal"
+
+export const comparisonTrustBar =
+  "flex flex-wrap items-center justify-center gap-4 text-xs font-medium text-slate-500 pt-2 border-t border-dashed border-slate-200/80 w-full max-w-xl"
+
+export const comparisonSectionTitle =
+  "text-xl sm:text-2xl font-bold tracking-tight text-slate-900"
+
+export const comparisonSectionSubtitle =
+  "text-xs sm:text-sm text-slate-500 max-w-2xl leading-relaxed mt-1"
+
+export const comparisonTableCard =
+  "w-full overflow-hidden rounded-xl border border-dashed border-border bg-white shadow-2xs"
+
+export const comparisonProfileGrid =
+  "relative grid grid-cols-1 divide-y divide-dashed divide-border border border-dashed border-border bg-white md:grid-cols-2 md:divide-y-0 md:divide-x"
+
+export const comparisonProfileColumn =
+  "group/col relative flex flex-col justify-between p-6 transition-colors hover:bg-slate-50/30 md:p-8"
+
+export const comparisonDeepDiveContainer =
+  "relative flex flex-col divide-y divide-dashed divide-border border border-dashed border-border bg-white"
+
+export const comparisonDeepDiveRow =
+  "group/col relative flex flex-col gap-6 p-6 transition-colors hover:bg-slate-50/20 md:p-8"
+
+export const comparisonScenarioGrid =
+  "relative grid grid-cols-1 divide-y divide-dashed divide-border border border-dashed border-border bg-white md:grid-cols-3 md:divide-y-0 md:divide-x"
+
+export const comparisonScenarioColumn =
+  "group/col relative flex flex-col justify-between p-6 transition-colors hover:bg-slate-50/30 md:p-8"
+
+export const comparisonStepNumber =
+  "flex size-7 shrink-0 items-center justify-center rounded-full bg-slate-900 font-mono text-xs font-bold text-white shadow-2xs"
+
+export const comparisonCtaCard =
+  "relative overflow-hidden rounded-2xl border border-dashed border-border bg-linear-to-b from-slate-50/80 via-white to-indigo-50/20 p-8 sm:p-12 text-center flex flex-col items-center gap-5 shadow-xs"
+
+
 
 
