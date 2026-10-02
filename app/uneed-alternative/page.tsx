@@ -9,6 +9,9 @@ export const metadata: Metadata = {
   keywords: UNEED_COMPARISON.keywords,
   alternates: {
     canonical: UNEED_COMPARISON.canonicalUrl,
+    types: {
+      "text/markdown": `${UNEED_COMPARISON.canonicalUrl}.md`,
+    },
   },
   openGraph: {
     title: UNEED_COMPARISON.metaTitle,

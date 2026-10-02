@@ -52,6 +52,10 @@ Every markdown twin returns:
 - \`/terms\` — Terms of Service & platform governance (twin at /terms.md)
 - \`/privacy\` — Privacy Policy & developer data protection (twin at /privacy.md)
 - \`/refund\` — Refund & cancellation policy (twin at /refund.md)
+- \`/producthunt-alternative\` — Product Hunt Alternative: LaunchNests vs Product Hunt
+- \`/uneed-alternative\` — Uneed Alternative: LaunchNests vs Uneed
+- \`/microlaunch-alternative\` — MicroLaunch Alternative: LaunchNests vs MicroLaunch
+- \`/betalist-alternative\` — BetaList Alternative: LaunchNests vs BetaList
 - \`/mcp\` — MCP documentation for agents (JSON-RPC tools)
 - \`/cli\` — CLI and Public REST API documentation
 - \`/auth.md\` — Agent authentication guidance

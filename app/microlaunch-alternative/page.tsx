@@ -9,6 +9,9 @@ export const metadata: Metadata = {
   keywords: MICROLAUNCH_COMPARISON.keywords,
   alternates: {
     canonical: MICROLAUNCH_COMPARISON.canonicalUrl,
+    types: {
+      "text/markdown": `${MICROLAUNCH_COMPARISON.canonicalUrl}.md`,
+    },
   },
   openGraph: {
     title: MICROLAUNCH_COMPARISON.metaTitle,

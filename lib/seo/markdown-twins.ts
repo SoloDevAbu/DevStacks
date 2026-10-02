@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { SITE_CONFIG } from "@/constants/site"
 import type { MakerProfile } from "@/types/entities"
+import type { PlatformComparison } from "@/types/comparison"
 import {
   countryCodeToFlag,
   countryCodeToName,
@@ -317,6 +318,123 @@ ${faqsList}
 - **Maker Profile**: ${canonical}
 - **Machine Twin**: ${SITE_CONFIG.url}/api/md/makers/${maker.username}
 - **JSON API**: ${SITE_CONFIG.url}/v1/makers/${maker.username}
+`
+}
+
+export const generateComparisonMarkdown = (
+  comp: PlatformComparison
+): string => {
+  const competitor = comp.comparedPlatformProfile ?? comp.productHuntProfile!
+  const ln = comp.launchNestsProfile
+
+  return `# ${comp.heroTitle}
+
+> ${comp.heroDescription}
+
+- Canonical URL: ${comp.canonicalUrl}
+- Last Verified: ${comp.lastVerifiedDate}
+- Editorial Status: Research-backed, independent comparison
+
+---
+
+## Comparison Matrix: ${comp.comparedPlatformName} vs ${ln.name}
+
+| Dimension | ${comp.comparedPlatformName} | ${ln.name} |
+|---|---|---|
+${comp.quickComparisonDimensions
+  .map(
+    (d) =>
+      `| **${d.label}** | ${d.competitorValue ?? d.productHuntValue} | ${d.launchNestsValue} |`
+  )
+  .join("\n")}
+
+---
+
+## Platform Profiles
+
+### About ${competitor.name}
+- Tagline: ${competitor.tagline}
+- Website: ${competitor.websiteUrl}
+- Target Audience: ${competitor.primaryAudience}
+- Discovery Model: ${competitor.discoveryLifespan}
+- Pricing: ${competitor.pricingModel}
+
+**Strengths:**
+${competitor.keyStrengths.map((s) => `- ${s}`).join("\n")}
+
+**Limitations:**
+${competitor.keyLimitations.map((l) => `- ${l}`).join("\n")}
+
+### About ${ln.name}
+- Tagline: ${ln.tagline}
+- Website: ${ln.websiteUrl}
+- Target Audience: ${ln.primaryAudience}
+- Discovery Model: ${ln.discoveryLifespan}
+- Pricing: ${ln.pricingModel}
+
+**Strengths:**
+${ln.keyStrengths.map((s) => `- ${s}`).join("\n")}
+
+**Limitations:**
+${ln.keyLimitations.map((l) => `- ${l}`).join("\n")}
+
+---
+
+## Detailed Breakdown
+
+${comp.deepDives
+  .map(
+    (deep, idx) => `### ${idx + 1}. ${deep.title}
+*${deep.subtitle}*
+
+- **${comp.comparedPlatformName} Approach:** ${deep.competitorAngle ?? deep.productHuntAngle}
+- **${ln.name} Approach:** ${deep.launchNestsAngle}
+- **Practical Takeaway:** ${deep.practicalTakeaway}`
+  )
+  .join("\n\n")}
+
+---
+
+## Scenarios: Which Platform Should You Choose?
+
+${comp.scenarios
+  .map(
+    (s) => `### ${s.title} (${s.badge})
+**Recommended For:** ${s.recommendedFor}
+
+${s.explanation}
+
+${s.bulletPoints.map((b) => `- ${b}`).join("\n")}`
+  )
+  .join("\n\n")}
+
+---
+
+## ${comp.canYouUseBoth.heading}
+*${comp.canYouUseBoth.subheading}*
+
+${comp.canYouUseBoth.description}
+
+${comp.canYouUseBoth.strategySteps
+  .map(
+    (step) => `### Step ${step.stepNumber}: ${step.title} (${step.timing})
+- **Action:** ${step.action}
+- **Outcome:** ${step.outcome}`
+  )
+  .join("\n\n")}
+
+> ${comp.canYouUseBoth.summary}
+
+---
+
+## Frequently Asked Questions
+
+${comp.faqs
+  .map(
+    (f) => `### ${f.question}
+${f.answer}`
+  )
+  .join("\n\n")}
 `
 }
 

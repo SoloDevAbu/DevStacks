@@ -29,19 +29,22 @@ export const generateMetadata = async (
     }
   }
 
-  const pageCanonical = `${SITE_CONFIG.url}/compare/${comparison.slug}`
+  const canonicalUrl = comparison.canonicalUrl
 
   return {
     title: comparison.metaTitle,
     description: comparison.metaDescription,
     keywords: comparison.keywords,
     alternates: {
-      canonical: pageCanonical,
+      canonical: canonicalUrl,
+      types: {
+        "text/markdown": `${canonicalUrl}.md`,
+      },
     },
     openGraph: {
       title: comparison.metaTitle,
       description: comparison.metaDescription,
-      url: pageCanonical,
+      url: canonicalUrl,
       type: "article",
       siteName: SITE_CONFIG.name,
       images: [

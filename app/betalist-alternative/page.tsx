@@ -9,6 +9,9 @@ export const metadata: Metadata = {
   keywords: BETALIST_COMPARISON.keywords,
   alternates: {
     canonical: BETALIST_COMPARISON.canonicalUrl,
+    types: {
+      "text/markdown": `${BETALIST_COMPARISON.canonicalUrl}.md`,
+    },
   },
   openGraph: {
     title: BETALIST_COMPARISON.metaTitle,

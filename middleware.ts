@@ -7,6 +7,18 @@ const getClientIp = (request: NextRequest) =>
   request.headers.get("x-real-ip") ||
   "127.0.0.1"
 
+const getComparisonSlugFromPath = (path: string): string | null => {
+  if (path === "/producthunt-alternative" || path === "/producthunt-alternative.md") return "producthunt"
+  if (path === "/uneed-alternative" || path === "/uneed-alternative.md") return "uneed"
+  if (path === "/microlaunch-alternative" || path === "/microlaunch-alternative.md") return "microlaunch"
+  if (path === "/betalist-alternative" || path === "/betalist-alternative.md") return "betalist"
+  const compMatch = path.match(/^\/compare\/([^/]+?)(?:\.md)?$/)
+  if (compMatch && compMatch[1]) return compMatch[1]
+  const altSuffixMatch = path.match(/^\/([^/]+)-alternative(?:\.md)?$/)
+  if (altSuffixMatch && altSuffixMatch[1]) return altSuffixMatch[1]
+  return null
+}
+
 export const middleware = (request: NextRequest) => {
   const { pathname } = request.nextUrl
   const acceptHeader = request.headers.get("accept") ?? ""
@@ -90,6 +102,14 @@ export const middleware = (request: NextRequest) => {
                   "Link",
                   `<${origin}/faq.md>; rel="alternate"; type="text/markdown"`
                 )
+              } else {
+                const compSlug = getComparisonSlugFromPath(pathname)
+                if (compSlug) {
+                  res.headers.set(
+                    "Link",
+                    `<${origin}/api/md/compare/${compSlug}>; rel="alternate"; type="text/markdown"`
+                  )
+                }
               }
             }
           }
@@ -171,6 +191,14 @@ export const middleware = (request: NextRequest) => {
     return rewriteWithHeaders("/.well-known/mcp.json")
   }
 
+  // Support .md suffix on comparison pages
+  if (pathname.endsWith(".md")) {
+    const compSlug = getComparisonSlugFromPath(pathname)
+    if (compSlug) {
+      return rewriteWithHeaders(`/api/md/compare/${compSlug}`)
+    }
+  }
+
   // Support .md suffix on tools: /tools/supabase.md -> /api/md/tools/supabase
   const toolMdMatch = pathname.match(/^\/tools\/([^/]+)\.md$/)
   if (toolMdMatch && toolMdMatch[1]) {
@@ -244,6 +272,11 @@ export const middleware = (request: NextRequest) => {
       return rewriteWithHeaders("/refund.md")
     }
 
+    const compSlug = getComparisonSlugFromPath(pathname)
+    if (compSlug) {
+      return rewriteWithHeaders(`/api/md/compare/${compSlug}`)
+    }
+
     if (pathname === "/") {
       return rewriteWithHeaders("/api/md/_catalog")
     }
@@ -263,6 +296,11 @@ export const config = {
     "/alternatives/:path*",
     "/built-with/:path*",
     "/trending/:path*",
+    "/compare/:path*",
+    "/producthunt-alternative",
+    "/uneed-alternative",
+    "/microlaunch-alternative",
+    "/betalist-alternative",
     "/pricing",
     "/faq",
     "/terms",

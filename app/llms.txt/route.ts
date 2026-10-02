@@ -7,6 +7,7 @@ import {
   getProductCategories,
   type DbCategoryItem,
 } from "@/db/queries/categories/list"
+import { getAllComparisons } from "@/constants/comparisons"
 
 export const revalidate = 86400
 
@@ -66,6 +67,14 @@ export const GET = async () => {
 - [MCP docs](${SITE_CONFIG.url}/mcp): Human + agent documentation for the public Model Context Protocol server (twin at /mcp.md).
 - [Public REST API](${SITE_CONFIG.url}/cli): OpenAPI 3.1 REST API documentation at /v1 (twin at /cli.md).
 
+## Launch Platform Comparisons & Alternatives
+${getAllComparisons()
+  .map(
+    (c) =>
+      `- [${c.name}](${c.canonicalUrl}): ${c.heroDescription}`
+  )
+  .join("\n")}
+
 ## Markdown-addressable routes
 
 - [/](${SITE_CONFIG.url}/): Homepage overview
@@ -78,6 +87,10 @@ export const GET = async () => {
 - [/trending](${SITE_CONFIG.url}/trending): Trending rankings leaderboard
 - [/discover/weekly-launches](${SITE_CONFIG.url}/discover/weekly-launches): Developer tools and products by week, community voted
 - [/discover/popular-building-blocks](${SITE_CONFIG.url}/discover/popular-building-blocks): Most-used developer APIs and infrastructure tools
+- [/producthunt-alternative](${SITE_CONFIG.url}/producthunt-alternative): Product Hunt vs LaunchNests editorial comparison
+- [/uneed-alternative](${SITE_CONFIG.url}/uneed-alternative): Uneed vs LaunchNests editorial comparison
+- [/microlaunch-alternative](${SITE_CONFIG.url}/microlaunch-alternative): MicroLaunch vs LaunchNests editorial comparison
+- [/betalist-alternative](${SITE_CONFIG.url}/betalist-alternative): BetaList vs LaunchNests editorial comparison
 - [/submit](${SITE_CONFIG.url}/submit): Submit and launch products or developer tools
 - [/pricing.md](${SITE_CONFIG.url}/pricing.md): Machine-readable pricing & sponsorship specification for AI agents
 - [/faq.md](${SITE_CONFIG.url}/faq.md): Frequently asked questions knowledge base

@@ -6,6 +6,8 @@ import { getActiveMakersForSitemap } from "@/db/queries/users/get-profile"
 import { SITE_CONFIG } from "@/constants/site"
 import { ROUTES } from "@/constants/routes"
 
+import { getAllComparisons } from "@/constants/comparisons"
+
 const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
   const siteUrl = SITE_CONFIG.url
   const now = new Date()
@@ -101,30 +103,17 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
       changeFrequency: "daily",
       priority: 0.85,
     },
-    {
-      url: `${siteUrl}${ROUTES.PRODUCTHUNT_ALTERNATIVE}`,
-      lastModified: now,
-      changeFrequency: "weekly",
-      priority: 0.85,
-    },
-    {
-      url: `${siteUrl}${ROUTES.UNEED_ALTERNATIVE}`,
-      lastModified: now,
-      changeFrequency: "weekly",
-      priority: 0.85,
-    },
-    {
-      url: `${siteUrl}${ROUTES.MICROLAUNCH_ALTERNATIVE}`,
-      lastModified: now,
-      changeFrequency: "weekly",
-      priority: 0.85,
-    },
-    {
-      url: `${siteUrl}${ROUTES.BETALIST_ALTERNATIVE}`,
-      lastModified: now,
-      changeFrequency: "weekly",
-      priority: 0.85,
-    },
+    ...getAllComparisons().map((comparison) => {
+      const path = comparison.canonicalUrl.replace("https://launchnests.com", "")
+      return {
+        url: `${siteUrl}${path}`,
+        lastModified: comparison.lastVerifiedDate
+          ? new Date(comparison.lastVerifiedDate)
+          : now,
+        changeFrequency: "weekly" as const,
+        priority: 0.85,
+      }
+    }),
   ]
 
   try {
