@@ -20,6 +20,7 @@ export const ROUTES = {
   ALTERNATIVES: (slug: string) => `/alternatives/${encodeURIComponent(slug)}`,
   PRODUCTHUNT_ALTERNATIVE: "/producthunt-alternative",
   UNEED_ALTERNATIVE: "/uneed-alternative",
+  MICROLAUNCH_ALTERNATIVE: "/microlaunch-alternative",
   COMPARE: (slug: string) => `/compare/${encodeURIComponent(slug)}`,
   BUILT_WITH: (slug: string) => `/built-with/${encodeURIComponent(slug)}`,
   PRIVACY: "/privacy",

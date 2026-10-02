@@ -38,6 +38,7 @@ const BUILDER_LINKS = [
   { label: "Sponsor & Pricing", href: ROUTES.PRICING },
   { label: "Product Hunt Alternative", href: ROUTES.PRODUCTHUNT_ALTERNATIVE },
   { label: "Uneed Alternative", href: ROUTES.UNEED_ALTERNATIVE },
+  { label: "MicroLaunch Alternative", href: ROUTES.MICROLAUNCH_ALTERNATIVE },
   { label: "Developer Guidelines", href: "/llms.txt" },
 ] as const
 

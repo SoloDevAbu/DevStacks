@@ -1,6 +1,7 @@
 import type { PlatformComparison } from "@/types/comparison"
 import { PRODUCT_HUNT_COMPARISON } from "@/constants/comparisons/product-hunt"
 import { UNEED_COMPARISON } from "@/constants/comparisons/uneed"
+import { MICROLAUNCH_COMPARISON } from "@/constants/comparisons/microlaunch"
 
 export const COMPARISONS_REGISTRY: Record<string, PlatformComparison> = {
   producthunt: PRODUCT_HUNT_COMPARISON,
@@ -8,11 +9,15 @@ export const COMPARISONS_REGISTRY: Record<string, PlatformComparison> = {
   "producthunt-alternative": PRODUCT_HUNT_COMPARISON,
   uneed: UNEED_COMPARISON,
   "uneed-alternative": UNEED_COMPARISON,
+  microlaunch: MICROLAUNCH_COMPARISON,
+  "micro-launch": MICROLAUNCH_COMPARISON,
+  "microlaunch-alternative": MICROLAUNCH_COMPARISON,
 }
 
 export const getAllComparisons = (): PlatformComparison[] => [
   PRODUCT_HUNT_COMPARISON,
   UNEED_COMPARISON,
+  MICROLAUNCH_COMPARISON,
 ]
 
 export const getComparisonBySlug = (
@@ -24,4 +29,6 @@ export const getComparisonBySlug = (
 
 export * from "@/constants/comparisons/product-hunt"
 export * from "@/constants/comparisons/uneed"
+export * from "@/constants/comparisons/microlaunch"
+
 
