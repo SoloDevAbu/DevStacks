@@ -1,6 +1,6 @@
 import Link from "next/link"
 import Image from "next/image"
-import { Blocks, Bot, Sparkles, Terminal } from "lucide-react"
+import { Award, Blocks, Bot, Sparkles, Terminal } from "lucide-react"
 import { HeaderLogo } from "@/components/layout/header-logo"
 import { HoverOutline } from "@/components/shared/hover-outline"
 import { AI_PROVIDERS } from "@/constants/ai-providers"
@@ -9,15 +9,21 @@ import { ROUTES } from "@/constants/routes"
 import { SITE_CONFIG } from "@/constants/site"
 import {
   siteFooterWrapper,
-  siteFooterGrid,
+  siteFooterBrandSection,
+  siteFooterNavGrid,
   siteFooterColHeading,
   siteFooterLink,
   siteFooterBottomStrip,
   footerAiSection,
   footerAiTrayLabel,
   footerAiButton,
+  footerSocialIconButton,
+  footerFeaturedSection,
+  footerFeaturedLabel,
+  footerFeaturedBadgeLink,
   agentProtocolTray,
   agentFooterLabel,
+  agentFooterBadge,
   agentFooterLink,
   agentFooterDot,
 } from "@/utils/styles"
@@ -36,11 +42,14 @@ const BUILDER_LINKS = [
   { label: "Launch a Product", href: ROUTES.SUBMIT_PRODUCT },
   { label: "Launch a Dev Tool", href: ROUTES.SUBMIT_TOOL },
   { label: "Sponsor & Pricing", href: ROUTES.PRICING },
+  { label: "Developer Guidelines", href: "/llms.txt" },
+] as const
+
+const ALTERNATIVE_LINKS = [
   { label: "Product Hunt Alternative", href: ROUTES.PRODUCTHUNT_ALTERNATIVE },
   { label: "Uneed Alternative", href: ROUTES.UNEED_ALTERNATIVE },
   { label: "MicroLaunch Alternative", href: ROUTES.MICROLAUNCH_ALTERNATIVE },
   { label: "BetaList Alternative", href: ROUTES.BETALIST_ALTERNATIVE },
-  { label: "Developer Guidelines", href: "/llms.txt" },
 ] as const
 
 const PROTOCOL_LINKS = [
@@ -109,35 +118,130 @@ export const AgentFooter = () => (
         </div>
       </div>
 
-      <div className={siteFooterGrid}>
-        {/* Brand Column */}
-        <div className="flex flex-col gap-3 sm:col-span-2 md:col-span-1 lg:col-span-2">
+      {/* Brand Section (Full-Width) */}
+      <div className={siteFooterBrandSection}>
+        <div className="flex max-w-xl flex-col gap-2.5">
           <HeaderLogo />
-          <p className="max-w-sm text-xs leading-relaxed text-slate-500">
+          <p className="text-xs leading-relaxed text-slate-500">
             The discovery engine for developer tools, APIs, and modern tech
             stacks. Built for engineers, machine-readable for AI agents.
           </p>
-          <div className="mt-2 flex items-center gap-3 font-mono text-xs text-slate-500">
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="group/social relative inline-flex">
             <a
               href={SITE_CONFIG.socials.x}
               target="_blank"
               rel="noopener noreferrer"
-              className="transition-colors hover:text-slate-900"
+              className={footerSocialIconButton}
+              title="X / Twitter"
+              aria-label="Follow LaunchNests on X (Twitter)"
             >
-              X / Twitter
+              <Image
+                src="/social-logo/twitter.png"
+                alt="X (Twitter)"
+                width={16}
+                height={16}
+                className="size-4 object-contain"
+              />
             </a>
-            <span>·</span>
+            <HoverOutline />
+          </div>
+
+          <div className="group/social relative inline-flex">
             <a
               href={SITE_CONFIG.socials.linkedin}
               target="_blank"
               rel="noopener noreferrer"
-              className="transition-colors hover:text-slate-900"
+              className={footerSocialIconButton}
+              title="LinkedIn"
+              aria-label="Follow LaunchNests on LinkedIn"
             >
-              LinkedIn
+              <Image
+                src="/social-logo/linkedin.png"
+                alt="LinkedIn"
+                width={16}
+                height={16}
+                className="size-4 object-contain"
+              />
             </a>
+            <HoverOutline />
           </div>
         </div>
+      </div>
 
+      {/* --- TIER 2: Dedicated Machine & Agent Protocol Tray --- */}
+      <div className={agentProtocolTray}>
+        <div className="mr-1 flex shrink-0 items-center gap-2">
+          <Bot className="size-3.5 text-blue-600" />
+          <span className={agentFooterLabel}>FOR AI AGENTS</span>
+          <span className={agentFooterBadge}>
+            MCP READY
+          </span>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+          {MACHINE_AGENT_LINKS.map((link, idx) => (
+            <span key={link.href} className="inline-flex items-center gap-2">
+              <Link
+                href={link.href}
+                className={agentFooterLink}
+                prefetch={false}
+              >
+                {link.label}
+              </Link>
+              {idx < MACHINE_AGENT_LINKS.length - 1 && (
+                <span aria-hidden="true" className={agentFooterDot}>
+                  ·
+                </span>
+              )}
+            </span>
+          ))}
+        </div>
+      </div>
+
+      {/* --- Featured On Section --- */}
+      <div className={footerFeaturedSection}>
+        <div className="flex shrink-0 items-center gap-2">
+          <Award className="size-3.5 text-amber-600" />
+          <span className={footerFeaturedLabel}>FEATURED ON</span>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-3 sm:gap-4">
+          <a
+            href="https://www.producthunt.com/products/launchnests?embed=true&utm_source=badge-featured&utm_medium=badge&utm_campaign=badge-launchnests"
+            target="_blank"
+            rel="noopener noreferrer"
+            className={footerFeaturedBadgeLink}
+          >
+            <img
+              src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1263668&theme=light&t=1790961643259"
+              alt="LaunchNests - Discover products, tools & the tech behind them | Product Hunt"
+              width="250"
+              height="54"
+              className="h-10 w-auto sm:h-11"
+            />
+          </a>
+
+          <a
+            href="https://www.scrolllaunch.com/products/launchnests?ref=badge"
+            target="_blank"
+            rel="noopener"
+            className={footerFeaturedBadgeLink}
+          >
+            <img
+              src="https://www.scrolllaunch.com/api/badge/launchnests?variant=launched&theme=light"
+              alt="LaunchNests - Featured on ScrollLaunch"
+              width="220"
+              height="48"
+              className="h-10 w-auto sm:h-11"
+            />
+          </a>
+        </div>
+      </div>
+
+      {/* Navigation Columns Grid */}
+      <div className={siteFooterNavGrid}>
         {/* Column 1: Directory */}
         <div className="flex flex-col gap-3">
           <h4 className={siteFooterColHeading}>Directory</h4>
@@ -166,7 +270,21 @@ export const AgentFooter = () => (
           </ul>
         </div>
 
-        {/* Column 3: Protocols */}
+        {/* Column 3: Alternatives */}
+        <div className="flex flex-col gap-3">
+          <h4 className={siteFooterColHeading}>Alternatives</h4>
+          <ul className="flex flex-col gap-2">
+            {ALTERNATIVE_LINKS.map((link) => (
+              <li key={link.label}>
+                <Link href={link.href} className={siteFooterLink}>
+                  {link.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Column 4: Protocols */}
         <div className="flex flex-col gap-3">
           <h4 className={siteFooterColHeading}>Protocols</h4>
           <ul className="flex flex-col gap-2">
@@ -183,32 +301,6 @@ export const AgentFooter = () => (
             ))}
           </ul>
         </div>
-      </div>
-    </div>
-
-    {/* --- TIER 2: Dedicated Machine & Agent Protocol Tray --- */}
-    <div className={agentProtocolTray}>
-      <div className="mr-1 flex shrink-0 items-center gap-2">
-        <Bot className="size-3.5 text-amber-700" />
-        <span className={agentFooterLabel}>FOR AI AGENTS</span>
-        <span className="py-0.2 rounded border border-amber-600/30 bg-amber-600/10 px-1 font-mono text-[9px] font-bold text-amber-800">
-          MCP READY
-        </span>
-      </div>
-
-      <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-        {MACHINE_AGENT_LINKS.map((link, idx) => (
-          <span key={link.href} className="inline-flex items-center gap-2">
-            <Link href={link.href} className={agentFooterLink} prefetch={false}>
-              {link.label}
-            </Link>
-            {idx < MACHINE_AGENT_LINKS.length - 1 && (
-              <span aria-hidden="true" className={agentFooterDot}>
-                ·
-              </span>
-            )}
-          </span>
-        ))}
       </div>
     </div>
 

@@ -251,7 +251,10 @@ export const agentFooterWrapper =
   "border-t border-dashed border-border bg-amber-50/20 px-6 py-4 text-xs md:px-8"
 
 export const agentFooterLabel =
-  "font-mono text-xs font-bold tracking-widest text-[#a06138] uppercase"
+  "font-mono text-xs font-bold tracking-widest text-blue-700 uppercase"
+
+export const agentFooterBadge =
+  "py-0.2 rounded border border-blue-600/30 bg-blue-600/10 px-1 font-mono text-[9px] font-bold text-blue-800"
 
 export const agentFooterLink =
   "font-mono text-xs text-slate-600 hover:text-slate-900 transition-colors underline-offset-2 hover:underline"
@@ -369,8 +372,13 @@ export const navbarNavLinkActive = "text-slate-950 font-bold"
 export const siteFooterWrapper =
   "border-t border-dashed border-border bg-slate-50/40"
 
-export const siteFooterGrid =
-  "grid grid-cols-1 gap-10 px-6 py-10 sm:grid-cols-2 md:grid-cols-4 md:px-8 md:py-12 lg:grid-cols-5"
+export const siteFooterBrandSection =
+  "flex flex-col gap-4 border-b border-dashed border-border bg-linear-to-r from-amber-50/80 via-orange-50/20 to-transparent px-6 py-8 sm:flex-row sm:items-center sm:justify-between md:px-8 md:py-9"
+
+export const siteFooterNavGrid =
+  "grid grid-cols-2 gap-8 px-6 py-10 sm:grid-cols-2 md:grid-cols-4 md:gap-10 md:px-8 md:py-12"
+
+export const siteFooterGrid = siteFooterNavGrid
 
 export const siteFooterColHeading =
   "font-mono text-xs font-bold tracking-wider text-slate-900 uppercase"
@@ -379,7 +387,7 @@ export const siteFooterLink =
   "text-xs text-slate-600 hover:text-slate-950 transition-colors"
 
 export const agentProtocolTray =
-  "flex flex-wrap items-center gap-x-2.5 gap-y-2 border-t border-dashed border-border bg-amber-50/40 px-6 py-5 font-mono text-xs text-slate-700 md:px-8 md:py-6"
+  "flex flex-wrap items-center gap-x-2.5 gap-y-2 border-y border-dashed border-border bg-linear-to-r from-blue-50/80 via-indigo-50/25 to-transparent px-6 py-5 font-mono text-xs text-slate-700 md:px-8 md:py-6"
 
 export const siteFooterBottomStrip =
   "flex flex-col items-start justify-between gap-2.5 border-t border-dashed border-border bg-white px-6 pt-6 pb-12 text-[11px] text-slate-500 sm:flex-row sm:items-center sm:gap-4 md:px-8 md:pt-8 md:pb-14"
@@ -392,6 +400,18 @@ export const footerAiTrayLabel =
 
 export const footerAiButton =
   "relative z-10 flex items-center justify-center gap-1.5 rounded-md border border-slate-200/80 bg-white/90 px-2.5 py-1 text-xs font-medium text-slate-700 transition-all hover:bg-slate-50 hover:shadow-2xs"
+
+export const footerSocialIconButton =
+  "relative z-10 flex size-8 items-center justify-center rounded-md border border-slate-200/80 bg-white transition-all hover:bg-slate-50 hover:shadow-2xs"
+
+export const footerFeaturedSection =
+  "flex flex-col gap-3 border-b border-dashed border-border bg-white px-6 py-5 sm:flex-row sm:items-center sm:justify-between md:px-8 md:py-6"
+
+export const footerFeaturedLabel =
+  "font-mono text-xs font-bold tracking-wider text-slate-700 uppercase"
+
+export const footerFeaturedBadgeLink =
+  "relative inline-flex items-center transition-opacity hover:opacity-90"
 
 export const makerBadge =
   "inline-flex items-center gap-1.5 rounded-md border border-slate-200/80 bg-slate-50/70 px-2 py-0.5 text-xs font-medium text-slate-700 hover:bg-slate-100/80 transition-colors"
