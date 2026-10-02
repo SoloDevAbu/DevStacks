@@ -36,6 +36,8 @@ const BUILDER_LINKS = [
   { label: "Launch a Product", href: ROUTES.SUBMIT_PRODUCT },
   { label: "Launch a Dev Tool", href: ROUTES.SUBMIT_TOOL },
   { label: "Sponsor & Pricing", href: ROUTES.PRICING },
+  { label: "Product Hunt Alternative", href: ROUTES.PRODUCTHUNT_ALTERNATIVE },
+  { label: "Uneed Alternative", href: ROUTES.UNEED_ALTERNATIVE },
   { label: "Developer Guidelines", href: "/llms.txt" },
 ] as const
 

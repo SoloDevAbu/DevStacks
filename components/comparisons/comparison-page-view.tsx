@@ -40,6 +40,7 @@ import {
 import { AskAiBar } from "@/components/shared/ask-ai-bar"
 import { ROUTES } from "@/constants/routes"
 import { SITE_CONFIG } from "@/constants/site"
+import { getAllComparisons } from "@/constants/comparisons"
 import { AI_PROMPTS } from "@/lib/prompts"
 import {
   breadcrumbSchema,
@@ -75,6 +76,9 @@ export const ComparisonPageView = ({
   comparison,
 }: ComparisonPageViewProps) => {
   const currentYear = new Date().getFullYear()
+  const otherComparisons = getAllComparisons().filter(
+    (c) => c.slug !== comparison.slug
+  )
 
   const breadcrumbsJsonLd = breadcrumbSchema([
     { name: "Home", url: SITE_CONFIG.url },
@@ -82,6 +86,9 @@ export const ComparisonPageView = ({
   ])
 
   const faqJsonLd = faqSchema(comparison.faqs)
+
+  const competitorProfile = (comparison.comparedPlatformProfile ??
+    comparison.productHuntProfile)!
 
   const webPageJsonLd = {
     "@type": "WebPage",
@@ -97,7 +104,7 @@ export const ComparisonPageView = ({
       {
         "@type": "Organization",
         name: comparison.comparedPlatformName,
-        url: comparison.productHuntProfile.websiteUrl,
+        url: competitorProfile.websiteUrl,
       },
       {
         "@type": "Organization",
@@ -200,7 +207,7 @@ export const ComparisonPageView = ({
             {/* Interactive Ask AI Assistant Bar */}
             <div className="mt-3 w-full max-w-xl">
               <AskAiBar
-                prompt={`Compare Product Hunt and LaunchNests for launching a developer tool or software product in ${currentYear}. What are the key differences?`}
+                prompt={`Compare ${comparison.comparedPlatformName} and LaunchNests for launching a developer tool or software product in ${currentYear}. What are the key differences?`}
                 label="ASK AI ABOUT THIS COMPARISON"
                 align="center"
               />
@@ -253,7 +260,7 @@ export const ComparisonPageView = ({
                       </TableCell>
                       <TableCell className="px-4 py-4 align-top text-xs leading-relaxed text-slate-600 sm:text-sm">
                         <span className="whitespace-normal">
-                          {dim.productHuntValue}
+                          {dim.competitorValue ?? dim.productHuntValue}
                         </span>
                       </TableCell>
                       <TableCell className="bg-indigo-50/20 px-4 py-4 align-top text-xs font-medium leading-relaxed text-slate-800 sm:text-sm">
@@ -268,7 +275,7 @@ export const ComparisonPageView = ({
             </div>
           </section>
 
-          {/* Platform Profiles: About Product Hunt vs About LaunchNests */}
+          {/* Platform Profiles: About Competitor vs About LaunchNests */}
           <section id="platform-profiles" className="flex flex-col gap-4">
             <div>
               <h2 className={comparisonSectionTitle}>Platform Profiles</h2>
@@ -279,7 +286,7 @@ export const ComparisonPageView = ({
             </div>
 
             <div className={comparisonProfileGrid}>
-              {/* Product Hunt Column */}
+              {/* Competitor Column */}
               <div className={comparisonProfileColumn}>
                 <CornerBrackets />
                 <div>
@@ -287,25 +294,25 @@ export const ComparisonPageView = ({
                     <div className="flex items-center gap-3">
                       <Avatar className="size-10 rounded-lg border border-slate-200 bg-white p-1 shadow-2xs">
                         <AvatarImage
-                          src={getFaviconUrl(comparison.productHuntProfile.websiteUrl) ?? ""}
-                          alt={comparison.productHuntProfile.name}
+                          src={getFaviconUrl(competitorProfile.websiteUrl) ?? ""}
+                          alt={competitorProfile.name}
                           className="object-contain"
                         />
                         <AvatarFallback className="rounded-lg font-mono text-xs font-bold text-amber-800 bg-amber-50">
-                          PH
+                          {comparison.comparedPlatformName.slice(0, 2).toUpperCase()}
                         </AvatarFallback>
                       </Avatar>
                       <div>
                         <h3 className="text-base font-bold text-slate-900 sm:text-lg">
-                          {comparison.productHuntProfile.name}
+                          {competitorProfile.name}
                         </h3>
                         <p className="font-mono text-xs text-slate-500">
-                          {comparison.productHuntProfile.tagline}
+                          {competitorProfile.tagline}
                         </p>
                       </div>
                     </div>
                     <a
-                      href={comparison.productHuntProfile.websiteUrl}
+                      href={competitorProfile.websiteUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-1 font-mono text-xs font-semibold text-slate-500 transition-colors hover:text-slate-900"
@@ -316,7 +323,7 @@ export const ComparisonPageView = ({
                   </div>
 
                   <p className="mt-4 text-xs leading-relaxed text-slate-600 sm:text-sm">
-                    {comparison.productHuntProfile.primaryAudience}
+                    {competitorProfile.primaryAudience}
                   </p>
 
                   <div className="mt-6 flex flex-col gap-2.5">
@@ -324,7 +331,7 @@ export const ComparisonPageView = ({
                       Documented Strengths
                     </span>
                     <ul className="flex flex-col gap-2 text-xs text-slate-600 sm:text-sm">
-                      {comparison.productHuntProfile.keyStrengths.map(
+                      {competitorProfile.keyStrengths.map(
                         (str, i) => (
                           <li key={i} className="flex items-start gap-2.5">
                             <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-emerald-600" />
@@ -340,7 +347,7 @@ export const ComparisonPageView = ({
                       Documented Limitations
                     </span>
                     <ul className="flex flex-col gap-2 text-xs text-slate-600 sm:text-sm">
-                      {comparison.productHuntProfile.keyLimitations.map(
+                      {competitorProfile.keyLimitations.map(
                         (lim, i) => (
                           <li key={i} className="flex items-start gap-2.5">
                             <XCircle className="mt-0.5 size-4 shrink-0 text-rose-500" />
@@ -464,24 +471,26 @@ export const ComparisonPageView = ({
 
                   {/* Inner 2-column comparative grid with corner brackets and dashed separation */}
                   <div className="relative grid grid-cols-1 divide-y divide-dashed divide-border border border-dashed border-border bg-white md:grid-cols-2 md:divide-y-0 md:divide-x">
-                    {/* Product Hunt Approach */}
+                    {/* Competitor Approach */}
                     <div className="group/item relative flex flex-col gap-2.5 p-5 transition-colors hover:bg-amber-50/20 md:p-6">
                       <CornerBrackets />
                       <div className="flex items-center gap-2">
                         <Avatar className="size-5 rounded-sm border border-slate-200 bg-white p-0.5">
                           <AvatarImage
-                            src={getFaviconUrl(comparison.productHuntProfile.websiteUrl) ?? ""}
-                            alt="Product Hunt"
+                            src={getFaviconUrl(competitorProfile.websiteUrl) ?? ""}
+                            alt={comparison.comparedPlatformName}
                             className="object-contain"
                           />
-                          <AvatarFallback className="font-mono text-[9px] font-bold">PH</AvatarFallback>
+                          <AvatarFallback className="font-mono text-[9px] font-bold">
+                            {comparison.comparedPlatformName.slice(0, 2).toUpperCase()}
+                          </AvatarFallback>
                         </Avatar>
                         <span className="font-mono text-xs font-bold tracking-wider text-amber-900 uppercase">
-                          Product Hunt Approach
+                          {comparison.comparedPlatformName} Approach
                         </span>
                       </div>
                       <p className="text-xs leading-relaxed text-slate-700 sm:text-sm">
-                        {deep.productHuntAngle}
+                        {deep.competitorAngle ?? deep.productHuntAngle}
                       </p>
                     </div>
 
@@ -637,8 +646,8 @@ export const ComparisonPageView = ({
                 Frequently Asked Questions
               </h2>
               <p className={comparisonSectionSubtitle}>
-                Straightforward answers to the most common questions about
-                Product Hunt alternatives.
+                Straightforward answers to the most common questions about{" "}
+                {comparison.comparedPlatformName} and {SITE_CONFIG.name}.
               </p>
             </div>
 
@@ -658,6 +667,67 @@ export const ComparisonPageView = ({
               ))}
             </div>
           </section>
+
+          {/* More Launch Platform Comparisons */}
+          {otherComparisons.length > 0 && (
+            <section id="other-comparisons" className="flex flex-col gap-4">
+              <div>
+                <h2 className={comparisonSectionTitle}>
+                  More Launch Platform Comparisons
+                </h2>
+                <p className={comparisonSectionSubtitle}>
+                  Explore objective breakdowns of other popular directories,
+                  launchpads, and developer discovery ecosystems.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                {otherComparisons.map((other) => {
+                  const otherProf =
+                    other.comparedPlatformProfile ?? other.productHuntProfile
+                  return (
+                    <Link
+                      key={other.slug}
+                      href={other.routePath}
+                      className="group relative flex flex-col justify-between rounded-xl border border-dashed border-border bg-white p-5 shadow-2xs transition-all hover:border-slate-400 hover:shadow-xs"
+                    >
+                      <CornerBrackets />
+                      <div className="flex items-center justify-between border-b border-dashed border-border pb-3">
+                        <div className="flex items-center gap-2.5">
+                          <Avatar className="size-8 rounded-md border border-slate-200 bg-white p-0.5">
+                            <AvatarImage
+                              src={
+                                getFaviconUrl(otherProf?.websiteUrl ?? "") ?? ""
+                              }
+                              alt={other.comparedPlatformName}
+                              className="object-contain"
+                            />
+                            <AvatarFallback className="font-mono text-xs font-bold text-slate-700">
+                              {other.comparedPlatformName
+                                .slice(0, 2)
+                                .toUpperCase()}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <h3 className="text-sm font-bold text-slate-900 transition-colors group-hover:text-indigo-600">
+                              {other.comparedPlatformName} vs {SITE_CONFIG.name}
+                            </h3>
+                            <p className="font-mono text-[11px] text-slate-500">
+                              {other.name}
+                            </p>
+                          </div>
+                        </div>
+                        <ChevronRight className="size-4 text-slate-400 transition-transform group-hover:translate-x-0.5 group-hover:text-indigo-600" />
+                      </div>
+                      <p className="mt-3 line-clamp-2 text-xs leading-relaxed text-slate-600">
+                        {other.heroDescription}
+                      </p>
+                    </Link>
+                  )
+                })}
+              </div>
+            </section>
+          )}
 
           {/* Closing Call to Action */}
           <section className={comparisonCtaCard}>
