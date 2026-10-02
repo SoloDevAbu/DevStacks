@@ -21,6 +21,7 @@ export const ROUTES = {
   PRODUCTHUNT_ALTERNATIVE: "/producthunt-alternative",
   UNEED_ALTERNATIVE: "/uneed-alternative",
   MICROLAUNCH_ALTERNATIVE: "/microlaunch-alternative",
+  BETALIST_ALTERNATIVE: "/betalist-alternative",
   COMPARE: (slug: string) => `/compare/${encodeURIComponent(slug)}`,
   BUILT_WITH: (slug: string) => `/built-with/${encodeURIComponent(slug)}`,
   PRIVACY: "/privacy",
