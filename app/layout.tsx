@@ -31,7 +31,7 @@ const getMetadataBase = () => {
   try {
     return new URL(SITE_CONFIG.url)
   } catch {
-    return new URL("http://localhost:3000")
+    return new URL("https://www.launchnests.com")
   }
 }
 

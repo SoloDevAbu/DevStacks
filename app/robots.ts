@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next"
-import { SITE_CONFIG } from "@/constants/site"
+import { normalizeSitemapUrl } from "@/utils/urls"
 
 const DISALLOWED_PATHS = [
   "/api/auth/",
@@ -69,8 +69,7 @@ const robots = (): MetadataRoute.Robots => {
         disallow: DISALLOWED_PATHS,
       },
     ],
-    sitemap: `${SITE_CONFIG.url}/sitemap.xml`,
-    host: SITE_CONFIG.url,
+    sitemap: normalizeSitemapUrl("/sitemap.xml"),
   }
 }
 

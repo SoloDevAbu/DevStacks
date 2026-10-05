@@ -53,7 +53,7 @@ interface SeedToolDefinition {
   faqs: SeedFaq[]
 }
 
-const LAUNCHNESTS_FAVICON = "https://launchnests.com/favicon.ico"
+const LAUNCHNESTS_FAVICON = "https://www.launchnests.com/favicon.ico"
 
 const getCleanDomain = (websiteUrl?: string | null): string | null => {
   if (!websiteUrl) return null

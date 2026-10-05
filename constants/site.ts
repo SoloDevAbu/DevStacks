@@ -1,6 +1,15 @@
-const getSiteUrl = () => {
-  const envUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim()
-  if (envUrl) return envUrl.replace(/\/$/, "")
+const getSiteUrl = (): string => {
+  let envUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim()
+  if (envUrl) {
+    envUrl = envUrl.replace(/\/+$/, "")
+    if (envUrl.includes("launchnests.com")) {
+      return "https://www.launchnests.com"
+    }
+    if (envUrl.startsWith("http://") && !envUrl.includes("localhost")) {
+      envUrl = envUrl.replace(/^http:\/\//, "https://")
+    }
+    return envUrl
+  }
   return process.env.NODE_ENV === "production"
     ? "https://www.launchnests.com"
     : "http://localhost:3000"

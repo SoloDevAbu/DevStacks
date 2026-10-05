@@ -3,117 +3,112 @@ import { getProducts } from "@/db/queries/products/list"
 import { getTools } from "@/db/queries/tools/list"
 import { getToolCategories } from "@/db/queries/categories/list"
 import { getActiveMakersForSitemap } from "@/db/queries/users/get-profile"
-import { SITE_CONFIG } from "@/constants/site"
 import { ROUTES } from "@/constants/routes"
-
+import { normalizeSitemapUrl } from "@/utils/urls"
 import { getAllComparisons } from "@/constants/comparisons"
 
 const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
-  const siteUrl = SITE_CONFIG.url
   const now = new Date()
 
   const staticRoutes: MetadataRoute.Sitemap = [
     {
-      url: siteUrl,
+      url: normalizeSitemapUrl(ROUTES.HOME),
       lastModified: now,
       changeFrequency: "daily",
       priority: 1.0,
     },
     {
-      url: `${siteUrl}${ROUTES.TOOLS}`,
+      url: normalizeSitemapUrl(ROUTES.TOOLS),
       lastModified: now,
       changeFrequency: "daily",
       priority: 0.9,
     },
     {
-      url: `${siteUrl}${ROUTES.PRODUCTS}`,
+      url: normalizeSitemapUrl(ROUTES.PRODUCTS),
       lastModified: now,
       changeFrequency: "daily",
       priority: 0.9,
     },
     {
-      url: `${siteUrl}${ROUTES.TRENDING}`,
+      url: normalizeSitemapUrl(ROUTES.TRENDING),
       lastModified: now,
       changeFrequency: "hourly",
       priority: 0.9,
     },
     {
-      url: `${siteUrl}${ROUTES.DISCOVER_POPULAR_BUILDING_BLOCKS}`,
+      url: normalizeSitemapUrl(ROUTES.DISCOVER_POPULAR_BUILDING_BLOCKS),
       lastModified: now,
       changeFrequency: "daily",
       priority: 0.85,
     },
     {
-      url: `${siteUrl}${ROUTES.MAKERS}`,
+      url: normalizeSitemapUrl(ROUTES.MAKERS),
       lastModified: now,
       changeFrequency: "daily",
       priority: 0.85,
     },
     {
-      url: `${siteUrl}${ROUTES.DISCOVER_WEEKLY_LAUNCHES}`,
+      url: normalizeSitemapUrl(ROUTES.DISCOVER_WEEKLY_LAUNCHES),
       lastModified: now,
       changeFrequency: "daily",
       priority: 0.85,
     },
     {
-      url: `${siteUrl}/mcp`,
+      url: normalizeSitemapUrl("/mcp"),
       lastModified: now,
       changeFrequency: "weekly",
       priority: 0.8,
     },
     {
-      url: `${siteUrl}/cli`,
+      url: normalizeSitemapUrl("/cli"),
       lastModified: now,
       changeFrequency: "weekly",
       priority: 0.8,
     },
     {
-      url: `${siteUrl}${ROUTES.PRICING}`,
+      url: normalizeSitemapUrl(ROUTES.PRICING),
       lastModified: now,
       changeFrequency: "weekly",
       priority: 0.8,
     },
     {
-      url: `${siteUrl}${ROUTES.SUBMIT}`,
+      url: normalizeSitemapUrl(ROUTES.SUBMIT),
       lastModified: now,
       changeFrequency: "daily",
       priority: 0.9,
     },
     {
-      url: `${siteUrl}${ROUTES.PRIVACY}`,
+      url: normalizeSitemapUrl(ROUTES.PRIVACY),
       lastModified: now,
       changeFrequency: "monthly",
       priority: 0.5,
     },
     {
-      url: `${siteUrl}${ROUTES.TERMS}`,
+      url: normalizeSitemapUrl(ROUTES.TERMS),
       lastModified: now,
       changeFrequency: "monthly",
       priority: 0.5,
     },
     {
-      url: `${siteUrl}${ROUTES.REFUND}`,
+      url: normalizeSitemapUrl(ROUTES.REFUND),
       lastModified: now,
       changeFrequency: "monthly",
       priority: 0.5,
     },
     {
-      url: `${siteUrl}${ROUTES.FAQ}`,
+      url: normalizeSitemapUrl(ROUTES.FAQ),
       lastModified: now,
       changeFrequency: "daily",
       priority: 0.85,
     },
-    ...getAllComparisons().map((comparison) => {
-      const path = comparison.canonicalUrl.replace("https://launchnests.com", "")
-      return {
-        url: `${siteUrl}${path}`,
-        lastModified: comparison.lastVerifiedDate
-          ? new Date(comparison.lastVerifiedDate)
-          : now,
-        changeFrequency: "weekly" as const,
-        priority: 0.85,
-      }
-    }),
+    ...getAllComparisons().map((comparison) => ({
+      url: normalizeSitemapUrl(comparison.routePath || comparison.canonicalUrl),
+      lastModified: comparison.lastVerifiedDate
+        ? new Date(comparison.lastVerifiedDate)
+        : now,
+      changeFrequency: "weekly" as const,
+      priority: 0.85,
+    })),
   ]
 
   try {
@@ -132,7 +127,7 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
         ...toolCategories
           .filter((cat) => cat.count >= 3)
           .map((cat) => ({
-            url: `${siteUrl}/tools/category/${cat.slug}`,
+            url: normalizeSitemapUrl(`/tools/category/${cat.slug}`),
             lastModified: now,
             changeFrequency: "daily" as const,
             priority: 0.85,
@@ -143,7 +138,7 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
     if (dbProducts && dbProducts.length > 0) {
       dynamicRoutes.push(
         ...dbProducts.map((product) => ({
-          url: `${siteUrl}/products/${product.slug}`,
+          url: normalizeSitemapUrl(`/products/${product.slug}`),
           lastModified: product.updatedAt ?? now,
           changeFrequency: "weekly" as const,
           priority: 0.8,
@@ -155,7 +150,7 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
       // Base tool profile URLs
       dynamicRoutes.push(
         ...dbTools.map((tool) => ({
-          url: `${siteUrl}/tools/${tool.slug}`,
+          url: normalizeSitemapUrl(`/tools/${tool.slug}`),
           lastModified: tool.updatedAt ?? now,
           changeFrequency: "weekly" as const,
           priority: 0.8,
@@ -167,7 +162,7 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
         ...dbTools
           .filter((tool) => (tool.buildsCount ?? 0) >= 3)
           .map((tool) => ({
-            url: `${siteUrl}/built-with/${tool.slug}`,
+            url: normalizeSitemapUrl(`/built-with/${tool.slug}`),
             lastModified: tool.updatedAt ?? now,
             changeFrequency: "weekly" as const,
             priority: 0.75,
@@ -188,7 +183,7 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
             return count >= 4 // self + 3 alternatives
           })
           .map((tool) => ({
-            url: `${siteUrl}/alternatives/${tool.slug}`,
+            url: normalizeSitemapUrl(`/alternatives/${tool.slug}`),
             lastModified: tool.updatedAt ?? now,
             changeFrequency: "weekly" as const,
             priority: 0.75,
@@ -201,7 +196,7 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
         ...dbMakers
           .filter((maker) => Boolean(maker.username))
           .map((maker) => ({
-            url: `${siteUrl}/makers/${maker.username}`,
+            url: normalizeSitemapUrl(`/makers/${maker.username}`),
             lastModified: maker.updatedAt ?? maker.createdAt ?? now,
             changeFrequency: "weekly" as const,
             priority: 0.75,
@@ -209,9 +204,29 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
       )
     }
 
+    const seen = new Set<string>()
     return [...staticRoutes, ...dynamicRoutes]
+      .map((entry) => ({
+        ...entry,
+        url: normalizeSitemapUrl(entry.url),
+      }))
+      .filter((entry) => {
+        if (!entry.url || seen.has(entry.url)) return false
+        seen.add(entry.url)
+        return true
+      })
   } catch {
-    return [...staticRoutes]
+    const seen = new Set<string>()
+    return staticRoutes
+      .map((entry) => ({
+        ...entry,
+        url: normalizeSitemapUrl(entry.url),
+      }))
+      .filter((entry) => {
+        if (!entry.url || seen.has(entry.url)) return false
+        seen.add(entry.url)
+        return true
+      })
   }
 }
 
