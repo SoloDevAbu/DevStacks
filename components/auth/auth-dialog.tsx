@@ -40,6 +40,9 @@ export const AuthDialog = ({
     setIsLoading(true)
     setError(null)
     try {
+      if (typeof window !== "undefined") {
+        sessionStorage.setItem("pending_auth_login", "google")
+      }
       await signIn.social({
         provider: "google",
         callbackURL:

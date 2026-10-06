@@ -12,6 +12,7 @@ import {
 import { AuthDialog } from "@/components/auth/auth-dialog"
 import { useSession } from "@/lib/auth/client"
 import { useRouter, useSearchParams, usePathname } from "next/navigation"
+import { trackLogin, trackSignUp } from "@/lib/analytics/events"
 
 interface OpenAuthModalOptions {
   defaultTab?: "signin" | "signup"
@@ -73,6 +74,24 @@ export const AuthModalProvider = ({ children }: { children: ReactNode }) => {
   const [options, setOptions] = useState<OpenAuthModalOptions>({})
   const { data: session } = useSession()
   const router = useRouter()
+
+  useEffect(() => {
+    if (session?.user?.id && typeof window !== "undefined") {
+      const pendingMethod = sessionStorage.getItem("pending_auth_login")
+      if (pendingMethod) {
+        sessionStorage.removeItem("pending_auth_login")
+        const createdAt = (session.user as { createdAt?: string | Date }).createdAt
+        const isNewUser =
+          createdAt &&
+          Date.now() - new Date(createdAt).getTime() < 120_000
+        if (isNewUser) {
+          trackSignUp(pendingMethod)
+        } else {
+          trackLogin(pendingMethod)
+        }
+      }
+    }
+  }, [session?.user?.id, session?.user])
 
   const openAuthModal = useCallback((opts: OpenAuthModalOptions = {}) => {
     setOptions(opts)

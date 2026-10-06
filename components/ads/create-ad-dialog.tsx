@@ -146,6 +146,9 @@ export const CreateAdDialog = ({
 
   const handleSubmit = () => {
     if (!session?.user) {
+      if (typeof window !== "undefined") {
+        sessionStorage.setItem("pending_auth_login", "google")
+      }
       signIn.social({ provider: "google" })
       return
     }
@@ -611,7 +614,12 @@ export const CreateAdDialog = ({
               {!session?.user ? (
                 <Button
                   type="button"
-                  onClick={() => signIn.social({ provider: "google" })}
+                  onClick={() => {
+                    if (typeof window !== "undefined") {
+                      sessionStorage.setItem("pending_auth_login", "google")
+                    }
+                    signIn.social({ provider: "google" })
+                  }}
                   className="flex-1 bg-slate-900 text-xs font-semibold text-white hover:bg-slate-800"
                 >
                   Sign In to Pay (${(totalInCents / 100).toFixed(0)})
