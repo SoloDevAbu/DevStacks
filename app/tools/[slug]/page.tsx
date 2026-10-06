@@ -57,6 +57,7 @@ import { ToolActionButtons } from "@/components/tools/tool-action-buttons"
 import { HoverOutline } from "@/components/shared/hover-outline"
 import { DetailSectionHeader } from "@/components/shared/detail-section-header"
 import { CommentsSection } from "@/components/shared/comments-section"
+import { GaItemViewTracker } from "@/components/shared/ga-item-view-tracker"
 import { cn } from "@/lib/utils"
 import {
   pricingBadgeColor,
@@ -300,6 +301,15 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: safeJsonLd(unifiedJsonLd) }}
+      />
+
+      <GaItemViewTracker
+        itemId={tool.id}
+        itemName={tool.name}
+        itemCategory={tool.category}
+        itemType="tool"
+        slug={tool.slug}
+        tier={tool.tier}
       />
 
       <article className="relative flex min-h-full flex-col bg-white">

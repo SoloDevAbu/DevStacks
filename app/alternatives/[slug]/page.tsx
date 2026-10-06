@@ -9,6 +9,7 @@ import { ToolCard } from "@/components/shared/tool-card"
 import { ProductLogo } from "@/components/shared/product-logo"
 import { getFaviconUrl } from "@/utils/urls"
 import { Badge } from "@/components/ui/badge"
+import { GaAlternativeViewTracker } from "@/components/shared/ga-alternative-view-tracker"
 import {
   breadcrumbSchema,
   itemListSchema,
@@ -138,6 +139,12 @@ const AlternativesPage = async (props: AlternativesPageProps) => {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: safeJsonLd(unifiedLd) }}
+      />
+
+      <GaAlternativeViewTracker
+        alternativeSlug={tool.slug}
+        itemName={tool.name}
+        category={tool.category}
       />
 
       <div className="flex min-h-screen flex-col bg-white">

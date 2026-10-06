@@ -54,6 +54,7 @@ import { ProductActionButtons } from "@/components/products/product-action-butto
 import { HoverOutline } from "@/components/shared/hover-outline"
 import { DetailSectionHeader } from "@/components/shared/detail-section-header"
 import { CommentsSection } from "@/components/shared/comments-section"
+import { GaItemViewTracker } from "@/components/shared/ga-item-view-tracker"
 import { cn } from "@/lib/utils"
 import {
   pricingBadgeColor,
@@ -289,6 +290,15 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: safeJsonLd(unifiedJsonLd) }}
+      />
+
+      <GaItemViewTracker
+        itemId={product.id}
+        itemName={product.name}
+        itemCategory={product.category}
+        itemType="product"
+        slug={product.slug}
+        tier={product.tier}
       />
 
       <article className="relative flex min-h-full flex-col bg-white">

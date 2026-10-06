@@ -29,6 +29,7 @@ import {
 } from "@/components/ui/avatar"
 import { CornerBrackets } from "@/components/shared/corner-brackets"
 import { getFaviconUrl } from "@/utils/urls"
+import { GaAlternativeViewTracker } from "@/components/shared/ga-alternative-view-tracker"
 import {
   Table,
   TableHeader,
@@ -125,6 +126,12 @@ export const ComparisonPageView = ({
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: safeJsonLd(unifiedJsonLd) }}
+      />
+
+      <GaAlternativeViewTracker
+        alternativeSlug={comparison.slug}
+        itemName={comparison.name}
+        category={comparison.targetKeyword}
       />
 
       <div className="flex w-full flex-col bg-white">
