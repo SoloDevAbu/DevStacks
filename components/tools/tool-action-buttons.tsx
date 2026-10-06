@@ -10,6 +10,7 @@ import { useSession } from "@/lib/auth/client"
 import { useAuthModal } from "@/hooks/auth/use-auth-modal"
 import { getOutboundUrl, getLinkRel } from "@/utils/urls"
 import { trackExternalVisit } from "@/lib/api/analytics"
+import { trackOutboundClick } from "@/lib/analytics/events"
 import { cn } from "@/lib/utils"
 
 interface ToolActionButtonsProps {
@@ -113,6 +114,12 @@ export const ToolActionButtons = ({
           target="_blank"
           rel={linkRel}
           onClick={() => {
+            trackOutboundClick({
+              linkUrl: websiteUrl,
+              itemId: toolId,
+              itemType: "tool",
+              slug,
+            })
             if (toolId) {
               trackExternalVisit({
                 itemType: "tool",

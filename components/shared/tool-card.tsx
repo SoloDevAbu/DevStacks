@@ -44,6 +44,7 @@ import {
   cardTagsGroup,
 } from "@/utils/styles"
 import { getOutboundUrl, getLinkRel, getFaviconUrl } from "@/utils/urls"
+import { trackOutboundClick } from "@/lib/analytics/events"
 import { useUpvoteTool } from "@/hooks/tools/use-upvote-tool"
 import { useBookmarkTool } from "@/hooks/tools/use-bookmark-tool"
 import { useUserInteractions } from "@/hooks/users/use-user-interactions"
@@ -213,7 +214,16 @@ export const ToolCard = ({
                 href={outboundUrl}
                 target="_blank"
                 rel={linkRel}
-                onClick={(e) => e.stopPropagation()}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  trackOutboundClick({
+                    linkUrl: tool.websiteUrl ?? "",
+                    itemId: tool.id,
+                    itemName: tool.name,
+                    itemType: "tool",
+                    slug: tool.slug,
+                  })
+                }}
                 className="ml-1.5 inline-flex items-center text-slate-400 transition-colors hover:text-slate-600"
                 title={`Visit ${tool.name} website`}
               >

@@ -40,6 +40,7 @@ import {
   cardTagsGroup,
 } from "@/utils/styles"
 import { getOutboundUrl, getLinkRel, getFaviconUrl } from "@/utils/urls"
+import { trackOutboundClick } from "@/lib/analytics/events"
 import { useLikeProduct } from "@/hooks/products/use-like-product"
 import { useBookmarkProduct } from "@/hooks/products/use-bookmark-product"
 import { useUserInteractions } from "@/hooks/users/use-user-interactions"
@@ -211,7 +212,16 @@ export const ProductCard = ({
                 href={outboundUrl}
                 target="_blank"
                 rel={linkRel}
-                onClick={(e) => e.stopPropagation()}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  trackOutboundClick({
+                    linkUrl: product.websiteUrl ?? "",
+                    itemId: product.id,
+                    itemName: product.name,
+                    itemType: "product",
+                    slug: product.slug,
+                  })
+                }}
                 className="ml-1.5 inline-flex items-center text-slate-400 transition-colors hover:text-slate-600"
                 title={`Visit ${product.name} website`}
               >

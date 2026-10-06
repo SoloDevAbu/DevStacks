@@ -10,6 +10,7 @@ import { useSession } from "@/lib/auth/client"
 import { useAuthModal } from "@/hooks/auth/use-auth-modal"
 import { getOutboundUrl, getLinkRel } from "@/utils/urls"
 import { trackExternalVisit } from "@/lib/api/analytics"
+import { trackOutboundClick } from "@/lib/analytics/events"
 import { cn } from "@/lib/utils"
 
 interface ProductActionButtonsProps {
@@ -79,6 +80,12 @@ export const ProductActionButtons = ({
   }
 
   const handleVisit = () => {
+    trackOutboundClick({
+      linkUrl: websiteUrl,
+      itemId: productId,
+      itemType: "product",
+      slug,
+    })
     if (productId) {
       trackExternalVisit({
         itemType: "product",

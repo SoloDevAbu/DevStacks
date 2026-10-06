@@ -1,7 +1,8 @@
 "use client"
 
-import { useState, useEffect, useCallback, type ReactNode } from "react"
+import { useState, useEffect, useCallback, useRef, type ReactNode } from "react"
 import { useRouter } from "next/navigation"
+import { trackSearch } from "@/lib/analytics/events"
 import {
   Search,
   Wrench,
@@ -89,7 +90,22 @@ export const SearchCommandProvider = ({ children }: { children: ReactNode }) => 
 
   const isLoading = hasQuery && (isToolsLoading || isProductsLoading)
 
+  const lastTrackedQueryRef = useRef("")
+
+  useEffect(() => {
+    const query = debouncedSearch.trim()
+    if (query.length >= 3 && query !== lastTrackedQueryRef.current) {
+      lastTrackedQueryRef.current = query
+      trackSearch(query)
+    }
+  }, [debouncedSearch])
+
   const handleSelect = (url: string) => {
+    const currentQuery = search.trim()
+    if (currentQuery && currentQuery !== lastTrackedQueryRef.current) {
+      lastTrackedQueryRef.current = currentQuery
+      trackSearch(currentQuery)
+    }
     closeSearch()
     router.push(url)
   }
