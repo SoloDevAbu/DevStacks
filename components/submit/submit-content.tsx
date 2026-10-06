@@ -60,6 +60,7 @@ import { LaunchWeekPicker } from "@/components/shared/launch-week-picker"
 import { ScheduleConfirmDialog } from "./schedule-confirm-dialog"
 import { EmbedBadgeDialog } from "@/components/shared/embed-badge-dialog"
 import type { DbProduct, DbTool } from "@/types/entities"
+import { trackSubmitProduct } from "@/lib/analytics/events"
 
 const emptyForm = {
   name: "",
@@ -320,6 +321,14 @@ export const SubmitContent = ({
       if (valid.type === "product") {
         const { submitterId: _unused, ...clientPayload } = valid.data
         const res = (await submitProductMutation(clientPayload)) as DbProduct
+        trackSubmitProduct({
+          itemId: res.id,
+          itemName: form.name,
+          itemSlug: res.slug,
+          itemType: "product",
+          category: form.category,
+          pricing: form.pricing,
+        })
         setIsScheduleConfirmOpen(false)
         setScheduledEntity({
           name: form.name,
@@ -336,6 +345,14 @@ export const SubmitContent = ({
         )
       } else {
         const res = (await submitToolMutation(valid.data)) as DbTool
+        trackSubmitProduct({
+          itemId: res.id,
+          itemName: form.name,
+          itemSlug: res.slug,
+          itemType: "tool",
+          category: form.category,
+          pricing: form.pricing,
+        })
         setIsScheduleConfirmOpen(false)
         setScheduledEntity({
           name: form.name,

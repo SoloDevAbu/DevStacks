@@ -1,7 +1,8 @@
 "use client"
 
-import { Suspense, useCallback } from "react"
+import { Suspense, useCallback, useEffect } from "react"
 import { useSearchParams, useRouter, usePathname } from "next/navigation"
+import { trackPurchase } from "@/lib/analytics/events"
 import {
   CheckCircle2,
   XCircle,
@@ -45,6 +46,15 @@ const CheckoutStatusDialogInner = () => {
   const isSucceeded = status === "succeeded" || status === "success"
 
   const isOpen = isSucceeded || isFailed || isCancelled
+
+  useEffect(() => {
+    if (isSucceeded && paymentId) {
+      trackPurchase({
+        transactionId: paymentId,
+        currency: "USD",
+      })
+    }
+  }, [isSucceeded, paymentId])
 
   const clearParamsAndNavigate = useCallback(
     (targetPath?: string) => {

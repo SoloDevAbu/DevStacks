@@ -15,6 +15,7 @@ import { Check, Sparkles, ShieldCheck, ArrowRight, Loader2 } from "lucide-react"
 import { PLANS, TIER, type Tier } from "@/constants/plans"
 import { upgradeTierCard, upgradeBadge } from "@/utils/dashboard/styles"
 import { apiClient } from "@/lib/api/axios-instance"
+import { trackBeginCheckout } from "@/lib/analytics/events"
 
 interface UpgradeTierDialogProps {
   isOpen: boolean
@@ -63,6 +64,12 @@ export const UpgradeTierDialog = ({
       })
 
       if (response.data?.checkoutUrl) {
+        trackBeginCheckout({
+          currency: "USD",
+          paymentType: "listing",
+          itemName: `Listing Upgrade (${selectedTier})`,
+          tier: selectedTier,
+        })
         window.location.href = response.data.checkoutUrl
       } else {
         throw new Error("Unable to create checkout session. Please try again.")
