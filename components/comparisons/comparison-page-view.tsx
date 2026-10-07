@@ -59,6 +59,16 @@ import {
   comparisonSectionTitle,
   comparisonSectionSubtitle,
   comparisonTableCard,
+  comparisonTable,
+  comparisonTableHeader,
+  comparisonTableHeaderRow,
+  comparisonTableBody,
+  comparisonTableRow,
+  comparisonDimensionCell,
+  comparisonCompetitorCell,
+  comparisonLaunchNestsCell,
+  comparisonCompetitorMobileCard,
+  comparisonLaunchNestsMobileCard,
   comparisonProfileGrid,
   comparisonProfileColumn,
   comparisonDeepDiveContainer,
@@ -134,22 +144,22 @@ export const ComparisonPageView = ({
         category={comparison.targetKeyword}
       />
 
-      <div className="flex w-full flex-col bg-white">
+      <div className="flex w-full flex-col bg-white overflow-x-clip">
         {/* Breadcrumb Strip */}
         <nav
           aria-label="Breadcrumb"
           className="border-b border-dashed border-border bg-slate-50/50 px-4 py-3 text-xs font-medium text-slate-500 sm:px-6 md:px-8"
         >
-          <div className="mx-auto flex max-w-6xl items-center gap-2">
+          <div className="mx-auto flex max-w-6xl items-center gap-2 min-w-0">
             <Link
               href={ROUTES.HOME}
-              className="flex items-center gap-1 transition-colors hover:text-slate-900"
+              className="flex items-center gap-1 transition-colors hover:text-slate-900 shrink-0"
             >
-              <ArrowLeft className="size-3" />
+              <ArrowLeft className="size-3 shrink-0" />
               Home
             </Link>
-            <ChevronRight className="size-3 text-slate-400" aria-hidden="true" />
-            <span className="font-semibold text-slate-900" aria-current="page">
+            <ChevronRight className="size-3 text-slate-400 shrink-0" aria-hidden="true" />
+            <span className="font-semibold text-slate-900 truncate" aria-current="page">
               {comparison.name}
             </span>
           </div>
@@ -171,12 +181,12 @@ export const ComparisonPageView = ({
             </p>
 
             {/* Direct Action CTAs */}
-            <div className="mt-2 flex flex-wrap items-center justify-center gap-3">
+            <div className="mt-2 flex w-full flex-wrap items-center justify-center gap-3">
               <Button
                 size="default"
                 nativeButton={false}
                 render={<Link href={ROUTES.SUBMIT} />}
-                className="gap-2 text-xs font-semibold"
+                className="gap-2 text-xs font-semibold w-full sm:w-auto"
               >
                 <PlusCircle className="size-4" />
                 Submit Your Project — Free
@@ -186,7 +196,7 @@ export const ComparisonPageView = ({
                 size="default"
                 nativeButton={false}
                 render={<Link href={ROUTES.TOOLS} />}
-                className="gap-2 text-xs font-semibold text-slate-700"
+                className="gap-2 text-xs font-semibold text-slate-700 w-full sm:w-auto"
               >
                 <Compass className="size-4 text-slate-500" />
                 Explore Developer Tools
@@ -235,45 +245,104 @@ export const ComparisonPageView = ({
             </div>
 
             <div className={comparisonTableCard}>
-              <Table>
-                <TableHeader>
-                  <TableRow className="border-b border-dashed border-border bg-slate-50/80">
-                    <TableHead className="w-1/4 px-4 py-3.5 font-mono text-xs font-bold tracking-wider text-slate-700 uppercase">
+              <Table
+                containerClassName="overflow-x-visible md:overflow-x-auto"
+                className={comparisonTable}
+                role="table"
+                aria-label={`Comparison matrix: ${comparison.comparedPlatformName} vs ${SITE_CONFIG.name}`}
+              >
+                <TableHeader className={comparisonTableHeader} role="rowgroup">
+                  <TableRow className={comparisonTableHeaderRow} role="row">
+                    <TableHead
+                      scope="col"
+                      role="columnheader"
+                      className="w-1/4 px-4 py-3.5 font-mono text-xs font-bold tracking-wider text-slate-700 uppercase"
+                    >
                       Dimension
                     </TableHead>
-                    <TableHead className="w-3/8 px-4 py-3.5 font-mono text-xs font-bold tracking-wider text-amber-900 uppercase">
+                    <TableHead
+                      scope="col"
+                      role="columnheader"
+                      className="w-3/8 px-4 py-3.5 font-mono text-xs font-bold tracking-wider text-amber-900 uppercase"
+                    >
                       {comparison.comparedPlatformName}
                     </TableHead>
-                    <TableHead className="w-3/8 px-4 py-3.5 font-mono text-xs font-bold tracking-wider text-indigo-900 uppercase">
+                    <TableHead
+                      scope="col"
+                      role="columnheader"
+                      className="w-3/8 px-4 py-3.5 font-mono text-xs font-bold tracking-wider text-indigo-900 uppercase"
+                    >
                       {SITE_CONFIG.name}
                     </TableHead>
                   </TableRow>
                 </TableHeader>
-                <TableBody>
+                <TableBody className={comparisonTableBody} role="rowgroup">
                   {comparison.quickComparisonDimensions.map((dim) => (
                     <TableRow
                       key={dim.key}
-                      className="border-b border-dashed border-border transition-colors hover:bg-slate-50/50"
+                      className={comparisonTableRow}
+                      role="row"
                     >
-                      <TableCell className="px-4 py-4 align-top font-semibold text-slate-900">
+                      <TableCell
+                        role="rowheader"
+                        className={comparisonDimensionCell}
+                      >
                         <div className="flex flex-col gap-0.5">
-                          <span>{dim.label}</span>
+                          <span className="mb-0.5 font-mono text-[10px] font-bold uppercase tracking-wider text-slate-400 md:hidden">
+                            Dimension
+                          </span>
+                          <span className="text-sm font-bold text-slate-900 md:text-xs md:font-semibold">
+                            {dim.label}
+                          </span>
                           {dim.description && (
-                            <span className="text-[11px] font-normal text-slate-500">
+                            <span className="text-xs font-normal text-slate-500 md:text-[11px]">
                               {dim.description}
                             </span>
                           )}
                         </div>
                       </TableCell>
-                      <TableCell className="px-4 py-4 align-top text-xs leading-relaxed text-slate-600 sm:text-sm">
-                        <span className="whitespace-normal">
-                          {dim.competitorValue ?? dim.productHuntValue}
-                        </span>
+                      <TableCell
+                        role="cell"
+                        className={comparisonCompetitorCell}
+                      >
+                        <div className={comparisonCompetitorMobileCard}>
+                          <div className="mb-1.5 flex items-center gap-1.5 md:hidden">
+                            <span
+                              className="size-2 rounded-full bg-amber-500 shrink-0"
+                              aria-hidden="true"
+                            />
+                            <span className="font-mono text-[11px] font-bold uppercase tracking-wider text-amber-900">
+                              {comparison.comparedPlatformName}
+                            </span>
+                          </div>
+                          <p className="whitespace-normal text-xs leading-relaxed text-slate-700 sm:text-sm">
+                            {dim.competitorValue ?? dim.productHuntValue}
+                          </p>
+                        </div>
                       </TableCell>
-                      <TableCell className="bg-indigo-50/20 px-4 py-4 align-top text-xs font-medium leading-relaxed text-slate-800 sm:text-sm">
-                        <span className="whitespace-normal">
-                          {dim.launchNestsValue}
-                        </span>
+                      <TableCell
+                        role="cell"
+                        className={comparisonLaunchNestsCell}
+                      >
+                        <div className={comparisonLaunchNestsMobileCard}>
+                          <div className="mb-1.5 flex items-center justify-between gap-1.5 md:hidden">
+                            <div className="flex items-center gap-1.5">
+                              <span
+                                className="size-2 rounded-full bg-indigo-600 shrink-0"
+                                aria-hidden="true"
+                              />
+                              <span className="font-mono text-[11px] font-bold uppercase tracking-wider text-indigo-950">
+                                {SITE_CONFIG.name}
+                              </span>
+                            </div>
+                            <span className="rounded bg-indigo-100/80 px-1.5 py-0.5 font-mono text-[10px] font-semibold text-indigo-700">
+                              PERMANENT
+                            </span>
+                          </div>
+                          <p className="whitespace-normal text-xs font-medium leading-relaxed text-slate-900 sm:text-sm">
+                            {dim.launchNestsValue}
+                          </p>
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -523,7 +592,7 @@ export const ComparisonPageView = ({
                     </div>
                   </div>
 
-                  <div className="flex items-start gap-2.5 border-l-2 border-slate-900 bg-slate-50/80 px-4 py-3 text-xs leading-relaxed text-slate-700 sm:text-sm">
+                  <div className="flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-2.5 border-l-2 border-slate-900 bg-slate-50/80 px-4 py-3 text-xs leading-relaxed text-slate-700 sm:text-sm">
                     <strong className="shrink-0 font-mono text-xs font-bold uppercase text-slate-900">
                       Practical Takeaway:
                     </strong>
@@ -753,12 +822,12 @@ export const ComparisonPageView = ({
               </p>
             </div>
 
-            <div className="flex flex-wrap items-center justify-center gap-3">
+            <div className="flex w-full flex-wrap items-center justify-center gap-3">
               <Button
                 size="default"
                 nativeButton={false}
                 render={<Link href={ROUTES.SUBMIT} />}
-                className="text-xs font-semibold"
+                className="text-xs font-semibold w-full sm:w-auto"
               >
                 Submit Your Product — 100% Free
               </Button>
@@ -767,7 +836,7 @@ export const ComparisonPageView = ({
                 size="default"
                 nativeButton={false}
                 render={<Link href={ROUTES.PRODUCTS} />}
-                className="text-xs font-semibold text-slate-700"
+                className="text-xs font-semibold text-slate-700 w-full sm:w-auto"
               >
                 Browse Product Directory
               </Button>
