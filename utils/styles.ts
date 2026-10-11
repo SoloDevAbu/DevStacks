@@ -405,13 +405,28 @@ export const footerSocialIconButton =
   "relative z-10 flex size-8 items-center justify-center rounded-md border border-slate-200/80 bg-white transition-all hover:bg-slate-50 hover:shadow-2xs"
 
 export const footerFeaturedSection =
-  "flex flex-col gap-3 border-b border-dashed border-border bg-white px-6 py-5 sm:flex-row sm:items-center sm:justify-between md:px-8 md:py-6"
+  "flex flex-col gap-3.5 border-b border-dashed border-border bg-white px-6 py-5 md:px-8 md:py-6 overflow-hidden"
 
 export const footerFeaturedLabel =
   "font-mono text-xs font-bold tracking-wider text-slate-700 uppercase"
 
+export const footerFeaturedMarqueeWrapper =
+  "group relative flex w-full items-center overflow-hidden"
+
+export const footerFeaturedMarqueeTrack =
+  "flex shrink-0 items-center gap-6 pr-6 animate-marquee"
+
+export const footerFeaturedMarqueeFadeLeft =
+  "pointer-events-none absolute inset-y-0 left-0 z-10 w-12 bg-linear-to-r from-white to-transparent"
+
+export const footerFeaturedMarqueeFadeRight =
+  "pointer-events-none absolute inset-y-0 right-0 z-10 w-12 bg-linear-to-l from-white to-transparent"
+
 export const footerFeaturedBadgeLink =
-  "relative inline-flex items-center transition-opacity hover:opacity-90"
+  "relative inline-flex shrink-0 items-center transition-opacity hover:opacity-90"
+
+export const footerFeaturedBadgeImage =
+  "h-9 sm:h-10 w-auto max-w-none object-contain transition-transform duration-200 hover:scale-[1.03]"
 
 export const makerBadge =
   "inline-flex items-center gap-1.5 rounded-md border border-slate-200/80 bg-slate-50/70 px-2 py-0.5 text-xs font-medium text-slate-700 hover:bg-slate-100/80 transition-colors"

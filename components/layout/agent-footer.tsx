@@ -7,6 +7,7 @@ import { AI_PROVIDERS } from "@/constants/ai-providers"
 import { AI_PROMPTS } from "@/lib/prompts"
 import { ROUTES } from "@/constants/routes"
 import { SITE_CONFIG } from "@/constants/site"
+import { FEATURED_BADGES } from "@/constants/featured-badges"
 import {
   siteFooterWrapper,
   siteFooterBrandSection,
@@ -20,7 +21,12 @@ import {
   footerSocialIconButton,
   footerFeaturedSection,
   footerFeaturedLabel,
+  footerFeaturedMarqueeWrapper,
+  footerFeaturedMarqueeTrack,
+  footerFeaturedMarqueeFadeLeft,
+  footerFeaturedMarqueeFadeRight,
   footerFeaturedBadgeLink,
+  footerFeaturedBadgeImage,
   agentProtocolTray,
   agentFooterLabel,
   agentFooterBadge,
@@ -205,136 +211,37 @@ export const AgentFooter = () => (
           <span className={footerFeaturedLabel}>FEATURED ON</span>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3 sm:gap-4">
-          <a
-            href="https://www.producthunt.com/products/launchnests?embed=true&utm_source=badge-featured&utm_medium=badge&utm_campaign=badge-launchnests"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={footerFeaturedBadgeLink}
-          >
-            <img
-              src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1263668&theme=light&t=1790961643259"
-              alt="LaunchNests - Discover products, tools & the tech behind them | Product Hunt"
-              width="250"
-              height="54"
-              className="h-10 w-auto sm:h-11"
-            />
-          </a>
+        <div className={footerFeaturedMarqueeWrapper}>
+          <div className={footerFeaturedMarqueeFadeLeft} />
+          <div className={footerFeaturedMarqueeFadeRight} />
 
-          <a
-            href="https://www.scrolllaunch.com/products/launchnests?ref=badge"
-            target="_blank"
-            rel="noopener"
-            className={footerFeaturedBadgeLink}
-          >
-            <img
-              src="https://www.scrolllaunch.com/api/badge/launchnests?variant=launched&theme=light"
-              alt="LaunchNests - Featured on ScrollLaunch"
-              width="220"
-              height="48"
-              className="h-10 w-auto sm:h-11"
-            />
-          </a>
-
-          <a
-            href="https://startupfa.st"
-            target="_blank"
-            title="Powered by Startup Fast"
-          >
-            <img
-              src="https://startupfa.st/images/badges/powered-by-light.svg"
-              alt="Powered by Startup Fast"
-              width="150"
-              height="44"
-            />
-          </a>
-
-          <a
-            href="https://startupfa.me/s/launchnests?utm_source=www.launchnests.com"
-            target="_blank"
-          >
-            <img
-              src="https://startupfa.me/badges/featured-badge.webp"
-              alt="LaunchNests - Featured on Startup Fame"
-              width="171"
-              height="54"
-            />
-          </a>
-
-          <a
-            href="https://ufind.best/products/launchnests"
-            target="_blank"
-            rel="noopener"
-          >
-            <img
-              src="https://ufind.best/badges/ufind-best-badge-light.svg"
-              alt="Featured on ufind.best"
-              width="150"
-            />
-          </a>
-
-          <a href="https://wired.business" target="_blank" rel="noopener">
-            <img
-              src="https://wired.business/badge0-light.svg"
-              alt="Featured on Wired Business"
-              width="200"
-              height="54"
-            />
-          </a>
-
-          <a href="https://twelve.tools" target="_blank" rel="noopener">
-            <img
-              src="https://twelve.tools/badge3-white.svg"
-              alt="Featured on Twelve Tools"
-              width="148"
-              height="40"
-            />
-          </a>
-
-          <a href="https://submitaitools.org" target="_blank">
-            <img
-              src="https://submitaitools.org/static_submitaitools/images/submitaitools.png"
-              alt="Submit AI Tools"
-              width="200"
-              height="60"
-            />
-          </a>
-
-          <a
-            href="https://best.serp.co/products/launchnests.com/"
-            target="_blank"
-            rel="noopener noreferrer"
-            title="Featured on SERP Best"
-          >
-            <img
-              src="https://best.serp.co/badge/featured-on-serp.co-light.svg"
-              alt="Featured on SERP Best"
-              width="200"
-              height="50"
-            />
-          </a>
-
-          <a href="https://dofollow.tools" target="_blank">
-            <img
-              src="https://dofollow.tools/badge/badge_light.svg"
-              alt="Featured on Dofollow.Tools"
-              width="200"
-              height="54"
-            />
-          </a>
-
-          <a
-            href="https://findly.tools/launchnests?utm_source=launchnests"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <img
-              src="https://findly.tools/badges/findly-tools-badge-light.svg"
-              alt="Featured on Findly.tools"
-              width="175"
-              height="55"
-            />
-          </a>
+          {[0, 1, 2, 3].map((copyIndex) => (
+            <div
+              key={copyIndex}
+              aria-hidden={copyIndex > 0 ? "true" : undefined}
+              className={footerFeaturedMarqueeTrack}
+            >
+              {FEATURED_BADGES.map((badge) => (
+                <a
+                  key={`${copyIndex}-${badge.id}`}
+                  href={badge.href}
+                  target={badge.target}
+                  {...(badge.rel ? { rel: badge.rel } : {})}
+                  {...(badge.title ? { title: badge.title } : {})}
+                  tabIndex={copyIndex > 0 ? -1 : undefined}
+                  className={footerFeaturedBadgeLink}
+                >
+                  <img
+                    src={badge.src}
+                    alt={badge.alt}
+                    width={badge.width}
+                    {...(badge.height !== undefined ? { height: badge.height } : {})}
+                    className={footerFeaturedBadgeImage}
+                  />
+                </a>
+              ))}
+            </div>
+          ))}
         </div>
       </div>
 
