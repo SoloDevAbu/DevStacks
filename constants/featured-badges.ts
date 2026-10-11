@@ -118,4 +118,14 @@ export const FEATURED_BADGES: readonly FeaturedBadge[] = [
     width: 175,
     height: 55,
   },
+  {
+    id: "codehype",
+    href: "https://www.codehype.ai/product/launchnests?utm_source=codehype_badge",
+    target: "_blank",
+    rel: "noopener noreferrer",
+    src: "https://www.codehype.ai/badges/launchnests.svg?variant=find-us&v=20",
+    alt: "Featured on CodeHype",
+    width: 180,
+    height: 65,
+  },
 ] as const
