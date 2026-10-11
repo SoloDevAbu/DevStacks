@@ -248,6 +248,18 @@ export const AgentFooter = () => (
               height="44"
             />
           </a>
+
+          <a
+            href="https://startupfa.me/s/launchnests?utm_source=www.launchnests.com"
+            target="_blank"
+          >
+            <img
+              src="https://startupfa.me/badges/featured-badge.webp"
+              alt="LaunchNests - Featured on Startup Fame"
+              width="171"
+              height="54"
+            />
+          </a>
         </div>
       </div>
 
