@@ -175,9 +175,7 @@ export const AgentFooter = () => (
         <div className="mr-1 flex shrink-0 items-center gap-2">
           <Bot className="size-3.5 text-blue-600" />
           <span className={agentFooterLabel}>FOR AI AGENTS</span>
-          <span className={agentFooterBadge}>
-            MCP READY
-          </span>
+          <span className={agentFooterBadge}>MCP READY</span>
         </div>
 
         <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
@@ -235,6 +233,19 @@ export const AgentFooter = () => (
               width="220"
               height="48"
               className="h-10 w-auto sm:h-11"
+            />
+          </a>
+
+          <a
+            href="https://startupfa.st"
+            target="_blank"
+            title="Powered by Startup Fast"
+          >
+            <img
+              src="https://startupfa.st/images/badges/powered-by-light.svg"
+              alt="Powered by Startup Fast"
+              width="150"
+              height="44"
             />
           </a>
         </div>
