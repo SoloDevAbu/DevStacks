@@ -313,6 +313,28 @@ export const AgentFooter = () => (
               height="50"
             />
           </a>
+
+          <a href="https://dofollow.tools" target="_blank">
+            <img
+              src="https://dofollow.tools/badge/badge_light.svg"
+              alt="Featured on Dofollow.Tools"
+              width="200"
+              height="54"
+            />
+          </a>
+
+          <a
+            href="https://findly.tools/launchnests?utm_source=launchnests"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <img
+              src="https://findly.tools/badges/findly-tools-badge-light.svg"
+              alt="Featured on Findly.tools"
+              width="175"
+              height="55"
+            />
+          </a>
         </div>
       </div>
 
