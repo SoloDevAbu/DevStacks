@@ -260,6 +260,59 @@ export const AgentFooter = () => (
               height="54"
             />
           </a>
+
+          <a
+            href="https://ufind.best/products/launchnests"
+            target="_blank"
+            rel="noopener"
+          >
+            <img
+              src="https://ufind.best/badges/ufind-best-badge-light.svg"
+              alt="Featured on ufind.best"
+              width="150"
+            />
+          </a>
+
+          <a href="https://wired.business" target="_blank" rel="noopener">
+            <img
+              src="https://wired.business/badge0-light.svg"
+              alt="Featured on Wired Business"
+              width="200"
+              height="54"
+            />
+          </a>
+
+          <a href="https://twelve.tools" target="_blank" rel="noopener">
+            <img
+              src="https://twelve.tools/badge3-white.svg"
+              alt="Featured on Twelve Tools"
+              width="148"
+              height="40"
+            />
+          </a>
+
+          <a href="https://submitaitools.org" target="_blank">
+            <img
+              src="https://submitaitools.org/static_submitaitools/images/submitaitools.png"
+              alt="Submit AI Tools"
+              width="200"
+              height="60"
+            />
+          </a>
+
+          <a
+            href="https://best.serp.co/products/launchnests.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            title="Featured on SERP Best"
+          >
+            <img
+              src="https://best.serp.co/badge/featured-on-serp.co-light.svg"
+              alt="Featured on SERP Best"
+              width="200"
+              height="50"
+            />
+          </a>
         </div>
       </div>
 
