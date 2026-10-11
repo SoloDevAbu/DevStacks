@@ -94,6 +94,17 @@ export const ProductCard = ({
   const outboundUrl = getOutboundUrl(product.websiteUrl ?? "", "launchnests")
   const linkRel = getLinkRel(product.tier)
 
+  const handleOutboundClick = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    trackOutboundClick({
+      linkUrl: product.websiteUrl ?? "",
+      itemId: product.id,
+      itemName: product.name,
+      itemType: "product",
+      slug: product.slug,
+    })
+  }
+
   const handleCardClick = (e: React.MouseEvent) => {
     if (
       (e.target as HTMLElement).closest(
@@ -177,56 +188,76 @@ export const ProductCard = ({
         </div>
 
         {/* Logo */}
-        <Link
-          href={ROUTES.PRODUCT(product.slug)}
-          className="shrink-0 transition-opacity hover:opacity-80"
-          title={`View ${product.name}`}
-        >
-          <ProductLogo
-            text={product.name.slice(0, 2).toUpperCase()}
-            bgColor="bg-indigo-900"
-            textColor="text-white"
-            imageUrl={logoUrl}
-            websiteUrl={product.websiteUrl}
-            alt={product.name}
-            className="size-12 shrink-0 overflow-hidden rounded-lg border border-slate-200 text-lg sm:size-14 sm:rounded-xl sm:text-xl"
-          />
-        </Link>
+        {product.websiteUrl ? (
+          <a
+            href={outboundUrl}
+            target="_blank"
+            rel={linkRel}
+            onClick={handleOutboundClick}
+            className="shrink-0 transition-opacity hover:opacity-80"
+            title={`Visit ${product.name} website`}
+          >
+            <ProductLogo
+              text={product.name.slice(0, 2).toUpperCase()}
+              bgColor="bg-indigo-900"
+              textColor="text-white"
+              imageUrl={logoUrl}
+              websiteUrl={product.websiteUrl}
+              alt={product.name}
+              className="size-12 shrink-0 overflow-hidden rounded-lg border border-slate-200 text-lg sm:size-14 sm:rounded-xl sm:text-xl"
+            />
+          </a>
+        ) : (
+          <Link
+            href={ROUTES.PRODUCT(product.slug)}
+            className="shrink-0 transition-opacity hover:opacity-80"
+            title={`View ${product.name}`}
+          >
+            <ProductLogo
+              text={product.name.slice(0, 2).toUpperCase()}
+              bgColor="bg-indigo-900"
+              textColor="text-white"
+              imageUrl={logoUrl}
+              websiteUrl={product.websiteUrl}
+              alt={product.name}
+              className="size-12 shrink-0 overflow-hidden rounded-lg border border-slate-200 text-lg sm:size-14 sm:rounded-xl sm:text-xl"
+            />
+          </Link>
+        )}
 
         {/* Product Details */}
         <div className="flex min-w-0 flex-1 flex-col gap-0.5 sm:gap-1">
           <div className="flex min-w-0 flex-nowrap items-center gap-1.5 overflow-hidden sm:gap-2">
             <h3 className="min-w-0 truncate text-sm font-bold text-slate-900 sm:text-base">
-              <Link
-                href={ROUTES.PRODUCT(product.slug)}
-                className="inline-flex min-w-0 items-center gap-1.5 transition-colors hover:text-indigo-600"
-                title={`View ${product.name}`}
-              >
-                <span className="truncate">{product.name}</span>
-                <VerifiedBadge
-                  tier={tier}
-                  className="size-3.5 shrink-0 sm:size-4"
-                />
-              </Link>
-              <a
-                href={outboundUrl}
-                target="_blank"
-                rel={linkRel}
-                onClick={(e) => {
-                  e.stopPropagation()
-                  trackOutboundClick({
-                    linkUrl: product.websiteUrl ?? "",
-                    itemId: product.id,
-                    itemName: product.name,
-                    itemType: "product",
-                    slug: product.slug,
-                  })
-                }}
-                className="ml-1.5 inline-flex items-center text-slate-400 transition-colors hover:text-slate-600"
-                title={`Visit ${product.name} website`}
-              >
-                <ExternalLink className="hidden size-3 shrink-0 opacity-0 transition-opacity group-hover:opacity-100 sm:inline" />
-              </a>
+              {product.websiteUrl ? (
+                <a
+                  href={outboundUrl}
+                  target="_blank"
+                  rel={linkRel}
+                  onClick={handleOutboundClick}
+                  className="inline-flex min-w-0 items-center gap-1.5 transition-colors hover:text-indigo-600"
+                  title={`Visit ${product.name} website`}
+                >
+                  <span className="truncate">{product.name}</span>
+                  <VerifiedBadge
+                    tier={tier}
+                    className="size-3.5 shrink-0 sm:size-4"
+                  />
+                  <ExternalLink className="hidden size-3 shrink-0 text-slate-400 opacity-0 transition-opacity group-hover:opacity-100 sm:inline" />
+                </a>
+              ) : (
+                <Link
+                  href={ROUTES.PRODUCT(product.slug)}
+                  className="inline-flex min-w-0 items-center gap-1.5 transition-colors hover:text-indigo-600"
+                  title={`View ${product.name}`}
+                >
+                  <span className="truncate">{product.name}</span>
+                  <VerifiedBadge
+                    tier={tier}
+                    className="size-3.5 shrink-0 sm:size-4"
+                  />
+                </Link>
+              )}
             </h3>
             {showTypeBadge && (
               <ItemTypeBadge
