@@ -1,10 +1,7 @@
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import { ComparisonPageView } from "@/components/comparisons/comparison-page-view"
-import {
-  getComparisonBySlug,
-  getAllComparisons,
-} from "@/constants/comparisons"
+import { getComparisonBySlug, getAllComparisons } from "@/constants/comparisons"
 import { SITE_CONFIG } from "@/constants/site"
 
 interface ComparePageProps {

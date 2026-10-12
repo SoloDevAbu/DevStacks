@@ -16,5 +16,4 @@ export const LAUNCH_STATUS = {
   CANCELLED: "cancelled",
 } as const
 
-export type LaunchStatus =
-  (typeof LAUNCH_STATUS)[keyof typeof LAUNCH_STATUS]
+export type LaunchStatus = (typeof LAUNCH_STATUS)[keyof typeof LAUNCH_STATUS]

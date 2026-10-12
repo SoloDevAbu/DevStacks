@@ -45,122 +45,133 @@ export const getMakerProfile = cache(
 
     if (!cleanUsername) return null
 
-  const [user] = await db
-    .select()
-    .from(users)
-    .where(eq(sql`lower(${users.username})`, cleanUsername))
-    .limit(1)
+    const [user] = await db
+      .select()
+      .from(users)
+      .where(eq(sql`lower(${users.username})`, cleanUsername))
+      .limit(1)
 
-  if (!user) return null
+    if (!user) return null
 
-  const [faqs, userTools, userProducts] = await Promise.all([
-    db
-      .select({
-        id: makerFaqs.id,
-        question: makerFaqs.question,
-        answer: makerFaqs.answer,
-        sortOrder: makerFaqs.sortOrder,
-      })
-      .from(makerFaqs)
-      .where(eq(makerFaqs.userId, user.id))
-      .orderBy(asc(makerFaqs.sortOrder), asc(makerFaqs.createdAt)),
+    const [faqs, userTools, userProducts] = await Promise.all([
+      db
+        .select({
+          id: makerFaqs.id,
+          question: makerFaqs.question,
+          answer: makerFaqs.answer,
+          sortOrder: makerFaqs.sortOrder,
+        })
+        .from(makerFaqs)
+        .where(eq(makerFaqs.userId, user.id))
+        .orderBy(asc(makerFaqs.sortOrder), asc(makerFaqs.createdAt)),
 
-    db
-      .select({
-        id: tools.id,
-        slug: tools.slug,
-        name: tools.name,
-        tagline: tools.tagline,
-        tags: tools.tags,
-        platforms: tools.platforms,
-        upvotesCount: tools.upvotesCount,
-        buildsCount: tools.buildsCount,
-        commentsCount: tools.commentsCount,
-        viewsCount: tools.viewsCount,
-        pricing: tools.pricing,
-        tier: tools.tier,
-        logoUrl: tools.logoUrl,
-        websiteUrl: tools.websiteUrl,
-        images: tools.images,
-        demoVideoUrl: tools.demoVideoUrl,
-        useCases: tools.useCases,
-        categoryId: tools.categoryId,
-        category: categories.name,
-        categorySlug: categories.slug,
-        submitterId: tools.submitterId,
-        submitterName: users.name,
-        submitterUsername: users.username,
-        submitterCountry: users.country,
-        submitterAvatarUrl: users.avatarUrl,
-        createdAt: tools.createdAt,
-        updatedAt: tools.updatedAt,
-      })
-      .from(tools)
-      .leftJoin(categories, eq(tools.categoryId, categories.id))
-      .leftJoin(users, eq(tools.submitterId, users.id))
-      .where(and(eq(tools.submitterId, user.id), eq(tools.status, "approved")))
-      .orderBy(desc(tools.upvotesCount)),
+      db
+        .select({
+          id: tools.id,
+          slug: tools.slug,
+          name: tools.name,
+          tagline: tools.tagline,
+          tags: tools.tags,
+          platforms: tools.platforms,
+          upvotesCount: tools.upvotesCount,
+          buildsCount: tools.buildsCount,
+          commentsCount: tools.commentsCount,
+          viewsCount: tools.viewsCount,
+          pricing: tools.pricing,
+          tier: tools.tier,
+          logoUrl: tools.logoUrl,
+          websiteUrl: tools.websiteUrl,
+          images: tools.images,
+          demoVideoUrl: tools.demoVideoUrl,
+          useCases: tools.useCases,
+          categoryId: tools.categoryId,
+          category: categories.name,
+          categorySlug: categories.slug,
+          submitterId: tools.submitterId,
+          submitterName: users.name,
+          submitterUsername: users.username,
+          submitterCountry: users.country,
+          submitterAvatarUrl: users.avatarUrl,
+          createdAt: tools.createdAt,
+          updatedAt: tools.updatedAt,
+        })
+        .from(tools)
+        .leftJoin(categories, eq(tools.categoryId, categories.id))
+        .leftJoin(users, eq(tools.submitterId, users.id))
+        .where(
+          and(
+            eq(tools.submitterId, user.id),
+            eq(tools.status, "approved"),
+            eq(tools.isDeleted, false)
+          )
+        )
+        .orderBy(desc(tools.upvotesCount)),
 
-    db
-      .select({
-        id: products.id,
-        slug: products.slug,
-        name: products.name,
-        tagline: products.tagline,
-        tags: products.tags,
-        platforms: products.platforms,
-        likesCount: products.likesCount,
-        commentsCount: products.commentsCount,
-        viewsCount: products.viewsCount,
-        pricing: products.pricing,
-        tier: products.tier,
-        logoUrl: products.logoUrl,
-        websiteUrl: products.websiteUrl,
-        images: products.images,
-        demoVideoUrl: products.demoVideoUrl,
-        useCases: products.useCases,
-        categoryId: products.categoryId,
-        category: categories.name,
-        categorySlug: categories.slug,
-        submitterId: products.submitterId,
-        submitterName: users.name,
-        submitterUsername: users.username,
-        submitterCountry: users.country,
-        submitterAvatarUrl: users.avatarUrl,
-        createdAt: products.createdAt,
-        updatedAt: products.updatedAt,
-      })
-      .from(products)
-      .leftJoin(categories, eq(products.categoryId, categories.id))
-      .leftJoin(users, eq(products.submitterId, users.id))
-      .where(
-        and(eq(products.submitterId, user.id), eq(products.status, "approved"))
-      )
-      .orderBy(desc(products.likesCount)),
-  ])
+      db
+        .select({
+          id: products.id,
+          slug: products.slug,
+          name: products.name,
+          tagline: products.tagline,
+          tags: products.tags,
+          platforms: products.platforms,
+          likesCount: products.likesCount,
+          commentsCount: products.commentsCount,
+          viewsCount: products.viewsCount,
+          pricing: products.pricing,
+          tier: products.tier,
+          logoUrl: products.logoUrl,
+          websiteUrl: products.websiteUrl,
+          images: products.images,
+          demoVideoUrl: products.demoVideoUrl,
+          useCases: products.useCases,
+          categoryId: products.categoryId,
+          category: categories.name,
+          categorySlug: categories.slug,
+          submitterId: products.submitterId,
+          submitterName: users.name,
+          submitterUsername: users.username,
+          submitterCountry: users.country,
+          submitterAvatarUrl: users.avatarUrl,
+          createdAt: products.createdAt,
+          updatedAt: products.updatedAt,
+        })
+        .from(products)
+        .leftJoin(categories, eq(products.categoryId, categories.id))
+        .leftJoin(users, eq(products.submitterId, users.id))
+        .where(
+          and(
+            eq(products.submitterId, user.id),
+            eq(products.status, "approved"),
+            eq(products.isDeleted, false)
+          )
+        )
+        .orderBy(desc(products.likesCount)),
+    ])
 
-  return {
-    id: user.id,
-    name: user.name,
-    username: user.username ?? username,
-    avatarUrl: user.avatarUrl ?? user.image,
-    image: user.image,
-    bio: user.bio,
-    description: user.description,
-    country: user.country,
-    state: user.state,
-    websiteUrl: user.websiteUrl,
-    twitterUrl: user.twitterUrl,
-    githubUrl: user.githubUrl,
-    linkedinUrl: user.linkedinUrl,
-    createdAt: user.createdAt,
-    faqs,
-    tools: userTools as unknown as DbTool[],
-    products: userProducts as unknown as DbProduct[],
-    toolsCount: userTools.length,
-    productsCount: userProducts.length,
+    return {
+      id: user.id,
+      name: user.name,
+      username: user.username ?? username,
+      avatarUrl: user.avatarUrl ?? user.image,
+      image: user.image,
+      bio: user.bio,
+      description: user.description,
+      country: user.country,
+      state: user.state,
+      websiteUrl: user.websiteUrl,
+      twitterUrl: user.twitterUrl,
+      githubUrl: user.githubUrl,
+      linkedinUrl: user.linkedinUrl,
+      createdAt: user.createdAt,
+      faqs,
+      tools: userTools as unknown as DbTool[],
+      products: userProducts as unknown as DbProduct[],
+      toolsCount: userTools.length,
+      productsCount: userProducts.length,
+    }
   }
-})
+)
 
 export const getCurrentUserProfile = async (userId: string) => {
   const [user] = await db
@@ -200,8 +211,8 @@ export const getActiveMakersForSitemap = async (limit = 5000) => {
       and(
         isNotNull(users.username),
         or(
-          sql`EXISTS (SELECT 1 FROM ${tools} WHERE ${tools.submitterId} = ${users.id} AND ${tools.status} = 'approved')`,
-          sql`EXISTS (SELECT 1 FROM ${products} WHERE ${products.submitterId} = ${users.id} AND ${products.status} = 'approved')`,
+          sql`EXISTS (SELECT 1 FROM ${tools} WHERE ${tools.submitterId} = ${users.id} AND ${tools.status} = 'approved' AND ${tools.isDeleted} = false)`,
+          sql`EXISTS (SELECT 1 FROM ${products} WHERE ${products.submitterId} = ${users.id} AND ${products.status} = 'approved' AND ${products.isDeleted} = false)`,
           and(isNotNull(users.bio), sql`length(trim(${users.bio})) > 50`)
         )
       )
@@ -239,8 +250,8 @@ export const getMakersCount = async (): Promise<number> => {
         and(
           isNotNull(users.username),
           or(
-            sql`EXISTS (SELECT 1 FROM ${tools} WHERE ${tools.submitterId} = ${users.id} AND ${tools.status} = 'approved')`,
-            sql`EXISTS (SELECT 1 FROM ${products} WHERE ${products.submitterId} = ${users.id} AND ${products.status} = 'approved')`,
+            sql`EXISTS (SELECT 1 FROM ${tools} WHERE ${tools.submitterId} = ${users.id} AND ${tools.status} = 'approved' AND ${tools.isDeleted} = false)`,
+            sql`EXISTS (SELECT 1 FROM ${products} WHERE ${products.submitterId} = ${users.id} AND ${products.status} = 'approved' AND ${products.isDeleted} = false)`,
             and(isNotNull(users.bio), sql`length(trim(${users.bio})) > 50`)
           )
         )
@@ -281,8 +292,8 @@ export const getMakersDirectory = async (
       and(
         isNotNull(users.username),
         or(
-          sql`EXISTS (SELECT 1 FROM ${tools} WHERE ${tools.submitterId} = ${users.id} AND ${tools.status} = 'approved')`,
-          sql`EXISTS (SELECT 1 FROM ${products} WHERE ${products.submitterId} = ${users.id} AND ${products.status} = 'approved')`,
+          sql`EXISTS (SELECT 1 FROM ${tools} WHERE ${tools.submitterId} = ${users.id} AND ${tools.status} = 'approved' AND ${tools.isDeleted} = false)`,
+          sql`EXISTS (SELECT 1 FROM ${products} WHERE ${products.submitterId} = ${users.id} AND ${products.status} = 'approved' AND ${products.isDeleted} = false)`,
           and(isNotNull(users.bio), sql`length(trim(${users.bio})) > 50`)
         )
       )
@@ -302,7 +313,11 @@ export const getMakersDirectory = async (
       })
       .from(tools)
       .where(
-        and(eq(tools.status, "approved"), inArray(tools.submitterId, makerIds))
+        and(
+          eq(tools.status, "approved"),
+          eq(tools.isDeleted, false),
+          inArray(tools.submitterId, makerIds)
+        )
       )
       .groupBy(tools.submitterId),
     db
@@ -314,6 +329,7 @@ export const getMakersDirectory = async (
       .where(
         and(
           eq(products.status, "approved"),
+          eq(products.isDeleted, false),
           inArray(products.submitterId, makerIds)
         )
       )
@@ -337,4 +353,3 @@ export const getMakersDirectory = async (
     productsCount: productCountMap.get(maker.id) ?? 0,
   }))
 }
-

@@ -1,6 +1,6 @@
 import { db } from "@/db"
 import { products, categories, externalLinkVisits } from "@/db/schema"
-import { eq, desc, inArray } from "drizzle-orm"
+import { and, eq, desc, inArray } from "drizzle-orm"
 import type { DbProduct } from "@/types/entities"
 
 export interface UserDashboardProduct extends DbProduct {
@@ -49,7 +49,7 @@ export const getUserProducts = async (
     })
     .from(products)
     .leftJoin(categories, eq(products.categoryId, categories.id))
-    .where(eq(products.submitterId, userId))
+    .where(and(eq(products.submitterId, userId), eq(products.isDeleted, false)))
     .orderBy(desc(products.createdAt))
 
   const productIds = userProducts.map((p) => p.id)

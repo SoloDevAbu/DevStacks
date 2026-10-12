@@ -51,11 +51,7 @@ export const ToolsHero = ({
 
       {/* Ask AI strip */}
       <div className="relative z-10 flex w-full max-w-[320px] flex-col gap-3 lg:max-w-100 lg:items-end">
-        <AskAiBar
-          prompt={aiPrompt}
-          label="ASK AI ABOUT TOOLS"
-          align="end"
-        />
+        <AskAiBar prompt={aiPrompt} label="ASK AI ABOUT TOOLS" align="end" />
       </div>
     </div>
   )

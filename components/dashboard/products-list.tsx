@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import {
   Package,
   Heart,
@@ -15,6 +16,7 @@ import {
   PlusCircle,
   TrendingUp,
   Code,
+  Trash2,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -27,14 +29,29 @@ import {
   EmptyContent,
   EmptyMedia,
 } from "@/components/ui/empty"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 import { ProductLogo } from "@/components/shared/product-logo"
 import { UpgradeTierDialog } from "@/components/dashboard/upgrade-tier-dialog"
 import { EmbedBadgeDialog } from "@/components/shared/embed-badge-dialog"
+import {
+  DeleteItemDialog,
+  type DeleteItemTarget,
+} from "@/components/dashboard/delete-item-dialog"
 import { ROUTES } from "@/constants/routes"
 import { TIER } from "@/constants/plans"
 import {
   dashboardRow,
   dashboardFilterBar,
+  dashboardActionGroup,
+  dashboardIconButton,
+  dashboardIconUpgradeButton,
+  dashboardIconAnalyticsButton,
+  dashboardIconDeleteButton,
   upgradeBadge,
 } from "@/utils/dashboard/styles"
 import { pricingBadgeColor, submissionStatusBadge } from "@/utils/styles"
@@ -47,13 +64,26 @@ interface ProductsListProps {
 }
 
 export const ProductsList = ({ products }: ProductsListProps) => {
+  const router = useRouter()
   const [searchQuery, setSearchQuery] = useState("")
-  const [statusFilter, setStatusFilter] = useState<"all" | "approved" | "pending">("all")
-  const [upgradingProduct, setUpgradingProduct] = useState<UserDashboardProduct | null>(null)
-  const [badgeProduct, setBadgeProduct] = useState<UserDashboardProduct | null>(null)
+  const [statusFilter, setStatusFilter] = useState<
+    "all" | "approved" | "pending"
+  >("all")
+  const [upgradingProduct, setUpgradingProduct] =
+    useState<UserDashboardProduct | null>(null)
+  const [badgeProduct, setBadgeProduct] = useState<UserDashboardProduct | null>(
+    null
+  )
+  const [deletingProduct, setDeletingProduct] =
+    useState<DeleteItemTarget | null>(null)
+  const [deletedIds, setDeletedIds] = useState<Set<string>>(new Set())
+
+  const activeProducts = useMemo(() => {
+    return products.filter((p) => !deletedIds.has(p.id))
+  }, [products, deletedIds])
 
   const filteredProducts = useMemo(() => {
-    return products.filter((product) => {
+    return activeProducts.filter((product) => {
       const matchesSearch =
         !searchQuery ||
         product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -69,7 +99,7 @@ export const ProductsList = ({ products }: ProductsListProps) => {
 
       return matchesSearch && matchesStatus
     })
-  }, [products, searchQuery, statusFilter])
+  }, [activeProducts, searchQuery, statusFilter])
 
   return (
     <div className="flex w-full flex-1 flex-col">
@@ -77,7 +107,7 @@ export const ProductsList = ({ products }: ProductsListProps) => {
       <div className={dashboardFilterBar}>
         <div className="flex items-center gap-2">
           <span className="font-mono text-xs font-bold text-slate-800 uppercase">
-            All Products ({products.length})
+            All Products ({activeProducts.length})
           </span>
         </div>
 
@@ -139,12 +169,12 @@ export const ProductsList = ({ products }: ProductsListProps) => {
           <EmptyHeader>
             <EmptyTitle>No products found</EmptyTitle>
             <EmptyDescription>
-              {products.length === 0
+              {activeProducts.length === 0
                 ? "You have not submitted any applications or products yet."
                 : "No products match your current search query or filter."}
             </EmptyDescription>
           </EmptyHeader>
-          {products.length === 0 && (
+          {activeProducts.length === 0 && (
             <EmptyContent>
               <Button
                 size="sm"
@@ -181,7 +211,7 @@ export const ProductsList = ({ products }: ProductsListProps) => {
                         <Link
                           href={ROUTES.PRODUCT(product.slug)}
                           target="_blank"
-                          className="text-base font-bold text-slate-900 transition-colors hover:text-indigo-600 flex items-center gap-1.5"
+                          className="flex items-center gap-1.5 text-base font-bold text-slate-900 transition-colors hover:text-indigo-600"
                           title="Open live product page"
                         >
                           <span>{product.name}</span>
@@ -218,72 +248,127 @@ export const ProductsList = ({ products }: ProductsListProps) => {
                         </Badge>
                       </div>
 
-                      <p className="text-xs font-medium text-slate-600 max-w-2xl">
+                      <p className="max-w-2xl text-xs font-medium text-slate-600">
                         {product.tagline}
                       </p>
                     </div>
                   </div>
 
-                  {/* Actions Group: Edit, Upgrade, Analytics */}
-                  <div className="flex flex-wrap items-center gap-2 self-start">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="h-8 gap-1.5 border-slate-200 text-xs font-medium text-slate-700 hover:bg-slate-50"
-                      render={
-                        <Link
-                          href={ROUTES.DASHBOARD_PRODUCT_EDIT(product.slug)}
-                        />
-                      }
-                    >
-                      <Edit3 className="size-3.5 text-slate-500" />
-                      <span>Edit</span>
-                    </Button>
+                  {/* Actions Group: Edit, Badge, Upgrade, Analytics, Delete */}
+                  <TooltipProvider delay={150}>
+                    <div className={dashboardActionGroup}>
+                      <Tooltip>
+                        <TooltipTrigger
+                          render={
+                            <Button
+                              size="icon"
+                              variant="outline"
+                              className={dashboardIconButton}
+                              aria-label="Edit product"
+                              render={
+                                <Link
+                                  href={ROUTES.DASHBOARD_PRODUCT_EDIT(
+                                    product.slug
+                                  )}
+                                />
+                              }
+                            />
+                          }
+                        >
+                          <Edit3 className="size-3.5 text-slate-500" />
+                        </TooltipTrigger>
+                        <TooltipContent>Edit product</TooltipContent>
+                      </Tooltip>
 
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => setBadgeProduct(product)}
-                      className="h-8 gap-1.5 border-slate-200 text-xs font-medium text-slate-700 hover:bg-slate-50"
-                      title="Get embed badge and AI prompt"
-                    >
-                      <Code className="size-3.5 text-slate-500" />
-                      <span>Badge</span>
-                    </Button>
+                      <Tooltip>
+                        <TooltipTrigger
+                          render={
+                            <Button
+                              size="icon"
+                              variant="outline"
+                              onClick={() => setBadgeProduct(product)}
+                              className={dashboardIconButton}
+                              aria-label="Get embed badge and AI prompt"
+                            />
+                          }
+                        >
+                          <Code className="size-3.5 text-slate-500" />
+                        </TooltipTrigger>
+                        <TooltipContent>Embed badge</TooltipContent>
+                      </Tooltip>
 
-                    {!isTopTier && (
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => setUpgradingProduct(product)}
-                        className="h-8 gap-1.5 border-amber-300 bg-amber-50/50 text-xs font-semibold text-amber-800 hover:bg-amber-100/70"
-                      >
-                        <Sparkles className="size-3.5 text-amber-600" />
-                        <span>Upgrade</span>
-                      </Button>
-                    )}
+                      {!isTopTier && (
+                        <Tooltip>
+                          <TooltipTrigger
+                            render={
+                              <Button
+                                size="icon"
+                                variant="outline"
+                                onClick={() => setUpgradingProduct(product)}
+                                className={dashboardIconUpgradeButton}
+                                aria-label="Upgrade tier"
+                              />
+                            }
+                          >
+                            <Sparkles className="size-3.5 text-amber-600" />
+                          </TooltipTrigger>
+                          <TooltipContent>Upgrade tier</TooltipContent>
+                        </Tooltip>
+                      )}
 
-                    <Button
-                      size="sm"
-                      className="h-8 gap-1.5 bg-slate-900 text-xs font-semibold text-white hover:bg-slate-800"
-                      render={
-                        <Link
-                          href={ROUTES.DASHBOARD_PRODUCT_ANALYTICS(
-                            product.slug
-                          )}
-                        />
-                      }
-                    >
-                      <BarChart2 className="size-3.5 text-indigo-300" />
-                      <span>Analytics</span>
-                    </Button>
-                  </div>
+                      <Tooltip>
+                        <TooltipTrigger
+                          render={
+                            <Button
+                              size="icon"
+                              className={dashboardIconAnalyticsButton}
+                              aria-label="View analytics"
+                              render={
+                                <Link
+                                  href={ROUTES.DASHBOARD_PRODUCT_ANALYTICS(
+                                    product.slug
+                                  )}
+                                />
+                              }
+                            />
+                          }
+                        >
+                          <BarChart2 className="size-3.5 text-indigo-300" />
+                        </TooltipTrigger>
+                        <TooltipContent>View analytics</TooltipContent>
+                      </Tooltip>
+
+                      <Tooltip>
+                        <TooltipTrigger
+                          render={
+                            <Button
+                              size="icon"
+                              variant="outline"
+                              onClick={() =>
+                                setDeletingProduct({
+                                  id: product.id,
+                                  name: product.name,
+                                  slug: product.slug,
+                                  itemType: "product",
+                                })
+                              }
+                              className={dashboardIconDeleteButton}
+                              aria-label="Delete product"
+                            />
+                          }
+                        >
+                          <Trash2 className="size-3.5" />
+                        </TooltipTrigger>
+                        <TooltipContent>Delete product</TooltipContent>
+                      </Tooltip>
+                    </div>
+                  </TooltipProvider>
                 </div>
 
                 {/* Metrics Bar */}
                 <div className="grid grid-cols-2 divide-x rounded-lg border border-dashed border-border bg-slate-50/60 py-2 sm:grid-cols-4">
                   <div className="flex flex-col items-center px-3 py-1">
-                    <span className="font-mono text-[10px] font-bold text-slate-400 uppercase flex items-center gap-1">
+                    <span className="flex items-center gap-1 font-mono text-[10px] font-bold text-slate-400 uppercase">
                       <Heart className="size-3 text-rose-500" />
                       Likes
                     </span>
@@ -293,7 +378,7 @@ export const ProductsList = ({ products }: ProductsListProps) => {
                   </div>
 
                   <div className="flex flex-col items-center px-3 py-1">
-                    <span className="font-mono text-[10px] font-bold text-slate-400 uppercase flex items-center gap-1">
+                    <span className="flex items-center gap-1 font-mono text-[10px] font-bold text-slate-400 uppercase">
                       <MessageSquare className="size-3 text-sky-500" />
                       Comments
                     </span>
@@ -303,7 +388,7 @@ export const ProductsList = ({ products }: ProductsListProps) => {
                   </div>
 
                   <div className="flex flex-col items-center px-3 py-1">
-                    <span className="font-mono text-[10px] font-bold text-slate-400 uppercase flex items-center gap-1">
+                    <span className="flex items-center gap-1 font-mono text-[10px] font-bold text-slate-400 uppercase">
                       <Eye className="size-3 text-purple-500" />
                       Page Views
                     </span>
@@ -313,7 +398,7 @@ export const ProductsList = ({ products }: ProductsListProps) => {
                   </div>
 
                   <div className="flex flex-col items-center px-3 py-1">
-                    <span className="font-mono text-[10px] font-bold text-slate-400 uppercase flex items-center gap-1">
+                    <span className="flex items-center gap-1 font-mono text-[10px] font-bold text-slate-400 uppercase">
                       <TrendingUp className="size-3 text-emerald-500" />
                       External Visits
                     </span>
@@ -354,6 +439,20 @@ export const ProductsList = ({ products }: ProductsListProps) => {
           slug={badgeProduct.slug}
           type="product"
           websiteUrl={badgeProduct.websiteUrl}
+        />
+      )}
+      {/* Delete Product Confirmation Dialog */}
+      {deletingProduct && (
+        <DeleteItemDialog
+          isOpen={Boolean(deletingProduct)}
+          onOpenChange={(open) => {
+            if (!open) setDeletingProduct(null)
+          }}
+          item={deletingProduct}
+          onSuccess={(id) => {
+            setDeletedIds((prev) => new Set(prev).add(id))
+            router.refresh()
+          }}
         />
       )}
     </div>

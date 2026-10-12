@@ -4,7 +4,9 @@ import { tools, products } from "@/db/schema"
 import { ne } from "drizzle-orm"
 
 const main = async () => {
-  console.log("Upgrading all existing tools and products to Premium listing tier...")
+  console.log(
+    "Upgrading all existing tools and products to Premium listing tier..."
+  )
 
   try {
     const updatedTools = await db

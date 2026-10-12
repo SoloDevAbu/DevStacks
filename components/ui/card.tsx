@@ -13,19 +13,19 @@ function Card({
       data-slot="card"
       data-size={size}
       className={cn(
-        "group/card relative flex flex-col gap-(--card-spacing) rounded-none bg-card py-(--card-spacing) text-xs/relaxed text-card-foreground border border-dashed border-border [--card-spacing:--spacing(4)] has-data-[slot=card-footer]:pb-0 has-[>img:first-child]:pt-0 data-[size=sm]:[--card-spacing:--spacing(3)] data-[size=sm]:has-data-[slot=card-footer]:pb-0 *:[img:first-child]:rounded-none *:[img:last-child]:rounded-none",
+        "group/card relative flex flex-col gap-(--card-spacing) rounded-none border border-dashed border-border bg-card py-(--card-spacing) text-xs/relaxed text-card-foreground [--card-spacing:--spacing(4)] has-data-[slot=card-footer]:pb-0 has-[>img:first-child]:pt-0 data-[size=sm]:[--card-spacing:--spacing(3)] data-[size=sm]:has-data-[slot=card-footer]:pb-0 *:[img:first-child]:rounded-none *:[img:last-child]:rounded-none",
         className
       )}
       {...props}
     >
       {/* Top Left */}
-      <div className="absolute top-[-1px] left-[-1px] w-2.5 h-2.5 border-t-2 border-l-2 border-slate-900 pointer-events-none z-10" />
+      <div className="pointer-events-none absolute top-[-1px] left-[-1px] z-10 h-2.5 w-2.5 border-t-2 border-l-2 border-slate-900" />
       {/* Top Right */}
-      <div className="absolute top-[-1px] right-[-1px] w-2.5 h-2.5 border-t-2 border-r-2 border-slate-900 pointer-events-none z-10" />
+      <div className="pointer-events-none absolute top-[-1px] right-[-1px] z-10 h-2.5 w-2.5 border-t-2 border-r-2 border-slate-900" />
       {/* Bottom Left */}
-      <div className="absolute bottom-[-1px] left-[-1px] w-2.5 h-2.5 border-b-2 border-l-2 border-slate-900 pointer-events-none z-10" />
+      <div className="pointer-events-none absolute bottom-[-1px] left-[-1px] z-10 h-2.5 w-2.5 border-b-2 border-l-2 border-slate-900" />
       {/* Bottom Right */}
-      <div className="absolute bottom-[-1px] right-[-1px] w-2.5 h-2.5 border-b-2 border-r-2 border-slate-900 pointer-events-none z-10" />
+      <div className="pointer-events-none absolute right-[-1px] bottom-[-1px] z-10 h-2.5 w-2.5 border-r-2 border-b-2 border-slate-900" />
       {children}
     </div>
   )

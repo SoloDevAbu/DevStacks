@@ -110,7 +110,10 @@ const FaqPage = () => {
               <ChevronRight className="size-3" />
             </li>
             <li className="flex items-center">
-              <span className="font-semibold text-slate-900" aria-current="page">
+              <span
+                className="font-semibold text-slate-900"
+                aria-current="page"
+              >
                 FAQs
               </span>
             </li>

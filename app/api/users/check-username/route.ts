@@ -71,7 +71,8 @@ export const GET = async (req: NextRequest) => {
     return NextResponse.json(
       {
         available: false,
-        message: error instanceof Error ? error.message : "Failed to check handle",
+        message:
+          error instanceof Error ? error.message : "Failed to check handle",
       },
       { status: 500 }
     )

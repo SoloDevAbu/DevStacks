@@ -94,4 +94,3 @@ export const normalizeSitemapUrl = (rawUrlOrPath: string): string => {
 
   return `${SITEMAP_PRODUCTION_ORIGIN}${str}`
 }
-

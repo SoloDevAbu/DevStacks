@@ -17,14 +17,10 @@ export const HeaderNav = () => {
 
       <Link
         href={ROUTES.PRICING}
-        className={cn(
-          navbarNavLink,
-          isPricingActive && navbarNavLinkActive
-        )}
+        className={cn(navbarNavLink, isPricingActive && navbarNavLinkActive)}
       >
         Pricing
       </Link>
     </nav>
   )
 }
-

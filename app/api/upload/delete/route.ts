@@ -3,12 +3,14 @@ import { auth } from "@/lib/auth"
 import { z } from "zod"
 import { deleteStorageObject, getStorageKeyFromUrl } from "@/lib/storage/s3"
 
-const deleteSchema = z.object({
-  url: z.string().optional(),
-  key: z.string().optional(),
-}).refine((data) => Boolean(data.url || data.key), {
-  message: "Either url or key must be provided",
-})
+const deleteSchema = z
+  .object({
+    url: z.string().optional(),
+    key: z.string().optional(),
+  })
+  .refine((data) => Boolean(data.url || data.key), {
+    message: "Either url or key must be provided",
+  })
 
 export const POST = async (req: NextRequest) => {
   try {
@@ -34,7 +36,11 @@ export const POST = async (req: NextRequest) => {
     }
 
     const { url, key: rawKey } = parsed.data
-    const key = rawKey ? rawKey.replace(/^\/+/, "") : (url ? getStorageKeyFromUrl(url) : null)
+    const key = rawKey
+      ? rawKey.replace(/^\/+/, "")
+      : url
+        ? getStorageKeyFromUrl(url)
+        : null
 
     if (!key) {
       return NextResponse.json(
@@ -62,10 +68,8 @@ export const POST = async (req: NextRequest) => {
       key,
     })
   } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : "Failed to delete storage asset"
-    return NextResponse.json(
-      { error: message },
-      { status: 500 }
-    )
+    const message =
+      err instanceof Error ? err.message : "Failed to delete storage asset"
+    return NextResponse.json({ error: message }, { status: 500 })
   }
 }

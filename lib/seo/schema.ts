@@ -318,7 +318,8 @@ export const breadcrumbSchema = (
 ) => ({
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
-  "@id": id ?? `${crumbs[crumbs.length - 1]?.url || SITE_CONFIG.url}#breadcrumb`,
+  "@id":
+    id ?? `${crumbs[crumbs.length - 1]?.url || SITE_CONFIG.url}#breadcrumb`,
   itemListElement: crumbs.map((crumb, i) => ({
     "@type": "ListItem",
     position: i + 1,

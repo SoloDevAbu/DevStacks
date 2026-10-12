@@ -28,7 +28,7 @@ export const ImagePreviewDialog = ({
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent
-        className="hidden sm:grid max-h-[90vh] w-fit max-w-[92vw] gap-0 overflow-hidden rounded-2xl border border-slate-200/60 bg-transparent p-0 shadow-2xl outline-none"
+        className="hidden max-h-[90vh] w-fit max-w-[92vw] gap-0 overflow-hidden rounded-2xl border border-slate-200/60 bg-transparent p-0 shadow-2xl outline-none sm:grid"
         showCloseButton={false}
       >
         <DialogTitle className="sr-only">{title}</DialogTitle>

@@ -19,13 +19,20 @@ const attachBuiltWithTools = async (items: RankedItem[]): Promise<void> => {
       toolSlug: tools.slug,
     })
     .from(productTools)
-    .leftJoin(tools, eq(productTools.toolId, tools.id))
+    .leftJoin(
+      tools,
+      and(eq(productTools.toolId, tools.id), eq(tools.isDeleted, false))
+    )
     .where(inArray(productTools.productId, productIds))
 
   const toolsMap = new Map<string, ProductBuiltWith[]>()
   for (const pt of ptRows) {
     const list = toolsMap.get(pt.productId) ?? []
-    list.push({ name: pt.name, toolSlug: pt.toolSlug ?? null, toolId: pt.toolId ?? null })
+    list.push({
+      name: pt.name,
+      toolSlug: pt.toolSlug ?? null,
+      toolId: pt.toolId ?? null,
+    })
     toolsMap.set(pt.productId, list)
   }
 
@@ -36,10 +43,32 @@ const attachBuiltWithTools = async (items: RankedItem[]): Promise<void> => {
   }
 }
 
-export const getTodaysLaunches = async ({ limit = 30 }: { limit?: number } = {}): Promise<RankedItem[]> => {
+export const getTodaysLaunches = async ({
+  limit = 30,
+}: { limit?: number } = {}): Promise<RankedItem[]> => {
   const now = new Date()
-  const startOfDay = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0, 0))
-  const endOfDay = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 23, 59, 59, 999))
+  const startOfDay = new Date(
+    Date.UTC(
+      now.getUTCFullYear(),
+      now.getUTCMonth(),
+      now.getUTCDate(),
+      0,
+      0,
+      0,
+      0
+    )
+  )
+  const endOfDay = new Date(
+    Date.UTC(
+      now.getUTCFullYear(),
+      now.getUTCMonth(),
+      now.getUTCDate(),
+      23,
+      59,
+      59,
+      999
+    )
+  )
 
   const [todayTools, todayProducts] = await Promise.all([
     db
@@ -69,6 +98,7 @@ export const getTodaysLaunches = async ({ limit = 30 }: { limit?: number } = {})
       .where(
         and(
           eq(tools.status, "approved"),
+          eq(tools.isDeleted, false),
           gte(tools.createdAt, startOfDay),
           lte(tools.createdAt, endOfDay)
         )
@@ -100,6 +130,7 @@ export const getTodaysLaunches = async ({ limit = 30 }: { limit?: number } = {})
       .where(
         and(
           eq(products.status, "approved"),
+          eq(products.isDeleted, false),
           gte(products.createdAt, startOfDay),
           lte(products.createdAt, endOfDay)
         )

@@ -4,11 +4,7 @@ import type { Payment, NewPayment } from "@/db/schema"
 import { eq, desc, and, inArray } from "drizzle-orm"
 
 export type PaymentStatus =
-  | "pending"
-  | "succeeded"
-  | "failed"
-  | "refunded"
-  | "cancelled"
+  "pending" | "succeeded" | "failed" | "refunded" | "cancelled"
 
 export const createPayment = async (
   data: NewPayment,
@@ -142,10 +138,5 @@ export const cancelPendingPaymentsByAdIds = async (
   await client
     .update(payments)
     .set({ status: "cancelled", updatedAt: new Date() })
-    .where(
-      and(
-        inArray(payments.adId, adIds),
-        eq(payments.status, "pending")
-      )
-    )
+    .where(and(inArray(payments.adId, adIds), eq(payments.status, "pending")))
 }

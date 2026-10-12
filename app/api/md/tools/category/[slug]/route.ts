@@ -1,5 +1,8 @@
 import { NextResponse } from "next/server"
-import { getCategoryBySlug, getCategoryStats } from "@/db/queries/categories/list"
+import {
+  getCategoryBySlug,
+  getCategoryStats,
+} from "@/db/queries/categories/list"
 import { getTools } from "@/db/queries/tools/list"
 import { createMarkdownResponse } from "@/lib/seo/markdown-twins"
 import { SITE_CONFIG } from "@/constants/site"
@@ -33,8 +36,9 @@ export const GET = async (
 
   const canonicalUrl = `${SITE_CONFIG.url}/tools/category/${category.slug}`
 
-  const toolsTable = toolsList.length > 0
-    ? `| Tool | Tagline | Pricing | Production Builds | Upvotes |
+  const toolsTable =
+    toolsList.length > 0
+      ? `| Tool | Tagline | Pricing | Production Builds | Upvotes |
 |---|---|:---:|:---:|:---:|
 ${toolsList
   .map(
@@ -42,15 +46,19 @@ ${toolsList
       `| [${t.name}](${SITE_CONFIG.url}/tools/${t.slug}) | ${t.tagline.replace(/\|/g, "-")} | ${t.pricing} | ${t.buildsCount} | ${t.upvotesCount} |`
   )
   .join("\n")}`
-    : "No verified tools currently listed in this category."
+      : "No verified tools currently listed in this category."
 
-  const toolsDetailList = toolsList.map((t) => `### [${t.name}](${SITE_CONFIG.url}/tools/${t.slug})
+  const toolsDetailList = toolsList
+    .map(
+      (t) => `### [${t.name}](${SITE_CONFIG.url}/tools/${t.slug})
 - **Tagline**: ${t.tagline}
 - **Pricing**: ${t.pricing}
 - **Verified Builds**: ${t.buildsCount} projects
 - **Community Upvotes**: ${t.upvotesCount}
 - **Website**: ${t.websiteUrl ?? `${SITE_CONFIG.url}/tools/${t.slug}`}
-- **Markdown Twin**: ${SITE_CONFIG.url}/api/md/tools/${t.slug}`).join("\n\n")
+- **Markdown Twin**: ${SITE_CONFIG.url}/api/md/tools/${t.slug}`
+    )
+    .join("\n\n")
 
   const markdown = `# ${category.name} Developer Tools & APIs — ${SITE_CONFIG.name}
 

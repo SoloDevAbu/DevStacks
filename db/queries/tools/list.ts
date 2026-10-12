@@ -33,7 +33,7 @@ export const getTools = async ({
   const safeLimit = Math.min(5000, Math.max(1, limit))
   const offset = (safePage - 1) * safeLimit
 
-  const conditions = [eq(tools.status, "approved")]
+  const conditions = [eq(tools.status, "approved"), eq(tools.isDeleted, false)]
 
   if (q && q.trim()) {
     const pattern = `%${q.trim()}%`
@@ -140,7 +140,7 @@ export const getToolsStats = async () => {
       totalBuilds: sql<number>`coalesce(sum(${tools.buildsCount}), 0)::int`,
     })
     .from(tools)
-    .where(eq(tools.status, "approved"))
+    .where(and(eq(tools.status, "approved"), eq(tools.isDeleted, false)))
 
   return {
     totalCount: Number(row?.totalCount ?? 0),

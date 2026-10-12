@@ -36,6 +36,3 @@ export * from "@/constants/comparisons/product-hunt"
 export * from "@/constants/comparisons/uneed"
 export * from "@/constants/comparisons/microlaunch"
 export * from "@/constants/comparisons/betalist"
-
-
-

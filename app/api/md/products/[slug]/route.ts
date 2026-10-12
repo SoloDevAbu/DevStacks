@@ -43,5 +43,8 @@ export const GET = async (
       tagline: p.tagline,
     })),
   })
-  return createMarkdownResponse(markdown, `${SITE_CONFIG.url}/products/${product.slug}`)
+  return createMarkdownResponse(
+    markdown,
+    `${SITE_CONFIG.url}/products/${product.slug}`
+  )
 }

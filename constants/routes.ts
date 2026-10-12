@@ -16,7 +16,8 @@ export const ROUTES = {
   PRODUCT: (slug: string) => `/products/${slug}`,
   TOOLS: "/tools",
   TOOL: (slug: string) => `/tools/${slug}`,
-  TOOL_CATEGORY: (slug: string) => `/tools/category/${encodeURIComponent(slug)}`,
+  TOOL_CATEGORY: (slug: string) =>
+    `/tools/category/${encodeURIComponent(slug)}`,
   ALTERNATIVES: (slug: string) => `/alternatives/${encodeURIComponent(slug)}`,
   PRODUCTHUNT_ALTERNATIVE: "/producthunt-alternative",
   UNEED_ALTERNATIVE: "/uneed-alternative",

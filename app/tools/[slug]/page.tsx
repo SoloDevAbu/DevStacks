@@ -526,7 +526,7 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
             <p
               className={cn(
                 detailSectionText,
-                "text-base font-normal leading-relaxed text-slate-700"
+                "text-base leading-relaxed font-normal text-slate-700"
               )}
             >
               {tool.description ??
@@ -890,7 +890,8 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
                     href={ROUTES.BUILT_WITH(tool.slug)}
                     className="text-xs font-semibold text-blue-600 hover:underline"
                   >
-                    View dedicated {tool.name} production showcase ({builtWithProducts.length} builds) ↗
+                    View dedicated {tool.name} production showcase (
+                    {builtWithProducts.length} builds) ↗
                   </Link>
                 </div>
               )}
@@ -931,7 +932,8 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
               href={ROUTES.ALTERNATIVES(tool.slug)}
               className="text-xs font-semibold text-indigo-600 hover:underline"
             >
-              Compare all {relatedTools.length} verified {tool.name} alternatives & competitors ↗
+              Compare all {relatedTools.length} verified {tool.name}{" "}
+              alternatives & competitors ↗
             </Link>
           </div>
         )}

@@ -33,7 +33,10 @@ export const getProducts = async ({
   const safeLimit = Math.min(5000, Math.max(1, limit))
   const offset = (safePage - 1) * safeLimit
 
-  const conditions = [eq(products.status, "approved")]
+  const conditions = [
+    eq(products.status, "approved"),
+    eq(products.isDeleted, false),
+  ]
 
   if (q && q.trim()) {
     const pattern = `%${q.trim()}%`
@@ -187,7 +190,7 @@ export const getProductsStats = async () => {
       totalLikes: sql<number>`coalesce(sum(${products.likesCount}), 0)::int`,
     })
     .from(products)
-    .where(eq(products.status, "approved"))
+    .where(and(eq(products.status, "approved"), eq(products.isDeleted, false)))
 
   return {
     totalCount: Number(row?.totalCount ?? 0),

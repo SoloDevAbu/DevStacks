@@ -1,13 +1,7 @@
 "use client"
 
 import { useState, useRef } from "react"
-import {
-  Upload,
-  Trash2,
-  Loader2,
-  ImagePlus,
-  Maximize2,
-} from "lucide-react"
+import { Upload, Trash2, Loader2, ImagePlus, Maximize2 } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { toast } from "@/components/ui/toast"
 import { useUploadImage } from "@/hooks/storage/use-upload-image"
@@ -31,8 +25,12 @@ export const ScreenshotsUploader = ({
   className,
 }: ScreenshotsUploaderProps) => {
   const [draggedOverSlot, setDraggedOverSlot] = useState<number | null>(null)
-  const [activePreviewIndex, setActivePreviewIndex] = useState<number | null>(null)
-  const [uploadingSlotIndex, setUploadingSlotIndex] = useState<number | null>(null)
+  const [activePreviewIndex, setActivePreviewIndex] = useState<number | null>(
+    null
+  )
+  const [uploadingSlotIndex, setUploadingSlotIndex] = useState<number | null>(
+    null
+  )
   const targetSlotRef = useRef<number>(0)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const { uploadImage, isPending: isUploading, progress } = useUploadImage()
@@ -44,7 +42,8 @@ export const ScreenshotsUploader = ({
   const handleFileProcess = async (file: File, targetSlot: number) => {
     if (disabled || isUploading) return
 
-    const allowed = STORAGE_CONFIG.SCREENSHOTS.ALLOWED_TYPES as readonly string[]
+    const allowed = STORAGE_CONFIG.SCREENSHOTS
+      .ALLOWED_TYPES as readonly string[]
     if (!allowed.includes(file.type)) {
       toast.error(
         "Unsupported File Type",
@@ -82,7 +81,8 @@ export const ScreenshotsUploader = ({
         `Screenshot #${targetSlot + 1} uploaded successfully.`
       )
     } catch (err) {
-      const msg = err instanceof Error ? err.message : "Failed to upload screenshot"
+      const msg =
+        err instanceof Error ? err.message : "Failed to upload screenshot"
       toast.error("Upload Failed", msg)
     } finally {
       setUploadingSlotIndex(null)
@@ -116,7 +116,9 @@ export const ScreenshotsUploader = ({
     }
   }
 
-  const handleFileInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileInputChange = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const file = e.target.files?.[0]
     if (file) {
       await handleFileProcess(file, targetSlotRef.current)
@@ -132,8 +134,15 @@ export const ScreenshotsUploader = ({
     const removedUrl = value[indexToRemove]
     const updated = value.filter((_, i) => i !== indexToRemove)
     onChange(updated)
-    toast.info("Screenshot Removed", `Now ${updated.length} of ${maxCount} uploaded.`)
-    if (removedUrl && (removedUrl.includes(`/${STORAGE_CONFIG.BUCKET_NAME}/`) || removedUrl.includes("/screenshots/"))) {
+    toast.info(
+      "Screenshot Removed",
+      `Now ${updated.length} of ${maxCount} uploaded.`
+    )
+    if (
+      removedUrl &&
+      (removedUrl.includes(`/${STORAGE_CONFIG.BUCKET_NAME}/`) ||
+        removedUrl.includes("/screenshots/"))
+    ) {
       deleteImage(removedUrl).catch(() => {})
     }
   }
@@ -171,7 +180,7 @@ export const ScreenshotsUploader = ({
       </div>
 
       {/* Grid of 3 fixed slots */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
         {Array.from({ length: maxCount }).map((_, slotIdx) => {
           const screenshotUrl = value[slotIdx]
           const isSlotUploading = isUploading && uploadingSlotIndex === slotIdx
@@ -188,7 +197,7 @@ export const ScreenshotsUploader = ({
                 <span className="mt-2 font-mono text-xs font-bold text-indigo-950">
                   Uploading {progress}%
                 </span>
-                <span className="text-[10px] text-indigo-600 font-medium">
+                <span className="text-[10px] font-medium text-indigo-600">
                   Screenshot #{slotIdx + 1}
                 </span>
               </div>
@@ -201,7 +210,10 @@ export const ScreenshotsUploader = ({
               <div
                 key={`slot-${slotIdx}-${screenshotUrl}`}
                 onClick={() => {
-                  if (typeof window !== "undefined" && window.innerWidth >= 640) {
+                  if (
+                    typeof window !== "undefined" &&
+                    window.innerWidth >= 640
+                  ) {
                     setActivePreviewIndex(slotIdx)
                   }
                 }}
@@ -218,15 +230,15 @@ export const ScreenshotsUploader = ({
                 <div className="absolute top-2 left-2 z-10">
                   <Badge
                     variant="secondary"
-                    className="bg-slate-900/80 font-mono text-[10px] font-semibold text-white shadow-2xs backdrop-blur-2xs"
+                    className="backdrop-blur-2xs bg-slate-900/80 font-mono text-[10px] font-semibold text-white shadow-2xs"
                   >
                     #{slotIdx + 1}
                   </Badge>
                 </div>
 
                 {/* Hover overlay with zoom icon (Desktop/Tablet only) */}
-                <div className="absolute inset-0 hidden sm:flex items-center justify-center bg-slate-950/0 transition-colors group-hover/thumb:bg-slate-950/40">
-                  <div className="flex items-center gap-1.5 rounded-full bg-slate-900/80 px-2.5 py-1 text-[11px] font-medium text-white opacity-0 shadow-lg backdrop-blur-2xs transition-opacity group-hover/thumb:opacity-100">
+                <div className="absolute inset-0 hidden items-center justify-center bg-slate-950/0 transition-colors group-hover/thumb:bg-slate-950/40 sm:flex">
+                  <div className="backdrop-blur-2xs flex items-center gap-1.5 rounded-full bg-slate-900/80 px-2.5 py-1 text-[11px] font-medium text-white opacity-0 shadow-lg transition-opacity group-hover/thumb:opacity-100">
                     <Maximize2 className="size-3" />
                     <span>View Larger</span>
                   </div>
@@ -256,15 +268,16 @@ export const ScreenshotsUploader = ({
               onDrop={(e) => handleDrop(e, slotIdx)}
               onClick={() => handleSlotClick(slotIdx)}
               className={cn(
-                "group/empty relative flex aspect-video w-full flex-col items-center justify-center rounded-xl border border-dashed border-slate-300 bg-white p-4 text-center transition-all hover:border-slate-400 hover:bg-slate-50/70 cursor-pointer shadow-2xs",
-                isSlotDraggedOver && "border-indigo-500 bg-indigo-50/60 ring-2 ring-indigo-500/20",
+                "group/empty relative flex aspect-video w-full cursor-pointer flex-col items-center justify-center rounded-xl border border-dashed border-slate-300 bg-white p-4 text-center shadow-2xs transition-all hover:border-slate-400 hover:bg-slate-50/70",
+                isSlotDraggedOver &&
+                  "border-indigo-500 bg-indigo-50/60 ring-2 ring-indigo-500/20",
                 disabled && "pointer-events-none opacity-60"
               )}
             >
               <div className="absolute top-2 left-2">
                 <Badge
                   variant="outline"
-                  className="font-mono text-[9px] font-semibold text-slate-400 border-slate-200"
+                  className="border-slate-200 font-mono text-[9px] font-semibold text-slate-400"
                 >
                   Slot #{slotIdx + 1}
                 </Badge>
@@ -291,7 +304,9 @@ export const ScreenshotsUploader = ({
       <ImagePreviewDialog
         isOpen={activePreviewIndex !== null}
         onClose={() => setActivePreviewIndex(null)}
-        imageUrl={activePreviewIndex !== null ? value[activePreviewIndex] : null}
+        imageUrl={
+          activePreviewIndex !== null ? value[activePreviewIndex] : null
+        }
         title={`Screenshot #${(activePreviewIndex ?? 0) + 1} Preview`}
         aspectRatio="video"
       />

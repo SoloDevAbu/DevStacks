@@ -26,7 +26,8 @@ export const GET = () => {
       {
         name: "get-tool-details",
         type: "rest-endpoint",
-        description: "Retrieve specifications and verified builds for a developer tool.",
+        description:
+          "Retrieve specifications and verified builds for a developer tool.",
         url: `${SITE_CONFIG.url}/v1/tools/{slug}`,
       },
       {

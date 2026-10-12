@@ -102,8 +102,15 @@ export const ToolEditForm = ({ tool }: ToolEditFormProps) => {
     setErrorMessage(null)
     setIsSuccess(false)
 
-    if (!name.trim() || !tagline.trim() || !description.trim() || !websiteUrl.trim()) {
-      setErrorMessage("Please fill in all required fields (Name, Tagline, Description, Website URL).")
+    if (
+      !name.trim() ||
+      !tagline.trim() ||
+      !description.trim() ||
+      !websiteUrl.trim()
+    ) {
+      setErrorMessage(
+        "Please fill in all required fields (Name, Tagline, Description, Website URL)."
+      )
       return
     }
 
@@ -156,7 +163,7 @@ export const ToolEditForm = ({ tool }: ToolEditFormProps) => {
     <div className={dashboardPageContainer}>
       <form onSubmit={handleSubmit} className="flex flex-col">
         {/* Top Header */}
-        <div className="flex flex-col gap-4 border-b border-dashed border-border bg-white px-6 py-6 md:px-8 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-4 border-b border-dashed border-border bg-white px-6 py-6 sm:flex-row sm:items-center sm:justify-between md:px-8">
           <div className="flex items-center gap-3">
             <Button
               type="button"
@@ -270,7 +277,8 @@ export const ToolEditForm = ({ tool }: ToolEditFormProps) => {
 
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="description" className="text-xs font-semibold">
-              Full Documentation & Overview <span className="text-rose-500">*</span>
+              Full Documentation & Overview{" "}
+              <span className="text-rose-500">*</span>
             </Label>
             <Textarea
               id="description"
@@ -423,7 +431,9 @@ export const ToolEditForm = ({ tool }: ToolEditFormProps) => {
         {/* Section 3: Deep Dive */}
         <div className={dashboardFormSection}>
           <div>
-            <h2 className={dashboardFormSectionTitle}>Deep Dive & Problem Solving</h2>
+            <h2 className={dashboardFormSectionTitle}>
+              Deep Dive & Problem Solving
+            </h2>
             <p className={dashboardFormSectionSubtitle}>
               Technical deep dive into the architecture and capabilities.
             </p>
@@ -477,7 +487,8 @@ export const ToolEditForm = ({ tool }: ToolEditFormProps) => {
             <div>
               <h2 className={dashboardFormSectionTitle}>Developer FAQs</h2>
               <p className={dashboardFormSectionSubtitle}>
-                Common questions on pricing, rate limits, self-hosting, and integrations.
+                Common questions on pricing, rate limits, self-hosting, and
+                integrations.
               </p>
             </div>
             <Button
@@ -504,16 +515,18 @@ export const ToolEditForm = ({ tool }: ToolEditFormProps) => {
                   <div className="flex items-center justify-between gap-2">
                     <Input
                       value={faq.question}
-                      onChange={(e) => updateFaq(idx, "question", e.target.value)}
+                      onChange={(e) =>
+                        updateFaq(idx, "question", e.target.value)
+                      }
                       placeholder="Question"
-                      className="h-8 text-xs font-semibold bg-white"
+                      className="h-8 bg-white text-xs font-semibold"
                     />
                     <Button
                       type="button"
                       variant="ghost"
                       size="sm"
                       onClick={() => removeFaq(idx)}
-                      className="h-8 size-8 p-0 text-slate-400 hover:text-rose-600"
+                      className="size-8 h-8 p-0 text-slate-400 hover:text-rose-600"
                     >
                       <Trash2 className="size-3.5" />
                     </Button>
@@ -522,7 +535,7 @@ export const ToolEditForm = ({ tool }: ToolEditFormProps) => {
                     value={faq.answer}
                     onChange={(e) => updateFaq(idx, "answer", e.target.value)}
                     placeholder="Answer..."
-                    className="min-h-16 text-xs bg-white"
+                    className="min-h-16 bg-white text-xs"
                   />
                 </div>
               ))}

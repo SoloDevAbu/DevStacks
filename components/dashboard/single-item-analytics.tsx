@@ -103,7 +103,7 @@ export const SingleItemAnalytics = ({ data }: SingleItemAnalyticsProps) => {
                   {item.tier}
                 </Badge>
               </div>
-              <p className="text-xs text-slate-600 max-w-xl">{item.tagline}</p>
+              <p className="max-w-xl text-xs text-slate-600">{item.tagline}</p>
             </div>
           </div>
 
@@ -230,9 +230,7 @@ export const SingleItemAnalytics = ({ data }: SingleItemAnalyticsProps) => {
           className={analyticsTabTrigger(activeSubTab === "visits")}
         >
           <TrendingUp className="size-3.5" />
-          <span>
-            External Visits ({stats.externalVisitsCount})
-          </span>
+          <span>External Visits ({stats.externalVisitsCount})</span>
         </button>
       </div>
 
@@ -247,8 +245,9 @@ export const SingleItemAnalytics = ({ data }: SingleItemAnalyticsProps) => {
               <EmptyHeader>
                 <EmptyTitle>No {likeLabel.toLowerCase()} yet</EmptyTitle>
                 <EmptyDescription>
-                  When signed-in developers and makers {isProduct ? "like" : "upvote"}{" "}
-                  your listing, their profiles will appear here.
+                  When signed-in developers and makers{" "}
+                  {isProduct ? "like" : "upvote"} your listing, their profiles
+                  will appear here.
                 </EmptyDescription>
               </EmptyHeader>
             </Empty>
@@ -275,7 +274,7 @@ export const SingleItemAnalytics = ({ data }: SingleItemAnalyticsProps) => {
                           <Link
                             href={ROUTES.MAKER(user.username)}
                             target="_blank"
-                            className="text-xs font-bold text-slate-900 hover:text-indigo-600 transition-colors"
+                            className="text-xs font-bold text-slate-900 transition-colors hover:text-indigo-600"
                           >
                             {user.name}
                           </Link>
@@ -317,7 +316,8 @@ export const SingleItemAnalytics = ({ data }: SingleItemAnalyticsProps) => {
               <EmptyHeader>
                 <EmptyTitle>No comments yet</EmptyTitle>
                 <EmptyDescription>
-                  Feedback, questions, and community thoughts on this listing will appear here.
+                  Feedback, questions, and community thoughts on this listing
+                  will appear here.
                 </EmptyDescription>
               </EmptyHeader>
             </Empty>
@@ -377,7 +377,10 @@ export const SingleItemAnalytics = ({ data }: SingleItemAnalyticsProps) => {
               </span>
             </div>
             <p className="text-xs leading-relaxed text-amber-900/90">
-              Only authenticated community members signed in to our platform who click &quot;Visit Website&quot; are identified below with their creator profile. Non-signed-in visitors are tallied in the total visit counts without personal tracking to preserve user privacy.
+              Only authenticated community members signed in to our platform who
+              click &quot;Visit Website&quot; are identified below with their
+              creator profile. Non-signed-in visitors are tallied in the total
+              visit counts without personal tracking to preserve user privacy.
             </p>
             <div className="mt-1 flex flex-wrap items-center gap-3 font-mono text-[11px] font-semibold text-amber-900">
               <span>● Total Clicks: {stats.externalVisitsCount}</span>
@@ -394,7 +397,8 @@ export const SingleItemAnalytics = ({ data }: SingleItemAnalyticsProps) => {
               <EmptyHeader>
                 <EmptyTitle>No outbound clicks recorded yet</EmptyTitle>
                 <EmptyDescription>
-                  When visitors click &quot;Visit Website&quot; to check out your product or tool, visits will appear here.
+                  When visitors click &quot;Visit Website&quot; to check out
+                  your product or tool, visits will appear here.
                 </EmptyDescription>
               </EmptyHeader>
             </Empty>
@@ -423,7 +427,7 @@ export const SingleItemAnalytics = ({ data }: SingleItemAnalyticsProps) => {
                           <Link
                             href={ROUTES.MAKER(visit.user.username)}
                             target="_blank"
-                            className="text-xs font-bold text-slate-900 hover:text-indigo-600 transition-colors"
+                            className="text-xs font-bold text-slate-900 transition-colors hover:text-indigo-600"
                           >
                             {visit.user.name}
                           </Link>
@@ -445,7 +449,7 @@ export const SingleItemAnalytics = ({ data }: SingleItemAnalyticsProps) => {
                         </Badge>
                       </div>
 
-                      <span className="text-[11px] text-slate-400 font-mono truncate max-w-sm">
+                      <span className="max-w-sm truncate font-mono text-[11px] text-slate-400">
                         {visit.targetUrl}
                       </span>
                     </div>

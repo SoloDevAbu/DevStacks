@@ -130,7 +130,7 @@ export const CommentsSection = ({
           className={cn(
             "flex flex-col gap-3 transition-all",
             !session?.user &&
-              "pointer-events-none select-none opacity-40 blur-[1.5px]"
+              "pointer-events-none opacity-40 blur-[1.5px] select-none"
           )}
         >
           <div className="flex items-center gap-2.5">

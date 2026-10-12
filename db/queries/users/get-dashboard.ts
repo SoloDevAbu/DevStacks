@@ -7,7 +7,7 @@ import {
   categories,
   users,
 } from "@/db/schema"
-import { eq, desc } from "drizzle-orm"
+import { and, eq, desc } from "drizzle-orm"
 import type {
   UserDashboardData,
   DbTool,
@@ -60,7 +60,7 @@ export const getUserDashboardData = async (
         })
         .from(tools)
         .leftJoin(categories, eq(tools.categoryId, categories.id))
-        .where(eq(tools.submitterId, userId))
+        .where(and(eq(tools.submitterId, userId), eq(tools.isDeleted, false)))
         .orderBy(desc(tools.createdAt)),
 
       db
@@ -102,7 +102,9 @@ export const getUserDashboardData = async (
         })
         .from(products)
         .leftJoin(categories, eq(products.categoryId, categories.id))
-        .where(eq(products.submitterId, userId))
+        .where(
+          and(eq(products.submitterId, userId), eq(products.isDeleted, false))
+        )
         .orderBy(desc(products.createdAt)),
 
       db
@@ -120,7 +122,7 @@ export const getUserDashboardData = async (
         .from(toolComments)
         .innerJoin(tools, eq(toolComments.toolId, tools.id))
         .innerJoin(users, eq(toolComments.userId, users.id))
-        .where(eq(tools.submitterId, userId))
+        .where(and(eq(tools.submitterId, userId), eq(tools.isDeleted, false)))
         .orderBy(desc(toolComments.createdAt))
         .limit(20),
 
@@ -139,7 +141,9 @@ export const getUserDashboardData = async (
         .from(productComments)
         .innerJoin(products, eq(productComments.productId, products.id))
         .innerJoin(users, eq(productComments.userId, users.id))
-        .where(eq(products.submitterId, userId))
+        .where(
+          and(eq(products.submitterId, userId), eq(products.isDeleted, false))
+        )
         .orderBy(desc(productComments.createdAt))
         .limit(20),
     ])
@@ -167,15 +171,38 @@ export const getUserDashboardData = async (
       authorUsername: c.authorUsername,
       authorImage: c.authorImage,
     })),
-  ].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+  ].sort(
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+  )
 
-  const totalToolUpvotes = userTools.reduce((acc, t) => acc + (t.upvotesCount || 0), 0)
-  const totalProductLikes = userProducts.reduce((acc, p) => acc + (p.likesCount || 0), 0)
-  const totalToolComments = userTools.reduce((acc, t) => acc + (t.commentsCount || 0), 0)
-  const totalProductComments = userProducts.reduce((acc, p) => acc + (p.commentsCount || 0), 0)
-  const totalToolViews = userTools.reduce((acc, t) => acc + (t.viewsCount || 0), 0)
-  const totalProductViews = userProducts.reduce((acc, p) => acc + (p.viewsCount || 0), 0)
-  const totalBuilds = userTools.reduce((acc, t) => acc + (t.buildsCount || 0), 0)
+  const totalToolUpvotes = userTools.reduce(
+    (acc, t) => acc + (t.upvotesCount || 0),
+    0
+  )
+  const totalProductLikes = userProducts.reduce(
+    (acc, p) => acc + (p.likesCount || 0),
+    0
+  )
+  const totalToolComments = userTools.reduce(
+    (acc, t) => acc + (t.commentsCount || 0),
+    0
+  )
+  const totalProductComments = userProducts.reduce(
+    (acc, p) => acc + (p.commentsCount || 0),
+    0
+  )
+  const totalToolViews = userTools.reduce(
+    (acc, t) => acc + (t.viewsCount || 0),
+    0
+  )
+  const totalProductViews = userProducts.reduce(
+    (acc, p) => acc + (p.viewsCount || 0),
+    0
+  )
+  const totalBuilds = userTools.reduce(
+    (acc, t) => acc + (t.buildsCount || 0),
+    0
+  )
 
   return {
     tools: userTools as unknown as DbTool[],

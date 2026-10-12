@@ -28,10 +28,7 @@ import {
 } from "lucide-react"
 import { SITE_CONFIG } from "@/constants/site"
 import { ROUTES } from "@/constants/routes"
-import {
-  TERMS_CATEGORIES,
-  TERMS_LAST_UPDATED,
-} from "@/constants/terms"
+import { TERMS_CATEGORIES, TERMS_LAST_UPDATED } from "@/constants/terms"
 import { PageHeader } from "@/components/shared/page-header"
 import { Button } from "@/components/ui/button"
 import { breadcrumbSchema, safeJsonLd } from "@/lib/seo/schema"
@@ -180,11 +177,7 @@ const TermsPage = () => {
                   const Icon = TERM_ICONS[item.number] ?? FileText
 
                   return (
-                    <div
-                      key={item.id}
-                      id={item.id}
-                      className={termsRowItem}
-                    >
+                    <div key={item.id} id={item.id} className={termsRowItem}>
                       <div className={termsRowHeader}>
                         <span className={termsRowIconBox}>
                           <Icon className="size-3.5" />
@@ -220,7 +213,8 @@ const TermsPage = () => {
                   Questions about our Terms?
                 </h3>
                 <p className="mt-0.5 text-xs text-slate-500">
-                  Need clarification on directory guidelines, API access, or sponsorships? Contact our team.
+                  Need clarification on directory guidelines, API access, or
+                  sponsorships? Contact our team.
                 </p>
               </div>
               <div className="flex shrink-0 flex-wrap items-center gap-2.5">

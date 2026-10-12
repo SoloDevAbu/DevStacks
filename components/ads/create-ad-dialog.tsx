@@ -102,7 +102,8 @@ export const CreateAdDialog = ({
   // Tier bonus logic
   const weekCount = selectedWeeks.length
   const tierBonusApplied = useMemo((): Tier | null => {
-    if (weekCount >= AD_TIER_BONUS.PREMIUM_PLUS_THRESHOLD) return TIER.PREMIUM_PLUS
+    if (weekCount >= AD_TIER_BONUS.PREMIUM_PLUS_THRESHOLD)
+      return TIER.PREMIUM_PLUS
     if (weekCount >= AD_TIER_BONUS.PREMIUM_THRESHOLD) return TIER.PREMIUM
     return null
   }, [weekCount])
@@ -135,7 +136,10 @@ export const CreateAdDialog = ({
       const exists = prev.some(
         (w) => w.isoYear === week.isoYear && w.isoWeek === week.isoWeek
       )
-      if (exists) return prev.filter((w) => !(w.isoYear === week.isoYear && w.isoWeek === week.isoWeek))
+      if (exists)
+        return prev.filter(
+          (w) => !(w.isoYear === week.isoYear && w.isoWeek === week.isoWeek)
+        )
       if (prev.length >= AD_MAX_WEEKS_PER_PRODUCT) return prev
       return [...prev, week]
     })
@@ -158,15 +162,25 @@ export const CreateAdDialog = ({
     initiateCheckout({
       paymentType: "ad",
       placement,
-      toolId: selectedSubmission.type === "tool" ? selectedSubmission.id : undefined,
-      productId: selectedSubmission.type === "product" ? selectedSubmission.id : undefined,
+      toolId:
+        selectedSubmission.type === "tool" ? selectedSubmission.id : undefined,
+      productId:
+        selectedSubmission.type === "product"
+          ? selectedSubmission.id
+          : undefined,
       selectedWeeks,
       ctaText: ctaText || "Learn More",
     })
   }
 
-  const weeksUntilPremium = Math.max(0, AD_TIER_BONUS.PREMIUM_THRESHOLD - weekCount)
-  const weeksUntilPremiumPlus = Math.max(0, AD_TIER_BONUS.PREMIUM_PLUS_THRESHOLD - weekCount)
+  const weeksUntilPremium = Math.max(
+    0,
+    AD_TIER_BONUS.PREMIUM_THRESHOLD - weekCount
+  )
+  const weeksUntilPremiumPlus = Math.max(
+    0,
+    AD_TIER_BONUS.PREMIUM_PLUS_THRESHOLD - weekCount
+  )
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
@@ -202,12 +216,20 @@ export const CreateAdDialog = ({
                     : "text-slate-400"
                 }`}
               >
-                <span className={`flex size-4 items-center justify-center rounded-full text-[10px] font-bold ${
-                  step === s ? "bg-indigo-600 text-white" : "bg-slate-200 text-slate-500"
-                }`}>
+                <span
+                  className={`flex size-4 items-center justify-center rounded-full text-[10px] font-bold ${
+                    step === s
+                      ? "bg-indigo-600 text-white"
+                      : "bg-slate-200 text-slate-500"
+                  }`}
+                >
                   {i + 1}
                 </span>
-                {s === "select-product" ? "Product" : s === "select-weeks" ? "Weeks" : "Review"}
+                {s === "select-product"
+                  ? "Product"
+                  : s === "select-weeks"
+                    ? "Weeks"
+                    : "Review"}
               </div>
             )
           )}
@@ -282,22 +304,22 @@ export const CreateAdDialog = ({
                     )}
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-1.5">
-                        <span className="text-xs font-bold text-slate-900 truncate">
+                        <span className="truncate text-xs font-bold text-slate-900">
                           {sub.name}
                         </span>
                         <Badge
                           variant="outline"
-                          className="shrink-0 text-[9px] px-1 py-0"
+                          className="shrink-0 px-1 py-0 text-[9px]"
                         >
                           {sub.type === "tool" ? "Tool" : "Product"}
                         </Badge>
                         {sub.tier !== "free" && (
-                          <Badge className="shrink-0 bg-blue-100 text-[9px] text-blue-700 px-1 py-0">
+                          <Badge className="shrink-0 bg-blue-100 px-1 py-0 text-[9px] text-blue-700">
                             {sub.tier === "premium+" ? "Premium+" : "Premium"}
                           </Badge>
                         )}
                       </div>
-                      <p className="text-[11px] text-slate-500 truncate">
+                      <p className="truncate text-[11px] text-slate-500">
                         {sub.tagline}
                       </p>
                     </div>
@@ -339,10 +361,13 @@ export const CreateAdDialog = ({
                     <Globe className="size-3.5" />
                   </span>
                 )}
-                <span className="text-xs font-semibold text-slate-900 truncate">
+                <span className="truncate text-xs font-semibold text-slate-900">
                   {selectedSubmission.name}
                 </span>
-                <Badge variant="outline" className="ml-auto shrink-0 text-[9px] px-1 py-0">
+                <Badge
+                  variant="outline"
+                  className="ml-auto shrink-0 px-1 py-0 text-[9px]"
+                >
                   {selectedSubmission.type === "tool" ? "Tool" : "Product"}
                 </Badge>
               </div>
@@ -373,7 +398,8 @@ export const CreateAdDialog = ({
                     const isFull = week.slotsRemaining <= 0
                     const selected = isWeekSelected(week.isoYear, week.isoWeek)
                     const atMax =
-                      selectedWeeks.length >= AD_MAX_WEEKS_PER_PRODUCT && !selected
+                      selectedWeeks.length >= AD_MAX_WEEKS_PER_PRODUCT &&
+                      !selected
                     const disabled = isFull || atMax
 
                     return (
@@ -397,7 +423,7 @@ export const CreateAdDialog = ({
                           ) : isFull ? (
                             <Badge
                               variant="outline"
-                              className="text-[8px] px-1 py-0 border-red-200 text-red-500"
+                              className="border-red-200 px-1 py-0 text-[8px] text-red-500"
                             >
                               Full
                             </Badge>
@@ -422,7 +448,7 @@ export const CreateAdDialog = ({
               <>
                 {tierBonusApplied === TIER.PREMIUM_PLUS ? (
                   <div className={promoBannerSuccess}>
-                    <Gift className="size-4 shrink-0 mt-0.5" />
+                    <Gift className="mt-0.5 size-4 shrink-0" />
                     <div>
                       <span className="font-bold">
                         🌟 Premium+ upgrade included!
@@ -440,7 +466,7 @@ export const CreateAdDialog = ({
                   </div>
                 ) : tierBonusApplied === TIER.PREMIUM ? (
                   <div className={promoBannerSuccess}>
-                    <Gift className="size-4 shrink-0 mt-0.5" />
+                    <Gift className="mt-0.5 size-4 shrink-0" />
                     <div>
                       <span className="font-bold">
                         ✅ Premium upgrade included!
@@ -459,7 +485,7 @@ export const CreateAdDialog = ({
                   </div>
                 ) : (
                   <div className={promoBanner}>
-                    <Sparkles className="size-4 shrink-0 mt-0.5" />
+                    <Sparkles className="mt-0.5 size-4 shrink-0" />
                     <div>
                       <span className="font-bold">
                         Select {weeksUntilPremium} more week
@@ -515,7 +541,7 @@ export const CreateAdDialog = ({
         {step === "review" && (
           <div className="space-y-3">
             {/* Order Summary */}
-            <div className="rounded-lg border border-slate-200 bg-slate-50/50 p-3 space-y-3">
+            <div className="space-y-3 rounded-lg border border-slate-200 bg-slate-50/50 p-3">
               <span className="text-[10px] font-bold tracking-wider text-slate-400 uppercase">
                 Order Summary
               </span>
@@ -560,7 +586,7 @@ export const CreateAdDialog = ({
                       <Badge
                         key={`${w.isoYear}-${w.isoWeek}`}
                         variant="outline"
-                        className="text-[10px] px-1.5 py-0.5"
+                        className="px-1.5 py-0.5 text-[10px]"
                       >
                         {formatWeekLabel(w.isoYear, w.isoWeek)}
                       </Badge>
@@ -572,8 +598,8 @@ export const CreateAdDialog = ({
               <div className="space-y-1.5 border-t border-dashed border-slate-200 pt-2">
                 <div className="flex justify-between text-xs text-slate-600">
                   <span>
-                    {weekCount} week{weekCount > 1 ? "s" : ""} ×{" "}
-                    ${pricing.pricePerWeek}
+                    {weekCount} week{weekCount > 1 ? "s" : ""} × $
+                    {pricing.pricePerWeek}
                   </span>
                   <span>${(subtotalInCents / 100).toFixed(0)}</span>
                 </div>
@@ -589,7 +615,11 @@ export const CreateAdDialog = ({
                   <div className="flex items-center gap-1.5 text-xs text-indigo-600">
                     <Gift className="size-3" />
                     <span className="font-semibold">
-                      Free {tierBonusApplied === TIER.PREMIUM_PLUS ? "Premium+" : "Premium"} upgrade
+                      Free{" "}
+                      {tierBonusApplied === TIER.PREMIUM_PLUS
+                        ? "Premium+"
+                        : "Premium"}{" "}
+                      upgrade
                     </span>
                   </div>
                 )}

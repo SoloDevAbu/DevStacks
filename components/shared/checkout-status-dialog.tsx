@@ -37,11 +37,12 @@ const CheckoutStatusDialogInner = () => {
   const paymentId =
     searchParams.get("payment_id") || searchParams.get("subscription_id")
   const email = searchParams.get("email")
-  const customMessage =
-    searchParams.get("message") || searchParams.get("error")
+  const customMessage = searchParams.get("message") || searchParams.get("error")
 
   const isFailed =
-    status === "failed" || status === "failure" || Boolean(searchParams.get("error"))
+    status === "failed" ||
+    status === "failure" ||
+    Boolean(searchParams.get("error"))
   const isCancelled = status === "cancelled" || status === "canceled"
   const isSucceeded = status === "succeeded" || status === "success"
 
@@ -111,10 +112,12 @@ const CheckoutStatusDialogInner = () => {
               </DialogDescription>
             </DialogHeader>
 
-            <div className="rounded-lg border border-dashed border-rose-200/80 bg-rose-50/40 p-3 text-xs text-slate-700 space-y-1.5">
+            <div className="space-y-1.5 rounded-lg border border-dashed border-rose-200/80 bg-rose-50/40 p-3 text-xs text-slate-700">
               {paymentId && (
                 <div className="flex items-start gap-1.5">
-                  <span className="font-semibold text-rose-900">Reference:</span>
+                  <span className="font-semibold text-rose-900">
+                    Reference:
+                  </span>
                   <span className="font-mono text-slate-600">{paymentId}</span>
                 </div>
               )}
@@ -130,7 +133,7 @@ const CheckoutStatusDialogInner = () => {
                   <span className="text-slate-600">{customMessage}</span>
                 </div>
               )}
-              <div className="text-slate-600 pt-0.5">
+              <div className="pt-0.5 text-slate-600">
                 Please verify your payment method, ensure international
                 transactions are enabled, or try another card.
               </div>
@@ -139,7 +142,7 @@ const CheckoutStatusDialogInner = () => {
             <DialogFooter className="mt-2 flex-col-reverse gap-2 sm:flex-row sm:justify-end">
               <Button
                 variant="outline"
-                className="w-full sm:w-auto text-xs font-semibold text-slate-700"
+                className="w-full text-xs font-semibold text-slate-700 sm:w-auto"
                 onClick={() => clearParamsAndNavigate(ROUTES.DASHBOARD)}
               >
                 <LayoutDashboard className="mr-1.5 size-3.5" />
@@ -147,7 +150,7 @@ const CheckoutStatusDialogInner = () => {
               </Button>
 
               <Button
-                className="w-full sm:w-auto bg-slate-900 text-xs font-semibold text-white hover:bg-slate-800"
+                className="w-full bg-slate-900 text-xs font-semibold text-white hover:bg-slate-800 sm:w-auto"
                 onClick={() => clearParamsAndNavigate(ROUTES.PRICING)}
               >
                 <RefreshCw className="mr-1.5 size-3.5" />
@@ -174,8 +177,8 @@ const CheckoutStatusDialogInner = () => {
                 Checkout Incomplete
               </DialogTitle>
               <DialogDescription className="text-xs text-slate-600">
-                You exited checkout before completing the payment. No charges were
-                made.
+                You exited checkout before completing the payment. No charges
+                were made.
               </DialogDescription>
             </DialogHeader>
 
@@ -187,7 +190,7 @@ const CheckoutStatusDialogInner = () => {
             <DialogFooter className="mt-2 flex-col-reverse gap-2 sm:flex-row sm:justify-end">
               <Button
                 variant="outline"
-                className="w-full sm:w-auto text-xs font-semibold text-slate-700"
+                className="w-full text-xs font-semibold text-slate-700 sm:w-auto"
                 onClick={() => clearParamsAndNavigate(ROUTES.DASHBOARD)}
               >
                 <LayoutDashboard className="mr-1.5 size-3.5" />
@@ -195,7 +198,7 @@ const CheckoutStatusDialogInner = () => {
               </Button>
 
               <Button
-                className="w-full sm:w-auto bg-slate-900 text-xs font-semibold text-white hover:bg-slate-800"
+                className="w-full bg-slate-900 text-xs font-semibold text-white hover:bg-slate-800 sm:w-auto"
                 onClick={() => clearParamsAndNavigate(ROUTES.PRICING)}
               >
                 <span>Pricing</span>
@@ -214,7 +217,8 @@ const CheckoutStatusDialogInner = () => {
 
               <div className="flex items-center justify-center">
                 <Badge className="border-emerald-200 bg-emerald-50 text-emerald-700">
-                  <Sparkles className="mr-1 size-3" /> Confirmed via Dodo Payments
+                  <Sparkles className="mr-1 size-3" /> Confirmed via Dodo
+                  Payments
                 </Badge>
               </div>
 
@@ -222,14 +226,16 @@ const CheckoutStatusDialogInner = () => {
                 Payment Successful!
               </DialogTitle>
               <DialogDescription className="text-xs text-slate-600">
-                Thank you for supporting {SITE_CONFIG.name}. Your campaign / upgrade
-                is being activated across our developer directory.
+                Thank you for supporting {SITE_CONFIG.name}. Your campaign /
+                upgrade is being activated across our developer directory.
               </DialogDescription>
             </DialogHeader>
 
-            <div className="rounded-lg border border-dashed border-emerald-200/80 bg-emerald-50/40 p-3 text-xs text-slate-700 space-y-1.5">
+            <div className="space-y-1.5 rounded-lg border border-dashed border-emerald-200/80 bg-emerald-50/40 p-3 text-xs text-slate-700">
               <div className="flex items-start gap-1.5">
-                <span className="font-bold text-emerald-800">✓ Activation:</span>
+                <span className="font-bold text-emerald-800">
+                  ✓ Activation:
+                </span>
                 <span>Ads and listings activate immediately.</span>
               </div>
               <div className="flex items-start gap-1.5">
@@ -237,7 +243,9 @@ const CheckoutStatusDialogInner = () => {
                 <span>
                   Sent to{" "}
                   {email ? (
-                    <span className="font-semibold text-slate-900">{email}</span>
+                    <span className="font-semibold text-slate-900">
+                      {email}
+                    </span>
                   ) : (
                     "your email"
                   )}
@@ -246,7 +254,9 @@ const CheckoutStatusDialogInner = () => {
               </div>
               {paymentId && (
                 <div className="flex items-start gap-1.5">
-                  <span className="font-bold text-emerald-800">✓ Reference:</span>
+                  <span className="font-bold text-emerald-800">
+                    ✓ Reference:
+                  </span>
                   <span className="font-mono text-slate-600">{paymentId}</span>
                 </div>
               )}
@@ -255,7 +265,7 @@ const CheckoutStatusDialogInner = () => {
             <DialogFooter className="mt-2 flex-col-reverse gap-2 sm:flex-row sm:justify-end">
               <Button
                 variant="outline"
-                className="w-full sm:w-auto text-xs font-semibold text-slate-700"
+                className="w-full text-xs font-semibold text-slate-700 sm:w-auto"
                 onClick={() => clearParamsAndNavigate(ROUTES.HOME)}
               >
                 <Home className="mr-1.5 size-3.5" />
@@ -263,7 +273,7 @@ const CheckoutStatusDialogInner = () => {
               </Button>
 
               <Button
-                className="w-full sm:w-auto bg-slate-900 text-xs font-semibold text-white hover:bg-slate-800"
+                className="w-full bg-slate-900 text-xs font-semibold text-white hover:bg-slate-800 sm:w-auto"
                 onClick={() => clearParamsAndNavigate(ROUTES.DASHBOARD)}
               >
                 <LayoutDashboard className="mr-1.5 size-3.5" />

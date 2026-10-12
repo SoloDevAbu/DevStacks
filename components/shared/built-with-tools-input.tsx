@@ -319,7 +319,8 @@ export const BuiltWithToolsInput = ({
 
                 {!isDebouncingOrSearching && matchingTools.length === 0 && (
                   <div className="px-2.5 py-2 text-xs text-slate-400">
-                    No matching {SITE_CONFIG.name} tool found for &quot;{trimmedQuery}
+                    No matching {SITE_CONFIG.name} tool found for &quot;
+                    {trimmedQuery}
                     &quot;.
                   </div>
                 )}

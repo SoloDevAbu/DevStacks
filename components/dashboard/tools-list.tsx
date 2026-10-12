@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import {
   Wrench,
   ArrowBigUp,
@@ -15,6 +16,7 @@ import {
   PlusCircle,
   TrendingUp,
   Code,
+  Trash2,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -27,14 +29,29 @@ import {
   EmptyContent,
   EmptyMedia,
 } from "@/components/ui/empty"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 import { ProductLogo } from "@/components/shared/product-logo"
 import { UpgradeTierDialog } from "@/components/dashboard/upgrade-tier-dialog"
 import { EmbedBadgeDialog } from "@/components/shared/embed-badge-dialog"
+import {
+  DeleteItemDialog,
+  type DeleteItemTarget,
+} from "@/components/dashboard/delete-item-dialog"
 import { ROUTES } from "@/constants/routes"
 import { TIER } from "@/constants/plans"
 import {
   dashboardRow,
   dashboardFilterBar,
+  dashboardActionGroup,
+  dashboardIconButton,
+  dashboardIconUpgradeButton,
+  dashboardIconAnalyticsButton,
+  dashboardIconDeleteButton,
   upgradeBadge,
 } from "@/utils/dashboard/styles"
 import { pricingBadgeColor, submissionStatusBadge } from "@/utils/styles"
@@ -47,13 +64,26 @@ interface ToolsListProps {
 }
 
 export const ToolsList = ({ tools }: ToolsListProps) => {
+  const router = useRouter()
   const [searchQuery, setSearchQuery] = useState("")
-  const [statusFilter, setStatusFilter] = useState<"all" | "approved" | "pending">("all")
-  const [upgradingTool, setUpgradingTool] = useState<UserDashboardTool | null>(null)
+  const [statusFilter, setStatusFilter] = useState<
+    "all" | "approved" | "pending"
+  >("all")
+  const [upgradingTool, setUpgradingTool] = useState<UserDashboardTool | null>(
+    null
+  )
   const [badgeTool, setBadgeTool] = useState<UserDashboardTool | null>(null)
+  const [deletingTool, setDeletingTool] = useState<DeleteItemTarget | null>(
+    null
+  )
+  const [deletedIds, setDeletedIds] = useState<Set<string>>(new Set())
+
+  const activeTools = useMemo(() => {
+    return tools.filter((t) => !deletedIds.has(t.id))
+  }, [tools, deletedIds])
 
   const filteredTools = useMemo(() => {
-    return tools.filter((tool) => {
+    return activeTools.filter((tool) => {
       const matchesSearch =
         !searchQuery ||
         tool.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -69,7 +99,7 @@ export const ToolsList = ({ tools }: ToolsListProps) => {
 
       return matchesSearch && matchesStatus
     })
-  }, [tools, searchQuery, statusFilter])
+  }, [activeTools, searchQuery, statusFilter])
 
   return (
     <div className="flex w-full flex-1 flex-col">
@@ -77,7 +107,7 @@ export const ToolsList = ({ tools }: ToolsListProps) => {
       <div className={dashboardFilterBar}>
         <div className="flex items-center gap-2">
           <span className="font-mono text-xs font-bold text-slate-800 uppercase">
-            All Developer Tools ({tools.length})
+            All Developer Tools ({activeTools.length})
           </span>
         </div>
 
@@ -139,12 +169,12 @@ export const ToolsList = ({ tools }: ToolsListProps) => {
           <EmptyHeader>
             <EmptyTitle>No developer tools found</EmptyTitle>
             <EmptyDescription>
-              {tools.length === 0
+              {activeTools.length === 0
                 ? "You have not listed any developer tools or APIs yet."
                 : "No tools match your current search query or filter."}
             </EmptyDescription>
           </EmptyHeader>
-          {tools.length === 0 && (
+          {activeTools.length === 0 && (
             <EmptyContent>
               <Button
                 size="sm"
@@ -181,7 +211,7 @@ export const ToolsList = ({ tools }: ToolsListProps) => {
                         <Link
                           href={ROUTES.TOOL(tool.slug)}
                           target="_blank"
-                          className="text-base font-bold text-slate-900 transition-colors hover:text-indigo-600 flex items-center gap-1.5"
+                          className="flex items-center gap-1.5 text-base font-bold text-slate-900 transition-colors hover:text-indigo-600"
                           title="Open live tool page"
                         >
                           <span>{tool.name}</span>
@@ -218,68 +248,125 @@ export const ToolsList = ({ tools }: ToolsListProps) => {
                         </Badge>
                       </div>
 
-                      <p className="text-xs font-medium text-slate-600 max-w-2xl">
+                      <p className="max-w-2xl text-xs font-medium text-slate-600">
                         {tool.tagline}
                       </p>
                     </div>
                   </div>
 
-                  {/* Actions Group: Edit, Upgrade, Analytics */}
-                  <div className="flex flex-wrap items-center gap-2 self-start">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="h-8 gap-1.5 border-slate-200 text-xs font-medium text-slate-700 hover:bg-slate-50"
-                      render={
-                        <Link href={ROUTES.DASHBOARD_TOOL_EDIT(tool.slug)} />
-                      }
-                    >
-                      <Edit3 className="size-3.5 text-slate-500" />
-                      <span>Edit</span>
-                    </Button>
+                  {/* Actions Group: Edit, Badge, Upgrade, Analytics, Delete */}
+                  <TooltipProvider delay={150}>
+                    <div className={dashboardActionGroup}>
+                      <Tooltip>
+                        <TooltipTrigger
+                          render={
+                            <Button
+                              size="icon"
+                              variant="outline"
+                              className={dashboardIconButton}
+                              aria-label="Edit tool"
+                              render={
+                                <Link
+                                  href={ROUTES.DASHBOARD_TOOL_EDIT(tool.slug)}
+                                />
+                              }
+                            />
+                          }
+                        >
+                          <Edit3 className="size-3.5 text-slate-500" />
+                        </TooltipTrigger>
+                        <TooltipContent>Edit tool</TooltipContent>
+                      </Tooltip>
 
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => setBadgeTool(tool)}
-                      className="h-8 gap-1.5 border-slate-200 text-xs font-medium text-slate-700 hover:bg-slate-50"
-                      title="Get embed badge and AI prompt"
-                    >
-                      <Code className="size-3.5 text-slate-500" />
-                      <span>Badge</span>
-                    </Button>
+                      <Tooltip>
+                        <TooltipTrigger
+                          render={
+                            <Button
+                              size="icon"
+                              variant="outline"
+                              onClick={() => setBadgeTool(tool)}
+                              className={dashboardIconButton}
+                              aria-label="Get embed badge and AI prompt"
+                            />
+                          }
+                        >
+                          <Code className="size-3.5 text-slate-500" />
+                        </TooltipTrigger>
+                        <TooltipContent>Embed badge</TooltipContent>
+                      </Tooltip>
 
-                    {!isTopTier && (
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => setUpgradingTool(tool)}
-                        className="h-8 gap-1.5 border-amber-300 bg-amber-50/50 text-xs font-semibold text-amber-800 hover:bg-amber-100/70"
-                      >
-                        <Sparkles className="size-3.5 text-amber-600" />
-                        <span>Upgrade</span>
-                      </Button>
-                    )}
+                      {!isTopTier && (
+                        <Tooltip>
+                          <TooltipTrigger
+                            render={
+                              <Button
+                                size="icon"
+                                variant="outline"
+                                onClick={() => setUpgradingTool(tool)}
+                                className={dashboardIconUpgradeButton}
+                                aria-label="Upgrade tier"
+                              />
+                            }
+                          >
+                            <Sparkles className="size-3.5 text-amber-600" />
+                          </TooltipTrigger>
+                          <TooltipContent>Upgrade tier</TooltipContent>
+                        </Tooltip>
+                      )}
 
-                    <Button
-                      size="sm"
-                      className="h-8 gap-1.5 bg-slate-900 text-xs font-semibold text-white hover:bg-slate-800"
-                      render={
-                        <Link
-                          href={ROUTES.DASHBOARD_TOOL_ANALYTICS(tool.slug)}
-                        />
-                      }
-                    >
-                      <BarChart2 className="size-3.5 text-indigo-300" />
-                      <span>Analytics</span>
-                    </Button>
-                  </div>
+                      <Tooltip>
+                        <TooltipTrigger
+                          render={
+                            <Button
+                              size="icon"
+                              className={dashboardIconAnalyticsButton}
+                              aria-label="View analytics"
+                              render={
+                                <Link
+                                  href={ROUTES.DASHBOARD_TOOL_ANALYTICS(
+                                    tool.slug
+                                  )}
+                                />
+                              }
+                            />
+                          }
+                        >
+                          <BarChart2 className="size-3.5 text-indigo-300" />
+                        </TooltipTrigger>
+                        <TooltipContent>View analytics</TooltipContent>
+                      </Tooltip>
+
+                      <Tooltip>
+                        <TooltipTrigger
+                          render={
+                            <Button
+                              size="icon"
+                              variant="outline"
+                              onClick={() =>
+                                setDeletingTool({
+                                  id: tool.id,
+                                  name: tool.name,
+                                  slug: tool.slug,
+                                  itemType: "tool",
+                                })
+                              }
+                              className={dashboardIconDeleteButton}
+                              aria-label="Delete tool"
+                            />
+                          }
+                        >
+                          <Trash2 className="size-3.5" />
+                        </TooltipTrigger>
+                        <TooltipContent>Delete tool</TooltipContent>
+                      </Tooltip>
+                    </div>
+                  </TooltipProvider>
                 </div>
 
                 {/* Metrics Bar */}
                 <div className="grid grid-cols-2 divide-x rounded-lg border border-dashed border-border bg-slate-50/60 py-2 sm:grid-cols-4">
                   <div className="flex flex-col items-center px-3 py-1">
-                    <span className="font-mono text-[10px] font-bold text-slate-400 uppercase flex items-center gap-1">
+                    <span className="flex items-center gap-1 font-mono text-[10px] font-bold text-slate-400 uppercase">
                       <ArrowBigUp className="size-3 text-amber-500" />
                       Upvotes
                     </span>
@@ -289,7 +376,7 @@ export const ToolsList = ({ tools }: ToolsListProps) => {
                   </div>
 
                   <div className="flex flex-col items-center px-3 py-1">
-                    <span className="font-mono text-[10px] font-bold text-slate-400 uppercase flex items-center gap-1">
+                    <span className="flex items-center gap-1 font-mono text-[10px] font-bold text-slate-400 uppercase">
                       <MessageSquare className="size-3 text-sky-500" />
                       Comments
                     </span>
@@ -299,7 +386,7 @@ export const ToolsList = ({ tools }: ToolsListProps) => {
                   </div>
 
                   <div className="flex flex-col items-center px-3 py-1">
-                    <span className="font-mono text-[10px] font-bold text-slate-400 uppercase flex items-center gap-1">
+                    <span className="flex items-center gap-1 font-mono text-[10px] font-bold text-slate-400 uppercase">
                       <Eye className="size-3 text-purple-500" />
                       Page Views
                     </span>
@@ -309,7 +396,7 @@ export const ToolsList = ({ tools }: ToolsListProps) => {
                   </div>
 
                   <div className="flex flex-col items-center px-3 py-1">
-                    <span className="font-mono text-[10px] font-bold text-slate-400 uppercase flex items-center gap-1">
+                    <span className="flex items-center gap-1 font-mono text-[10px] font-bold text-slate-400 uppercase">
                       <TrendingUp className="size-3 text-emerald-500" />
                       External Visits
                     </span>
@@ -350,6 +437,20 @@ export const ToolsList = ({ tools }: ToolsListProps) => {
           slug={badgeTool.slug}
           type="tool"
           websiteUrl={badgeTool.websiteUrl}
+        />
+      )}
+      {/* Delete Tool Confirmation Dialog */}
+      {deletingTool && (
+        <DeleteItemDialog
+          isOpen={Boolean(deletingTool)}
+          onOpenChange={(open) => {
+            if (!open) setDeletingTool(null)
+          }}
+          item={deletingTool}
+          onSuccess={(id) => {
+            setDeletedIds((prev) => new Set(prev).add(id))
+            router.refresh()
+          }}
         />
       )}
     </div>

@@ -186,11 +186,9 @@ export default async function MakerPage({ params }: MakerPageProps) {
         )
       : null
 
-  const entitySchemas = [
-    profileJsonLd,
-    breadcrumbsJsonLd,
-    faqJsonLd,
-  ].filter(Boolean) as Record<string, unknown>[]
+  const entitySchemas = [profileJsonLd, breadcrumbsJsonLd, faqJsonLd].filter(
+    Boolean
+  ) as Record<string, unknown>[]
   const unifiedJsonLd = buildEntityGraph(entitySchemas)
 
   return (
@@ -230,7 +228,10 @@ export default async function MakerPage({ params }: MakerPageProps) {
               /
             </li>
             <li className="flex items-center">
-              <span className="font-semibold text-slate-900" aria-current="page">
+              <span
+                className="font-semibold text-slate-900"
+                aria-current="page"
+              >
                 @{maker.username}
               </span>
             </li>

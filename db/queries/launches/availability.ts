@@ -32,17 +32,26 @@ export const getLaunchPromoStatus = async (): Promise<LaunchPromoStatus> => {
     db
       .select({ count: sql<number>`count(*)::int` })
       .from(tools)
-      .where(and(ne(tools.status, "rejected"), isNotNull(tools.submitterId))),
+      .where(
+        and(
+          ne(tools.status, "rejected"),
+          eq(tools.isDeleted, false),
+          isNotNull(tools.submitterId)
+        )
+      ),
     db
       .select({ count: sql<number>`count(*)::int` })
       .from(products)
       .where(
-        and(ne(products.status, "rejected"), isNotNull(products.submitterId))
+        and(
+          ne(products.status, "rejected"),
+          eq(products.isDeleted, false),
+          isNotNull(products.submitterId)
+        )
       ),
   ])
 
-  const promoClaimed =
-    (toolsRow[0]?.count ?? 0) + (productsRow[0]?.count ?? 0)
+  const promoClaimed = (toolsRow[0]?.count ?? 0) + (productsRow[0]?.count ?? 0)
   const maxPromo = LAUNCH_PROMO.MAX_LAUNCHES
   const isPromoActive = promoClaimed < maxPromo
   const promoRemaining = Math.max(0, maxPromo - promoClaimed)

@@ -2,6 +2,7 @@ import { type NextRequest, NextResponse } from "next/server"
 import { resolveProduct } from "@/lib/products/resolve-product"
 import { auth } from "@/lib/auth"
 import { updateProduct } from "@/db/queries/products/update"
+import { softDeleteProduct } from "@/db/queries/products/delete"
 import { submitProductSchema } from "@/lib/validation/product"
 
 export const GET = async (
@@ -48,7 +49,10 @@ export const PATCH = async (
 
     const { slug } = await params
     if (!slug) {
-      return NextResponse.json({ error: "Missing product slug" }, { status: 400 })
+      return NextResponse.json(
+        { error: "Missing product slug" },
+        { status: 400 }
+      )
     }
 
     const body = await req.json()
@@ -67,7 +71,41 @@ export const PATCH = async (
     const updated = await updateProduct(slug, session.user.id, parsed.data)
     return NextResponse.json({ data: updated }, { status: 200 })
   } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : "Failed to update product"
+    const message =
+      err instanceof Error ? err.message : "Failed to update product"
+    return NextResponse.json({ error: message }, { status: 500 })
+  }
+}
+
+export const DELETE = async (
+  req: NextRequest,
+  { params }: { params: Promise<{ slug: string }> }
+) => {
+  try {
+    const session = await auth.api.getSession({
+      headers: req.headers,
+    })
+
+    if (!session?.user?.id) {
+      return NextResponse.json(
+        { error: "Unauthorized. Please sign in to delete this product." },
+        { status: 401 }
+      )
+    }
+
+    const { slug } = await params
+    if (!slug) {
+      return NextResponse.json(
+        { error: "Missing product slug" },
+        { status: 400 }
+      )
+    }
+
+    const deleted = await softDeleteProduct(slug, session.user.id)
+    return NextResponse.json({ data: deleted }, { status: 200 })
+  } catch (err: unknown) {
+    const message =
+      err instanceof Error ? err.message : "Failed to delete product"
     return NextResponse.json({ error: message }, { status: 500 })
   }
 }

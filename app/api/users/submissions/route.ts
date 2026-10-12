@@ -9,10 +9,7 @@ export const GET = async (req: NextRequest) => {
     const session = await auth.api.getSession({ headers: req.headers })
 
     if (!session?.user) {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      )
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
     const userId = session.user.id
@@ -29,7 +26,13 @@ export const GET = async (req: NextRequest) => {
           tier: tools.tier,
         })
         .from(tools)
-        .where(and(eq(tools.submitterId, userId), eq(tools.status, "approved"))),
+        .where(
+          and(
+            eq(tools.submitterId, userId),
+            eq(tools.status, "approved"),
+            eq(tools.isDeleted, false)
+          )
+        ),
       db
         .select({
           id: products.id,
@@ -42,7 +45,11 @@ export const GET = async (req: NextRequest) => {
         })
         .from(products)
         .where(
-          and(eq(products.submitterId, userId), eq(products.status, "approved"))
+          and(
+            eq(products.submitterId, userId),
+            eq(products.status, "approved"),
+            eq(products.isDeleted, false)
+          )
         ),
     ])
 

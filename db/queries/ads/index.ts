@@ -80,17 +80,26 @@ export const getActiveAdsForCurrentWeek = async ({
       },
     })
     .from(ads)
-    .leftJoin(tools, eq(ads.toolId, tools.id))
-    .leftJoin(products, eq(ads.productId, products.id))
+    .leftJoin(tools, and(eq(ads.toolId, tools.id), eq(tools.isDeleted, false)))
+    .leftJoin(
+      products,
+      and(eq(ads.productId, products.id), eq(products.isDeleted, false))
+    )
     .where(inArray(ads.id, adIds))
     .orderBy(desc(ads.createdAt))
     .limit(limit)
 
-  return results.map((r) => ({
-    ...r.ad,
-    tool: r.tool?.id ? r.tool : null,
-    product: r.product?.id ? r.product : null,
-  }))
+  return results
+    .filter((r) => {
+      if (r.ad.toolId && !r.tool?.id) return false
+      if (r.ad.productId && !r.product?.id) return false
+      return true
+    })
+    .map((r) => ({
+      ...r.ad,
+      tool: r.tool?.id ? r.tool : null,
+      product: r.product?.id ? r.product : null,
+    }))
 }
 
 export const getAdById = async (id: string): Promise<Ad | null> => {
@@ -108,8 +117,11 @@ export const getAdWithTargetUrl = async (
       productWebsite: products.websiteUrl,
     })
     .from(ads)
-    .leftJoin(tools, eq(ads.toolId, tools.id))
-    .leftJoin(products, eq(ads.productId, products.id))
+    .leftJoin(tools, and(eq(ads.toolId, tools.id), eq(tools.isDeleted, false)))
+    .leftJoin(
+      products,
+      and(eq(ads.productId, products.id), eq(products.isDeleted, false))
+    )
     .where(eq(ads.id, id))
     .limit(1)
 
@@ -131,10 +143,7 @@ export const getUserAds = async (userId: string): Promise<Ad[]> =>
     .where(eq(ads.userId, userId))
     .orderBy(desc(ads.createdAt))
 
-export const createAd = async (
-  data: NewAd,
-  client: any = db
-): Promise<Ad> => {
+export const createAd = async (data: NewAd, client: any = db): Promise<Ad> => {
   const [ad] = await client.insert(ads).values(data).returning()
   return ad
 }

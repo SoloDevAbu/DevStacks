@@ -8,7 +8,9 @@ export interface ImageDimensionsResult {
   error?: string
 }
 
-export const getImageDimensions = (file: File): Promise<{ width: number; height: number }> => {
+export const getImageDimensions = (
+  file: File
+): Promise<{ width: number; height: number }> => {
   return new Promise((resolve, reject) => {
     const objectUrl = URL.createObjectURL(file)
     const img = new Image()

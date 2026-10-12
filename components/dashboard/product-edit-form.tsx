@@ -43,7 +43,9 @@ export const ProductEditForm = ({ product }: ProductEditFormProps) => {
 
   const [name, setName] = useState<string>(product.name || "")
   const [tagline, setTagline] = useState<string>(product.tagline || "")
-  const [description, setDescription] = useState<string>(product.description || "")
+  const [description, setDescription] = useState<string>(
+    product.description || ""
+  )
   const [websiteUrl, setWebsiteUrl] = useState<string>(product.websiteUrl || "")
   const [logoUrl, setLogoUrl] = useState(product.logoUrl || "")
   const [images, setImages] = useState<string[]>(product.images || [])
@@ -102,8 +104,15 @@ export const ProductEditForm = ({ product }: ProductEditFormProps) => {
     setErrorMessage(null)
     setIsSuccess(false)
 
-    if (!name.trim() || !tagline.trim() || !description.trim() || !websiteUrl.trim()) {
-      setErrorMessage("Please fill in all required fields (Name, Tagline, Description, Website URL).")
+    if (
+      !name.trim() ||
+      !tagline.trim() ||
+      !description.trim() ||
+      !websiteUrl.trim()
+    ) {
+      setErrorMessage(
+        "Please fill in all required fields (Name, Tagline, Description, Website URL)."
+      )
       return
     }
 
@@ -156,7 +165,7 @@ export const ProductEditForm = ({ product }: ProductEditFormProps) => {
     <div className={dashboardPageContainer}>
       <form onSubmit={handleSubmit} className="flex flex-col">
         {/* Top Header */}
-        <div className="flex flex-col gap-4 border-b border-dashed border-border bg-white px-6 py-6 md:px-8 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-4 border-b border-dashed border-border bg-white px-6 py-6 sm:flex-row sm:items-center sm:justify-between md:px-8">
           <div className="flex items-center gap-3">
             <Button
               type="button"
@@ -427,7 +436,8 @@ export const ProductEditForm = ({ product }: ProductEditFormProps) => {
           <div>
             <h2 className={dashboardFormSectionTitle}>Deep Dive Showcase</h2>
             <p className={dashboardFormSectionSubtitle}>
-              Provide detailed technical architectural clarity for developer users.
+              Provide detailed technical architectural clarity for developer
+              users.
             </p>
           </div>
 
@@ -477,9 +487,12 @@ export const ProductEditForm = ({ product }: ProductEditFormProps) => {
         <div className={dashboardFormSection}>
           <div className="flex items-center justify-between">
             <div>
-              <h2 className={dashboardFormSectionTitle}>Frequently Asked Questions</h2>
+              <h2 className={dashboardFormSectionTitle}>
+                Frequently Asked Questions
+              </h2>
               <p className={dashboardFormSectionSubtitle}>
-                Add FAQs to directly address questions from builders and customers.
+                Add FAQs to directly address questions from builders and
+                customers.
               </p>
             </div>
             <Button
@@ -506,16 +519,18 @@ export const ProductEditForm = ({ product }: ProductEditFormProps) => {
                   <div className="flex items-center justify-between gap-2">
                     <Input
                       value={faq.question}
-                      onChange={(e) => updateFaq(idx, "question", e.target.value)}
+                      onChange={(e) =>
+                        updateFaq(idx, "question", e.target.value)
+                      }
                       placeholder="Question"
-                      className="h-8 text-xs font-semibold bg-white"
+                      className="h-8 bg-white text-xs font-semibold"
                     />
                     <Button
                       type="button"
                       variant="ghost"
                       size="sm"
                       onClick={() => removeFaq(idx)}
-                      className="h-8 size-8 p-0 text-slate-400 hover:text-rose-600"
+                      className="size-8 h-8 p-0 text-slate-400 hover:text-rose-600"
                     >
                       <Trash2 className="size-3.5" />
                     </Button>
@@ -524,7 +539,7 @@ export const ProductEditForm = ({ product }: ProductEditFormProps) => {
                     value={faq.answer}
                     onChange={(e) => updateFaq(idx, "answer", e.target.value)}
                     placeholder="Answer..."
-                    className="min-h-16 text-xs bg-white"
+                    className="min-h-16 bg-white text-xs"
                   />
                 </div>
               ))}

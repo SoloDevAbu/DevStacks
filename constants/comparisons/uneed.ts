@@ -81,18 +81,23 @@ export const UNEED_COMPARISON: PlatformComparison = {
     {
       key: "purpose",
       label: "Primary Purpose",
-      competitorValue: "Curated indie maker directory & rolling launch leaderboards",
-      launchNestsValue: "Perpetual developer directory & relational tech-stack graph",
+      competitorValue:
+        "Curated indie maker directory & rolling launch leaderboards",
+      launchNestsValue:
+        "Perpetual developer directory & relational tech-stack graph",
       highlight: "neutral",
-      description: "Uneed focuses on indie maker tools; LaunchNests maps the software engineering ecosystem.",
+      description:
+        "Uneed focuses on indie maker tools; LaunchNests maps the software engineering ecosystem.",
     },
     {
       key: "audience",
       label: "Target Audience",
       competitorValue: "Indie hackers, solopreneurs, micro-SaaS founders",
-      launchNestsValue: "Software engineers, technical founders, AI coding agents",
+      launchNestsValue:
+        "Software engineers, technical founders, AI coding agents",
       highlight: "neutral",
-      description: "Both serve builders, but LaunchNests is tailored specifically for code and infrastructure.",
+      description:
+        "Both serve builders, but LaunchNests is tailored specifically for code and infrastructure.",
     },
     {
       key: "freequeue",
@@ -100,15 +105,19 @@ export const UNEED_COMPARISON: PlatformComparison = {
       competitorValue: "Automated queue scheduled 30 days to 5 months out",
       launchNestsValue: "Fast 12–24 hour moderation and immediate publication",
       highlight: "launchNests",
-      description: "Uneed spaces free launches over several months; LaunchNests reviews promptly.",
+      description:
+        "Uneed spaces free launches over several months; LaunchNests reviews promptly.",
     },
     {
       key: "retentionrules",
       label: "Launch Retention Rules",
-      competitorValue: "Requires 10 upvotes on launch day to stay published; 20 for do-follow link",
-      launchNestsValue: "Permanent listing upon review approval; zero upvote quotas required",
+      competitorValue:
+        "Requires 10 upvotes on launch day to stay published; 20 for do-follow link",
+      launchNestsValue:
+        "Permanent listing upon review approval; zero upvote quotas required",
       highlight: "launchNests",
-      description: "Uneed de-lists products that miss launch-day vote goals; LaunchNests indexes permanently.",
+      description:
+        "Uneed de-lists products that miss launch-day vote goals; LaunchNests indexes permanently.",
     },
     {
       key: "techstack",
@@ -116,15 +125,18 @@ export const UNEED_COMPARISON: PlatformComparison = {
       competitorValue: "None (individual isolated tool listings)",
       launchNestsValue: "Two-way 'Built With' relational tech-stack graph",
       highlight: "launchNests",
-      description: "LaunchNests connects tools to the real-world products built on top of them.",
+      description:
+        "LaunchNests connects tools to the real-world products built on top of them.",
     },
     {
       key: "expeditedcost",
       label: "Expedited Review Cost",
       competitorValue: "$14.99 (Fast-track) or $29.99 (Skip Waiting Line)",
-      launchNestsValue: "$15 one-time (Featured Builder with verified Do-Follow)",
+      launchNestsValue:
+        "$15 one-time (Featured Builder with verified Do-Follow)",
       highlight: "launchNests",
-      description: "Both offer paid fast-tracking, with LaunchNests including permanent verified SEO equity.",
+      description:
+        "Both offer paid fast-tracking, with LaunchNests including permanent verified SEO equity.",
     },
     {
       key: "membership",
@@ -132,46 +144,58 @@ export const UNEED_COMPARISON: PlatformComparison = {
       competitorValue: "$12.99/month or $99/year recurring subscription",
       launchNestsValue: "$0 recurring (affordable one-time tiers only)",
       highlight: "launchNests",
-      description: "Uneed uses a recurring monthly membership; LaunchNests is strictly pay-once.",
+      description:
+        "Uneed uses a recurring monthly membership; LaunchNests is strictly pay-once.",
     },
     {
       key: "aireadiness",
       label: "AI Engine Indexing (AEO/GEO)",
       competitorValue: "Standard HTML web pages without /llms.txt or MCP",
-      launchNestsValue: "Native /llms.txt, raw Markdown (.md), and Model Context Protocol (MCP)",
+      launchNestsValue:
+        "Native /llms.txt, raw Markdown (.md), and Model Context Protocol (MCP)",
       highlight: "launchNests",
-      description: "Machine-readable endpoints enable autonomous discovery in Cursor, Claude, and ChatGPT.",
+      description:
+        "Machine-readable endpoints enable autonomous discovery in Cursor, Claude, and ChatGPT.",
     },
     {
       key: "backlinks",
       label: "SEO Backlink Attribute",
-      competitorValue: "Do-follow if 20+ votes achieved or via $29.99 Skip Line",
-      launchNestsValue: "Permanent Do-Follow on $15 tier; clean direct links on free",
+      competitorValue:
+        "Do-follow if 20+ votes achieved or via $29.99 Skip Line",
+      launchNestsValue:
+        "Permanent Do-Follow on $15 tier; clean direct links on free",
       highlight: "launchNests",
-      description: "LaunchNests provides transparent link equity without requiring viral launch-day upvotes.",
+      description:
+        "LaunchNests provides transparent link equity without requiring viral launch-day upvotes.",
     },
     {
       key: "community",
       label: "Community Features",
       competitorValue: "Social feed, maker streaks, private Discord (Pro)",
-      launchNestsValue: "Real-world build showcases, GitHub repo integration, developer tools hub",
+      launchNestsValue:
+        "Real-world build showcases, GitHub repo integration, developer tools hub",
       highlight: "neutral",
-      description: "Uneed excels at maker social interaction; LaunchNests focuses on technical exploration.",
+      description:
+        "Uneed excels at maker social interaction; LaunchNests focuses on technical exploration.",
     },
     {
       key: "bestfor",
       label: "Best Suited For",
-      competitorValue: "Indie SaaS seeking community upvotes and maker feedback",
-      launchNestsValue: "Dev tools, APIs, and software products seeking permanent discovery",
+      competitorValue:
+        "Indie SaaS seeking community upvotes and maker feedback",
+      launchNestsValue:
+        "Dev tools, APIs, and software products seeking permanent discovery",
       highlight: "neutral",
-      description: "Choose the platform that aligns with your technical depth and launch timeline.",
+      description:
+        "Choose the platform that aligns with your technical depth and launch timeline.",
     },
   ],
   deepDives: [
     {
       id: "submission-queues",
       title: "Launch Queues: Multi-Month Waiting Line vs Fast Moderation",
-      subtitle: "How each platform handles queueing, scheduling, and publication velocity",
+      subtitle:
+        "How each platform handles queueing, scheduling, and publication velocity",
       competitorAngle:
         "Uneed utilizes an automated waiting line for free submissions. When you submit without paying, the platform assigns you a launch date based on current queue volume, typically between 30 days and 5 months in the future. To launch sooner, makers must purchase either the Fast-track option ($14.99 to launch in ~2 weeks) or the 'Skip the Waiting Line' option ($29.99 to pick an exact date).",
       launchNestsAngle:
@@ -182,7 +206,8 @@ export const UNEED_COMPARISON: PlatformComparison = {
     {
       id: "vote-thresholds",
       title: "Launch-Day Performance: Upvote Quotas vs Guaranteed Cataloging",
-      subtitle: "The pressure of launch-day engagement versus permanent directory presence",
+      subtitle:
+        "The pressure of launch-day engagement versus permanent directory presence",
       competitorAngle:
         "On Uneed, a free launch is tied to specific performance criteria on launch day. To remain published in the directory, a product must gather an upvote score of at least 10 on the day of its launch. Furthermore, to retain a coveted 'do-follow' backlink, it must reach a score of 20 upvotes. If a product fails to rally community support on that single day, it risks delisting or losing link equity unless the maker paid for the $29.99 Skip the Line perk.",
       launchNestsAngle:
@@ -193,7 +218,8 @@ export const UNEED_COMPARISON: PlatformComparison = {
     {
       id: "tech-stack-graph",
       title: "Directory Listings vs The Relational 'Built With' Graph",
-      subtitle: "How architectural connections create ongoing discovery beyond the launch window",
+      subtitle:
+        "How architectural connections create ongoing discovery beyond the launch window",
       competitorAngle:
         "Uneed functions as an index of standalone tool profiles categorized by industry tags (AI, Productivity, Marketing, Dev, etc.). While visitors can filter tools by category or search by keyword, each listing exists as an isolated profile without connections to the software stack used to build it or other products using similar technologies.",
       launchNestsAngle:
@@ -203,8 +229,10 @@ export const UNEED_COMPARISON: PlatformComparison = {
     },
     {
       id: "pricing-models",
-      title: "Monetization Philosophy: Recurring Pro Membership vs Transparent One-Time Tiers",
-      subtitle: "Comparing subscription perks against straightforward lifetime verification",
+      title:
+        "Monetization Philosophy: Recurring Pro Membership vs Transparent One-Time Tiers",
+      subtitle:
+        "Comparing subscription perks against straightforward lifetime verification",
       competitorAngle:
         "Uneed offers a variety of paid services centered around an ongoing membership called Uneed Pro ($12.99/month or $99/year). Pro members receive +3 voting power, private Discord access, one free relaunch per month, video upload abilities, and partner discounts. In addition, Uneed offers a manual directory submission service ($249) that submits your tool to 100+ external directories.",
       launchNestsAngle:
@@ -215,7 +243,8 @@ export const UNEED_COMPARISON: PlatformComparison = {
     {
       id: "ai-readiness",
       title: "AI Search Readiness & Agent Accessibility (AEO/GEO)",
-      subtitle: "Preparing your product for autonomous LLM agents and next-generation code editors",
+      subtitle:
+        "Preparing your product for autonomous LLM agents and next-generation code editors",
       competitorAngle:
         "Uneed is designed for human web visitors who browse curated lists and upvote on leaderboards. While its high domain authority aids traditional search engine crawlers, it does not provide specialized machine-readable endpoints, structured manifests, or agent protocols tailored for generative AI search engines.",
       launchNestsAngle:
@@ -230,7 +259,8 @@ export const UNEED_COMPARISON: PlatformComparison = {
       title: "When Uneed is the Ideal Choice",
       badge: "Community & Buzz",
       badgeVariant: "hot",
-      recommendedFor: "Indie hackers, solopreneurs, and consumer/B2B SaaS with an active social circle",
+      recommendedFor:
+        "Indie hackers, solopreneurs, and consumer/B2B SaaS with an active social circle",
       explanation:
         "Uneed is an excellent launchpad when you want to connect with fellow makers, tap into a vibrant indie community, and compete for daily or weekly leaderboard recognition.",
       bulletPoints: [
@@ -246,7 +276,8 @@ export const UNEED_COMPARISON: PlatformComparison = {
       title: "When LaunchNests is the Ideal Choice",
       badge: "Devs & Tech Graph",
       badgeVariant: "new",
-      recommendedFor: "Software engineers, devtool founders, APIs, technical SaaS, and open-source creators",
+      recommendedFor:
+        "Software engineers, devtool founders, APIs, technical SaaS, and open-source creators",
       explanation:
         "LaunchNests is the superior platform when you want fast, guaranteed indexing, ongoing technical discovery through a two-way tech stack graph, and exposure to autonomous AI coding agents.",
       bulletPoints: [
@@ -263,7 +294,8 @@ export const UNEED_COMPARISON: PlatformComparison = {
       title: "When You Should Leverage Both Platforms",
       badge: "Multi-Channel Growth",
       badgeVariant: "neutral",
-      recommendedFor: "Technical founders seeking comprehensive distribution across indie and developer communities",
+      recommendedFor:
+        "Technical founders seeking comprehensive distribution across indie and developer communities",
       explanation:
         "The most effective launch strategy does not force an either/or decision. Savvy founders combine Uneed's indie maker spotlight with LaunchNests' perpetual developer tech-stack catalog.",
       bulletPoints: [
@@ -275,8 +307,10 @@ export const UNEED_COMPARISON: PlatformComparison = {
     },
   ],
   canYouUseBoth: {
-    heading: "Dual Distribution Playbook: How to Leverage Uneed and LaunchNests Together",
-    subheading: "Combine Uneed's maker community excitement with LaunchNests' permanent developer graph",
+    heading:
+      "Dual Distribution Playbook: How to Leverage Uneed and LaunchNests Together",
+    subheading:
+      "Combine Uneed's maker community excitement with LaunchNests' permanent developer graph",
     description:
       "Launching a software product is not a zero-sum game. Uneed and LaunchNests serve complementary roles in a founder's growth stack: Uneed delivers community engagement and launch-day competition among indie creators, while LaunchNests provides permanent technical indexing, tech-stack backlinks, and AI agent discoverability. Here is how to sequence both platforms for maximum impact:",
     strategySteps: [
@@ -323,12 +357,14 @@ export const UNEED_COMPARISON: PlatformComparison = {
         "While Uneed is a curated general directory and launchpad for indie hackers and micro-SaaS, LaunchNests is an engineering-first platform built specifically for developer tools and software products. Key differences include: (1) LaunchNests has no months-long waiting line for free submissions (reviews take 12–24 hours); (2) LaunchNests has no minimum upvote quotas to stay listed; (3) LaunchNests features a two-way 'Built With' tech-stack graph linking products to the tools powering them; (4) LaunchNests provides machine-readable AI agent endpoints (/llms.txt and MCP server); and (5) LaunchNests offers transparent one-time verification ($15/$19) instead of monthly recurring subscriptions.",
     },
     {
-      question: "What happens if my product doesn't get enough upvotes on Uneed?",
+      question:
+        "What happens if my product doesn't get enough upvotes on Uneed?",
       answer:
         "On Uneed's free tier, a product requires an upvote score of at least 10 on the day of its launch to stay published. If it receives fewer than 10 upvotes, it may be removed from the catalog. To keep a do-follow SEO backlink, it requires at least 20 upvotes. You can bypass these performance requirements by purchasing the 'Skip the Waiting Line' package ($29.99), which guarantees permanent publication and a lifetime do-follow link.",
     },
     {
-      question: "Does LaunchNests require upvotes or community voting to keep my product listed?",
+      question:
+        "Does LaunchNests require upvotes or community voting to keep my product listed?",
       answer:
         "No. LaunchNests operates on an editorial quality standard rather than an upvote quota. Once your submission is reviewed and approved by our team, it remains permanently listed in the directory and relevant category pages. You do not need to rally supporters, run launch-day voting campaigns, or worry about delisting if your product doesn't hit a specific vote count on day one.",
     },
@@ -338,12 +374,14 @@ export const UNEED_COMPARISON: PlatformComparison = {
         "The 'Built With' graph is LaunchNests' relational architecture mapping. When you submit a product, you specify the developer tools, frameworks, databases, and APIs used in its creation (e.g. Next.js, Supabase, Tailwind CSS, Stripe). This establishes a two-way connection: your product profile showcases its technical blueprint, and the directory page for each tool lists your product as a live production example. This generates ongoing, relevant organic discovery as developers research tools in your stack.",
     },
     {
-      question: "How does LaunchNests optimize for AI search agents and LLMs compared to Uneed?",
+      question:
+        "How does LaunchNests optimize for AI search agents and LLMs compared to Uneed?",
       answer:
         "LaunchNests implements Answer Engine Optimization (AEO) and Generative Engine Optimization (GEO) through root-level /llms.txt and /llms-full.txt files, clean raw Markdown endpoints for every tool and product, and a live Model Context Protocol (MCP) server at /api/mcp. This allows AI assistants like Claude, ChatGPT, Cursor, and Perplexity to programmatically query and cite software tools. Uneed uses traditional HTML web pages without dedicated agent manifests or MCP endpoints.",
     },
     {
-      question: "Can I launch developer templates, boilerplates, or APIs on both platforms?",
+      question:
+        "Can I launch developer templates, boilerplates, or APIs on both platforms?",
       answer:
         "Yes! Both Uneed and LaunchNests are friendly to indie software and developer tools. Uneed accepts SaaS, templates, and digital products. LaunchNests is particularly well-suited for developer infrastructure, APIs, boilerplates, and open-source libraries, offering native GitHub repository linking, open-source pricing tags, and categorized developer tooling filters.",
     },

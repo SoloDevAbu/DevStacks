@@ -33,7 +33,9 @@ interface GlobalAnalyticsViewProps {
 }
 
 export const GlobalAnalyticsView = ({ data }: GlobalAnalyticsViewProps) => {
-  const [filterType, setFilterType] = useState<"all" | "products" | "tools">("all")
+  const [filterType, setFilterType] = useState<"all" | "products" | "tools">(
+    "all"
+  )
 
   const { stats, items, recentInteractions } = data
 
@@ -226,19 +228,22 @@ export const GlobalAnalyticsView = ({ data }: GlobalAnalyticsViewProps) => {
                   <div className="flex items-center gap-2">
                     <Link
                       href={analyticsLink}
-                      className="text-sm font-bold text-slate-900 hover:text-indigo-600 transition-colors"
+                      className="text-sm font-bold text-slate-900 transition-colors hover:text-indigo-600"
                     >
                       {item.name}
                     </Link>
 
                     <Badge
                       variant="outline"
-                      className="border-dashed text-[10px] font-semibold uppercase text-slate-500"
+                      className="border-dashed text-[10px] font-semibold text-slate-500 uppercase"
                     >
                       {item.itemType}
                     </Badge>
 
-                    <Badge variant="outline" className={upgradeBadge(item.tier)}>
+                    <Badge
+                      variant="outline"
+                      className={upgradeBadge(item.tier)}
+                    >
                       {item.tier}
                     </Badge>
                   </div>
@@ -246,7 +251,7 @@ export const GlobalAnalyticsView = ({ data }: GlobalAnalyticsViewProps) => {
               </div>
 
               {/* Performance numbers */}
-              <div className="flex flex-wrap items-center gap-4 sm:gap-6 text-xs">
+              <div className="flex flex-wrap items-center gap-4 text-xs sm:gap-6">
                 <div className="flex flex-col items-center">
                   <span className="font-mono text-[10px] text-slate-400 uppercase">
                     Views
@@ -329,7 +334,9 @@ export const GlobalAnalyticsView = ({ data }: GlobalAnalyticsViewProps) => {
                       <AvatarImage src={act.user.image} alt={act.user.name} />
                     ) : null}
                     <AvatarFallback className="bg-slate-900 text-[10px] text-white">
-                      {act.user?.name ? act.user.name.slice(0, 2).toUpperCase() : "CM"}
+                      {act.user?.name
+                        ? act.user.name.slice(0, 2).toUpperCase()
+                        : "CM"}
                     </AvatarFallback>
                   </Avatar>
 

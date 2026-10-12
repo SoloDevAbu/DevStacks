@@ -235,7 +235,9 @@ export const AgentFooter = () => (
                     src={badge.src}
                     alt={badge.alt}
                     width={badge.width}
-                    {...(badge.height !== undefined ? { height: badge.height } : {})}
+                    {...(badge.height !== undefined
+                      ? { height: badge.height }
+                      : {})}
                     className={footerFeaturedBadgeImage}
                   />
                 </a>

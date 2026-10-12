@@ -66,4 +66,3 @@ export const createPresignedUploadUrl = async ({
 
   return { uploadUrl, publicUrl }
 }
-

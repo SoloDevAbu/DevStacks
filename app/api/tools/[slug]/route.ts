@@ -4,6 +4,7 @@ import { db } from "@/db"
 import { tools } from "@/db/schema"
 import { auth } from "@/lib/auth"
 import { updateTool } from "@/db/queries/tools/update"
+import { softDeleteTool } from "@/db/queries/tools/delete"
 import { submitToolSchema } from "@/lib/validation/tool"
 import { eq, sql } from "drizzle-orm"
 
@@ -67,6 +68,35 @@ export const PATCH = async (
     return NextResponse.json({ data: updated }, { status: 200 })
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : "Failed to update tool"
+    return NextResponse.json({ error: message }, { status: 500 })
+  }
+}
+
+export const DELETE = async (
+  req: NextRequest,
+  { params }: { params: Promise<{ slug: string }> }
+) => {
+  try {
+    const session = await auth.api.getSession({
+      headers: req.headers,
+    })
+
+    if (!session?.user?.id) {
+      return NextResponse.json(
+        { error: "Unauthorized. Please sign in to delete this tool." },
+        { status: 401 }
+      )
+    }
+
+    const { slug } = await params
+    if (!slug) {
+      return NextResponse.json({ error: "Missing tool slug" }, { status: 400 })
+    }
+
+    const deleted = await softDeleteTool(slug, session.user.id)
+    return NextResponse.json({ data: deleted }, { status: 200 })
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : "Failed to delete tool"
     return NextResponse.json({ error: message }, { status: 500 })
   }
 }

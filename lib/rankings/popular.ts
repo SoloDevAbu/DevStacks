@@ -1,6 +1,6 @@
 import { db } from "@/db"
 import { tools, categories } from "@/db/schema"
-import { eq } from "drizzle-orm"
+import { and, eq } from "drizzle-orm"
 import { POPULAR_BUILDING_BLOCKS_WEIGHTS } from "@/constants/rankings"
 import type { RankedTool, RankingOptions } from "./types"
 
@@ -71,7 +71,7 @@ export const getPopularBuildingBlocks = async ({
     })
     .from(tools)
     .leftJoin(categories, eq(tools.categoryId, categories.id))
-    .where(eq(tools.status, "approved"))
+    .where(and(eq(tools.status, "approved"), eq(tools.isDeleted, false)))
 
   const scored: RankedTool[] = rows.map((t) => ({
     ...t,

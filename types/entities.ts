@@ -46,6 +46,8 @@ export type DbTool = {
   uniqueValue?: string | null
   description?: string | null
   status?: string
+  isDeleted?: boolean
+  deletedAt?: Date | null
   createdAt?: Date
   updatedAt?: Date
 }
@@ -89,6 +91,8 @@ export type DbProduct = {
   uniqueValue?: string | null
   description?: string | null
   status?: string
+  isDeleted?: boolean
+  deletedAt?: Date | null
   createdAt?: Date
   updatedAt?: Date
 }

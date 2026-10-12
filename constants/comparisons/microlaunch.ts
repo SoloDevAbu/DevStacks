@@ -82,25 +82,31 @@ export const MICROLAUNCH_COMPARISON: PlatformComparison = {
       key: "purpose",
       label: "Primary Purpose",
       competitorValue: "30-day launch campaign & indie startup discovery",
-      launchNestsValue: "Perpetual developer directory & relational tech-stack graph",
+      launchNestsValue:
+        "Perpetual developer directory & relational tech-stack graph",
       highlight: "neutral",
-      description: "MicroLaunch provides a month-long spotlight; LaunchNests builds an enduring technical index.",
+      description:
+        "MicroLaunch provides a month-long spotlight; LaunchNests builds an enduring technical index.",
     },
     {
       key: "audience",
       label: "Target Audience",
       competitorValue: "Indie hackers, micro-SaaS founders, early adopters",
-      launchNestsValue: "Software engineers, technical founders, AI coding agents",
+      launchNestsValue:
+        "Software engineers, technical founders, AI coding agents",
       highlight: "neutral",
-      description: "Both cater to founders, but LaunchNests focuses specifically on code and architecture.",
+      description:
+        "Both cater to founders, but LaunchNests focuses specifically on code and architecture.",
     },
     {
       key: "lifespan",
       label: "Discovery Lifespan",
       competitorValue: "30-day campaign spotlight followed by archive listing",
-      launchNestsValue: "Perpetual categorized indexing & ongoing tech-stack discovery",
+      launchNestsValue:
+        "Perpetual categorized indexing & ongoing tech-stack discovery",
       highlight: "launchNests",
-      description: "MicroLaunch emphasizes an extended launch month; LaunchNests remains permanently active.",
+      description:
+        "MicroLaunch emphasizes an extended launch month; LaunchNests remains permanently active.",
     },
     {
       key: "techstack",
@@ -108,7 +114,8 @@ export const MICROLAUNCH_COMPARISON: PlatformComparison = {
       competitorValue: "None (individual isolated product profiles)",
       launchNestsValue: "Two-way 'Built With' relational tech-stack graph",
       highlight: "launchNests",
-      description: "LaunchNests connects products to the frameworks, databases, and APIs powering them.",
+      description:
+        "LaunchNests connects products to the frameworks, databases, and APIs powering them.",
     },
     {
       key: "moderation",
@@ -116,7 +123,8 @@ export const MICROLAUNCH_COMPARISON: PlatformComparison = {
       competitorValue: "Free queue with scheduled dates or instant paid skip",
       launchNestsValue: "Fast 12–24 hour editorial moderation across all tiers",
       highlight: "launchNests",
-      description: "LaunchNests reviews submissions promptly without holding free listings in prolonged queues.",
+      description:
+        "LaunchNests reviews submissions promptly without holding free listings in prolonged queues.",
     },
     {
       key: "paidupgrade",
@@ -124,54 +132,70 @@ export const MICROLAUNCH_COMPARISON: PlatformComparison = {
       competitorValue: "Launch Pro ($39) / Launch Plus ($79)",
       launchNestsValue: "Featured Builder ($15) / Ecosystem Partner ($19)",
       highlight: "launchNests",
-      description: "LaunchNests provides highly accessible one-time pricing for permanent verified perks.",
+      description:
+        "LaunchNests provides highly accessible one-time pricing for permanent verified perks.",
     },
     {
       key: "backlinks",
       label: "SEO Backlink Attribute",
-      competitorValue: "Standard link on free; do-follow included with Launch Pro",
-      launchNestsValue: "Permanent Do-Follow on $15 tier; clean direct links on free",
+      competitorValue:
+        "Standard link on free; do-follow included with Launch Pro",
+      launchNestsValue:
+        "Permanent Do-Follow on $15 tier; clean direct links on free",
       highlight: "neutral",
-      description: "Both offer do-follow link options to improve search engine authority.",
+      description:
+        "Both offer do-follow link options to improve search engine authority.",
     },
     {
       key: "aireadiness",
       label: "AI Engine Indexing (AEO/GEO)",
       competitorValue: "Standard HTML web pages without /llms.txt or MCP",
-      launchNestsValue: "Native /llms.txt, raw Markdown (.md), and Model Context Protocol (MCP)",
+      launchNestsValue:
+        "Native /llms.txt, raw Markdown (.md), and Model Context Protocol (MCP)",
       highlight: "launchNests",
-      description: "Machine-readable endpoints enable autonomous discovery in Cursor, Claude, and ChatGPT.",
+      description:
+        "Machine-readable endpoints enable autonomous discovery in Cursor, Claude, and ChatGPT.",
     },
     {
       key: "deals",
       label: "Deals & Coupons",
-      competitorValue: "Built-in marketplace to offer launch discounts and promo codes",
-      launchNestsValue: "Focuses on technical specifications, pricing models, and GitHub links",
+      competitorValue:
+        "Built-in marketplace to offer launch discounts and promo codes",
+      launchNestsValue:
+        "Focuses on technical specifications, pricing models, and GitHub links",
       highlight: "neutral",
-      description: "MicroLaunch enables coupon marketing; LaunchNests highlights software architecture.",
+      description:
+        "MicroLaunch enables coupon marketing; LaunchNests highlights software architecture.",
     },
     {
       key: "community",
       label: "Community Features",
-      competitorValue: "Monthly leaderboards, product reviews, and maker stories",
-      launchNestsValue: "Real-world build showcases, GitHub repo integration, developer tools hub",
+      competitorValue:
+        "Monthly leaderboards, product reviews, and maker stories",
+      launchNestsValue:
+        "Real-world build showcases, GitHub repo integration, developer tools hub",
       highlight: "neutral",
-      description: "MicroLaunch excels at maker feedback; LaunchNests focuses on technical exploration.",
+      description:
+        "MicroLaunch excels at maker feedback; LaunchNests focuses on technical exploration.",
     },
     {
       key: "bestfor",
       label: "Best Suited For",
-      competitorValue: "Indie founders wanting a 30-day community launch campaign",
-      launchNestsValue: "Dev tools, APIs, and software products seeking permanent discovery",
+      competitorValue:
+        "Indie founders wanting a 30-day community launch campaign",
+      launchNestsValue:
+        "Dev tools, APIs, and software products seeking permanent discovery",
       highlight: "neutral",
-      description: "Choose the platform that aligns with your product's technical depth and launch goals.",
+      description:
+        "Choose the platform that aligns with your product's technical depth and launch goals.",
     },
   ],
   deepDives: [
     {
       id: "launch-duration",
       title: "30-Day Campaign Window vs Perpetual Directory Indexing",
-      subtitle: "The distinction between an extended launch event and permanent architectural presence",
+      subtitle:
+        "The distinction between an extended launch event and permanent architectural presence",
       competitorAngle:
         "MicroLaunch was built to solve the intense burnout of 24-hour launch platforms like Product Hunt by offering 30 days of active visibility. Products are featured across daily and monthly leaderboards, giving founders a full month to collect upvotes, gather reviews, and convert early visitors. Once the 30-day window concludes, however, the product moves off the primary spotlight into directory archives where ongoing discoverability naturally slows.",
       launchNestsAngle:
@@ -182,7 +206,8 @@ export const MICROLAUNCH_COMPARISON: PlatformComparison = {
     {
       id: "tech-stack-graph",
       title: "Isolated Product Profiles vs The 'Built With' Graph",
-      subtitle: "How relational technology mapping unlocks bidirectional organic discovery",
+      subtitle:
+        "How relational technology mapping unlocks bidirectional organic discovery",
       competitorAngle:
         "On MicroLaunch, listings function as standalone product profiles with screenshots, descriptions, links, and founder stories. While users can browse by broad categories (AI, Productivity, Marketing, Dev Tools), products are isolated from the developer tools and frameworks that power them, missing an opportunity for architectural cross-discovery.",
       launchNestsAngle:
@@ -192,8 +217,10 @@ export const MICROLAUNCH_COMPARISON: PlatformComparison = {
     },
     {
       id: "pricing-structures",
-      title: "Pricing Architecture: Launch Upgrades vs Transparent Lifetime Verification",
-      subtitle: "Comparing multi-tiered launch packages with accessible one-time developer tiers",
+      title:
+        "Pricing Architecture: Launch Upgrades vs Transparent Lifetime Verification",
+      subtitle:
+        "Comparing multi-tiered launch packages with accessible one-time developer tiers",
       competitorAngle:
         "MicroLaunch provides a free submission option alongside paid tiers: Launch Pro (typically $39, regularly $49) and Launch Plus ($79, regularly $99). Launch Pro adds skip-the-queue privileges, 'Product of the Day' eligibility, do-follow backlinks, and deal placements. Additionally, MicroLaunch offers an agency-style submission service where their team manually submits your product to 150+ external directories.",
       launchNestsAngle:
@@ -204,7 +231,8 @@ export const MICROLAUNCH_COMPARISON: PlatformComparison = {
     {
       id: "ai-readiness",
       title: "AI Search Readiness & Agent Accessibility (AEO/GEO)",
-      subtitle: "How each platform prepares software listings for autonomous LLMs and modern coding agents",
+      subtitle:
+        "How each platform prepares software listings for autonomous LLMs and modern coding agents",
       competitorAngle:
         "MicroLaunch serves traditional human web traffic through standard HTML web pages. While its domain authority benefits conventional search engines like Google, it does not offer dedicated machine-readable endpoints, structured manifests, or agent protocols tailored for generative AI search engines and coding assistants.",
       launchNestsAngle:
@@ -215,7 +243,8 @@ export const MICROLAUNCH_COMPARISON: PlatformComparison = {
     {
       id: "community-mechanics",
       title: "Deals & Feedback Community vs Engineering Ecosystem",
-      subtitle: "Evaluating the audience profile and community engagement models of both platforms",
+      subtitle:
+        "Evaluating the audience profile and community engagement models of both platforms",
       competitorAngle:
         "MicroLaunch excels as an interactive hub for indie hackers. Its built-in deals marketplace allows founders to offer exclusive coupons and discounts to early adopters. The community active on MicroLaunch is composed of makers who actively share feedback, swap upvotes, and support each other's launches.",
       launchNestsAngle:
@@ -230,7 +259,8 @@ export const MICROLAUNCH_COMPARISON: PlatformComparison = {
       title: "When MicroLaunch is the Ideal Choice",
       badge: "30-Day Campaign",
       badgeVariant: "hot",
-      recommendedFor: "Indie hackers, solopreneurs, and micro-SaaS founders seeking a month-long launch campaign",
+      recommendedFor:
+        "Indie hackers, solopreneurs, and micro-SaaS founders seeking a month-long launch campaign",
       explanation:
         "MicroLaunch is the right platform when you want to run an extended launch campaign, collect user reviews, offer deals, and engage with a supportive community of fellow indie makers.",
       bulletPoints: [
@@ -246,7 +276,8 @@ export const MICROLAUNCH_COMPARISON: PlatformComparison = {
       title: "When LaunchNests is the Ideal Choice",
       badge: "Devs & Tech Graph",
       badgeVariant: "new",
-      recommendedFor: "Software engineers, devtool founders, APIs, technical SaaS, and open-source creators",
+      recommendedFor:
+        "Software engineers, devtool founders, APIs, technical SaaS, and open-source creators",
       explanation:
         "LaunchNests is the superior platform when you want fast, guaranteed indexing, ongoing technical discovery through a two-way tech stack graph, and exposure to autonomous AI coding agents.",
       bulletPoints: [
@@ -263,7 +294,8 @@ export const MICROLAUNCH_COMPARISON: PlatformComparison = {
       title: "When You Should Leverage Both Platforms",
       badge: "Dual Distribution",
       badgeVariant: "neutral",
-      recommendedFor: "Founders seeking both immediate indie maker feedback and enduring developer search equity",
+      recommendedFor:
+        "Founders seeking both immediate indie maker feedback and enduring developer search equity",
       explanation:
         "The smartest launch strategy leverages both platforms in tandem: MicroLaunch provides the extended 30-day community campaign, while LaunchNests builds your permanent technical foundation.",
       bulletPoints: [
@@ -275,8 +307,10 @@ export const MICROLAUNCH_COMPARISON: PlatformComparison = {
     },
   ],
   canYouUseBoth: {
-    heading: "Dual Distribution Playbook: How to Leverage MicroLaunch and LaunchNests Together",
-    subheading: "Combine MicroLaunch's 30-day community campaign with LaunchNests' permanent developer tech-stack graph",
+    heading:
+      "Dual Distribution Playbook: How to Leverage MicroLaunch and LaunchNests Together",
+    subheading:
+      "Combine MicroLaunch's 30-day community campaign with LaunchNests' permanent developer tech-stack graph",
     description:
       "Modern software distribution requires both active promotional bursts and passive, long-term search equity. MicroLaunch and LaunchNests complement each other perfectly: MicroLaunch gives you a 30-day sprint of community attention, user reviews, and deals exposure, while LaunchNests provides permanent technical cataloging, tech-stack backlinks, and AI agent citations. Here is how to execute a coordinated launch across both platforms:",
     strategySteps: [
@@ -338,12 +372,14 @@ export const MICROLAUNCH_COMPARISON: PlatformComparison = {
         "The 'Built With' graph is LaunchNests' relational architecture mapping. When you submit a product, you specify the developer tools, frameworks, databases, and APIs used to build it (e.g., Next.js, Supabase, Tailwind CSS, Stripe). This establishes a two-way connection: your product profile showcases its technical blueprint, and the directory page for each tool lists your product as a live production build. This generates ongoing, relevant organic discovery as developers research tools in your stack.",
     },
     {
-      question: "How does LaunchNests optimize for AI search engines compared to MicroLaunch?",
+      question:
+        "How does LaunchNests optimize for AI search engines compared to MicroLaunch?",
       answer:
         "LaunchNests implements Answer Engine Optimization (AEO) and Generative Engine Optimization (GEO) through root-level /llms.txt and /llms-full.txt files, clean raw Markdown endpoints for every listing, and an active Model Context Protocol (MCP) server at /api/mcp. This allows AI assistants like Claude, ChatGPT, Cursor, and Perplexity to programmatically query and cite software tools. MicroLaunch serves traditional HTML web pages without dedicated machine-readable manifests or MCP protocols.",
     },
     {
-      question: "Can I submit developer boilerplates, APIs, and open-source tools to both platforms?",
+      question:
+        "Can I submit developer boilerplates, APIs, and open-source tools to both platforms?",
       answer:
         "Yes! Both platforms welcome software tools and digital products. MicroLaunch accommodates SaaS, digital downloads, and indie tools. LaunchNests is tailored specifically for developer infrastructure, APIs, boilerplates, and open-source libraries, offering direct GitHub repository linking, open-source pricing tags, and categorized developer tooling hubs.",
     },

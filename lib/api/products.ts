@@ -55,3 +55,7 @@ export const updateProductApi = async (
   return data.data
 }
 
+export const deleteProductApi = async (slug: string) => {
+  const { data } = await apiClient.delete(`/products/${slug}`)
+  return data.data
+}

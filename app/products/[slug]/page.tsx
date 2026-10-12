@@ -518,7 +518,7 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
             <p
               className={cn(
                 detailSectionText,
-                "text-base font-normal leading-relaxed text-slate-700"
+                "text-base leading-relaxed font-normal text-slate-700"
               )}
             >
               {product.description ??

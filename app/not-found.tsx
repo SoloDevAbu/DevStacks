@@ -33,7 +33,8 @@ const QUICK_EXPLORE_LINKS = [
   },
   {
     title: "Products Showcase",
-    description: "Discover verified software built by developers and indie teams.",
+    description:
+      "Discover verified software built by developers and indie teams.",
     href: ROUTES.PRODUCTS,
     icon: Package,
   },
@@ -87,7 +88,8 @@ const NotFound = () => {
         </p>
 
         <p className="mx-auto mt-2 max-w-md text-xs leading-relaxed text-slate-500 sm:text-sm">
-          The page you are looking for does not exist, has been deleted, or may have moved to a different address.
+          The page you are looking for does not exist, has been deleted, or may
+          have moved to a different address.
         </p>
 
         {/* Action Buttons */}
@@ -149,11 +151,11 @@ const NotFound = () => {
                   <div className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 text-slate-600 transition-all group-hover:border-slate-300 group-hover:bg-white group-hover:text-slate-950 group-hover:shadow-2xs">
                     <Icon className="size-4" />
                   </div>
-                  <div className="flex flex-col gap-0.5 min-w-0">
+                  <div className="flex min-w-0 flex-col gap-0.5">
                     <span className="text-xs font-bold text-slate-900 transition-colors group-hover:text-blue-600">
                       {link.title}
                     </span>
-                    <span className="text-[11px] text-slate-500 line-clamp-2">
+                    <span className="line-clamp-2 text-[11px] text-slate-500">
                       {link.description}
                     </span>
                   </div>

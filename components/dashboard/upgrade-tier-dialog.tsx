@@ -105,7 +105,8 @@ export const UpgradeTierDialog = ({
           </DialogTitle>
           <DialogDescription className="text-xs text-slate-500">
             Unlock high-authority SEO backlinks, verified badge trust, priority
-            placement, and dominant directory exposure. Upgrades are irreversible.
+            placement, and dominant directory exposure. Upgrades are
+            irreversible.
           </DialogDescription>
         </DialogHeader>
 
@@ -116,7 +117,7 @@ export const UpgradeTierDialog = ({
         )}
 
         {/* Tier selection cards */}
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 pt-2">
+        <div className="grid grid-cols-1 gap-3 pt-2 sm:grid-cols-2">
           {availableTiers.map((tier) => {
             const plan = PLANS[tier]
             const isSelected = selectedTier === tier
@@ -165,7 +166,7 @@ export const UpgradeTierDialog = ({
                   </div>
                 </div>
 
-                <div className="mt-3.5 pt-2 border-t border-dashed border-slate-200">
+                <div className="mt-3.5 border-t border-dashed border-slate-200 pt-2">
                   <span
                     className={`font-mono text-[11px] font-bold ${
                       isSelected ? "text-indigo-600" : "text-slate-400"

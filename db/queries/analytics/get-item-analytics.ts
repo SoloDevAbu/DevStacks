@@ -78,7 +78,13 @@ export const getProductAnalytics = async (
   const [product] = await db
     .select()
     .from(products)
-    .where(and(eq(products.slug, slug), eq(products.submitterId, userId)))
+    .where(
+      and(
+        eq(products.slug, slug),
+        eq(products.submitterId, userId),
+        eq(products.isDeleted, false)
+      )
+    )
     .limit(1)
 
   if (!product) return null
@@ -196,7 +202,13 @@ export const getToolAnalytics = async (
   const [tool] = await db
     .select()
     .from(tools)
-    .where(and(eq(tools.slug, slug), eq(tools.submitterId, userId)))
+    .where(
+      and(
+        eq(tools.slug, slug),
+        eq(tools.submitterId, userId),
+        eq(tools.isDeleted, false)
+      )
+    )
     .limit(1)
 
   if (!tool) return null

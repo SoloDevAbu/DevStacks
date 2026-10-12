@@ -17,9 +17,7 @@ export const initiateCheckout = async (
       ? crypto.randomUUID()
       : undefined)
 
-  const finalPayload = idempotencyKey
-    ? { ...payload, idempotencyKey }
-    : payload
+  const finalPayload = idempotencyKey ? { ...payload, idempotencyKey } : payload
 
   const headers = idempotencyKey
     ? { "x-idempotency-key": idempotencyKey }

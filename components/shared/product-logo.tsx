@@ -52,7 +52,7 @@ export const ProductLogo = ({
 
   const isSmall = Boolean(
     className &&
-      /\b(size-[4-9]|w-[4-9]|h-[4-9]|size-10|w-10|h-10)\b/.test(className)
+    /\b(size-[4-9]|w-[4-9]|h-[4-9]|size-10|w-10|h-10)\b/.test(className)
   )
 
   if (currentSrc && !hasFailed) {

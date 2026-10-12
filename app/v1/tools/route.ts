@@ -7,7 +7,10 @@ export const revalidate = 60
 export const GET = async (request: NextRequest) => {
   const { searchParams } = new URL(request.url)
   const page = Math.max(1, parseInt(searchParams.get("page") ?? "1", 10))
-  const limit = Math.min(60, Math.max(1, parseInt(searchParams.get("limit") ?? "20", 10)))
+  const limit = Math.min(
+    60,
+    Math.max(1, parseInt(searchParams.get("limit") ?? "20", 10))
+  )
   const q = searchParams.get("q") ?? undefined
   const category = searchParams.get("category") ?? undefined
   const pricing = searchParams.get("pricing") ?? undefined
@@ -26,7 +29,6 @@ export const GET = async (request: NextRequest) => {
       limit,
       page,
     })
-
 
     return NextResponse.json(
       {
@@ -47,7 +49,8 @@ export const GET = async (request: NextRequest) => {
         type: `${SITE_CONFIG.url}/errors/server-error`,
         title: "Database Error",
         status: 500,
-        detail: error instanceof Error ? error.message : "Failed to fetch tools",
+        detail:
+          error instanceof Error ? error.message : "Failed to fetch tools",
       },
       { status: 500 }
     )

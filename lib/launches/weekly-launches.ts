@@ -21,13 +21,20 @@ const attachBuiltWithTools = async (items: RankedItem[]): Promise<void> => {
       toolSlug: tools.slug,
     })
     .from(productTools)
-    .leftJoin(tools, eq(productTools.toolId, tools.id))
+    .leftJoin(
+      tools,
+      and(eq(productTools.toolId, tools.id), eq(tools.isDeleted, false))
+    )
     .where(inArray(productTools.productId, productIds))
 
   const toolsMap = new Map<string, ProductBuiltWith[]>()
   for (const pt of ptRows) {
     const list = toolsMap.get(pt.productId) ?? []
-    list.push({ name: pt.name, toolSlug: pt.toolSlug ?? null, toolId: pt.toolId ?? null })
+    list.push({
+      name: pt.name,
+      toolSlug: pt.toolSlug ?? null,
+      toolId: pt.toolId ?? null,
+    })
     toolsMap.set(pt.productId, list)
   }
 
@@ -77,6 +84,7 @@ export const getWeeklyLaunches = async ({
       .where(
         and(
           eq(tools.status, "approved"),
+          eq(tools.isDeleted, false),
           or(
             and(eq(tools.launchYear, year), eq(tools.launchWeek, week)),
             and(
@@ -114,6 +122,7 @@ export const getWeeklyLaunches = async ({
       .where(
         and(
           eq(products.status, "approved"),
+          eq(products.isDeleted, false),
           or(
             and(eq(products.launchYear, year), eq(products.launchWeek, week)),
             and(
@@ -181,6 +190,7 @@ export const getWeeklyPremiumLaunches = async ({
       .where(
         and(
           eq(tools.status, "approved"),
+          eq(tools.isDeleted, false),
           inArray(tools.tier, [TIER.PREMIUM, TIER.PREMIUM_PLUS]),
           or(
             and(eq(tools.launchYear, year), eq(tools.launchWeek, week)),
@@ -219,6 +229,7 @@ export const getWeeklyPremiumLaunches = async ({
       .where(
         and(
           eq(products.status, "approved"),
+          eq(products.isDeleted, false),
           inArray(products.tier, [TIER.PREMIUM, TIER.PREMIUM_PLUS]),
           or(
             and(eq(products.launchYear, year), eq(products.launchWeek, week)),

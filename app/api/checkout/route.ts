@@ -120,7 +120,7 @@ export const POST = async (req: NextRequest) => {
             status: tools.status,
           })
           .from(tools)
-          .where(eq(tools.id, toolId))
+          .where(and(eq(tools.id, toolId), eq(tools.isDeleted, false)))
           .limit(1)
 
         if (
@@ -143,7 +143,7 @@ export const POST = async (req: NextRequest) => {
             status: products.status,
           })
           .from(products)
-          .where(eq(products.id, productId))
+          .where(and(eq(products.id, productId), eq(products.isDeleted, false)))
           .limit(1)
 
         if (
@@ -469,7 +469,7 @@ export const POST = async (req: NextRequest) => {
           tier: tools.tier,
         })
         .from(tools)
-        .where(eq(tools.id, itemId))
+        .where(and(eq(tools.id, itemId), eq(tools.isDeleted, false)))
         .limit(1)
 
       if (!tool || tool.submitterId !== user.id || tool.status !== "approved") {
@@ -494,7 +494,7 @@ export const POST = async (req: NextRequest) => {
           tier: products.tier,
         })
         .from(products)
-        .where(eq(products.id, itemId))
+        .where(and(eq(products.id, itemId), eq(products.isDeleted, false)))
         .limit(1)
 
       if (
@@ -639,7 +639,7 @@ const getItemCurrentTier = async (
     const [tool] = await client
       .select({ tier: tools.tier })
       .from(tools)
-      .where(eq(tools.id, toolId))
+      .where(and(eq(tools.id, toolId), eq(tools.isDeleted, false)))
       .limit(1)
     return (tool?.tier as Tier) ?? null
   }
@@ -647,7 +647,7 @@ const getItemCurrentTier = async (
     const [product] = await client
       .select({ tier: products.tier })
       .from(products)
-      .where(eq(products.id, productId))
+      .where(and(eq(products.id, productId), eq(products.isDeleted, false)))
       .limit(1)
     return (product?.tier as Tier) ?? null
   }

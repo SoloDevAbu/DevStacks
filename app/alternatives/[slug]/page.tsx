@@ -2,7 +2,18 @@ import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import Link from "next/link"
 import Image from "next/image"
-import { ArrowLeft, ChevronRight, Scale, Sparkles, Target, DollarSign, Hammer, ThumbsUp, Globe, ExternalLink } from "lucide-react"
+import {
+  ArrowLeft,
+  ChevronRight,
+  Scale,
+  Sparkles,
+  Target,
+  DollarSign,
+  Hammer,
+  ThumbsUp,
+  Globe,
+  ExternalLink,
+} from "lucide-react"
 import { resolveTool } from "@/lib/tools/resolve-tool"
 import { getRelatedTools } from "@/db/queries/tools/get"
 import { ToolCard } from "@/components/shared/tool-card"
@@ -26,13 +37,19 @@ type AlternativesPageProps = {
   params: Promise<{ slug: string }>
 }
 
-export const generateMetadata = async (props: AlternativesPageProps): Promise<Metadata> => {
+export const generateMetadata = async (
+  props: AlternativesPageProps
+): Promise<Metadata> => {
   const { slug } = await props.params
   const tool = await resolveTool(slug)
 
   if (!tool) {
     return {
       title: `Alternatives Not Found — ${SITE_CONFIG.name}`,
+      robots: {
+        index: false,
+        follow: false,
+      },
     }
   }
 
@@ -173,7 +190,10 @@ const AlternativesPage = async (props: AlternativesPageProps) => {
             </li>
             {tool.category && (
               <>
-                <li className="flex items-center text-slate-400" aria-hidden="true">
+                <li
+                  className="flex items-center text-slate-400"
+                  aria-hidden="true"
+                >
                   <ChevronRight className="size-3" />
                 </li>
                 <li className="flex items-center">
@@ -190,7 +210,10 @@ const AlternativesPage = async (props: AlternativesPageProps) => {
               <ChevronRight className="size-3" />
             </li>
             <li className="flex items-center">
-              <Link href={ROUTES.TOOL(tool.slug)} className="hover:text-slate-900">
+              <Link
+                href={ROUTES.TOOL(tool.slug)}
+                className="hover:text-slate-900"
+              >
                 {tool.name}
               </Link>
             </li>
@@ -198,7 +221,10 @@ const AlternativesPage = async (props: AlternativesPageProps) => {
               <ChevronRight className="size-3" />
             </li>
             <li className="flex items-center">
-              <span className="font-semibold text-slate-900" aria-current="page">
+              <span
+                className="font-semibold text-slate-900"
+                aria-current="page"
+              >
                 Alternatives
               </span>
             </li>
@@ -217,11 +243,17 @@ const AlternativesPage = async (props: AlternativesPageProps) => {
               Top {tool.name} Alternatives & Competitors ({currentYear})
             </h1>
 
-            <p className="max-w-3xl text-sm font-normal leading-relaxed text-slate-600 sm:text-base">
-              Looking for an alternative to <strong className="font-semibold text-slate-800">{tool.name}</strong>?{" "}
-              Compare verified tools and APIs in the{" "}
-              <strong className="font-semibold text-slate-800">{tool.category ?? "Developer Tools"}</strong> category.{" "}
-              Ranked transparently by verified production builds, pricing tiers, and developer upvotes.
+            <p className="max-w-3xl text-sm leading-relaxed font-normal text-slate-600 sm:text-base">
+              Looking for an alternative to{" "}
+              <strong className="font-semibold text-slate-800">
+                {tool.name}
+              </strong>
+              ? Compare verified tools and APIs in the{" "}
+              <strong className="font-semibold text-slate-800">
+                {tool.category ?? "Developer Tools"}
+              </strong>{" "}
+              category. Ranked transparently by verified production builds,
+              pricing tiers, and developer upvotes.
             </p>
 
             {/* Target Tool Anchor Card */}
@@ -229,7 +261,9 @@ const AlternativesPage = async (props: AlternativesPageProps) => {
               <div className="flex items-center gap-4">
                 <ProductLogo
                   text={tool.name.slice(0, 2).toUpperCase()}
-                  imageUrl={tool.logoUrl?.trim() || getFaviconUrl(tool.websiteUrl)}
+                  imageUrl={
+                    tool.logoUrl?.trim() || getFaviconUrl(tool.websiteUrl)
+                  }
                   websiteUrl={tool.websiteUrl}
                   alt={tool.name}
                   bgColor="bg-slate-900"
@@ -238,7 +272,9 @@ const AlternativesPage = async (props: AlternativesPageProps) => {
                 />
                 <div className="flex flex-col gap-0.5">
                   <div className="flex items-center gap-2">
-                    <span className="text-xs font-semibold text-slate-500 uppercase">Current Tool:</span>
+                    <span className="text-xs font-semibold text-slate-500 uppercase">
+                      Current Tool:
+                    </span>
                     <Link
                       href={ROUTES.TOOL(tool.slug)}
                       className="font-bold text-slate-900 hover:text-blue-600 hover:underline"
@@ -308,16 +344,24 @@ const AlternativesPage = async (props: AlternativesPageProps) => {
                   {/* Target Tool Row */}
                   <tr className="bg-blue-50/30 font-medium">
                     <td className="px-4 py-3 font-semibold text-slate-900">
-                      {tool.name} <span className="text-[11px] text-blue-600">(This Tool)</span>
+                      {tool.name}{" "}
+                      <span className="text-[11px] text-blue-600">
+                        (This Tool)
+                      </span>
                     </td>
                     <td className="px-4 py-3">{tool.pricing}</td>
-                    <td className="px-4 py-3 font-semibold text-blue-600">{tool.buildsCount} builds</td>
+                    <td className="px-4 py-3 font-semibold text-blue-600">
+                      {tool.buildsCount} builds
+                    </td>
                     <td className="px-4 py-3">{tool.upvotesCount}</td>
                     <td className="px-4 py-3 text-xs text-slate-500">
                       {(tool.platforms ?? []).join(", ") || "Web / Cloud"}
                     </td>
                     <td className="px-4 py-3 text-right">
-                      <Link href={ROUTES.TOOL(tool.slug)} className="text-xs font-semibold text-blue-600 hover:underline">
+                      <Link
+                        href={ROUTES.TOOL(tool.slug)}
+                        className="text-xs font-semibold text-blue-600 hover:underline"
+                      >
                         Profile
                       </Link>
                     </td>
@@ -327,18 +371,26 @@ const AlternativesPage = async (props: AlternativesPageProps) => {
                   {alternatives.map((alt) => (
                     <tr key={alt.id} className="hover:bg-slate-50/50">
                       <td className="px-4 py-3 font-semibold text-slate-900">
-                        <Link href={ROUTES.TOOL(alt.slug)} className="hover:text-blue-600 hover:underline">
+                        <Link
+                          href={ROUTES.TOOL(alt.slug)}
+                          className="hover:text-blue-600 hover:underline"
+                        >
                           {alt.name}
                         </Link>
                       </td>
                       <td className="px-4 py-3">{alt.pricing}</td>
-                      <td className="px-4 py-3 font-semibold text-slate-800">{alt.buildsCount} builds</td>
+                      <td className="px-4 py-3 font-semibold text-slate-800">
+                        {alt.buildsCount} builds
+                      </td>
                       <td className="px-4 py-3">{alt.upvotesCount}</td>
                       <td className="px-4 py-3 text-xs text-slate-500">
                         {(alt.platforms ?? []).join(", ") || "Web / Cloud"}
                       </td>
                       <td className="px-4 py-3 text-right">
-                        <Link href={ROUTES.TOOL(alt.slug)} className="text-xs font-semibold text-blue-600 hover:underline">
+                        <Link
+                          href={ROUTES.TOOL(alt.slug)}
+                          className="text-xs font-semibold text-blue-600 hover:underline"
+                        >
                           Explore
                         </Link>
                       </td>
@@ -377,7 +429,8 @@ const AlternativesPage = async (props: AlternativesPageProps) => {
                 No direct alternatives cataloged in this category yet
               </h2>
               <p className="mt-1 max-w-sm text-xs text-slate-500">
-                Know an alternative to {tool.name}? Submit it to help fellow developers compare tooling options.
+                Know an alternative to {tool.name}? Submit it to help fellow
+                developers compare tooling options.
               </p>
               <div className="mt-4">
                 <Link

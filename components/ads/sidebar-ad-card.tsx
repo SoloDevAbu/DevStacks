@@ -95,7 +95,7 @@ const ActiveAdItem = ({ ad }: { ad: ActiveAdDto }) => {
             </h4>
             <VerifiedBadge tier={tier} />
           </div>
-          <p className="mt-1 text-[11px] leading-relaxed text-slate-600 line-clamp-2">
+          <p className="mt-1 line-clamp-2 text-[11px] leading-relaxed text-slate-600">
             {ad.tagline}
           </p>
         </div>
@@ -103,7 +103,7 @@ const ActiveAdItem = ({ ad }: { ad: ActiveAdDto }) => {
 
       <Button
         className={cn(
-          "relative z-10 mt-3.5 h-8 w-full justify-between rounded-lg bg-white px-3 text-xs font-semibold shadow-2xs cursor-pointer transition-colors",
+          "relative z-10 mt-3.5 h-8 w-full cursor-pointer justify-between rounded-lg bg-white px-3 text-xs font-semibold shadow-2xs transition-colors",
           tier === TIER.PREMIUM_PLUS
             ? "border border-amber-200 text-amber-700 hover:bg-amber-50"
             : tier === TIER.PREMIUM
@@ -173,15 +173,15 @@ export const SidebarAdCard = () => {
                 Reach Active Builders
               </h4>
               <p className="mt-1 text-[11px] leading-relaxed text-slate-600">
-                Feature your developer tool, API, or infrastructure directly in our
-                ecosystem.
+                Feature your developer tool, API, or infrastructure directly in
+                our ecosystem.
               </p>
             </div>
 
             <Button
               onClick={() => setDialogOpen(true)}
               variant="outline"
-              className="relative z-10 mt-3.5 h-8 w-full justify-between rounded-lg border-indigo-200 bg-white px-3 text-xs font-semibold text-indigo-700 shadow-2xs hover:bg-indigo-50 cursor-pointer"
+              className="relative z-10 mt-3.5 h-8 w-full cursor-pointer justify-between rounded-lg border-indigo-200 bg-white px-3 text-xs font-semibold text-indigo-700 shadow-2xs hover:bg-indigo-50"
             >
               <span>Reserve Placement</span>
               <ArrowUpRight className="size-3.5" />

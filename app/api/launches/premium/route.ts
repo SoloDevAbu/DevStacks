@@ -17,7 +17,10 @@ export const GET = async (request: Request) => {
   }
 
   if (year > currentYear || (year === currentYear && week > currentWeek)) {
-    return NextResponse.json({ error: "Cannot fetch future weeks" }, { status: 400 })
+    return NextResponse.json(
+      { error: "Cannot fetch future weeks" },
+      { status: 400 }
+    )
   }
 
   try {

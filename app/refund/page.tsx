@@ -16,10 +16,7 @@ import {
 } from "lucide-react"
 import { SITE_CONFIG } from "@/constants/site"
 import { ROUTES } from "@/constants/routes"
-import {
-  REFUND_CATEGORIES,
-  REFUND_LAST_UPDATED,
-} from "@/constants/refund"
+import { REFUND_CATEGORIES, REFUND_LAST_UPDATED } from "@/constants/refund"
 import { PageHeader } from "@/components/shared/page-header"
 import { Button } from "@/components/ui/button"
 import { breadcrumbSchema, safeJsonLd } from "@/lib/seo/schema"
@@ -156,11 +153,7 @@ const RefundPage = () => {
                   const Icon = REFUND_ICONS[item.number] ?? CreditCard
 
                   return (
-                    <div
-                      key={item.id}
-                      id={item.id}
-                      className={termsRowItem}
-                    >
+                    <div key={item.id} id={item.id} className={termsRowItem}>
                       <div className={termsRowHeader}>
                         <span className={termsRowIconBox}>
                           <Icon className="size-3.5" />
@@ -196,7 +189,8 @@ const RefundPage = () => {
                   Billing Inquiries & Slot Management
                 </h3>
                 <p className="mt-0.5 text-xs text-slate-500">
-                  Have questions about an invoice, sponsorship reservation, or refund request?
+                  Have questions about an invoice, sponsorship reservation, or
+                  refund request?
                 </p>
               </div>
               <div className="flex shrink-0 flex-wrap items-center gap-2.5">

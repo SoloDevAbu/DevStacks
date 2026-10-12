@@ -23,10 +23,7 @@ import {
 } from "lucide-react"
 import { SITE_CONFIG } from "@/constants/site"
 import { ROUTES } from "@/constants/routes"
-import {
-  PRIVACY_CATEGORIES,
-  PRIVACY_LAST_UPDATED,
-} from "@/constants/privacy"
+import { PRIVACY_CATEGORIES, PRIVACY_LAST_UPDATED } from "@/constants/privacy"
 import { PageHeader } from "@/components/shared/page-header"
 import { Button } from "@/components/ui/button"
 import { breadcrumbSchema, safeJsonLd } from "@/lib/seo/schema"
@@ -170,11 +167,7 @@ const PrivacyPage = () => {
                   const Icon = PRIVACY_ICONS[item.number] ?? ShieldCheck
 
                   return (
-                    <div
-                      key={item.id}
-                      id={item.id}
-                      className={termsRowItem}
-                    >
+                    <div key={item.id} id={item.id} className={termsRowItem}>
                       <div className={termsRowHeader}>
                         <span className={termsRowIconBox}>
                           <Icon className="size-3.5" />
@@ -210,7 +203,8 @@ const PrivacyPage = () => {
                   Data Protection & Privacy Inquiries
                 </h3>
                 <p className="mt-0.5 text-xs text-slate-500">
-                  Wish to submit a data deletion request, export your account data, or ask privacy questions?
+                  Wish to submit a data deletion request, export your account
+                  data, or ask privacy questions?
                 </p>
               </div>
               <div className="flex shrink-0 flex-wrap items-center gap-2.5">

@@ -1,7 +1,16 @@
 import type { Metadata } from "next"
 import { notFound, redirect } from "next/navigation"
 import Link from "next/link"
-import { ArrowLeft, ChevronRight, Package, PlusCircle, Hammer, Sparkles, Globe, Layers } from "lucide-react"
+import {
+  ArrowLeft,
+  ChevronRight,
+  Package,
+  PlusCircle,
+  Hammer,
+  Sparkles,
+  Globe,
+  Layers,
+} from "lucide-react"
 import { resolveTool, getProductsBuiltWithTool } from "@/lib/tools/resolve-tool"
 import { ProductCard } from "@/components/shared/product-card"
 import { ProductLogo } from "@/components/shared/product-logo"
@@ -23,17 +32,27 @@ type BuiltWithPageProps = {
   params: Promise<{ slug: string }>
 }
 
-export const generateMetadata = async (props: BuiltWithPageProps): Promise<Metadata> => {
+export const generateMetadata = async (
+  props: BuiltWithPageProps
+): Promise<Metadata> => {
   const { slug } = await props.params
   const tool = await resolveTool(slug)
 
   if (!tool) {
     return {
       title: `Showcase Not Found — ${SITE_CONFIG.name}`,
+      robots: {
+        index: false,
+        follow: false,
+      },
     }
   }
 
-  const builtWithProducts = await getProductsBuiltWithTool(tool.slug, tool.name, 50)
+  const builtWithProducts = await getProductsBuiltWithTool(
+    tool.slug,
+    tool.name,
+    50
+  )
   const isIndexable = builtWithProducts.length >= 3
 
   const title = `Products Built With ${tool.name} — Production Showcase | ${SITE_CONFIG.name}`
@@ -91,7 +110,11 @@ const BuiltWithPage = async (props: BuiltWithPageProps) => {
     notFound()
   }
 
-  const builtWithProducts = await getProductsBuiltWithTool(tool.slug, tool.name, 50)
+  const builtWithProducts = await getProductsBuiltWithTool(
+    tool.slug,
+    tool.name,
+    50
+  )
 
   // Anti-thin circuit breaker: If 0 builds, redirect to the tool's main profile
   if (builtWithProducts.length === 0) {
@@ -162,7 +185,10 @@ const BuiltWithPage = async (props: BuiltWithPageProps) => {
             </li>
             {tool.category && (
               <>
-                <li className="flex items-center text-slate-400" aria-hidden="true">
+                <li
+                  className="flex items-center text-slate-400"
+                  aria-hidden="true"
+                >
                   <ChevronRight className="size-3" />
                 </li>
                 <li className="flex items-center">
@@ -179,7 +205,10 @@ const BuiltWithPage = async (props: BuiltWithPageProps) => {
               <ChevronRight className="size-3" />
             </li>
             <li className="flex items-center">
-              <Link href={ROUTES.TOOL(tool.slug)} className="hover:text-slate-900">
+              <Link
+                href={ROUTES.TOOL(tool.slug)}
+                className="hover:text-slate-900"
+              >
                 {tool.name}
               </Link>
             </li>
@@ -187,7 +216,10 @@ const BuiltWithPage = async (props: BuiltWithPageProps) => {
               <ChevronRight className="size-3" />
             </li>
             <li className="flex items-center">
-              <span className="font-semibold text-slate-900" aria-current="page">
+              <span
+                className="font-semibold text-slate-900"
+                aria-current="page"
+              >
                 Built With
               </span>
             </li>
@@ -200,7 +232,9 @@ const BuiltWithPage = async (props: BuiltWithPageProps) => {
             <div className="flex items-start gap-4 md:gap-5">
               <ProductLogo
                 text={tool.name.slice(0, 2).toUpperCase()}
-                imageUrl={tool.logoUrl?.trim() || getFaviconUrl(tool.websiteUrl)}
+                imageUrl={
+                  tool.logoUrl?.trim() || getFaviconUrl(tool.websiteUrl)
+                }
                 websiteUrl={tool.websiteUrl}
                 alt={tool.name}
                 bgColor="bg-slate-900"
@@ -218,14 +252,22 @@ const BuiltWithPage = async (props: BuiltWithPageProps) => {
                   Products Built With {tool.name}
                 </h1>
 
-                <p className="max-w-2xl text-sm font-normal leading-relaxed text-slate-600 sm:text-base">
-                  Discover live applications, SaaS platforms, and indie developer projects verified to run on{" "}
-                  <strong className="font-semibold text-slate-800">{tool.name}</strong>. Inspect full stacks and architectures.
+                <p className="max-w-2xl text-sm leading-relaxed font-normal text-slate-600 sm:text-base">
+                  Discover live applications, SaaS platforms, and indie
+                  developer projects verified to run on{" "}
+                  <strong className="font-semibold text-slate-800">
+                    {tool.name}
+                  </strong>
+                  . Inspect full stacks and architectures.
                 </p>
 
                 <div className="mt-2 flex flex-wrap items-center gap-2.5 text-xs text-slate-600">
-                  <Badge variant="outline" className="border-slate-300 bg-slate-50 font-semibold text-blue-600">
-                    {builtWithProducts.length} Verified {builtWithProducts.length === 1 ? "Product" : "Products"}
+                  <Badge
+                    variant="outline"
+                    className="border-slate-300 bg-slate-50 font-semibold text-blue-600"
+                  >
+                    {builtWithProducts.length} Verified{" "}
+                    {builtWithProducts.length === 1 ? "Product" : "Products"}
                   </Badge>
 
                   <Link

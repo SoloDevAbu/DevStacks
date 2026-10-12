@@ -37,4 +37,3 @@ export const checkUsernameAvailability = async (
   )
   return data
 }
-

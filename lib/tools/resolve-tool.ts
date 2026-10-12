@@ -30,24 +30,26 @@ export interface FullTool extends DbTool {
   updatedAt?: Date
 }
 
-export const resolveTool = cache(async (slug: string): Promise<FullTool | null> => {
-  try {
-    const dbTool = await getToolBySlug(slug)
-    if (dbTool) {
-      return {
-        ...dbTool,
-        pricing: dbTool.pricing as FullTool["pricing"],
-        tier: dbTool.tier as FullTool["tier"],
-        platforms: dbTool.platforms ?? [],
-        tags: dbTool.tags ?? [],
-      } as FullTool
+export const resolveTool = cache(
+  async (slug: string): Promise<FullTool | null> => {
+    try {
+      const dbTool = await getToolBySlug(slug)
+      if (dbTool && !dbTool.isDeleted) {
+        return {
+          ...dbTool,
+          pricing: dbTool.pricing as FullTool["pricing"],
+          tier: dbTool.tier as FullTool["tier"],
+          platforms: dbTool.platforms ?? [],
+          tags: dbTool.tags ?? [],
+        } as FullTool
+      }
+    } catch {
+      return null
     }
-  } catch {
+
     return null
   }
-
-  return null
-})
+)
 
 export const getProductsBuiltWithTool = async (
   toolSlug: string,
@@ -55,7 +57,10 @@ export const getProductsBuiltWithTool = async (
   limit = 10
 ): Promise<DbProduct[]> => {
   try {
-    const conditions = [eq(products.status, "approved")]
+    const conditions = [
+      eq(products.status, "approved"),
+      eq(products.isDeleted, false),
+    ]
 
     if (toolName && toolName.trim()) {
       conditions.push(

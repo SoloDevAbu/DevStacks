@@ -4,7 +4,7 @@ import { getTools } from "@/db/queries/tools/list"
 import { getProducts } from "@/db/queries/products/list"
 import { db } from "@/db"
 import { tools, products, users } from "@/db/schema"
-import { sql, count } from "drizzle-orm"
+import { sql, count, eq } from "drizzle-orm"
 
 export const revalidate = 3600
 
@@ -42,8 +42,14 @@ export const GET = async () => {
         .from(users)
         .where(sql`${users.username} IS NOT NULL`)
         .limit(12),
-      db.select({ total: count() }).from(tools),
-      db.select({ total: count() }).from(products),
+      db
+        .select({ total: count() })
+        .from(tools)
+        .where(eq(tools.isDeleted, false)),
+      db
+        .select({ total: count() })
+        .from(products)
+        .where(eq(products.isDeleted, false)),
       db
         .select({ total: count() })
         .from(users)
@@ -53,7 +59,9 @@ export const GET = async () => {
     productsList = fetchedProducts ?? []
     makersList = fetchedMakers ?? []
     totalToolsCount = Number(toolCountRes[0]?.total ?? toolsList.length)
-    totalProductsCount = Number(productCountRes[0]?.total ?? productsList.length)
+    totalProductsCount = Number(
+      productCountRes[0]?.total ?? productsList.length
+    )
     totalMakersCount = Number(makerCountRes[0]?.total ?? makersList.length)
   } catch {
     toolsList = []

@@ -124,7 +124,11 @@ const TrendingPage = async (props: {
     items,
   })
 
-  const unifiedJsonLd = buildEntityGraph([breadcrumbs, jsonLd, collectionJsonLd])
+  const unifiedJsonLd = buildEntityGraph([
+    breadcrumbs,
+    jsonLd,
+    collectionJsonLd,
+  ])
 
   return (
     <>

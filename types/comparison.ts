@@ -79,4 +79,3 @@ export interface PlatformComparison {
   }
   faqs: ComparisonFaqItem[]
 }
-
