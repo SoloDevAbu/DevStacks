@@ -13,7 +13,9 @@ export type ToolListParams = {
   sortBy?: "upvotes" | "builds" | "recent" | "views"
 }
 
-export const fetchTools = async (params: ToolListParams = {}): Promise<DbTool[]> => {
+export const fetchTools = async (
+  params: ToolListParams = {}
+): Promise<DbTool[]> => {
   const { data } = await apiClient.get("/tools", { params })
   return (data.data ?? []) as DbTool[]
 }
@@ -59,4 +61,7 @@ export const updateToolApi = async (
   return data.data
 }
 
-
+export const deleteToolApi = async (slug: string) => {
+  const { data } = await apiClient.delete(`/tools/${slug}`)
+  return data.data
+}
