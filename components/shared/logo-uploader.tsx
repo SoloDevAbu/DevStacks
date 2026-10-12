@@ -1,20 +1,24 @@
 "use client"
 
 import { useState, useRef } from "react"
-import Image from "next/image"
-import { Upload, X, AlertCircle, Check, Loader2, Sparkles, Image as ImageIcon } from "lucide-react"
+import {
+  Upload,
+  X,
+  Check,
+  Loader2,
+  Sparkles,
+  Image as ImageIcon,
+  Maximize2,
+  RotateCcw,
+} from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { toast } from "@/components/ui/toast"
 import { useUploadImage } from "@/hooks/storage/use-upload-image"
 import { validateLogoAspectRatio, formatFileSize } from "@/utils/images"
 import { STORAGE_CONFIG } from "@/constants/storage"
+import { ImagePreviewDialog } from "@/components/shared/image-preview-dialog"
 import { cn } from "@/lib/utils"
-import {
-  uploaderDropzoneBase,
-  uploaderDropzoneActive,
-  uploaderAspectNotice,
-} from "@/utils/styles"
 
 interface LogoUploaderProps {
   value?: string
@@ -32,6 +36,7 @@ export const LogoUploader = ({
   className,
 }: LogoUploaderProps) => {
   const [isDragging, setIsDragging] = useState(false)
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const { uploadImage, isPending: isUploading, progress } = useUploadImage()
 
@@ -53,7 +58,7 @@ export const LogoUploader = ({
     if (file.size > STORAGE_CONFIG.LOGO.MAX_SIZE_BYTES) {
       toast.error(
         "File Too Large",
-        `Logo must be under ${STORAGE_CONFIG.LOGO.MAX_SIZE_BYTES / (1024 * 1024)}MB. Your file is ${formatFileSize(file.size)}.`
+        `Logo must be under 500KB (0.5MB). Your file is ${formatFileSize(file.size)}.`
       )
       return
     }
@@ -73,7 +78,10 @@ export const LogoUploader = ({
         file,
       })
       onChange(publicUrl)
-      toast.success("Logo Uploaded", "Your 1:1 logo has been uploaded to storage.")
+      toast.success(
+        "Logo Uploaded",
+        "Your 1:1 logo has been uploaded to storage."
+      )
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Failed to upload logo"
       toast.error("Upload Failed", msg)
@@ -114,11 +122,14 @@ export const LogoUploader = ({
   const handleRemove = (e: React.MouseEvent) => {
     e.stopPropagation()
     onChange("")
-    toast.info("Logo Removed", "Reverted to auto-detected website favicon.")
+    toast.info(
+      "Custom Logo Cleared",
+      "Reverted to auto-detected website favicon."
+    )
   }
 
   return (
-    <div className={cn("flex flex-col gap-3", className)}>
+    <div className={cn("flex flex-col gap-2", className)}>
       <input
         ref={fileInputRef}
         type="file"
@@ -128,39 +139,56 @@ export const LogoUploader = ({
         disabled={disabled || isUploading}
       />
 
-      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-        {/* Square Preview Slot */}
-        <div className="relative flex size-24 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-dashed border-slate-300 bg-slate-50 p-1.5 shadow-2xs">
+      {/* Unified Single Uploader Card */}
+      <div
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onDrop={handleDrop}
+        className={cn(
+          "relative flex flex-col gap-4 rounded-xl border border-dashed border-slate-300 bg-white p-4 shadow-2xs transition-all sm:flex-row sm:items-center",
+          isDragging &&
+            "border-indigo-500 bg-indigo-50/40 ring-2 ring-indigo-500/20",
+          (disabled || isUploading) && "opacity-80"
+        )}
+      >
+        {/* 1:1 Square Preview Slot (Clickable to view bigger) */}
+        <div
+          onClick={() => {
+            if (currentDisplayUrl && !isUploading) setIsPreviewOpen(true)
+          }}
+          className={cn(
+            "group/preview relative flex size-20 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-slate-200 bg-slate-50 p-1 transition-all sm:size-22",
+            currentDisplayUrl &&
+              "cursor-pointer hover:border-slate-400 hover:shadow-xs"
+          )}
+          title={currentDisplayUrl ? "Click to view larger" : undefined}
+        >
           {currentDisplayUrl ? (
-            <div className="relative size-full overflow-hidden rounded-lg bg-white border border-slate-100 flex items-center justify-center">
+            <div className="relative flex size-full items-center justify-center overflow-hidden rounded-lg bg-white">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={currentDisplayUrl}
                 alt="Product logo"
-                className="size-full object-contain p-1"
+                className="size-full object-contain p-1.5 transition-transform duration-200 group-hover/preview:scale-105"
               />
-              {isCustomUploaded && !disabled && !isUploading && (
-                <button
-                  type="button"
-                  onClick={handleRemove}
-                  className="absolute top-1 right-1 flex size-5 cursor-pointer items-center justify-center rounded-full bg-slate-900/80 text-white transition-opacity hover:bg-red-600"
-                  title="Remove custom logo"
-                >
-                  <X className="size-3" />
-                </button>
-              )}
+
+              {/* Hover overlay for zoom */}
+              <div className="absolute inset-0 flex items-center justify-center bg-slate-900/0 transition-colors group-hover/preview:bg-slate-900/30">
+                <Maximize2 className="size-4 text-white opacity-0 drop-shadow transition-opacity group-hover/preview:opacity-100" />
+              </div>
             </div>
           ) : (
-            <div className="flex flex-col items-center justify-center text-slate-400 gap-1">
-              <ImageIcon className="size-6" />
+            <div className="flex flex-col items-center justify-center gap-1 p-2 text-center text-slate-400">
+              <ImageIcon className="size-5" />
               <span className="font-mono text-[9px] font-semibold uppercase">
                 1:1 Logo
               </span>
             </div>
           )}
 
+          {/* Upload Progress */}
           {isUploading && (
-            <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/90 backdrop-blur-2xs gap-1">
+            <div className="backdrop-blur-2xs absolute inset-0 flex flex-col items-center justify-center gap-1 bg-white/95">
               <Loader2 className="size-5 animate-spin text-slate-900" />
               <span className="font-mono text-[10px] font-bold text-slate-700">
                 {progress}%
@@ -169,16 +197,49 @@ export const LogoUploader = ({
           )}
         </div>
 
-        {/* Action Controls & Aspect Notice */}
-        <div className="flex flex-col gap-2 flex-1 min-w-0">
+        {/* Info & Unified Actions */}
+        <div className="flex min-w-0 flex-1 flex-col gap-2">
           <div className="flex flex-wrap items-center gap-2">
+            {isCustomUploaded ? (
+              <Badge
+                variant="outline"
+                className="gap-1 border-emerald-300 bg-emerald-50 text-[10px] font-semibold text-emerald-800"
+              >
+                <Check className="size-3 text-emerald-600" />
+                <span>Custom 1:1 Logo</span>
+              </Badge>
+            ) : fallbackFaviconUrl ? (
+              <Badge
+                variant="secondary"
+                className="gap-1 border border-amber-200/80 bg-amber-50 text-[10px] font-semibold text-amber-900"
+              >
+                <Sparkles className="size-3 text-amber-600" />
+                <span>Auto Favicon (Website URL)</span>
+              </Badge>
+            ) : (
+              <Badge variant="outline" className="text-[10px] text-slate-500">
+                No Logo Selected
+              </Badge>
+            )}
+
+            <span className="inline-flex items-center gap-1.5 rounded-md border border-slate-200/80 bg-slate-50 px-2 py-0.5 text-[10px] font-medium text-slate-600">
+              1:1 Square Ratio • Max 500KB (0.5MB)
+            </span>
+          </div>
+
+          <p className="text-xs leading-normal text-slate-500">
+            Upload your official square brand icon (PNG, JPG, WebP, SVG) or drag
+            and drop it here.
+          </p>
+
+          <div className="flex flex-wrap items-center gap-2 pt-0.5">
             <Button
               type="button"
-              variant="outline"
+              variant={isCustomUploaded ? "outline" : "default"}
               size="sm"
               disabled={disabled || isUploading}
               onClick={() => fileInputRef.current?.click()}
-              className="gap-2 text-xs"
+              className="h-8 gap-1.5 text-xs font-semibold"
             >
               {isUploading ? (
                 <>
@@ -188,50 +249,24 @@ export const LogoUploader = ({
               ) : (
                 <>
                   <Upload className="size-3.5" />
-                  <span>{isCustomUploaded ? "Change Logo" : "Upload 1:1 Logo"}</span>
+                  <span>
+                    {isCustomUploaded ? "Change Logo" : "Upload 1:1 Logo"}
+                  </span>
                 </>
               )}
             </Button>
-
-            {isCustomUploaded ? (
-              <Badge
-                variant="outline"
-                className="gap-1 border-emerald-200 bg-emerald-50 text-[10px] text-emerald-700"
+            {isCustomUploaded && !disabled && !isUploading && (
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={handleRemove}
+                className="h-8 gap-1.5 text-xs text-rose-600 hover:bg-rose-50 hover:text-rose-700"
               >
-                <Check className="size-3 text-emerald-600" />
-                <span>Custom Logo</span>
-              </Badge>
-            ) : fallbackFaviconUrl ? (
-              <Badge
-                variant="secondary"
-                className="gap-1 text-[10px] text-slate-600"
-              >
-                <Sparkles className="size-3 text-amber-500" />
-                <span>Auto Favicon</span>
-              </Badge>
-            ) : null}
-
-            <span className={uploaderAspectNotice}>
-              Ratio: <strong>1:1 (Square)</strong> • Max 2MB
-            </span>
-          </div>
-
-          <div
-            onDragOver={handleDragOver}
-            onDragLeave={handleDragLeave}
-            onDrop={handleDrop}
-            onClick={() => fileInputRef.current?.click()}
-            className={cn(
-              uploaderDropzoneBase,
-              "py-3 px-4 flex-row gap-2.5 justify-start text-left",
-              isDragging && uploaderDropzoneActive,
-              (disabled || isUploading) && "pointer-events-none opacity-60"
+                <RotateCcw className="size-3.5" />
+                <span>Reset to Favicon</span>
+              </Button>
             )}
-          >
-            <Upload className="size-4 shrink-0 text-slate-400" />
-            <p className="text-xs text-slate-500">
-              Drag & drop a square image or click to browse (PNG, JPG, WebP, SVG).
-            </p>
           </div>
         </div>
       </div>

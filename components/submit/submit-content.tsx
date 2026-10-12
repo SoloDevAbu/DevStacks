@@ -581,26 +581,6 @@ export const SubmitContent = ({
                     Primary landing page or documentation (must include
                     https://).
                   </span>
-                  {getFaviconUrl(form.websiteUrl) && (
-                    <div className="mt-1 flex items-center gap-2 rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600">
-                      <div className="relative flex size-5 shrink-0 items-center justify-center overflow-hidden rounded border border-slate-200 bg-white">
-                        <img
-                          src={getFaviconUrl(form.websiteUrl)!}
-                          alt="Favicon preview"
-                          className="size-3.5 object-contain"
-                          onError={(e) => {
-                            const ddg = getDuckDuckGoFaviconUrl(form.websiteUrl)
-                            if (ddg && e.currentTarget.src !== ddg) {
-                              e.currentTarget.src = ddg
-                            }
-                          }}
-                        />
-                      </div>
-                      <span className="text-[11px] font-medium text-slate-600">
-                        Brand favicon detected automatically from your URL
-                      </span>
-                    </div>
-                  )}
                   {errors.websiteUrl && (
                     <p className="text-xs text-red-500">
                       {errors.websiteUrl[0]}
@@ -1180,7 +1160,7 @@ export const SubmitContent = ({
                   variant="outline"
                   className="rounded-md border-indigo-200 bg-indigo-50/70 px-2 py-0.5 font-mono text-[10px] font-semibold tracking-wider text-indigo-700 uppercase"
                 >
-                  Metadata Only • Hidden from Public Page
+                  Metadata Only
                 </Badge>
               </div>
               <p className="text-xs text-slate-500">

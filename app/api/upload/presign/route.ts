@@ -70,7 +70,7 @@ export const POST = async (req: NextRequest) => {
       if (fileSize > STORAGE_CONFIG.LOGO.MAX_SIZE_BYTES) {
         return NextResponse.json(
           {
-            error: `Logo size exceeds maximum allowed of ${STORAGE_CONFIG.LOGO.MAX_SIZE_BYTES / (1024 * 1024)}MB`,
+            error: `Logo size exceeds maximum allowed of ${STORAGE_CONFIG.LOGO.MAX_SIZE_BYTES / 1024}KB (0.5MB).`,
           },
           { status: 400 }
         )
@@ -88,7 +88,7 @@ export const POST = async (req: NextRequest) => {
       if (fileSize > STORAGE_CONFIG.SCREENSHOTS.MAX_SIZE_BYTES) {
         return NextResponse.json(
           {
-            error: `Screenshot size exceeds maximum allowed of ${STORAGE_CONFIG.SCREENSHOTS.MAX_SIZE_BYTES / (1024 * 1024)}MB`,
+            error: `Screenshot size exceeds maximum allowed of ${STORAGE_CONFIG.SCREENSHOTS.MAX_SIZE_BYTES / (1024 * 1024)}MB.`,
           },
           { status: 400 }
         )
