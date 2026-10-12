@@ -25,6 +25,9 @@ import {
   dashboardFormSectionTitle,
   dashboardFormSectionSubtitle,
 } from "@/utils/dashboard/styles"
+import { LogoUploader } from "@/components/shared/logo-uploader"
+import { ScreenshotsUploader } from "@/components/shared/screenshots-uploader"
+import { getFaviconUrl } from "@/utils/urls"
 import type { DbTool } from "@/types/entities"
 
 interface ToolEditFormProps {
@@ -43,6 +46,7 @@ export const ToolEditForm = ({ tool }: ToolEditFormProps) => {
   const [description, setDescription] = useState<string>(tool.description || "")
   const [websiteUrl, setWebsiteUrl] = useState<string>(tool.websiteUrl || "")
   const [logoUrl, setLogoUrl] = useState(tool.logoUrl || "")
+  const [images, setImages] = useState<string[]>(tool.images || [])
   const [category, setCategory] = useState(tool.category || "")
   const [tags, setTags] = useState(tool.tags?.join(", ") || "")
   const [pricing, setPricing] = useState(tool.pricing || "Free")
@@ -109,6 +113,7 @@ export const ToolEditForm = ({ tool }: ToolEditFormProps) => {
       description: description.trim(),
       websiteUrl: websiteUrl.trim(),
       logoUrl: logoUrl.trim() || undefined,
+      images,
       category: category.trim() || undefined,
       pricing,
       tags: tags
@@ -332,7 +337,7 @@ export const ToolEditForm = ({ tool }: ToolEditFormProps) => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div className="flex flex-col gap-5">
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="websiteUrl" className="text-xs font-semibold">
                 Website / Docs URL <span className="text-rose-500">*</span>
@@ -349,16 +354,23 @@ export const ToolEditForm = ({ tool }: ToolEditFormProps) => {
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="logoUrl" className="text-xs font-semibold">
-                Logo URL (leave blank for auto-favicon)
+              <Label className="text-xs font-semibold">
+                Tool Logo (1:1 Square)
               </Label>
-              <Input
-                id="logoUrl"
-                type="url"
+              <LogoUploader
                 value={logoUrl}
-                onChange={(e) => setLogoUrl(e.target.value)}
-                placeholder="https://tool.dev/logo.png"
-                className="h-9 text-xs"
+                fallbackFaviconUrl={getFaviconUrl(websiteUrl)}
+                onChange={(url) => setLogoUrl(url)}
+              />
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <Label className="text-xs font-semibold">
+                Tool Screenshots (Max 3)
+              </Label>
+              <ScreenshotsUploader
+                value={images}
+                onChange={(newImages) => setImages(newImages)}
               />
             </div>
           </div>

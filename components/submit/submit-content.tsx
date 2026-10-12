@@ -59,6 +59,8 @@ import { getFaviconUrl, getDuckDuckGoFaviconUrl } from "@/utils/urls"
 import { LaunchWeekPicker } from "@/components/shared/launch-week-picker"
 import { ScheduleConfirmDialog } from "./schedule-confirm-dialog"
 import { EmbedBadgeDialog } from "@/components/shared/embed-badge-dialog"
+import { LogoUploader } from "@/components/shared/logo-uploader"
+import { ScreenshotsUploader } from "@/components/shared/screenshots-uploader"
 import type { DbProduct, DbTool } from "@/types/entities"
 import { trackSubmitProduct } from "@/lib/analytics/events"
 
@@ -216,7 +218,7 @@ export const SubmitContent = ({
     setForm((prev) => ({
       ...prev,
       websiteUrl: val,
-      logoUrl: favicon ?? prev.logoUrl,
+      logoUrl: prev.logoUrl?.trim() ? prev.logoUrl : (favicon ?? ""),
     }))
     setErrors((prev) => ({ ...prev, websiteUrl: [] }))
   }
@@ -605,6 +607,20 @@ export const SubmitContent = ({
                     </p>
                   )}
                 </div>
+
+                <div className="grid gap-2">
+                  <Label>{typeLabel} Logo (1:1 Square)</Label>
+                  <LogoUploader
+                    value={form.logoUrl}
+                    fallbackFaviconUrl={getFaviconUrl(form.websiteUrl)}
+                    onChange={(url) =>
+                      setForm((prev) => ({ ...prev, logoUrl: url }))
+                    }
+                  />
+                  {errors.logoUrl && (
+                    <p className="text-xs text-red-500">{errors.logoUrl[0]}</p>
+                  )}
+                </div>
               </div>
             </div>
 
@@ -861,7 +877,20 @@ export const SubmitContent = ({
                 </p>
               </div>
 
-              <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-5">
+                <div className="grid gap-2">
+                  <Label>{typeLabel} Screenshots (Max 3)</Label>
+                  <ScreenshotsUploader
+                    value={form.images}
+                    onChange={(images) =>
+                      setForm((prev) => ({ ...prev, images }))
+                    }
+                  />
+                  {errors.images && (
+                    <p className="text-xs text-red-500">{errors.images[0]}</p>
+                  )}
+                </div>
+
                 <div className="grid gap-2">
                   <Label htmlFor="video">Demo Video URL</Label>
                   <div className="relative">

@@ -25,6 +25,9 @@ import {
   dashboardFormSectionTitle,
   dashboardFormSectionSubtitle,
 } from "@/utils/dashboard/styles"
+import { LogoUploader } from "@/components/shared/logo-uploader"
+import { ScreenshotsUploader } from "@/components/shared/screenshots-uploader"
+import { getFaviconUrl } from "@/utils/urls"
 import type { DbProduct } from "@/types/entities"
 
 interface ProductEditFormProps {
@@ -43,6 +46,7 @@ export const ProductEditForm = ({ product }: ProductEditFormProps) => {
   const [description, setDescription] = useState<string>(product.description || "")
   const [websiteUrl, setWebsiteUrl] = useState<string>(product.websiteUrl || "")
   const [logoUrl, setLogoUrl] = useState(product.logoUrl || "")
+  const [images, setImages] = useState<string[]>(product.images || [])
   const [category, setCategory] = useState(product.category || "")
   const [tags, setTags] = useState(product.tags?.join(", ") || "")
   const [pricing, setPricing] = useState(product.pricing || "Free")
@@ -109,6 +113,7 @@ export const ProductEditForm = ({ product }: ProductEditFormProps) => {
       description: description.trim(),
       websiteUrl: websiteUrl.trim(),
       logoUrl: logoUrl.trim() || undefined,
+      images,
       category: category.trim() || undefined,
       pricing,
       tags: tags
@@ -334,7 +339,7 @@ export const ProductEditForm = ({ product }: ProductEditFormProps) => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div className="flex flex-col gap-5">
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="websiteUrl" className="text-xs font-semibold">
                 Website URL <span className="text-rose-500">*</span>
@@ -351,16 +356,23 @@ export const ProductEditForm = ({ product }: ProductEditFormProps) => {
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="logoUrl" className="text-xs font-semibold">
-                Logo URL (leave blank for auto-favicon)
+              <Label className="text-xs font-semibold">
+                Product Logo (1:1 Square)
               </Label>
-              <Input
-                id="logoUrl"
-                type="url"
+              <LogoUploader
                 value={logoUrl}
-                onChange={(e) => setLogoUrl(e.target.value)}
-                placeholder="https://example.com/logo.png"
-                className="h-9 text-xs"
+                fallbackFaviconUrl={getFaviconUrl(websiteUrl)}
+                onChange={(url) => setLogoUrl(url)}
+              />
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <Label className="text-xs font-semibold">
+                Product Screenshots (Max 3)
+              </Label>
+              <ScreenshotsUploader
+                value={images}
+                onChange={(newImages) => setImages(newImages)}
               />
             </div>
           </div>
