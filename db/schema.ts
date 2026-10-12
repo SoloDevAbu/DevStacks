@@ -186,6 +186,9 @@ export const tools = pgTable(
     launchWeek: integer("launch_week"),
     launchDate: timestamp("launch_date", { withTimezone: true }),
 
+    isDeleted: boolean("is_deleted").notNull().default(false),
+    deletedAt: timestamp("deleted_at", { withTimezone: true }),
+
     createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()
       .defaultNow(),
@@ -195,6 +198,7 @@ export const tools = pgTable(
   },
   (t) => [
     index("tools_status_idx").on(t.status),
+    index("tools_is_deleted_idx").on(t.isDeleted),
     index("tools_category_id_idx").on(t.categoryId),
     index("tools_pricing_idx").on(t.pricing),
     index("tools_submitter_id_idx").on(t.submitterId),
@@ -278,6 +282,9 @@ export const products = pgTable(
     launchWeek: integer("launch_week"),
     launchDate: timestamp("launch_date", { withTimezone: true }),
 
+    isDeleted: boolean("is_deleted").notNull().default(false),
+    deletedAt: timestamp("deleted_at", { withTimezone: true }),
+
     createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()
       .defaultNow(),
@@ -287,6 +294,7 @@ export const products = pgTable(
   },
   (t) => [
     index("products_status_idx").on(t.status),
+    index("products_is_deleted_idx").on(t.isDeleted),
     index("products_category_id_idx").on(t.categoryId),
     index("products_pricing_idx").on(t.pricing),
     index("products_submitter_id_idx").on(t.submitterId),
