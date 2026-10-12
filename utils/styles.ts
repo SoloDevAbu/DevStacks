@@ -869,6 +869,18 @@ export const comparisonStepNumber =
 export const comparisonCtaCard =
   "relative overflow-hidden rounded-2xl border border-dashed border-border bg-linear-to-b from-slate-50/80 via-white to-indigo-50/20 p-8 sm:p-12 text-center flex flex-col items-center gap-5 shadow-xs"
 
+export const uploaderDropzoneBase =
+  "relative flex flex-col items-center justify-center rounded-xl border border-dashed border-slate-300 bg-white p-5 text-center transition-all hover:border-slate-400 hover:bg-slate-50/60 cursor-pointer shadow-2xs"
+
+export const uploaderDropzoneActive =
+  "border-indigo-500 bg-indigo-50/50 ring-2 ring-indigo-500/20"
+
+export const uploaderThumbnailCard =
+  "group relative overflow-hidden rounded-xl border border-slate-200 bg-white shadow-2xs transition-all hover:border-slate-300 hover:shadow-xs"
+
+export const uploaderAspectNotice =
+  "inline-flex items-center gap-1.5 rounded-md border border-slate-200/80 bg-slate-50 px-2.5 py-1 text-[11px] font-medium text-slate-600"
+
 
 
 

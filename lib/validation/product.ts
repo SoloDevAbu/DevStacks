@@ -1,4 +1,5 @@
 import { z } from "zod"
+import { STORAGE_CONFIG } from "@/constants/storage"
 
 const urlSchema = z.string().url("Must be a valid URL").or(z.literal(""))
 
@@ -43,7 +44,13 @@ export const submitProductSchema = z.object({
   appStoreUrl: urlSchema.optional(),
   playStoreUrl: urlSchema.optional(),
   chromeExtensionUrl: urlSchema.optional(),
-  images: z.array(z.string().url()).max(5).default([]),
+  images: z
+    .array(z.string().url("Must be a valid URL"))
+    .max(
+      STORAGE_CONFIG.SCREENSHOTS.MAX_COUNT,
+      `Maximum ${STORAGE_CONFIG.SCREENSHOTS.MAX_COUNT} screenshots allowed`
+    )
+    .default([]),
   demoVideoUrl: urlSchema.optional(),
   useCases: z.string().max(2000).optional().or(z.literal("")),
 

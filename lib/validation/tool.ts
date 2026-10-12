@@ -1,5 +1,6 @@
 import { z } from "zod"
 import { platformEnumSchema } from "@/lib/validation/product"
+import { STORAGE_CONFIG } from "@/constants/storage"
 
 const urlSchema = z.string().url("Must be a valid URL").or(z.literal(""))
 
@@ -32,7 +33,13 @@ export const submitToolSchema = z.object({
     .default([]),
   platforms: z.array(platformEnumSchema).default([]),
   pricing: z.enum(["Free", "Freemium", "Paid", "Open Source"]).default("Free"),
-  images: z.array(z.string().url()).max(5).default([]),
+  images: z
+    .array(z.string().url("Must be a valid URL"))
+    .max(
+      STORAGE_CONFIG.SCREENSHOTS.MAX_COUNT,
+      `Maximum ${STORAGE_CONFIG.SCREENSHOTS.MAX_COUNT} screenshots allowed`
+    )
+    .default([]),
   demoVideoUrl: urlSchema.optional(),
   useCases: z.string().max(2000).optional().or(z.literal("")),
   keywords: z.string().max(500).optional().or(z.literal("")),
