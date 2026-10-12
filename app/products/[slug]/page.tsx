@@ -53,6 +53,7 @@ import { Button } from "@/components/ui/button"
 import { ProductActionButtons } from "@/components/products/product-action-buttons"
 import { HoverOutline } from "@/components/shared/hover-outline"
 import { DetailSectionHeader } from "@/components/shared/detail-section-header"
+import { ScreenshotsCarousel } from "@/components/shared/screenshots-carousel"
 import { CommentsSection } from "@/components/shared/comments-section"
 import { GaItemViewTracker } from "@/components/shared/ga-item-view-tracker"
 import { cn } from "@/lib/utils"
@@ -535,21 +536,10 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
               theme="sky"
             />
             <div className="bg-slate-50/20 p-6 md:p-8">
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
-                {product.images.slice(0, 5).map((imgUrl, i) => (
-                  <div
-                    key={i}
-                    className="group relative aspect-video overflow-hidden rounded-xl border border-dashed border-border bg-white shadow-2xs transition-all hover:border-slate-300"
-                  >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={imgUrl}
-                      alt={`${product.name} preview ${i + 1}`}
-                      className="size-full object-cover object-top transition-transform duration-300 group-hover:scale-102"
-                    />
-                  </div>
-                ))}
-              </div>
+              <ScreenshotsCarousel
+                images={product.images}
+                title={product.name}
+              />
             </div>
           </section>
         )}
