@@ -7,7 +7,7 @@ import {
   tools,
   products,
 } from "@/db/schema"
-import { eq } from "drizzle-orm"
+import { and, eq } from "drizzle-orm"
 
 export type UserInteractions = {
   // Tools
@@ -35,22 +35,26 @@ export const getUserInteractions = async (
       .select({ toolId: toolUpvotes.toolId, slug: tools.slug })
       .from(toolUpvotes)
       .innerJoin(tools, eq(toolUpvotes.toolId, tools.id))
-      .where(eq(toolUpvotes.userId, userId)),
+      .where(and(eq(toolUpvotes.userId, userId), eq(tools.isDeleted, false))),
     db
       .select({ toolId: toolBookmarks.toolId, slug: tools.slug })
       .from(toolBookmarks)
       .innerJoin(tools, eq(toolBookmarks.toolId, tools.id))
-      .where(eq(toolBookmarks.userId, userId)),
+      .where(and(eq(toolBookmarks.userId, userId), eq(tools.isDeleted, false))),
     db
       .select({ productId: productLikes.productId, slug: products.slug })
       .from(productLikes)
       .innerJoin(products, eq(productLikes.productId, products.id))
-      .where(eq(productLikes.userId, userId)),
+      .where(
+        and(eq(productLikes.userId, userId), eq(products.isDeleted, false))
+      ),
     db
       .select({ productId: productBookmarks.productId, slug: products.slug })
       .from(productBookmarks)
       .innerJoin(products, eq(productBookmarks.productId, products.id))
-      .where(eq(productBookmarks.userId, userId)),
+      .where(
+        and(eq(productBookmarks.userId, userId), eq(products.isDeleted, false))
+      ),
   ])
 
   return {

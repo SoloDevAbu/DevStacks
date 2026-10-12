@@ -9,7 +9,7 @@ import {
   externalLinkVisits,
   users,
 } from "@/db/schema"
-import { eq, desc, inArray } from "drizzle-orm"
+import { and, eq, desc, inArray } from "drizzle-orm"
 
 export interface ItemPerformanceSummary {
   id: string
@@ -72,7 +72,9 @@ export const getGlobalAnalytics = async (
         commentsCount: products.commentsCount,
       })
       .from(products)
-      .where(eq(products.submitterId, userId))
+      .where(
+        and(eq(products.submitterId, userId), eq(products.isDeleted, false))
+      )
       .orderBy(desc(products.createdAt)),
 
     db
@@ -87,138 +89,147 @@ export const getGlobalAnalytics = async (
         commentsCount: tools.commentsCount,
       })
       .from(tools)
-      .where(eq(tools.submitterId, userId))
+      .where(and(eq(tools.submitterId, userId), eq(tools.isDeleted, false)))
       .orderBy(desc(tools.createdAt)),
   ])
 
   const productIds = userProducts.map((p) => p.id)
   const toolIds = userTools.map((t) => t.id)
 
-  const [productVisits, toolVisits, recentLikes, recentUpvotes, recentProdComments, recentToolComments] =
-    await Promise.all([
-      productIds.length > 0
-        ? db
-            .select({
-              id: externalLinkVisits.id,
-              productId: externalLinkVisits.productId,
-              userId: externalLinkVisits.userId,
-              createdAt: externalLinkVisits.createdAt,
-              userName: users.name,
-              userUsername: users.username,
-              userImage: users.image,
-            })
-            .from(externalLinkVisits)
-            .leftJoin(users, eq(externalLinkVisits.userId, users.id))
-            .where(inArray(externalLinkVisits.productId, productIds))
-            .orderBy(desc(externalLinkVisits.createdAt))
-            .limit(100)
-        : Promise.resolve([]),
+  const [
+    productVisits,
+    toolVisits,
+    recentLikes,
+    recentUpvotes,
+    recentProdComments,
+    recentToolComments,
+  ] = await Promise.all([
+    productIds.length > 0
+      ? db
+          .select({
+            id: externalLinkVisits.id,
+            productId: externalLinkVisits.productId,
+            userId: externalLinkVisits.userId,
+            createdAt: externalLinkVisits.createdAt,
+            userName: users.name,
+            userUsername: users.username,
+            userImage: users.image,
+          })
+          .from(externalLinkVisits)
+          .leftJoin(users, eq(externalLinkVisits.userId, users.id))
+          .where(inArray(externalLinkVisits.productId, productIds))
+          .orderBy(desc(externalLinkVisits.createdAt))
+          .limit(100)
+      : Promise.resolve([]),
 
-      toolIds.length > 0
-        ? db
-            .select({
-              id: externalLinkVisits.id,
-              toolId: externalLinkVisits.toolId,
-              userId: externalLinkVisits.userId,
-              createdAt: externalLinkVisits.createdAt,
-              userName: users.name,
-              userUsername: users.username,
-              userImage: users.image,
-            })
-            .from(externalLinkVisits)
-            .leftJoin(users, eq(externalLinkVisits.userId, users.id))
-            .where(inArray(externalLinkVisits.toolId, toolIds))
-            .orderBy(desc(externalLinkVisits.createdAt))
-            .limit(100)
-        : Promise.resolve([]),
+    toolIds.length > 0
+      ? db
+          .select({
+            id: externalLinkVisits.id,
+            toolId: externalLinkVisits.toolId,
+            userId: externalLinkVisits.userId,
+            createdAt: externalLinkVisits.createdAt,
+            userName: users.name,
+            userUsername: users.username,
+            userImage: users.image,
+          })
+          .from(externalLinkVisits)
+          .leftJoin(users, eq(externalLinkVisits.userId, users.id))
+          .where(inArray(externalLinkVisits.toolId, toolIds))
+          .orderBy(desc(externalLinkVisits.createdAt))
+          .limit(100)
+      : Promise.resolve([]),
 
-      productIds.length > 0
-        ? db
-            .select({
-              id: productLikes.id,
-              productId: productLikes.productId,
-              productName: products.name,
-              productSlug: products.slug,
-              createdAt: productLikes.createdAt,
-              userName: users.name,
-              userUsername: users.username,
-              userImage: users.image,
-            })
-            .from(productLikes)
-            .innerJoin(products, eq(productLikes.productId, products.id))
-            .innerJoin(users, eq(productLikes.userId, users.id))
-            .where(inArray(productLikes.productId, productIds))
-            .orderBy(desc(productLikes.createdAt))
-            .limit(15)
-        : Promise.resolve([]),
+    productIds.length > 0
+      ? db
+          .select({
+            id: productLikes.id,
+            productId: productLikes.productId,
+            productName: products.name,
+            productSlug: products.slug,
+            createdAt: productLikes.createdAt,
+            userName: users.name,
+            userUsername: users.username,
+            userImage: users.image,
+          })
+          .from(productLikes)
+          .innerJoin(products, eq(productLikes.productId, products.id))
+          .innerJoin(users, eq(productLikes.userId, users.id))
+          .where(inArray(productLikes.productId, productIds))
+          .orderBy(desc(productLikes.createdAt))
+          .limit(15)
+      : Promise.resolve([]),
 
-      toolIds.length > 0
-        ? db
-            .select({
-              id: toolUpvotes.id,
-              toolId: toolUpvotes.toolId,
-              toolName: tools.name,
-              toolSlug: tools.slug,
-              createdAt: toolUpvotes.createdAt,
-              userName: users.name,
-              userUsername: users.username,
-              userImage: users.image,
-            })
-            .from(toolUpvotes)
-            .innerJoin(tools, eq(toolUpvotes.toolId, tools.id))
-            .innerJoin(users, eq(toolUpvotes.userId, users.id))
-            .where(inArray(toolUpvotes.toolId, toolIds))
-            .orderBy(desc(toolUpvotes.createdAt))
-            .limit(15)
-        : Promise.resolve([]),
+    toolIds.length > 0
+      ? db
+          .select({
+            id: toolUpvotes.id,
+            toolId: toolUpvotes.toolId,
+            toolName: tools.name,
+            toolSlug: tools.slug,
+            createdAt: toolUpvotes.createdAt,
+            userName: users.name,
+            userUsername: users.username,
+            userImage: users.image,
+          })
+          .from(toolUpvotes)
+          .innerJoin(tools, eq(toolUpvotes.toolId, tools.id))
+          .innerJoin(users, eq(toolUpvotes.userId, users.id))
+          .where(inArray(toolUpvotes.toolId, toolIds))
+          .orderBy(desc(toolUpvotes.createdAt))
+          .limit(15)
+      : Promise.resolve([]),
 
-      productIds.length > 0
-        ? db
-            .select({
-              id: productComments.id,
-              productId: productComments.productId,
-              productName: products.name,
-              productSlug: products.slug,
-              body: productComments.body,
-              createdAt: productComments.createdAt,
-              userName: users.name,
-              userUsername: users.username,
-              userImage: users.image,
-            })
-            .from(productComments)
-            .innerJoin(products, eq(productComments.productId, products.id))
-            .innerJoin(users, eq(productComments.userId, users.id))
-            .where(inArray(productComments.productId, productIds))
-            .orderBy(desc(productComments.createdAt))
-            .limit(15)
-        : Promise.resolve([]),
+    productIds.length > 0
+      ? db
+          .select({
+            id: productComments.id,
+            productId: productComments.productId,
+            productName: products.name,
+            productSlug: products.slug,
+            body: productComments.body,
+            createdAt: productComments.createdAt,
+            userName: users.name,
+            userUsername: users.username,
+            userImage: users.image,
+          })
+          .from(productComments)
+          .innerJoin(products, eq(productComments.productId, products.id))
+          .innerJoin(users, eq(productComments.userId, users.id))
+          .where(inArray(productComments.productId, productIds))
+          .orderBy(desc(productComments.createdAt))
+          .limit(15)
+      : Promise.resolve([]),
 
-      toolIds.length > 0
-        ? db
-            .select({
-              id: toolComments.id,
-              toolId: toolComments.toolId,
-              toolName: tools.name,
-              toolSlug: tools.slug,
-              body: toolComments.body,
-              createdAt: toolComments.createdAt,
-              userName: users.name,
-              userUsername: users.username,
-              userImage: users.image,
-            })
-            .from(toolComments)
-            .innerJoin(tools, eq(toolComments.toolId, tools.id))
-            .innerJoin(users, eq(toolComments.userId, users.id))
-            .where(inArray(toolComments.toolId, toolIds))
-            .orderBy(desc(toolComments.createdAt))
-            .limit(15)
-        : Promise.resolve([]),
-    ])
+    toolIds.length > 0
+      ? db
+          .select({
+            id: toolComments.id,
+            toolId: toolComments.toolId,
+            toolName: tools.name,
+            toolSlug: tools.slug,
+            body: toolComments.body,
+            createdAt: toolComments.createdAt,
+            userName: users.name,
+            userUsername: users.username,
+            userImage: users.image,
+          })
+          .from(toolComments)
+          .innerJoin(tools, eq(toolComments.toolId, tools.id))
+          .innerJoin(users, eq(toolComments.userId, users.id))
+          .where(inArray(toolComments.toolId, toolIds))
+          .orderBy(desc(toolComments.createdAt))
+          .limit(15)
+      : Promise.resolve([]),
+  ])
 
   const productVisitsMap = new Map<string, number>()
   for (const v of productVisits) {
     if (v.productId) {
-      productVisitsMap.set(v.productId, (productVisitsMap.get(v.productId) || 0) + 1)
+      productVisitsMap.set(
+        v.productId,
+        (productVisitsMap.get(v.productId) || 0) + 1
+      )
     }
   }
 
@@ -276,7 +287,9 @@ export const getGlobalAnalytics = async (
     productVisits.filter((v) => Boolean(v.userId)).length +
     toolVisits.filter((v) => Boolean(v.userId)).length
   const overallCtr =
-    totalViews > 0 ? Number(((totalExternalVisits / totalViews) * 100).toFixed(1)) : 0
+    totalViews > 0
+      ? Number(((totalExternalVisits / totalViews) * 100).toFixed(1))
+      : 0
 
   const recentInteractions: RecentInteraction[] = [
     ...recentLikes.map((l) => ({
@@ -333,7 +346,9 @@ export const getGlobalAnalytics = async (
       content: c.body,
       createdAt: c.createdAt,
     })),
-  ].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+  ].sort(
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+  )
 
   return {
     stats: {

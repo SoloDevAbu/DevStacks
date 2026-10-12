@@ -11,7 +11,12 @@ export const getToolBySlugOrName = async (slugOrName: string) => {
       name: tools.name,
     })
     .from(tools)
-    .where(or(eq(tools.slug, slugOrName), ilike(tools.name, slugOrName)))
+    .where(
+      and(
+        or(eq(tools.slug, slugOrName), ilike(tools.name, slugOrName)),
+        eq(tools.isDeleted, false)
+      )
+    )
     .limit(1)
 
   return row ?? null
@@ -64,14 +69,18 @@ export const getToolBySlug = async (slug: string) => {
       submitterUsername: users.username,
       submitterCountry: users.country,
       submitterState: users.state,
-      submitterAvatarUrl: sql<string | null>`COALESCE(${users.image}, ${users.avatarUrl})`,
+      submitterAvatarUrl: sql<
+        string | null
+      >`COALESCE(${users.image}, ${users.avatarUrl})`,
+      isDeleted: tools.isDeleted,
+      deletedAt: tools.deletedAt,
       createdAt: tools.createdAt,
       updatedAt: tools.updatedAt,
     })
     .from(tools)
     .leftJoin(categories, eq(tools.categoryId, categories.id))
     .leftJoin(users, eq(tools.submitterId, users.id))
-    .where(eq(tools.slug, slug))
+    .where(and(eq(tools.slug, slug), eq(tools.isDeleted, false)))
     .limit(1)
 
   return row ?? null
@@ -109,6 +118,7 @@ export const getRelatedTools = async (
       .where(
         and(
           eq(tools.status, "approved"),
+          eq(tools.isDeleted, false),
           eq(tools.categoryId, categoryId),
           ne(tools.id, currentToolId)
         )

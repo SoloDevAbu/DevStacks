@@ -20,7 +20,7 @@ const slugify = (text: string) =>
 export const getToolCategories = async (
   query?: string
 ): Promise<DbCategoryItem[]> => {
-  const conditions = [eq(tools.status, "approved")]
+  const conditions = [eq(tools.status, "approved"), eq(tools.isDeleted, false)]
 
   if (query && query.trim()) {
     const pattern = `%${query.trim()}%`
@@ -48,7 +48,10 @@ export const getToolCategories = async (
 export const getProductCategories = async (
   query?: string
 ): Promise<DbCategoryItem[]> => {
-  const conditions = [eq(products.status, "approved")]
+  const conditions = [
+    eq(products.status, "approved"),
+    eq(products.isDeleted, false),
+  ]
 
   if (query && query.trim()) {
     const pattern = `%${query.trim()}%`
@@ -189,14 +192,26 @@ export const getCategoryStats = async (categoryId: string) => {
       freeCount: sql<number>`count(case when ${tools.pricing} in ('Free', 'Freemium', 'Open Source') then 1 end)::int`,
     })
     .from(tools)
-    .where(and(eq(tools.categoryId, categoryId), eq(tools.status, "approved")))
+    .where(
+      and(
+        eq(tools.categoryId, categoryId),
+        eq(tools.status, "approved"),
+        eq(tools.isDeleted, false)
+      )
+    )
 
   const [productStats] = await db
     .select({
       productCount: sql<number>`count(${products.id})::int`,
     })
     .from(products)
-    .where(and(eq(products.categoryId, categoryId), eq(products.status, "approved")))
+    .where(
+      and(
+        eq(products.categoryId, categoryId),
+        eq(products.status, "approved"),
+        eq(products.isDeleted, false)
+      )
+    )
 
   return {
     toolCount: Number(toolStats?.toolCount ?? 0),

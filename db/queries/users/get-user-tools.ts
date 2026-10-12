@@ -1,6 +1,6 @@
 import { db } from "@/db"
 import { tools, categories, externalLinkVisits } from "@/db/schema"
-import { eq, desc, inArray } from "drizzle-orm"
+import { and, eq, desc, inArray } from "drizzle-orm"
 import type { DbTool } from "@/types/entities"
 
 export interface UserDashboardTool extends DbTool {
@@ -50,7 +50,7 @@ export const getUserTools = async (
     })
     .from(tools)
     .leftJoin(categories, eq(tools.categoryId, categories.id))
-    .where(eq(tools.submitterId, userId))
+    .where(and(eq(tools.submitterId, userId), eq(tools.isDeleted, false)))
     .orderBy(desc(tools.createdAt))
 
   const toolIds = userTools.map((t) => t.id)

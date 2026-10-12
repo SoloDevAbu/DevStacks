@@ -44,6 +44,8 @@ export const getProductBySlug = async (slug: string) => {
       categoryId: products.categoryId,
       category: categories.name,
       categorySlug: categories.slug,
+      isDeleted: products.isDeleted,
+      deletedAt: products.deletedAt,
       createdAt: products.createdAt,
       updatedAt: products.updatedAt,
       submitterId: products.submitterId,
@@ -51,20 +53,24 @@ export const getProductBySlug = async (slug: string) => {
       submitterUsername: users.username,
       submitterCountry: users.country,
       submitterState: users.state,
-      submitterAvatarUrl: sql<string | null>`COALESCE(${users.image}, ${users.avatarUrl})`,
+      submitterAvatarUrl: sql<
+        string | null
+      >`COALESCE(${users.image}, ${users.avatarUrl})`,
       submitter: {
         id: users.id,
         name: users.name,
         username: users.username,
         country: users.country,
         state: users.state,
-        avatarUrl: sql<string | null>`COALESCE(${users.image}, ${users.avatarUrl})`,
+        avatarUrl: sql<
+          string | null
+        >`COALESCE(${users.image}, ${users.avatarUrl})`,
       },
     })
     .from(products)
     .leftJoin(users, eq(products.submitterId, users.id))
     .leftJoin(categories, eq(products.categoryId, categories.id))
-    .where(eq(products.slug, slug))
+    .where(and(eq(products.slug, slug), eq(products.isDeleted, false)))
     .limit(1)
 
   if (!product) return null
@@ -125,6 +131,7 @@ export const getRelatedProducts = async (
       .where(
         and(
           eq(products.status, "approved"),
+          eq(products.isDeleted, false),
           eq(products.categoryId, categoryId),
           ne(products.id, currentProductId)
         )
