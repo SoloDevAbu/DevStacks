@@ -229,34 +229,29 @@ export const ProductCard = ({
         <div className="flex min-w-0 flex-1 flex-col gap-0.5 sm:gap-1">
           <div className="flex min-w-0 flex-nowrap items-center gap-1.5 overflow-hidden sm:gap-2">
             <h3 className="min-w-0 truncate text-sm font-bold text-slate-900 sm:text-base">
-              {product.websiteUrl ? (
+              <Link
+                href={ROUTES.PRODUCT(product.slug)}
+                className="inline-flex min-w-0 items-center gap-1.5 transition-colors hover:text-indigo-600"
+                title={`View ${product.name}`}
+              >
+                <span className="truncate">{product.name}</span>
+                <VerifiedBadge
+                  tier={tier}
+                  className="size-3.5 shrink-0 sm:size-4"
+                />
+              </Link>
+              {product.websiteUrl && (
                 <a
                   href={outboundUrl}
                   target="_blank"
                   rel={linkRel}
                   onClick={handleOutboundClick}
-                  className="inline-flex min-w-0 items-center gap-1.5 transition-colors hover:text-indigo-600"
+                  className="ml-1.5 inline-flex items-center text-slate-400 transition-colors hover:text-indigo-600"
                   title={`Visit ${product.name} website`}
+                  aria-label={`Visit ${product.name} website`}
                 >
-                  <span className="truncate">{product.name}</span>
-                  <VerifiedBadge
-                    tier={tier}
-                    className="size-3.5 shrink-0 sm:size-4"
-                  />
-                  <ExternalLink className="hidden size-3 shrink-0 text-slate-400 opacity-0 transition-opacity group-hover:opacity-100 sm:inline" />
+                  <ExternalLink className="size-3 shrink-0" />
                 </a>
-              ) : (
-                <Link
-                  href={ROUTES.PRODUCT(product.slug)}
-                  className="inline-flex min-w-0 items-center gap-1.5 transition-colors hover:text-indigo-600"
-                  title={`View ${product.name}`}
-                >
-                  <span className="truncate">{product.name}</span>
-                  <VerifiedBadge
-                    tier={tier}
-                    className="size-3.5 shrink-0 sm:size-4"
-                  />
-                </Link>
               )}
             </h3>
             {showTypeBadge && (

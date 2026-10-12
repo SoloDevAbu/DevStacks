@@ -116,6 +116,9 @@ const runCleanup = async () => {
   // 3. Delete orphaned objects in chunks of 500
   if (orphanedKeys.length > 0) {
     const chunkSize = 500
+    let successfullyDeletedCount = 0
+    let failedCount = 0
+
     for (let i = 0; i < orphanedKeys.length; i += chunkSize) {
       const chunk = orphanedKeys.slice(i, i + chunkSize)
       const deleteCommand = new DeleteObjectsCommand({
@@ -125,13 +128,30 @@ const runCleanup = async () => {
           Quiet: true,
         },
       })
-      await client.send(deleteCommand)
-      console.log(`Deleted batch of ${chunk.length} orphaned objects.`)
+      const response = await client.send(deleteCommand)
+      const batchErrors = response.Errors || []
+      const batchFailed = batchErrors.length
+      const batchSuccess = chunk.length - batchFailed
+
+      successfullyDeletedCount += batchSuccess
+      failedCount += batchFailed
+
+      if (batchFailed > 0) {
+        for (const err of batchErrors) {
+          console.error(
+            `Failed to delete ${err.Key}: [${err.Code}] ${err.Message}`
+          )
+        }
+      }
+
+      console.log(
+        `Batch ${Math.floor(i / chunkSize) + 1}: ${batchSuccess} deleted, ${batchFailed} failed.`
+      )
     }
 
     const mbFreed = (totalBytesFreed / (1024 * 1024)).toFixed(2)
     console.log(
-      `Cleanup complete: Deleted ${orphanedKeys.length} orphaned files. Freed ${mbFreed} MB.`
+      `Cleanup complete: Successfully deleted ${successfullyDeletedCount} orphaned files (${failedCount} failed). Freed ${mbFreed} MB.`
     )
   } else {
     console.log("No orphaned files to delete. Storage is completely clean.")

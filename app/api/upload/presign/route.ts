@@ -12,12 +12,7 @@ const presignSchema = z.object({
   fileName: z.string().optional(),
 })
 
-const getExtension = (contentType: string, fileName?: string) => {
-  if (fileName && fileName.includes(".")) {
-    const ext = fileName.split(".").pop()?.toLowerCase()
-    if (ext && /^[a-z0-9]+$/.test(ext)) return ext
-  }
-
+const getExtension = (contentType: string) => {
   switch (contentType) {
     case "image/png":
       return "png"
@@ -55,7 +50,7 @@ export const POST = async (req: NextRequest) => {
       )
     }
 
-    const { kind, contentType, fileSize, fileName } = parsed.data
+    const { kind, contentType, fileSize } = parsed.data
 
     if (kind === "logo") {
       const allowed = STORAGE_CONFIG.LOGO.ALLOWED_TYPES as readonly string[]
@@ -95,13 +90,14 @@ export const POST = async (req: NextRequest) => {
       }
     }
 
-    const ext = getExtension(contentType, fileName)
+    const ext = getExtension(contentType)
     const folder = kind === "logo" ? "logos" : "screenshots"
     const key = `${folder}/${session.user.id}/${randomUUID()}.${ext}`
 
     const { uploadUrl, publicUrl } = await createPresignedUploadUrl({
       key,
       contentType,
+      contentLength: fileSize,
     })
 
     return NextResponse.json({

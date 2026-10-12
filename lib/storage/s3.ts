@@ -46,15 +46,18 @@ export const deleteStorageObject = async (key: string) => {
 export const createPresignedUploadUrl = async ({
   key,
   contentType,
+  contentLength,
 }: {
   key: string
   contentType: string
+  contentLength?: number
 }) => {
   const client = getStorageClient()
   const command = new PutObjectCommand({
     Bucket: STORAGE_CONFIG.BUCKET_NAME,
     Key: key,
     ContentType: contentType,
+    ContentLength: contentLength,
     ACL: "public-read",
   })
 

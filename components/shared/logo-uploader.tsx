@@ -18,7 +18,6 @@ import { useUploadImage } from "@/hooks/storage/use-upload-image"
 import { useDeleteImage } from "@/hooks/storage/use-delete-image"
 import { validateLogoAspectRatio, formatFileSize } from "@/utils/images"
 import { STORAGE_CONFIG } from "@/constants/storage"
-import { ImagePreviewDialog } from "@/components/shared/image-preview-dialog"
 import { cn } from "@/lib/utils"
 
 interface LogoUploaderProps {
@@ -129,7 +128,11 @@ export const LogoUploader = ({
       "Custom Logo Cleared",
       "Reverted to auto-detected website favicon."
     )
-    if (previousUrl && (previousUrl.includes(`/${STORAGE_CONFIG.BUCKET_NAME}/`) || previousUrl.includes("/logos/"))) {
+    if (
+      previousUrl &&
+      (previousUrl.includes(`/${STORAGE_CONFIG.BUCKET_NAME}/`) ||
+        previousUrl.includes("/logos/"))
+    ) {
       deleteImage(previousUrl).catch(() => {})
     }
   }

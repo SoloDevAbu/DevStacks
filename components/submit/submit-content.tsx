@@ -214,11 +214,9 @@ export const SubmitContent = ({
 
   const handleWebsiteUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value
-    const favicon = getFaviconUrl(val)
     setForm((prev) => ({
       ...prev,
       websiteUrl: val,
-      logoUrl: prev.logoUrl?.trim() ? prev.logoUrl : (favicon ?? ""),
     }))
     setErrors((prev) => ({ ...prev, websiteUrl: [] }))
   }
