@@ -30,20 +30,21 @@ export interface FullProduct extends DbProduct {
 
 export const resolveProduct = cache(
   async (slug: string): Promise<FullProduct | null> => {
-  try {
-    const dbProduct = await getProductBySlug(slug)
-    if (dbProduct) {
-      return {
-        ...dbProduct,
-        pricing: dbProduct.pricing as FullProduct["pricing"],
-        tier: dbProduct.tier as FullProduct["tier"],
-        platforms: dbProduct.platforms ?? [],
-        tags: dbProduct.tags ?? [],
-      } as FullProduct
+    try {
+      const dbProduct = await getProductBySlug(slug)
+      if (dbProduct && !dbProduct.isDeleted) {
+        return {
+          ...dbProduct,
+          pricing: dbProduct.pricing as FullProduct["pricing"],
+          tier: dbProduct.tier as FullProduct["tier"],
+          platforms: dbProduct.platforms ?? [],
+          tags: dbProduct.tags ?? [],
+        } as FullProduct
+      }
+    } catch {
+      return null
     }
-  } catch {
+
     return null
   }
-
-  return null
-})
+)

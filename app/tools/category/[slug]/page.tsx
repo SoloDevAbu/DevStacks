@@ -1,8 +1,21 @@
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import Link from "next/link"
-import { ArrowLeft, ChevronRight, Layers, Sparkles, FolderGit2, Hammer, Code2, Globe } from "lucide-react"
-import { getCategoryBySlug, getCategoryStats, getToolCategories } from "@/db/queries/categories/list"
+import {
+  ArrowLeft,
+  ChevronRight,
+  Layers,
+  Sparkles,
+  FolderGit2,
+  Hammer,
+  Code2,
+  Globe,
+} from "lucide-react"
+import {
+  getCategoryBySlug,
+  getCategoryStats,
+  getToolCategories,
+} from "@/db/queries/categories/list"
 import { getTools } from "@/db/queries/tools/list"
 import { ToolCard } from "@/components/shared/tool-card"
 import { CrawlableCategoryBar } from "@/components/shared/crawlable-category-bar"
@@ -23,13 +36,19 @@ type CategoryPageProps = {
   params: Promise<{ slug: string }>
 }
 
-export const generateMetadata = async (props: CategoryPageProps): Promise<Metadata> => {
+export const generateMetadata = async (
+  props: CategoryPageProps
+): Promise<Metadata> => {
   const { slug } = await props.params
   const category = await getCategoryBySlug(slug)
 
   if (!category) {
     return {
       title: `Category Not Found — ${SITE_CONFIG.name}`,
+      robots: {
+        index: false,
+        follow: false,
+      },
     }
   }
 
@@ -152,7 +171,10 @@ const CategoryToolsPage = async (props: CategoryPageProps) => {
               <ChevronRight className="size-3" />
             </li>
             <li className="flex items-center">
-              <span className="font-semibold text-slate-900" aria-current="page">
+              <span
+                className="font-semibold text-slate-900"
+                aria-current="page"
+              >
                 {category.name}
               </span>
             </li>
@@ -171,33 +193,50 @@ const CategoryToolsPage = async (props: CategoryPageProps) => {
               {category.name} Developer Tools & APIs
             </h1>
 
-            <p className="max-w-3xl text-sm font-normal leading-relaxed text-slate-600 sm:text-base">
-              Explore verified developer tools, SDKs, and infrastructure layers in the{" "}
-              <strong className="font-semibold text-slate-800">{category.name}</strong>{" "}
-              space. Ranked transparently by community adoption, production builds, and developer upvotes.
+            <p className="max-w-3xl text-sm leading-relaxed font-normal text-slate-600 sm:text-base">
+              Explore verified developer tools, SDKs, and infrastructure layers
+              in the{" "}
+              <strong className="font-semibold text-slate-800">
+                {category.name}
+              </strong>{" "}
+              space. Ranked transparently by community adoption, production
+              builds, and developer upvotes.
             </p>
 
             {/* Live Ecosystem Telemetry */}
             <div className="mt-2 flex flex-wrap items-center gap-3 pt-2 text-xs font-medium text-slate-600">
-              <Badge variant="outline" className="border-slate-300 bg-slate-50 px-2.5 py-1 text-slate-800">
+              <Badge
+                variant="outline"
+                className="border-slate-300 bg-slate-50 px-2.5 py-1 text-slate-800"
+              >
                 <Code2 className="mr-1.5 size-3.5 text-blue-600" />
-                {stats.toolCount} Verified {stats.toolCount === 1 ? "Tool" : "Tools"}
+                {stats.toolCount} Verified{" "}
+                {stats.toolCount === 1 ? "Tool" : "Tools"}
               </Badge>
 
-              <Badge variant="outline" className="border-slate-300 bg-slate-50 px-2.5 py-1 text-slate-800">
+              <Badge
+                variant="outline"
+                className="border-slate-300 bg-slate-50 px-2.5 py-1 text-slate-800"
+              >
                 <Hammer className="mr-1.5 size-3.5 text-emerald-600" />
                 {stats.totalBuilds.toLocaleString()} Production Builds
               </Badge>
 
               {stats.openSourceCount > 0 && (
-                <Badge variant="outline" className="border-slate-300 bg-slate-50 px-2.5 py-1 text-slate-800">
+                <Badge
+                  variant="outline"
+                  className="border-slate-300 bg-slate-50 px-2.5 py-1 text-slate-800"
+                >
                   <Sparkles className="mr-1.5 size-3.5 text-amber-600" />
                   {stats.openSourceCount} Open Source Options
                 </Badge>
               )}
 
               {stats.productCount > 0 && (
-                <Badge variant="outline" className="border-slate-300 bg-slate-50 px-2.5 py-1 text-slate-800">
+                <Badge
+                  variant="outline"
+                  className="border-slate-300 bg-slate-50 px-2.5 py-1 text-slate-800"
+                >
                   <Layers className="mr-1.5 size-3.5 text-indigo-600" />
                   {stats.productCount} Associated SaaS Products
                 </Badge>
@@ -248,7 +287,8 @@ const CategoryToolsPage = async (props: CategoryPageProps) => {
                 No tools cataloged in this category yet
               </h2>
               <p className="mt-1 max-w-sm text-xs text-slate-500">
-                Are you building a {category.name} tool or API? Be the first to showcase it on {SITE_CONFIG.name}.
+                Are you building a {category.name} tool or API? Be the first to
+                showcase it on {SITE_CONFIG.name}.
               </p>
               <div className="mt-4">
                 <Link

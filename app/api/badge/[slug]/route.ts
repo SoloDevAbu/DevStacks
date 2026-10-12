@@ -15,18 +15,21 @@ export const GET = async (
 
   let name = slug
   let votes = 0
+  let found = false
 
   if (type === "product") {
     const product = await getProductBySlug(slug)
     if (product) {
       name = product.name
       votes = product.likesCount ?? 0
+      found = true
     }
   } else if (type === "tool") {
     const tool = await getToolBySlug(slug)
     if (tool) {
       name = tool.name
       votes = tool.upvotesCount ?? 0
+      found = true
     }
   } else {
     // Try tool first, then product
@@ -34,13 +37,24 @@ export const GET = async (
     if (tool) {
       name = tool.name
       votes = tool.upvotesCount ?? 0
+      found = true
     } else {
       const product = await getProductBySlug(slug)
       if (product) {
         name = product.name
         votes = product.likesCount ?? 0
+        found = true
       }
     }
+  }
+
+  if (!found) {
+    return new NextResponse("Not Found", {
+      status: 404,
+      headers: {
+        "X-Robots-Tag": "noindex, nofollow",
+      },
+    })
   }
 
   let svg = ""
