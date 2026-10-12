@@ -1,4 +1,8 @@
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3"
+import {
+  S3Client,
+  PutObjectCommand,
+  DeleteObjectCommand,
+} from "@aws-sdk/client-s3"
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner"
 import { STORAGE_CONFIG } from "@/constants/storage"
 
@@ -17,6 +21,26 @@ export const getStorageClient = () => {
 export const getPublicAssetUrl = (key: string) => {
   const endpoint = process.env.AWS_ENDPOINT_URL_S3?.replace(/\/+$/, "")
   return `${endpoint}/${STORAGE_CONFIG.BUCKET_NAME}/${key}`
+}
+
+export const getStorageKeyFromUrl = (url: string): string | null => {
+  if (!url) return null
+  const bucket = STORAGE_CONFIG.BUCKET_NAME
+  const marker = `/${bucket}/`
+  const index = url.indexOf(marker)
+  if (index !== -1) {
+    return url.slice(index + marker.length)
+  }
+  return null
+}
+
+export const deleteStorageObject = async (key: string) => {
+  const client = getStorageClient()
+  const command = new DeleteObjectCommand({
+    Bucket: STORAGE_CONFIG.BUCKET_NAME,
+    Key: key,
+  })
+  return await client.send(command)
 }
 
 export const createPresignedUploadUrl = async ({
@@ -39,3 +63,4 @@ export const createPresignedUploadUrl = async ({
 
   return { uploadUrl, publicUrl }
 }
+

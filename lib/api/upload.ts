@@ -49,3 +49,14 @@ export const uploadFileToStorage = async (
 
   return publicUrl
 }
+
+export const deleteFileFromStorage = async (
+  urlOrKey: string
+): Promise<{ success: boolean; key: string }> => {
+  const { data } = await apiClient.post<{ success: boolean; key: string }>(
+    "/upload/delete",
+    { url: urlOrKey }
+  )
+  return data
+}
+

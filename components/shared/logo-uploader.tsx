@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { toast } from "@/components/ui/toast"
 import { useUploadImage } from "@/hooks/storage/use-upload-image"
+import { useDeleteImage } from "@/hooks/storage/use-delete-image"
 import { validateLogoAspectRatio, formatFileSize } from "@/utils/images"
 import { STORAGE_CONFIG } from "@/constants/storage"
 import { ImagePreviewDialog } from "@/components/shared/image-preview-dialog"
@@ -39,6 +40,7 @@ export const LogoUploader = ({
   const [isPreviewOpen, setIsPreviewOpen] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const { uploadImage, isPending: isUploading, progress } = useUploadImage()
+  const { deleteImage } = useDeleteImage()
 
   const currentDisplayUrl = value?.trim() || fallbackFaviconUrl || ""
   const isCustomUploaded = Boolean(value?.trim())
@@ -121,11 +123,15 @@ export const LogoUploader = ({
 
   const handleRemove = (e: React.MouseEvent) => {
     e.stopPropagation()
+    const previousUrl = value?.trim()
     onChange("")
     toast.info(
       "Custom Logo Cleared",
       "Reverted to auto-detected website favicon."
     )
+    if (previousUrl && (previousUrl.includes(`/${STORAGE_CONFIG.BUCKET_NAME}/`) || previousUrl.includes("/logos/"))) {
+      deleteImage(previousUrl).catch(() => {})
+    }
   }
 
   return (

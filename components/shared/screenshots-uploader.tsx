@@ -11,6 +11,7 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { toast } from "@/components/ui/toast"
 import { useUploadImage } from "@/hooks/storage/use-upload-image"
+import { useDeleteImage } from "@/hooks/storage/use-delete-image"
 import { formatFileSize } from "@/utils/images"
 import { STORAGE_CONFIG } from "@/constants/storage"
 import { ImagePreviewDialog } from "@/components/shared/image-preview-dialog"
@@ -35,6 +36,7 @@ export const ScreenshotsUploader = ({
   const targetSlotRef = useRef<number>(0)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const { uploadImage, isPending: isUploading, progress } = useUploadImage()
+  const { deleteImage } = useDeleteImage()
 
   const maxCount = STORAGE_CONFIG.SCREENSHOTS.MAX_COUNT
   const isFull = value.length >= maxCount
@@ -127,9 +129,13 @@ export const ScreenshotsUploader = ({
   const handleRemove = (e: React.MouseEvent, indexToRemove: number) => {
     e.stopPropagation()
     if (disabled || isUploading) return
+    const removedUrl = value[indexToRemove]
     const updated = value.filter((_, i) => i !== indexToRemove)
     onChange(updated)
     toast.info("Screenshot Removed", `Now ${updated.length} of ${maxCount} uploaded.`)
+    if (removedUrl && (removedUrl.includes(`/${STORAGE_CONFIG.BUCKET_NAME}/`) || removedUrl.includes("/screenshots/"))) {
+      deleteImage(removedUrl).catch(() => {})
+    }
   }
 
   return (
