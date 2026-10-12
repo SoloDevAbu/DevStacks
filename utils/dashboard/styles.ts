@@ -12,10 +12,10 @@ export const dashboardNavTabsContainer =
 
 export const dashboardNavTab = (isActive: boolean) =>
   cn(
-    "flex flex-1 items-center justify-center gap-2 border-b-2 px-3.5 py-2.5 text-xs font-semibold transition-colors shrink-0 sm:shrink",
+    "flex flex-1 shrink-0 items-center justify-center gap-2 border-b-2 px-3.5 py-2.5 text-xs font-semibold transition-colors sm:shrink",
     isActive
-      ? "border-slate-900 text-slate-900 font-bold"
-      : "border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-800 hover:bg-slate-50/40"
+      ? "border-slate-900 font-bold text-slate-900"
+      : "border-transparent text-slate-500 hover:border-slate-300 hover:bg-slate-50/40 hover:text-slate-800"
   )
 
 export const dashboardHeaderTitle =
@@ -53,6 +53,18 @@ export const dashboardEmptyContainer =
 
 export const dashboardActionGroup = "flex flex-wrap items-center gap-2"
 
+export const dashboardIconButton =
+  "size-8 border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors"
+
+export const dashboardIconUpgradeButton =
+  "size-8 border-amber-300 bg-amber-50/50 text-amber-800 hover:bg-amber-100/70 hover:text-amber-900 transition-colors"
+
+export const dashboardIconAnalyticsButton =
+  "size-8 bg-slate-900 text-white hover:bg-slate-800 hover:text-white transition-colors"
+
+export const dashboardIconDeleteButton =
+  "size-8 border-slate-200 text-slate-500 hover:border-rose-200 hover:bg-rose-50 hover:text-rose-600 transition-colors"
+
 export const dashboardFilterBar =
   "flex flex-col gap-4 border-b border-dashed border-border bg-white px-6 py-3.5 sm:flex-row sm:items-center sm:justify-between md:px-8"
 
@@ -69,20 +81,20 @@ export const upgradeTierCard = (isSelected: boolean, isCurrent: boolean) =>
   cn(
     "relative flex flex-col justify-between rounded-xl border p-5 text-left transition-all",
     isCurrent
-      ? "border-slate-200 bg-slate-50/80 opacity-75 cursor-default"
+      ? "cursor-default border-slate-200 bg-slate-50/80 opacity-75"
       : isSelected
-        ? "border-indigo-600 bg-indigo-50/40 shadow-xs ring-2 ring-indigo-500/20 cursor-pointer"
-        : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/60 cursor-pointer"
+        ? "cursor-pointer border-indigo-600 bg-indigo-50/40 shadow-xs ring-2 ring-indigo-500/20"
+        : "cursor-pointer border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/60"
   )
 
 export const upgradeBadge = (tier: Tier) =>
   cn(
     "font-mono text-[10px] font-bold uppercase",
     tier === TIER.PREMIUM_PLUS
-      ? "bg-amber-100 text-amber-800 border-amber-300"
+      ? "border-amber-300 bg-amber-100 text-amber-800"
       : tier === TIER.PREMIUM
-        ? "bg-blue-100 text-blue-800 border-blue-300"
-        : "bg-slate-100 text-slate-700 border-slate-200"
+        ? "border-blue-300 bg-blue-100 text-blue-800"
+        : "border-slate-200 bg-slate-100 text-slate-700"
   )
 
 export const analyticsStatBox =
@@ -90,7 +102,7 @@ export const analyticsStatBox =
 
 export const analyticsTabTrigger = (isActive: boolean) =>
   cn(
-    "flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-all cursor-pointer",
+    "flex cursor-pointer items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-all",
     isActive
       ? "bg-slate-900 text-white shadow-xs"
       : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
