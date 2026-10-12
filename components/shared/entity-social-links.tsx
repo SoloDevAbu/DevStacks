@@ -41,7 +41,9 @@ export const EntitySocialLinks = ({
   }
 
   const activeLinks = SOCIAL_LINK_CONFIGS.filter(
-    (config) => typeof urlMap[config.key] === "string" && Boolean(urlMap[config.key]?.trim())
+    (config) =>
+      typeof urlMap[config.key] === "string" &&
+      Boolean(urlMap[config.key]?.trim())
   )
 
   if (activeLinks.length === 0) return null
@@ -52,7 +54,9 @@ export const EntitySocialLinks = ({
         const rawUrl = urlMap[config.key]!.trim()
         const isWebsite = config.key === "websiteUrl"
         const href = isWebsite ? getOutboundUrl(rawUrl, "launchnests") : rawUrl
-        const rel = isWebsite ? getLinkRel(tier) : "noopener noreferrer nofollow"
+        const rel = isWebsite
+          ? getLinkRel(tier)
+          : "noopener noreferrer nofollow"
 
         return (
           <a

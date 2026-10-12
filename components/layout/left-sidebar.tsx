@@ -75,7 +75,7 @@ export const LeftSidebar = () => {
                     <span className="flex items-center gap-2 xl:gap-2.5">
                       <item.icon
                         className={cn(
-                          "size-3.5 xl:size-4 shrink-0 transition-colors",
+                          "size-3.5 shrink-0 transition-colors xl:size-4",
                           isActive
                             ? "text-slate-900"
                             : "text-slate-400 group-hover:text-slate-700"
@@ -121,7 +121,7 @@ export const LeftSidebar = () => {
         <div className={sidebarPromoCard}>
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2">
-              <div className="flex size-5.5 xl:size-6 shrink-0 items-center justify-center rounded-md bg-indigo-50 text-indigo-600">
+              <div className="flex size-5.5 shrink-0 items-center justify-center rounded-md bg-indigo-50 text-indigo-600 xl:size-6">
                 <Sparkles className="size-3" />
               </div>
               <p className="text-xs font-bold text-slate-900">
@@ -134,7 +134,8 @@ export const LeftSidebar = () => {
           </div>
 
           <p className="mt-1 text-[11px] leading-snug text-slate-500 [@media(max-height:680px)]:hidden">
-            Submit your product or developer tool to be discovered by engineers and AI.
+            Submit your product or developer tool to be discovered by engineers
+            and AI.
           </p>
 
           <Link

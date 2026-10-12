@@ -49,7 +49,9 @@ export const AskAiBar = ({
         </div>
       )}
 
-      <div className={cn("flex flex-wrap items-center gap-2", buttonsAlignClass)}>
+      <div
+        className={cn("flex flex-wrap items-center gap-2", buttonsAlignClass)}
+      >
         {AI_PROVIDERS.map((ai) => (
           <div key={ai.id} className="group/btn relative inline-flex">
             <a

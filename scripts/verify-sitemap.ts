@@ -26,38 +26,17 @@ const runTests = async () => {
       "producthunt-alternative",
       "https://www.launchnests.com/producthunt-alternative",
     ],
-    [
-      "https://www.launchnests.com",
-      "https://www.launchnests.com",
-    ],
-    [
-      "https://www.launchnests.com/",
-      "https://www.launchnests.com",
-    ],
-    [
-      "/",
-      "https://www.launchnests.com",
-    ],
-    [
-      "/tools",
-      "https://www.launchnests.com/tools",
-    ],
-    [
-      "https://www.launchnests.com/tools",
-      "https://www.launchnests.com/tools",
-    ],
-    [
-      "/tools?category=AI",
-      "https://www.launchnests.com/tools?category=AI",
-    ],
+    ["https://www.launchnests.com", "https://www.launchnests.com"],
+    ["https://www.launchnests.com/", "https://www.launchnests.com"],
+    ["/", "https://www.launchnests.com"],
+    ["/tools", "https://www.launchnests.com/tools"],
+    ["https://www.launchnests.com/tools", "https://www.launchnests.com/tools"],
+    ["/tools?category=AI", "https://www.launchnests.com/tools?category=AI"],
     [
       "https://www.launchnests.com/tools?category=AI",
       "https://www.launchnests.com/tools?category=AI",
     ],
-    [
-      "http://localhost:3000/products",
-      "https://www.launchnests.com/products",
-    ],
+    ["http://localhost:3000/products", "https://www.launchnests.com/products"],
   ]
 
   let passed = 0
@@ -67,7 +46,9 @@ const runTests = async () => {
       console.log(`[PASS] ${input} -> ${actual}`)
       passed++
     } else {
-      console.error(`[FAIL] ${input}\n  Expected: ${expected}\n  Actual:   ${actual}`)
+      console.error(
+        `[FAIL] ${input}\n  Expected: ${expected}\n  Actual:   ${actual}`
+      )
     }
   }
 
@@ -108,7 +89,9 @@ const runTests = async () => {
   }
 
   if (allValid) {
-    console.log(`[PASS] All ${entries.length} sitemap entries verified successfully!`)
+    console.log(
+      `[PASS] All ${entries.length} sitemap entries verified successfully!`
+    )
     console.log("\nSample verified entries:")
     entries.slice(0, 10).forEach((e) => console.log(` - ${e.url}`))
   } else {

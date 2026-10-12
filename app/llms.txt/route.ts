@@ -69,10 +69,7 @@ export const GET = async () => {
 
 ## Launch Platform Comparisons & Alternatives
 ${getAllComparisons()
-  .map(
-    (c) =>
-      `- [${c.name}](${c.canonicalUrl}): ${c.heroDescription}`
-  )
+  .map((c) => `- [${c.name}](${c.canonicalUrl}): ${c.heroDescription}`)
   .join("\n")}
 
 ## Markdown-addressable routes

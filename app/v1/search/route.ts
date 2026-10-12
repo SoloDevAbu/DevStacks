@@ -8,7 +8,10 @@ export const revalidate = 60
 export const GET = async (request: NextRequest) => {
   const { searchParams } = new URL(request.url)
   const q = searchParams.get("q")?.trim()
-  const limit = Math.min(30, Math.max(1, parseInt(searchParams.get("limit") ?? "10", 10)))
+  const limit = Math.min(
+    30,
+    Math.max(1, parseInt(searchParams.get("limit") ?? "10", 10))
+  )
 
   if (!q || q.length < 2) {
     return NextResponse.json(
@@ -52,7 +55,8 @@ export const GET = async (request: NextRequest) => {
         type: `${SITE_CONFIG.url}/errors/server-error`,
         title: "Search Error",
         status: 500,
-        detail: error instanceof Error ? error.message : "Failed to execute search",
+        detail:
+          error instanceof Error ? error.message : "Failed to execute search",
       },
       { status: 500 }
     )

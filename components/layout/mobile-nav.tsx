@@ -63,7 +63,10 @@ export const MobileNav = () => {
       >
         <Menu className="size-5" />
       </SheetTrigger>
-      <SheetContent side="left" className="flex w-75 flex-col overflow-y-auto p-0">
+      <SheetContent
+        side="left"
+        className="flex w-75 flex-col overflow-y-auto p-0"
+      >
         <SheetHeader className="border-b border-dashed border-border px-6 py-4 text-left">
           <SheetTitle>
             <HeaderLogo showText={true} hideTextOnMobile={false} />

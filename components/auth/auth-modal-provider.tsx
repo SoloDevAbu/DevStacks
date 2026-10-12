@@ -80,10 +80,10 @@ export const AuthModalProvider = ({ children }: { children: ReactNode }) => {
       const pendingMethod = sessionStorage.getItem("pending_auth_login")
       if (pendingMethod) {
         sessionStorage.removeItem("pending_auth_login")
-        const createdAt = (session.user as { createdAt?: string | Date }).createdAt
+        const createdAt = (session.user as { createdAt?: string | Date })
+          .createdAt
         const isNewUser =
-          createdAt &&
-          Date.now() - new Date(createdAt).getTime() < 120_000
+          createdAt && Date.now() - new Date(createdAt).getTime() < 120_000
         if (isNewUser) {
           trackSignUp(pendingMethod)
         } else {

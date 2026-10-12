@@ -7,7 +7,10 @@ export const revalidate = 60
 
 export const GET = async (request: NextRequest) => {
   const { searchParams } = new URL(request.url)
-  const limit = Math.min(50, Math.max(1, parseInt(searchParams.get("limit") ?? "20", 10)))
+  const limit = Math.min(
+    50,
+    Math.max(1, parseInt(searchParams.get("limit") ?? "20", 10))
+  )
 
   try {
     const [topTools, trendingProducts] = await Promise.all([
@@ -36,7 +39,10 @@ export const GET = async (request: NextRequest) => {
         type: `${SITE_CONFIG.url}/errors/server-error`,
         title: "Leaderboard Error",
         status: 500,
-        detail: error instanceof Error ? error.message : "Failed to fetch leaderboard",
+        detail:
+          error instanceof Error
+            ? error.message
+            : "Failed to fetch leaderboard",
       },
       { status: 500 }
     )

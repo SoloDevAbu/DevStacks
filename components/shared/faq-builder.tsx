@@ -91,7 +91,10 @@ export const FaqBuilder = ({
           </div>
 
           <div className="grid gap-2">
-            <Label htmlFor={`faq-question-${idx}`} className="text-xs font-semibold text-slate-700">
+            <Label
+              htmlFor={`faq-question-${idx}`}
+              className="text-xs font-semibold text-slate-700"
+            >
               Question
             </Label>
             <Input
@@ -103,7 +106,10 @@ export const FaqBuilder = ({
           </div>
 
           <div className="grid gap-2">
-            <Label htmlFor={`faq-answer-${idx}`} className="text-xs font-semibold text-slate-700">
+            <Label
+              htmlFor={`faq-answer-${idx}`}
+              className="text-xs font-semibold text-slate-700"
+            >
               Answer
             </Label>
             <Textarea

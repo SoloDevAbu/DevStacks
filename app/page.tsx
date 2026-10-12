@@ -19,8 +19,7 @@ export const metadata: Metadata = {
   title: {
     absolute: `${SITE_CONFIG.name} — This Week's Launches for AI & Search Engines`,
   },
-  description:
-    `Discover this week's developer tools, APIs, and products launching on ${SITE_CONFIG.name}. Ranked by community votes and optimized for AI search engines, ChatGPT, Claude, and Google.`,
+  description: `Discover this week's developer tools, APIs, and products launching on ${SITE_CONFIG.name}. Ranked by community votes and optimized for AI search engines, ChatGPT, Claude, and Google.`,
   keywords: [
     ...SITE_CONFIG.keywords,
     "weekly developer launches",
@@ -42,8 +41,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: `${SITE_CONFIG.name} — This Week's Launches for AI & Search Engines`,
-    description:
-      `Discover this week's developer tools, APIs, and products launching on ${SITE_CONFIG.name}. Ranked by community votes and optimized for AI search engines, ChatGPT, Claude, and Google.`,
+    description: `Discover this week's developer tools, APIs, and products launching on ${SITE_CONFIG.name}. Ranked by community votes and optimized for AI search engines, ChatGPT, Claude, and Google.`,
     type: "website",
     url: SITE_CONFIG.url,
     siteName: SITE_CONFIG.name,
@@ -60,8 +58,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: `${SITE_CONFIG.name} — This Week's Launches for AI & Search Engines`,
-    description:
-      `Discover this week's developer tools, APIs, and products launching on ${SITE_CONFIG.name}. Ranked by community votes and optimized for AI search engines, ChatGPT, Claude, and Google.`,
+    description: `Discover this week's developer tools, APIs, and products launching on ${SITE_CONFIG.name}. Ranked by community votes and optimized for AI search engines, ChatGPT, Claude, and Google.`,
     images: [SITE_CONFIG.ogImageUrl],
   },
 }
@@ -70,7 +67,11 @@ const Page = async () => {
   const { year, week } = getCurrentWeek()
 
   const [weeklyLaunches, popularBuildingBlocks] = await Promise.all([
-    getWeeklyLaunches({ year, week, limit: HOMEPAGE_LIMITS.WEEKLY_LAUNCHES_MAX }).catch(() => []),
+    getWeeklyLaunches({
+      year,
+      week,
+      limit: HOMEPAGE_LIMITS.WEEKLY_LAUNCHES_MAX,
+    }).catch(() => []),
     getPopularBuildingBlocks({
       limit: HOMEPAGE_LIMITS.POPULAR_BUILDING_BLOCKS,
     }).catch(() => []),
@@ -83,14 +84,11 @@ const Page = async () => {
       description: item.tagline,
     }))
 
-  const breadcrumbs = breadcrumbSchema([
-    { name: "Home", url: SITE_CONFIG.url },
-  ])
+  const breadcrumbs = breadcrumbSchema([{ name: "Home", url: SITE_CONFIG.url }])
 
   const collectionJsonLd = collectionPageSchema({
     name: `${SITE_CONFIG.name} — This Week's Launches for AI & Search Engines`,
-    description:
-      `Discover developer tools, APIs, and software products launched this week on ${SITE_CONFIG.name}, ranked by community votes and optimized for AI and search engine discovery.`,
+    description: `Discover developer tools, APIs, and software products launched this week on ${SITE_CONFIG.name}, ranked by community votes and optimized for AI and search engine discovery.`,
     url: SITE_CONFIG.url,
     items: featuredItems,
   })

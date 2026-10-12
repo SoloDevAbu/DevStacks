@@ -10,10 +10,7 @@ interface ItemTypeBadgeProps {
 
 export const ItemTypeBadge = ({ kind, className }: ItemTypeBadgeProps) => {
   return (
-    <Badge
-      variant="outline"
-      className={cn(itemTypeBadge(kind), className)}
-    >
+    <Badge variant="outline" className={cn(itemTypeBadge(kind), className)}>
       {ITEM_KIND_LABELS[kind]}
     </Badge>
   )

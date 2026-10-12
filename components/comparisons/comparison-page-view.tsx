@@ -22,11 +22,7 @@ import {
 import type { PlatformComparison } from "@/types/comparison"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import {
-  Avatar,
-  AvatarImage,
-  AvatarFallback,
-} from "@/components/ui/avatar"
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { CornerBrackets } from "@/components/shared/corner-brackets"
 import { getFaviconUrl } from "@/utils/urls"
 import { GaAlternativeViewTracker } from "@/components/shared/ga-alternative-view-tracker"
@@ -83,9 +79,7 @@ interface ComparisonPageViewProps {
   comparison: PlatformComparison
 }
 
-export const ComparisonPageView = ({
-  comparison,
-}: ComparisonPageViewProps) => {
+export const ComparisonPageView = ({ comparison }: ComparisonPageViewProps) => {
   const currentYear = new Date().getFullYear()
   const otherComparisons = getAllComparisons().filter(
     (c) => c.slug !== comparison.slug
@@ -144,22 +138,28 @@ export const ComparisonPageView = ({
         category={comparison.targetKeyword}
       />
 
-      <div className="flex w-full flex-col bg-white overflow-x-clip">
+      <div className="flex w-full flex-col overflow-x-clip bg-white">
         {/* Breadcrumb Strip */}
         <nav
           aria-label="Breadcrumb"
           className="border-b border-dashed border-border bg-slate-50/50 px-4 py-3 text-xs font-medium text-slate-500 sm:px-6 md:px-8"
         >
-          <div className="mx-auto flex max-w-6xl items-center gap-2 min-w-0">
+          <div className="mx-auto flex max-w-6xl min-w-0 items-center gap-2">
             <Link
               href={ROUTES.HOME}
-              className="flex items-center gap-1 transition-colors hover:text-slate-900 shrink-0"
+              className="flex shrink-0 items-center gap-1 transition-colors hover:text-slate-900"
             >
               <ArrowLeft className="size-3 shrink-0" />
               Home
             </Link>
-            <ChevronRight className="size-3 text-slate-400 shrink-0" aria-hidden="true" />
-            <span className="font-semibold text-slate-900 truncate" aria-current="page">
+            <ChevronRight
+              className="size-3 shrink-0 text-slate-400"
+              aria-hidden="true"
+            />
+            <span
+              className="truncate font-semibold text-slate-900"
+              aria-current="page"
+            >
               {comparison.name}
             </span>
           </div>
@@ -186,7 +186,7 @@ export const ComparisonPageView = ({
                 size="default"
                 nativeButton={false}
                 render={<Link href={ROUTES.SUBMIT} />}
-                className="gap-2 text-xs font-semibold w-full sm:w-auto"
+                className="w-full gap-2 text-xs font-semibold sm:w-auto"
               >
                 <PlusCircle className="size-4" />
                 Submit Your Project — Free
@@ -196,7 +196,7 @@ export const ComparisonPageView = ({
                 size="default"
                 nativeButton={false}
                 render={<Link href={ROUTES.TOOLS} />}
-                className="gap-2 text-xs font-semibold text-slate-700 w-full sm:w-auto"
+                className="w-full gap-2 text-xs font-semibold text-slate-700 sm:w-auto"
               >
                 <Compass className="size-4 text-slate-500" />
                 Explore Developer Tools
@@ -288,7 +288,7 @@ export const ComparisonPageView = ({
                         className={comparisonDimensionCell}
                       >
                         <div className="flex flex-col gap-0.5">
-                          <span className="mb-0.5 font-mono text-[10px] font-bold uppercase tracking-wider text-slate-400 md:hidden">
+                          <span className="mb-0.5 font-mono text-[10px] font-bold tracking-wider text-slate-400 uppercase md:hidden">
                             Dimension
                           </span>
                           <span className="text-sm font-bold text-slate-900 md:text-xs md:font-semibold">
@@ -308,14 +308,14 @@ export const ComparisonPageView = ({
                         <div className={comparisonCompetitorMobileCard}>
                           <div className="mb-1.5 flex items-center gap-1.5 md:hidden">
                             <span
-                              className="size-2 rounded-full bg-amber-500 shrink-0"
+                              className="size-2 shrink-0 rounded-full bg-amber-500"
                               aria-hidden="true"
                             />
-                            <span className="font-mono text-[11px] font-bold uppercase tracking-wider text-amber-900">
+                            <span className="font-mono text-[11px] font-bold tracking-wider text-amber-900 uppercase">
                               {comparison.comparedPlatformName}
                             </span>
                           </div>
-                          <p className="whitespace-normal text-xs leading-relaxed text-slate-700 sm:text-sm">
+                          <p className="text-xs leading-relaxed whitespace-normal text-slate-700 sm:text-sm">
                             {dim.competitorValue ?? dim.productHuntValue}
                           </p>
                         </div>
@@ -328,10 +328,10 @@ export const ComparisonPageView = ({
                           <div className="mb-1.5 flex items-center justify-between gap-1.5 md:hidden">
                             <div className="flex items-center gap-1.5">
                               <span
-                                className="size-2 rounded-full bg-indigo-600 shrink-0"
+                                className="size-2 shrink-0 rounded-full bg-indigo-600"
                                 aria-hidden="true"
                               />
-                              <span className="font-mono text-[11px] font-bold uppercase tracking-wider text-indigo-950">
+                              <span className="font-mono text-[11px] font-bold tracking-wider text-indigo-950 uppercase">
                                 {SITE_CONFIG.name}
                               </span>
                             </div>
@@ -339,7 +339,7 @@ export const ComparisonPageView = ({
                               PERMANENT
                             </span>
                           </div>
-                          <p className="whitespace-normal text-xs font-medium leading-relaxed text-slate-900 sm:text-sm">
+                          <p className="text-xs leading-relaxed font-medium whitespace-normal text-slate-900 sm:text-sm">
                             {dim.launchNestsValue}
                           </p>
                         </div>
@@ -370,12 +370,16 @@ export const ComparisonPageView = ({
                     <div className="flex items-center gap-3">
                       <Avatar className="size-10 rounded-lg border border-slate-200 bg-white p-1 shadow-2xs">
                         <AvatarImage
-                          src={getFaviconUrl(competitorProfile.websiteUrl) ?? ""}
+                          src={
+                            getFaviconUrl(competitorProfile.websiteUrl) ?? ""
+                          }
                           alt={competitorProfile.name}
                           className="object-contain"
                         />
-                        <AvatarFallback className="rounded-lg font-mono text-xs font-bold text-amber-800 bg-amber-50">
-                          {comparison.comparedPlatformName.slice(0, 2).toUpperCase()}
+                        <AvatarFallback className="rounded-lg bg-amber-50 font-mono text-xs font-bold text-amber-800">
+                          {comparison.comparedPlatformName
+                            .slice(0, 2)
+                            .toUpperCase()}
                         </AvatarFallback>
                       </Avatar>
                       <div>
@@ -407,14 +411,12 @@ export const ComparisonPageView = ({
                       Documented Strengths
                     </span>
                     <ul className="flex flex-col gap-2 text-xs text-slate-600 sm:text-sm">
-                      {competitorProfile.keyStrengths.map(
-                        (str, i) => (
-                          <li key={i} className="flex items-start gap-2.5">
-                            <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-emerald-600" />
-                            <span>{str}</span>
-                          </li>
-                        )
-                      )}
+                      {competitorProfile.keyStrengths.map((str, i) => (
+                        <li key={i} className="flex items-start gap-2.5">
+                          <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-emerald-600" />
+                          <span>{str}</span>
+                        </li>
+                      ))}
                     </ul>
                   </div>
 
@@ -423,14 +425,12 @@ export const ComparisonPageView = ({
                       Documented Limitations
                     </span>
                     <ul className="flex flex-col gap-2 text-xs text-slate-600 sm:text-sm">
-                      {competitorProfile.keyLimitations.map(
-                        (lim, i) => (
-                          <li key={i} className="flex items-start gap-2.5">
-                            <XCircle className="mt-0.5 size-4 shrink-0 text-rose-500" />
-                            <span>{lim}</span>
-                          </li>
-                        )
-                      )}
+                      {competitorProfile.keyLimitations.map((lim, i) => (
+                        <li key={i} className="flex items-start gap-2.5">
+                          <XCircle className="mt-0.5 size-4 shrink-0 text-rose-500" />
+                          <span>{lim}</span>
+                        </li>
+                      ))}
                     </ul>
                   </div>
                 </div>
@@ -448,7 +448,7 @@ export const ComparisonPageView = ({
                           alt={SITE_CONFIG.name}
                           className="object-contain"
                         />
-                        <AvatarFallback className="rounded-lg font-mono text-xs font-bold text-indigo-800 bg-indigo-50">
+                        <AvatarFallback className="rounded-lg bg-indigo-50 font-mono text-xs font-bold text-indigo-800">
                           LN
                         </AvatarFallback>
                       </Avatar>
@@ -457,7 +457,10 @@ export const ComparisonPageView = ({
                           <h3 className="text-base font-bold text-slate-900 sm:text-lg">
                             {comparison.launchNestsProfile.name}
                           </h3>
-                          <Badge variant="outline" className="font-mono text-[10px]">
+                          <Badge
+                            variant="outline"
+                            className="font-mono text-[10px]"
+                          >
                             DEVELOPER DIRECTORY
                           </Badge>
                         </div>
@@ -546,19 +549,23 @@ export const ComparisonPageView = ({
                   </div>
 
                   {/* Inner 2-column comparative grid with corner brackets and dashed separation */}
-                  <div className="relative grid grid-cols-1 divide-y divide-dashed divide-border border border-dashed border-border bg-white md:grid-cols-2 md:divide-y-0 md:divide-x">
+                  <div className="relative grid grid-cols-1 divide-y divide-dashed divide-border border border-dashed border-border bg-white md:grid-cols-2 md:divide-x md:divide-y-0">
                     {/* Competitor Approach */}
                     <div className="group/item relative flex flex-col gap-2.5 p-5 transition-colors hover:bg-amber-50/20 md:p-6">
                       <CornerBrackets />
                       <div className="flex items-center gap-2">
                         <Avatar className="size-5 rounded-sm border border-slate-200 bg-white p-0.5">
                           <AvatarImage
-                            src={getFaviconUrl(competitorProfile.websiteUrl) ?? ""}
+                            src={
+                              getFaviconUrl(competitorProfile.websiteUrl) ?? ""
+                            }
                             alt={comparison.comparedPlatformName}
                             className="object-contain"
                           />
                           <AvatarFallback className="font-mono text-[9px] font-bold">
-                            {comparison.comparedPlatformName.slice(0, 2).toUpperCase()}
+                            {comparison.comparedPlatformName
+                              .slice(0, 2)
+                              .toUpperCase()}
                           </AvatarFallback>
                         </Avatar>
                         <span className="font-mono text-xs font-bold tracking-wider text-amber-900 uppercase">
@@ -580,7 +587,9 @@ export const ComparisonPageView = ({
                             alt={SITE_CONFIG.name}
                             className="object-contain"
                           />
-                          <AvatarFallback className="font-mono text-[9px] font-bold">LN</AvatarFallback>
+                          <AvatarFallback className="font-mono text-[9px] font-bold">
+                            LN
+                          </AvatarFallback>
                         </Avatar>
                         <span className="font-mono text-xs font-bold tracking-wider text-indigo-900 uppercase">
                           LaunchNests Approach
@@ -592,8 +601,8 @@ export const ComparisonPageView = ({
                     </div>
                   </div>
 
-                  <div className="flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-2.5 border-l-2 border-slate-900 bg-slate-50/80 px-4 py-3 text-xs leading-relaxed text-slate-700 sm:text-sm">
-                    <strong className="shrink-0 font-mono text-xs font-bold uppercase text-slate-900">
+                  <div className="flex flex-col gap-1 border-l-2 border-slate-900 bg-slate-50/80 px-4 py-3 text-xs leading-relaxed text-slate-700 sm:flex-row sm:items-start sm:gap-2.5 sm:text-sm">
+                    <strong className="shrink-0 font-mono text-xs font-bold text-slate-900 uppercase">
                       Practical Takeaway:
                     </strong>
                     <span>{deep.practicalTakeaway}</span>
@@ -827,7 +836,7 @@ export const ComparisonPageView = ({
                 size="default"
                 nativeButton={false}
                 render={<Link href={ROUTES.SUBMIT} />}
-                className="text-xs font-semibold w-full sm:w-auto"
+                className="w-full text-xs font-semibold sm:w-auto"
               >
                 Submit Your Product — 100% Free
               </Button>
@@ -836,7 +845,7 @@ export const ComparisonPageView = ({
                 size="default"
                 nativeButton={false}
                 render={<Link href={ROUTES.PRODUCTS} />}
-                className="text-xs font-semibold text-slate-700 w-full sm:w-auto"
+                className="w-full text-xs font-semibold text-slate-700 sm:w-auto"
               >
                 Browse Product Directory
               </Button>

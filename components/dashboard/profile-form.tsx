@@ -50,7 +50,10 @@ export const ProfileForm = ({ initialProfile }: ProfileFormProps) => {
   )
 
   const debouncedUsername = useDebounce(username, 300)
-  const cleanDebounced = debouncedUsername.trim().toLowerCase().replace(/^@/, "")
+  const cleanDebounced = debouncedUsername
+    .trim()
+    .toLowerCase()
+    .replace(/^@/, "")
   const { data: checkData, isFetching: isCheckingUsername } =
     useCheckUsername(cleanDebounced)
 

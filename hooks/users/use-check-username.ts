@@ -1,7 +1,10 @@
 "use client"
 
 import { useQuery } from "@tanstack/react-query"
-import { checkUsernameAvailability, type CheckUsernameResponse } from "@/lib/api/users"
+import {
+  checkUsernameAvailability,
+  type CheckUsernameResponse,
+} from "@/lib/api/users"
 
 export const CHECK_USERNAME_QUERY_KEY = (username: string) => [
   "users",

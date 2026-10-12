@@ -67,4 +67,3 @@ const DashboardProfilePage = async () => {
 }
 
 export default DashboardProfilePage
-

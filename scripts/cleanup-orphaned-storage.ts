@@ -1,8 +1,5 @@
 import "dotenv/config"
-import {
-  ListObjectsV2Command,
-  DeleteObjectsCommand,
-} from "@aws-sdk/client-s3"
+import { ListObjectsV2Command, DeleteObjectsCommand } from "@aws-sdk/client-s3"
 import { db, schema } from "@/db"
 import { getStorageClient, getStorageKeyFromUrl } from "@/lib/storage/s3"
 import { STORAGE_CONFIG } from "@/constants/storage"
@@ -87,7 +84,10 @@ const runCleanup = async () => {
       if (!item.Key) continue
 
       // Only check logos and screenshots folders
-      if (!item.Key.startsWith("logos/") && !item.Key.startsWith("screenshots/")) {
+      if (
+        !item.Key.startsWith("logos/") &&
+        !item.Key.startsWith("screenshots/")
+      ) {
         continue
       }
 

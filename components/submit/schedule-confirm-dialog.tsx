@@ -20,8 +20,18 @@ import {
 } from "@/utils/styles"
 
 const SHORT_MONTHS = [
-  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
 ]
 
 interface ScheduleConfirmDialogProps {
@@ -58,7 +68,10 @@ export const ScheduleConfirmDialog = ({
   const itemTypeLabel = isProduct ? "product" : "tool"
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && !isSubmitting && onClose()}>
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => !open && !isSubmitting && onClose()}
+    >
       <DialogContent className={scheduleModalContainer}>
         <DialogHeader className="p-0 text-left">
           <div className="flex items-start gap-3.5 pr-8">
@@ -84,7 +97,10 @@ export const ScheduleConfirmDialog = ({
                 {name || `Untitled ${itemTypeLabel}`}
               </span>
               <span className="text-xs text-slate-500">
-                Launch week: <strong className="font-semibold text-slate-700">{weekString}</strong>
+                Launch week:{" "}
+                <strong className="font-semibold text-slate-700">
+                  {weekString}
+                </strong>
               </span>
             </div>
           </div>
@@ -104,15 +120,17 @@ export const ScheduleConfirmDialog = ({
             </p>
             <div className="mt-1 flex flex-col gap-1.5 border-t border-slate-100 pt-2 text-[11px] text-slate-600">
               <div className="flex items-center gap-1.5">
-                <Check className="size-3 text-emerald-600 shrink-0" />
+                <Check className="size-3 shrink-0 text-emerald-600" />
                 <span>Permanent Do-Follow SEO Backlink on live launch</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <Check className="size-3 text-emerald-600 shrink-0" />
-                <span>Verified Checkmark Badge across search &amp; directory feeds</span>
+                <Check className="size-3 shrink-0 text-emerald-600" />
+                <span>
+                  Verified Checkmark Badge across search &amp; directory feeds
+                </span>
               </div>
               <div className="flex items-center gap-1.5">
-                <Check className="size-3 text-emerald-600 shrink-0" />
+                <Check className="size-3 shrink-0 text-emerald-600" />
                 <span>Priority inclusion in upcoming Weekly AI digest</span>
               </div>
             </div>
@@ -133,7 +151,7 @@ export const ScheduleConfirmDialog = ({
               type="button"
               onClick={onConfirm}
               disabled={isSubmitting}
-              className="gap-2 text-xs font-semibold bg-slate-900 text-white hover:bg-slate-800"
+              className="gap-2 bg-slate-900 text-xs font-semibold text-white hover:bg-slate-800"
             >
               {isSubmitting ? (
                 <>

@@ -10,11 +10,7 @@ export const metadata: Metadata = {
 }
 
 const CompareLayout = ({ children }: { children: React.ReactNode }) => {
-  return (
-    <div className="w-full bg-white">
-      {children}
-    </div>
-  )
+  return <div className="w-full bg-white">{children}</div>
 }
 
 export default CompareLayout

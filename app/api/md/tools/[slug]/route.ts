@@ -54,5 +54,8 @@ export const GET = async (
     },
     builtWithProducts.length
   )
-  return createMarkdownResponse(markdown, `${SITE_CONFIG.url}/tools/${tool.slug}`)
+  return createMarkdownResponse(
+    markdown,
+    `${SITE_CONFIG.url}/tools/${tool.slug}`
+  )
 }

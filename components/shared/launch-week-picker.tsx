@@ -13,12 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import {
-  Sparkles,
-  Calendar,
-  AlertTriangle,
-  ArrowRight,
-} from "lucide-react"
+import { Sparkles, Calendar, AlertTriangle, ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 interface LaunchWeekPickerProps {
@@ -43,7 +38,8 @@ export const LaunchWeekPicker = ({
     week: number
   } | null>(null)
 
-  const isPaidTier = currentTier === TIER.PREMIUM || currentTier === TIER.PREMIUM_PLUS
+  const isPaidTier =
+    currentTier === TIER.PREMIUM || currentTier === TIER.PREMIUM_PLUS
   const isPromoActive = Boolean(data?.promo?.isPromoActive)
 
   // Auto-select the closest available week when data loads if nothing is selected yet
@@ -55,10 +51,18 @@ export const LaunchWeekPicker = ({
       const first = data.weeks[0]
       onSelectWeek(first.isoYear, first.isoWeek)
     } else {
-      const firstAvailable = data.weeks.find((w) => !w.isFreeFull) ?? data.weeks[0]
+      const firstAvailable =
+        data.weeks.find((w) => !w.isFreeFull) ?? data.weeks[0]
       onSelectWeek(firstAvailable.isoYear, firstAvailable.isoWeek)
     }
-  }, [data, selectedYear, selectedWeek, isPromoActive, isPaidTier, onSelectWeek])
+  }, [
+    data,
+    selectedYear,
+    selectedWeek,
+    isPromoActive,
+    isPaidTier,
+    onSelectWeek,
+  ])
 
   const currentValue =
     selectedYear && selectedWeek ? `${selectedYear}-${selectedWeek}` : ""
@@ -80,7 +84,8 @@ export const LaunchWeekPicker = ({
   if (isError || !data?.weeks || data.weeks.length === 0) {
     return (
       <div className="rounded-md border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-xs text-slate-500">
-        Automatic launch schedule active. You will be scheduled for next week automatically.
+        Automatic launch schedule active. You will be scheduled for next week
+        automatically.
       </div>
     )
   }
@@ -88,11 +93,11 @@ export const LaunchWeekPicker = ({
   const { weeks } = data
 
   return (
-    <div className="flex flex-col gap-2 w-full">
+    <div className="flex w-full flex-col gap-2">
       <Select value={currentValue} onValueChange={handleValueChange}>
         <SelectTrigger className="h-10 w-full rounded-md border border-slate-200/90 bg-white px-3 text-xs shadow-2xs transition-colors hover:border-slate-300">
           <div className="flex items-center gap-2 truncate">
-            <Calendar className="size-3.5 text-slate-400 shrink-0" />
+            <Calendar className="size-3.5 shrink-0 text-slate-400" />
             <SelectValue placeholder="Select a launch week..." />
           </div>
         </SelectTrigger>
@@ -106,30 +111,37 @@ export const LaunchWeekPicker = ({
                 key={`${w.isoYear}-${w.isoWeek}`}
                 value={`${w.isoYear}-${w.isoWeek}`}
                 disabled={isFull}
-                className="cursor-pointer py-2.5 px-3"
+                className="cursor-pointer px-3 py-2.5"
               >
                 <div className="flex w-full items-center justify-between gap-4 text-xs">
                   <div className="flex items-center gap-2">
-                    <span className="font-bold text-slate-900">{w.weekLabel}</span>
-                    <span className="text-slate-500 font-normal">({w.dateRange})</span>
+                    <span className="font-bold text-slate-900">
+                      {w.weekLabel}
+                    </span>
+                    <span className="font-normal text-slate-500">
+                      ({w.dateRange})
+                    </span>
                     {isFastTrack && !isFull && (
-                      <span className="rounded bg-indigo-50 px-1.5 py-0.2 font-mono text-[9px] font-semibold text-indigo-700">
+                      <span className="py-0.2 rounded bg-indigo-50 px-1.5 font-mono text-[9px] font-semibold text-indigo-700">
                         Next Week
                       </span>
                     )}
                   </div>
-                  <div className="flex items-center gap-1.5 shrink-0">
+                  <div className="flex shrink-0 items-center gap-1.5">
                     {isPromoActive ? (
                       <span className="rounded bg-emerald-50 px-1.5 py-0.5 font-mono text-[10px] font-bold text-emerald-700">
                         Free Premium Slot
                       </span>
                     ) : isPaidTier ? (
-                      <span className="text-indigo-600 font-medium">Unlimited</span>
+                      <span className="font-medium text-indigo-600">
+                        Unlimited
+                      </span>
                     ) : isFull ? (
-                      <span className="text-rose-500 font-medium">Full</span>
+                      <span className="font-medium text-rose-500">Full</span>
                     ) : (
                       <span className="text-slate-500">
-                        {w.freeSlotsRemaining} of {MAX_FREE_LAUNCHES_PER_WEEK} slots left
+                        {w.freeSlotsRemaining} of {MAX_FREE_LAUNCHES_PER_WEEK}{" "}
+                        slots left
                       </span>
                     )}
                   </div>
@@ -145,7 +157,8 @@ export const LaunchWeekPicker = ({
         <div className="flex items-center gap-1.5 text-[11px] text-emerald-700">
           <Sparkles className="size-3.5 shrink-0 text-emerald-600" />
           <span>
-            <strong>Launch Special Active:</strong> First 50 launches receive a Free Lifetime Premium Listing ({LAUNCH_PROMO.VALUE_GIFTED} value).
+            <strong>Launch Special Active:</strong> First 50 launches receive a
+            Free Lifetime Premium Listing ({LAUNCH_PROMO.VALUE_GIFTED} value).
           </span>
         </div>
       )}
@@ -156,7 +169,8 @@ export const LaunchWeekPicker = ({
           <div className="flex items-center gap-2">
             <AlertTriangle className="size-4 shrink-0 text-amber-600" />
             <p>
-              Week {clickedFullWeek.week} free slots are full. Upgrade to schedule for this week.
+              Week {clickedFullWeek.week} free slots are full. Upgrade to
+              schedule for this week.
             </p>
           </div>
           <Button

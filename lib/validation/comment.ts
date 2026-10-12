@@ -14,11 +14,7 @@ export const createCommentSchema = z.object({
     .refine((val) => !URL_REGEX.test(val), {
       message: "Links are not allowed in comments",
     })
-    .transform((val) =>
-      val
-        .replace(/<[^>]*>/g, "")
-        .trim()
-    ),
+    .transform((val) => val.replace(/<[^>]*>/g, "").trim()),
 })
 
 export const deleteCommentSchema = z.object({

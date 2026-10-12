@@ -8,10 +8,20 @@ const getClientIp = (request: NextRequest) =>
   "127.0.0.1"
 
 const getComparisonSlugFromPath = (path: string): string | null => {
-  if (path === "/producthunt-alternative" || path === "/producthunt-alternative.md") return "producthunt"
-  if (path === "/uneed-alternative" || path === "/uneed-alternative.md") return "uneed"
-  if (path === "/microlaunch-alternative" || path === "/microlaunch-alternative.md") return "microlaunch"
-  if (path === "/betalist-alternative" || path === "/betalist-alternative.md") return "betalist"
+  if (
+    path === "/producthunt-alternative" ||
+    path === "/producthunt-alternative.md"
+  )
+    return "producthunt"
+  if (path === "/uneed-alternative" || path === "/uneed-alternative.md")
+    return "uneed"
+  if (
+    path === "/microlaunch-alternative" ||
+    path === "/microlaunch-alternative.md"
+  )
+    return "microlaunch"
+  if (path === "/betalist-alternative" || path === "/betalist-alternative.md")
+    return "betalist"
   const compMatch = path.match(/^\/compare\/([^/]+?)(?:\.md)?$/)
   if (compMatch && compMatch[1]) return compMatch[1]
   const altSuffixMatch = path.match(/^\/([^/]+)-alternative(?:\.md)?$/)

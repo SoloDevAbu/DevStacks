@@ -5,11 +5,17 @@ export interface ISOWeekInfo {
   endDate: Date
 }
 
-export const getISOWeek = (date: Date): { isoYear: number; isoWeek: number } => {
-  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()))
+export const getISOWeek = (
+  date: Date
+): { isoYear: number; isoWeek: number } => {
+  const d = new Date(
+    Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())
+  )
   d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7))
   const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1))
-  const isoWeek = Math.ceil(((d.getTime() - yearStart.getTime()) / 86400000 + 1) / 7)
+  const isoWeek = Math.ceil(
+    ((d.getTime() - yearStart.getTime()) / 86400000 + 1) / 7
+  )
   return { isoYear: d.getUTCFullYear(), isoWeek }
 }
 
@@ -65,8 +71,18 @@ export const getRemainingWeeksOfYear = (
 }
 
 const MONTH_SHORT = [
-  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
 ] as const
 
 export const formatWeekLabel = (isoYear: number, isoWeek: number): string => {
@@ -82,7 +98,10 @@ export const formatWeekLabel = (isoYear: number, isoWeek: number): string => {
   return `W${isoWeek}: ${startMonth} ${startDay} – ${endMonth} ${endDay}`
 }
 
-export const formatWeekRangeShort = (isoYear: number, isoWeek: number): string => {
+export const formatWeekRangeShort = (
+  isoYear: number,
+  isoWeek: number
+): string => {
   const { startDate, endDate } = getISOWeekRange(isoYear, isoWeek)
   const startMonth = MONTH_SHORT[startDate.getUTCMonth()]
   const endMonth = MONTH_SHORT[endDate.getUTCMonth()]

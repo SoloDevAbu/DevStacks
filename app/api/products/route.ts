@@ -85,7 +85,9 @@ export const POST = async (req: NextRequest) => {
       submitterId: session.user.id,
       tags: Array.isArray(tags) ? tags : [],
       platforms: (rest.platforms ?? []) as any,
-      builtWithTools: Array.isArray(builtWithTools) ? builtWithTools : undefined,
+      builtWithTools: Array.isArray(builtWithTools)
+        ? builtWithTools
+        : undefined,
     })
 
     return NextResponse.json({ data: product }, { status: 201 })

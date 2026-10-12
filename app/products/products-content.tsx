@@ -29,7 +29,9 @@ export const ProductsDirectoryContent = ({
   initialProducts = [],
 }: ProductsDirectoryContentProps) => {
   const router = useRouter()
-  const [selectedCategory, setSelectedCategory] = useState<string | undefined>(initialCategory)
+  const [selectedCategory, setSelectedCategory] = useState<string | undefined>(
+    initialCategory
+  )
   const [selectedPricing, setSelectedPricing] = useState<string>(initialPricing)
   const [sortBy, setSortBy] = useState<ProductSortOption>(initialSortBy)
 
@@ -46,7 +48,9 @@ export const ProductsDirectoryContent = ({
       if (initialQuery) params.set("q", initialQuery)
 
       const qs = params.toString()
-      router.push(qs ? `${ROUTES.PRODUCTS}?${qs}` : ROUTES.PRODUCTS, { scroll: false })
+      router.push(qs ? `${ROUTES.PRODUCTS}?${qs}` : ROUTES.PRODUCTS, {
+        scroll: false,
+      })
     },
     [router, selectedCategory, selectedPricing, sortBy, initialQuery]
   )
@@ -93,7 +97,9 @@ export const ProductsDirectoryContent = ({
     enabled: hasNextPage && !isFetchingNextPage,
   })
 
-  const displayedProducts = data?.pages.flatMap((page) => page) ?? (isInitialParams ? initialProducts : [])
+  const displayedProducts =
+    data?.pages.flatMap((page) => page) ??
+    (isInitialParams ? initialProducts : [])
 
   return (
     <div className="flex w-full flex-1 flex-col">
@@ -107,10 +113,7 @@ export const ProductsDirectoryContent = ({
       />
 
       <div className="flex w-full flex-1 flex-col pb-8">
-        <ProductList
-          products={displayedProducts}
-          showMedals
-        />
+        <ProductList products={displayedProducts} showMedals />
         <InfiniteScrollSentinel
           sentinelRef={sentinelRef}
           isFetchingNextPage={isFetchingNextPage}

@@ -3,13 +3,7 @@
 import { useState, useEffect, useCallback, useRef, type ReactNode } from "react"
 import { useRouter } from "next/navigation"
 import { trackSearch } from "@/lib/analytics/events"
-import {
-  Search,
-  Wrench,
-  Package,
-  TrendingUp,
-  CreditCard,
-} from "lucide-react"
+import { Search, Wrench, Package, TrendingUp, CreditCard } from "lucide-react"
 import { Spinner } from "@/components/ui/spinner"
 import { Kbd, KbdGroup } from "@/components/ui/kbd"
 import { Badge } from "@/components/ui/badge"
@@ -45,7 +39,11 @@ import { cn } from "@/lib/utils"
 
 export { useSearchCommand }
 
-export const SearchCommandProvider = ({ children }: { children: ReactNode }) => {
+export const SearchCommandProvider = ({
+  children,
+}: {
+  children: ReactNode
+}) => {
   const router = useRouter()
   const [isOpen, setIsOpen] = useState(false)
   const [search, setSearch] = useState("")
@@ -146,7 +144,8 @@ export const SearchCommandProvider = ({ children }: { children: ReactNode }) => 
               </div>
             ) : hasQuery && !hasResults ? (
               <CommandEmpty>
-                No tools or products found matching &ldquo;{debouncedSearch}&rdquo;.
+                No tools or products found matching &ldquo;{debouncedSearch}
+                &rdquo;.
               </CommandEmpty>
             ) : null}
 
@@ -173,7 +172,10 @@ export const SearchCommandProvider = ({ children }: { children: ReactNode }) => 
                             <span className="truncate font-semibold text-slate-900">
                               {tool.name}
                             </span>
-                            <VerifiedBadge tier={tool.tier as Tier} className="size-3.5 shrink-0" />
+                            <VerifiedBadge
+                              tier={tool.tier as Tier}
+                              className="size-3.5 shrink-0"
+                            />
                             {tool.pricing && (
                               <Badge
                                 variant="outline"
@@ -192,7 +194,10 @@ export const SearchCommandProvider = ({ children }: { children: ReactNode }) => 
                             </p>
                           )}
                         </div>
-                        <ItemTypeBadge kind={ITEM_KIND.TOOL} className="shrink-0 text-[10px]" />
+                        <ItemTypeBadge
+                          kind={ITEM_KIND.TOOL}
+                          className="shrink-0 text-[10px]"
+                        />
                       </CommandItem>
                     ))}
                   </CommandGroup>
@@ -204,7 +209,9 @@ export const SearchCommandProvider = ({ children }: { children: ReactNode }) => 
                       <CommandItem
                         key={`prod-${product.id}`}
                         value={`prod-${product.slug}`}
-                        onSelect={() => handleSelect(ROUTES.PRODUCT(product.slug))}
+                        onSelect={() =>
+                          handleSelect(ROUTES.PRODUCT(product.slug))
+                        }
                         className="flex cursor-pointer items-center gap-2.5 px-2.5 py-2"
                       >
                         <ProductLogo
@@ -219,7 +226,10 @@ export const SearchCommandProvider = ({ children }: { children: ReactNode }) => 
                             <span className="truncate font-semibold text-slate-900">
                               {product.name}
                             </span>
-                            <VerifiedBadge tier={product.tier as Tier} className="size-3.5 shrink-0" />
+                            <VerifiedBadge
+                              tier={product.tier as Tier}
+                              className="size-3.5 shrink-0"
+                            />
                             {product.pricing && (
                               <Badge
                                 variant="outline"
@@ -238,7 +248,10 @@ export const SearchCommandProvider = ({ children }: { children: ReactNode }) => 
                             </p>
                           )}
                         </div>
-                        <ItemTypeBadge kind={ITEM_KIND.PRODUCT} className="shrink-0 text-[10px]" />
+                        <ItemTypeBadge
+                          kind={ITEM_KIND.PRODUCT}
+                          className="shrink-0 text-[10px]"
+                        />
                       </CommandItem>
                     ))}
                   </CommandGroup>
@@ -257,7 +270,9 @@ export const SearchCommandProvider = ({ children }: { children: ReactNode }) => 
                     className="flex cursor-pointer items-center gap-2 px-2.5 py-2"
                   >
                     <Wrench className="size-3.5 text-slate-500" />
-                    <span>View all tools matching &ldquo;{debouncedSearch}&rdquo;</span>
+                    <span>
+                      View all tools matching &ldquo;{debouncedSearch}&rdquo;
+                    </span>
                     <span className="ml-auto font-mono text-[10px] text-muted-foreground">
                       Tools
                     </span>
@@ -272,7 +287,9 @@ export const SearchCommandProvider = ({ children }: { children: ReactNode }) => 
                     className="flex cursor-pointer items-center gap-2 px-2.5 py-2"
                   >
                     <Package className="size-3.5 text-slate-500" />
-                    <span>View all products matching &ldquo;{debouncedSearch}&rdquo;</span>
+                    <span>
+                      View all products matching &ldquo;{debouncedSearch}&rdquo;
+                    </span>
                     <span className="ml-auto font-mono text-[10px] text-muted-foreground">
                       Products
                     </span>
@@ -290,7 +307,9 @@ export const SearchCommandProvider = ({ children }: { children: ReactNode }) => 
                 >
                   <Wrench className="size-4 text-blue-500" />
                   <div className="flex flex-col">
-                    <span className="font-medium text-slate-900">Developer Tools</span>
+                    <span className="font-medium text-slate-900">
+                      Developer Tools
+                    </span>
                     <span className="text-[11px] text-muted-foreground">
                       Browse developer tools, APIs & SDKs
                     </span>
@@ -303,7 +322,9 @@ export const SearchCommandProvider = ({ children }: { children: ReactNode }) => 
                 >
                   <Package className="size-4 text-indigo-500" />
                   <div className="flex flex-col">
-                    <span className="font-medium text-slate-900">Products & Launches</span>
+                    <span className="font-medium text-slate-900">
+                      Products & Launches
+                    </span>
                     <span className="text-[11px] text-muted-foreground">
                       Explore newly launched projects & software
                     </span>
@@ -329,7 +350,9 @@ export const SearchCommandProvider = ({ children }: { children: ReactNode }) => 
                 >
                   <CreditCard className="size-4 text-amber-500" />
                   <div className="flex flex-col">
-                    <span className="font-medium text-slate-900">Pricing & Premium</span>
+                    <span className="font-medium text-slate-900">
+                      Pricing & Premium
+                    </span>
                     <span className="text-[11px] text-muted-foreground">
                       Upgrade tiers, get verified & boost visibility
                     </span>
@@ -378,7 +401,9 @@ export interface GlobalSearchCommandProps {
   className?: string
 }
 
-export const GlobalSearchCommand = ({ className }: GlobalSearchCommandProps) => {
+export const GlobalSearchCommand = ({
+  className,
+}: GlobalSearchCommandProps) => {
   const { openSearch } = useSearchCommand()
   const [isMac, setIsMac] = useState(false)
 

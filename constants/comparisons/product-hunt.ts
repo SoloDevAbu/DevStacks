@@ -83,7 +83,8 @@ export const PRODUCT_HUNT_COMPARISON: PlatformComparison = {
       productHuntValue: "24-hour launch competition & daily leaderboard",
       launchNestsValue: "Perpetual developer directory & tech-stack database",
       highlight: "neutral",
-      description: "How each platform frames its primary user and maker experience.",
+      description:
+        "How each platform frames its primary user and maker experience.",
     },
     {
       key: "audience",
@@ -91,7 +92,8 @@ export const PRODUCT_HUNT_COMPARISON: PlatformComparison = {
       productHuntValue: "Broad tech ecosystem (consumers, founders, VCs)",
       launchNestsValue: "Software engineers, devtool builders, AI agents",
       highlight: "neutral",
-      description: "Product Hunt serves general tech; LaunchNests focuses on developers.",
+      description:
+        "Product Hunt serves general tech; LaunchNests focuses on developers.",
     },
     {
       key: "lifespan",
@@ -99,7 +101,8 @@ export const PRODUCT_HUNT_COMPARISON: PlatformComparison = {
       productHuntValue: "24-hour launch window (12:01 AM – 11:59 PM PT)",
       launchNestsValue: "Permanent categorized indexing & weekly momentum",
       highlight: "launchNests",
-      description: "Product Hunt discovery peaks in 1 day; LaunchNests remains cataloged.",
+      description:
+        "Product Hunt discovery peaks in 1 day; LaunchNests remains cataloged.",
     },
     {
       key: "techstack",
@@ -107,7 +110,8 @@ export const PRODUCT_HUNT_COMPARISON: PlatformComparison = {
       productHuntValue: "None (isolated product listings)",
       launchNestsValue: "Two-way 'Built With' relational tech-stack graph",
       highlight: "launchNests",
-      description: "LaunchNests connects products to the tools, databases, and APIs powering them.",
+      description:
+        "LaunchNests connects products to the tools, databases, and APIs powering them.",
     },
     {
       key: "linkStructure",
@@ -123,23 +127,28 @@ export const PRODUCT_HUNT_COMPARISON: PlatformComparison = {
       productHuntValue: "Standard HTML pages; no /llms.txt or MCP server",
       launchNestsValue: "/llms.txt, /llms-full.txt, raw .md, & live MCP server",
       highlight: "launchNests",
-      description: "Readiness for LLM retrieval (ChatGPT, Claude, Perplexity, Cursor).",
+      description:
+        "Readiness for LLM retrieval (ChatGPT, Claude, Perplexity, Cursor).",
     },
     {
       key: "submissionRules",
       label: "Relaunch & Submission Policy",
       productHuntValue: "Strict 6-month cooldown; no directories/boilerplates",
-      launchNestsValue: "Continuous listing; devtools, boilerplates & APIs welcome",
+      launchNestsValue:
+        "Continuous listing; devtools, boilerplates & APIs welcome",
       highlight: "launchNests",
-      description: "Eligibility rules for software, devtools, and iterative product updates.",
+      description:
+        "Eligibility rules for software, devtools, and iterative product updates.",
     },
     {
       key: "socialProof",
       label: "Social Proof Badges",
       productHuntValue: "Prestigious '#1 Product of the Day' embed badges",
-      launchNestsValue: "Community upvotes, trending score, & verified builds count",
+      launchNestsValue:
+        "Community upvotes, trending score, & verified builds count",
       highlight: "productHunt",
-      description: "Product Hunt badges carry unmatched recognition among tech media and investors.",
+      description:
+        "Product Hunt badges carry unmatched recognition among tech media and investors.",
     },
     {
       key: "pricing",
@@ -155,14 +164,16 @@ export const PRODUCT_HUNT_COMPARISON: PlatformComparison = {
       productHuntValue: "Mainstream apps seeking viral launch-day buzz",
       launchNestsValue: "Developer products, APIs, and tech-stack visibility",
       highlight: "neutral",
-      description: "Different strategic priorities depending on your product type.",
+      description:
+        "Different strategic priorities depending on your product type.",
     },
   ],
   deepDives: [
     {
       id: "discovery-lifespan",
       title: "Launch-Day Spike vs Perpetual Directory Discovery",
-      subtitle: "The difference between an ephemeral voting event and lasting catalog visibility",
+      subtitle:
+        "The difference between an ephemeral voting event and lasting catalog visibility",
       productHuntAngle:
         "Product Hunt revolves around a high-stakes 24-hour cycle. Products go live at 12:01 AM PT, and makers spend the entire day rallying supporters, answering comments, and competing for a top 5 badge. For successful launches, the traffic spike can be intense. However, once the 24 hours conclude, products move off the homepage into archive lists, and daily referral traffic typically declines significantly.",
       launchNestsAngle:
@@ -173,7 +184,8 @@ export const PRODUCT_HUNT_COMPARISON: PlatformComparison = {
     {
       id: "audience-focus",
       title: "Broad Tech Enthusiasts vs Software Engineers",
-      subtitle: "Aligning your product category with the visitors who browse each platform",
+      subtitle:
+        "Aligning your product category with the visitors who browse each platform",
       productHuntAngle:
         "Product Hunt's audience spans consumer tech, lifestyle apps, productivity tools, AI novelties, marketing SaaS, and hardware. While developer tools do launch on Product Hunt, they compete on the same leaderboard against mainstream consumer applications, gamified apps, and B2B marketing tools that naturally appeal to a wider non-technical voting base.",
       launchNestsAngle:
@@ -184,7 +196,8 @@ export const PRODUCT_HUNT_COMPARISON: PlatformComparison = {
     {
       id: "tech-stack-graph",
       title: "Isolated Product Profiles vs The 'Built With' Graph",
-      subtitle: "How architectural connections create bidirectional organic discovery",
+      subtitle:
+        "How architectural connections create bidirectional organic discovery",
       productHuntAngle:
         "On Product Hunt, each product listing is an independent entity. There is no native data model showing which developer tools, databases, or cloud infrastructure power the product, nor can users discover other products built with the same tech stack.",
       launchNestsAngle:
@@ -195,7 +208,8 @@ export const PRODUCT_HUNT_COMPARISON: PlatformComparison = {
     {
       id: "ai-readiness",
       title: "Standard Web Browsing vs AI & Machine Accessibility (AEO/GEO)",
-      subtitle: "Preparing your product for autonomous agents and LLM answer engines",
+      subtitle:
+        "Preparing your product for autonomous agents and LLM answer engines",
       productHuntAngle:
         "Product Hunt serves human web visitors through traditional HTML and client-rendered web views. It does not provide public machine-readable indexes, structured /llms.txt manifests, or API protocols for generative AI search engines.",
       launchNestsAngle:
@@ -206,7 +220,8 @@ export const PRODUCT_HUNT_COMPARISON: PlatformComparison = {
     {
       id: "submission-and-links",
       title: "Submission Rules, Cooldowns & Link Equity",
-      subtitle: "Understanding platform guidelines, restrictions, and SEO link attributes",
+      subtitle:
+        "Understanding platform guidelines, restrictions, and SEO link attributes",
       productHuntAngle:
         "Product Hunt enforces strict guidelines: personal accounts only, a 6-month mandatory cooldown between posts of the same product (requiring substantial new features), and an explicit policy of not featuring directories, templates, boilerplates, or waitlists without immediate access. Furthermore, outbound product links pass through tracking redirects (/r/) with rel='nofollow' attributes, which search engines do not treat as direct authority endorsements.",
       launchNestsAngle:
@@ -264,7 +279,8 @@ export const PRODUCT_HUNT_COMPARISON: PlatformComparison = {
   ],
   canYouUseBoth: {
     heading: "Can You Use Both Platforms Together?",
-    subheading: "A practical omnichannel distribution strategy for modern software builders",
+    subheading:
+      "A practical omnichannel distribution strategy for modern software builders",
     description:
       "Product Hunt and LaunchNests are not mutually exclusive. In fact, combining them offers a balanced distribution strategy that covers both immediate launch-day momentum and long-term organic discoverability.",
     strategySteps: [
@@ -301,12 +317,14 @@ export const PRODUCT_HUNT_COMPARISON: PlatformComparison = {
   },
   faqs: [
     {
-      question: "Is LaunchNests a direct competitor or alternative to Product Hunt?",
+      question:
+        "Is LaunchNests a direct competitor or alternative to Product Hunt?",
       answer:
         "LaunchNests serves as an alternative approach to product discovery, especially for developer tools, APIs, and software applications. While Product Hunt focuses on a 24-hour daily launch competition for broad tech products, LaunchNests provides a permanent directory, a relational 'Built With' tech-stack database, and machine-readable endpoints for AI search engines. Many makers use both platforms together.",
     },
     {
-      question: "Can I launch the same product on both Product Hunt and LaunchNests?",
+      question:
+        "Can I launch the same product on both Product Hunt and LaunchNests?",
       answer:
         "Yes. There are no exclusivity restrictions on either platform. Launching on Product Hunt gives you a 24-hour burst of early-adopter visibility, while listing on LaunchNests ensures your product remains permanently searchable by category, tech stack, and AI agents long after the launch day ends.",
     },
@@ -316,7 +334,8 @@ export const PRODUCT_HUNT_COMPARISON: PlatformComparison = {
         "Developers often choose LaunchNests when they are building technical products (libraries, APIs, databases, boilerplates) that may not appeal to Product Hunt's general consumer audience. LaunchNests listings also do not expire after 24 hours, do not require a 6-month cooldown between updates, and include two-way tech-stack discovery linking tools to real-world builds.",
     },
     {
-      question: "How does product discovery work on LaunchNests after launch week?",
+      question:
+        "How does product discovery work on LaunchNests after launch week?",
       answer:
         "On LaunchNests, products do not disappear into archives. They remain permanently accessible through category hubs, filterable by pricing and adoption, searchable via global search, and discoverable through the 'Built With' profiles of all the underlying tools used to build them. Additionally, autonomous AI assistants retrieve structured data from /llms.txt and our MCP server.",
     },
@@ -326,7 +345,8 @@ export const PRODUCT_HUNT_COMPARISON: PlatformComparison = {
         "Yes, listing on LaunchNests is 100% free for software products, developer tools, open-source repositories, and indie projects. Every approved submission receives permanent directory indexing, structured JSON-LD schema, and inclusion in AI crawler feeds. Optional paid sponsorships are available for makers seeking additional sidebar or banner visibility.",
     },
     {
-      question: "How does LaunchNests handle outbound links compared to Product Hunt?",
+      question:
+        "How does LaunchNests handle outbound links compared to Product Hunt?",
       answer:
         "Product Hunt routes outbound website clicks through tracking redirect links (/r/) with rel='nofollow' attributes. LaunchNests provides direct outbound links on product profiles, and verified listings include Do-Follow links to pass domain authority directly to your product.",
     },

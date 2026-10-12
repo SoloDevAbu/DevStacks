@@ -21,7 +21,9 @@ export const GET = async (req: NextRequest) => {
       )
     }
 
-    const weeks = await getWeekAvailability(parsed.data.placement as AdPlacement)
+    const weeks = await getWeekAvailability(
+      parsed.data.placement as AdPlacement
+    )
 
     return NextResponse.json(
       { data: weeks },

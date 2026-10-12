@@ -270,7 +270,8 @@ export const cardCommentGroup =
   "group/comment inline-flex shrink-0 items-center gap-1 text-[11px] sm:text-xs font-medium text-slate-500 transition-colors hover:text-slate-700"
 
 export const cardTagIcon = "size-3 sm:size-3.5 shrink-0 text-slate-400"
-export const cardTagsGroup = "flex min-w-0 items-center gap-1 sm:gap-1.5 overflow-hidden flex-nowrap"
+export const cardTagsGroup =
+  "flex min-w-0 items-center gap-1 sm:gap-1.5 overflow-hidden flex-nowrap"
 export const cardTagBadge =
   "truncate shrink-0 rounded-md border border-slate-200/80 bg-slate-100/70 px-1.5 py-0 text-[10px] sm:px-2 sm:py-0.5 sm:text-xs font-medium text-slate-600 transition-colors hover:bg-slate-200/60 max-w-[120px]"
 
@@ -301,8 +302,7 @@ export const sidebarContainer =
 export const sidebarNavGroup =
   "flex flex-col gap-3.5 xl:gap-5 [@media(max-height:720px)]:gap-2"
 
-export const sidebarNavSection =
-  "flex flex-col gap-1 xl:gap-1.5"
+export const sidebarNavSection = "flex flex-col gap-1 xl:gap-1.5"
 
 export const sidebarHeading =
   "font-mono text-[10px] xl:text-[11px] font-bold tracking-wider text-slate-400 uppercase select-none"
@@ -579,7 +579,7 @@ export const termsBulletList =
 
 export const activeSponsorCardBg = (tier?: Tier) =>
   cn(
-    "group/sponsor relative rounded-none border border-dashed p-4 transition-all hover:shadow-xs overflow-hidden",
+    "group/sponsor relative overflow-hidden rounded-none border border-dashed p-4 transition-all hover:shadow-xs",
     tier === TIER.PREMIUM_PLUS
       ? "border-amber-300/90 bg-linear-to-br from-amber-50/70 via-white to-orange-50/50 hover:border-amber-400"
       : tier === TIER.PREMIUM
@@ -717,7 +717,7 @@ export const sidebarLaunchVotes =
 
 export const itemTypeBadge = (kind: ItemKind) =>
   cn(
-    "flex items-center rounded-none px-1.5 py-0.5 text-[10px] font-bold tracking-wider uppercase transition-colors shrink-0",
+    "flex shrink-0 items-center rounded-none px-1.5 py-0.5 text-[10px] font-bold tracking-wider uppercase transition-colors",
     kind === ITEM_KIND.TOOL
       ? "border-sky-200/80 bg-sky-50/80 text-sky-700 hover:bg-sky-100/80"
       : "border-violet-200/80 bg-violet-50/80 text-violet-700 hover:bg-violet-100/80"
@@ -815,8 +815,7 @@ export const comparisonSectionSubtitle =
 export const comparisonTableCard =
   "w-full overflow-hidden rounded-xl border border-dashed border-border bg-white shadow-2xs"
 
-export const comparisonTable =
-  "w-full block md:table caption-bottom text-xs"
+export const comparisonTable = "w-full block md:table caption-bottom text-xs"
 
 export const comparisonTableHeader =
   "sr-only md:not-sr-only md:table-header-group"
@@ -880,7 +879,3 @@ export const uploaderThumbnailCard =
 
 export const uploaderAspectNotice =
   "inline-flex items-center gap-1.5 rounded-md border border-slate-200/80 bg-slate-50 px-2.5 py-1 text-[11px] font-medium text-slate-600"
-
-
-
-

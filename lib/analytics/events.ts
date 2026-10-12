@@ -52,11 +52,16 @@ export interface PurchaseParams {
 
 const PURCHASE_STORAGE_KEY = "launchnests_tracked_purchases"
 
-const dispatchGAEvent = (eventName: string, params: Record<string, unknown> = {}) => {
+const dispatchGAEvent = (
+  eventName: string,
+  params: Record<string, unknown> = {}
+) => {
   if (typeof window === "undefined") return
 
   try {
-    const gtagFn = (window as unknown as { gtag?: (...args: unknown[]) => void }).gtag
+    const gtagFn = (
+      window as unknown as { gtag?: (...args: unknown[]) => void }
+    ).gtag
     if (typeof gtagFn === "function") {
       gtagFn("event", eventName, params)
     } else {

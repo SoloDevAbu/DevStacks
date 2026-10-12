@@ -10,7 +10,10 @@ export const GET = async (request: Request) => {
   const weekParam = searchParams.get("week")
 
   if (!yearParam || !weekParam) {
-    return NextResponse.json({ error: "year and week are required" }, { status: 400 })
+    return NextResponse.json(
+      { error: "year and week are required" },
+      { status: 400 }
+    )
   }
 
   const year = parseInt(yearParam, 10)
@@ -22,13 +25,23 @@ export const GET = async (request: Request) => {
 
   const { year: currentYear, week: currentWeek } = getCurrentWeek()
   if (year > currentYear || (year === currentYear && week > currentWeek)) {
-    return NextResponse.json({ error: "Cannot fetch future weeks" }, { status: 400 })
+    return NextResponse.json(
+      { error: "Cannot fetch future weeks" },
+      { status: 400 }
+    )
   }
 
   try {
-    const launches = await getWeeklyLaunches({ year, week, limit: HOMEPAGE_LIMITS.WEEKLY_LAUNCHES })
+    const launches = await getWeeklyLaunches({
+      year,
+      week,
+      limit: HOMEPAGE_LIMITS.WEEKLY_LAUNCHES,
+    })
     return NextResponse.json(launches)
   } catch {
-    return NextResponse.json({ error: "Failed to fetch weekly launches" }, { status: 500 })
+    return NextResponse.json(
+      { error: "Failed to fetch weekly launches" },
+      { status: 500 }
+    )
   }
 }

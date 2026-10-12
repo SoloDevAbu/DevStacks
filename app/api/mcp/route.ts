@@ -76,7 +76,10 @@ const MCP_TOOLS = [
     inputSchema: {
       type: "object",
       properties: {
-        username: { type: "string", description: "Maker username, e.g. 'alice'" },
+        username: {
+          type: "string",
+          description: "Maker username, e.g. 'alice'",
+        },
       },
       required: ["username"],
     },
@@ -106,7 +109,8 @@ const MCP_TOOLS = [
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Requested-With",
+  "Access-Control-Allow-Headers":
+    "Content-Type, Authorization, X-Requested-With",
 }
 
 export const OPTIONS = () => {
@@ -130,7 +134,8 @@ export const GET = () => {
   const discovery = {
     name: `${SITE_CONFIG.name} MCP`,
     transport: "streamable-http",
-    usage: "POST JSON-RPC 2.0 messages to this endpoint (/api/mcp). GET is discovery only.",
+    usage:
+      "POST JSON-RPC 2.0 messages to this endpoint (/api/mcp). GET is discovery only.",
     endpoint: `${SITE_CONFIG.url}/api/mcp`,
     alias: `${SITE_CONFIG.url}/mcp`,
     documentation: `${SITE_CONFIG.url}/mcp.md`,
@@ -163,7 +168,11 @@ export const POST = async (request: NextRequest) => {
     body = await request.json()
   } catch {
     return sendJsonRpc(
-      { jsonrpc: "2.0", id: null, error: { code: -32700, message: "Parse error" } },
+      {
+        jsonrpc: "2.0",
+        id: null,
+        error: { code: -32700, message: "Parse error" },
+      },
       400
     )
   }
@@ -203,7 +212,8 @@ export const POST = async (request: NextRequest) => {
 
   if (method === "tools/call") {
     const toolName = (params as { name?: string }).name
-    const toolArgs = (params as { arguments?: Record<string, unknown> }).arguments ?? {}
+    const toolArgs =
+      (params as { arguments?: Record<string, unknown> }).arguments ?? {}
 
     try {
       if (toolName === "search_tools") {
@@ -239,7 +249,12 @@ export const POST = async (request: NextRequest) => {
           jsonrpc: "2.0",
           id,
           result: {
-            content: [{ type: "text", text: JSON.stringify(tool ?? { error: "Tool not found" }) }],
+            content: [
+              {
+                type: "text",
+                text: JSON.stringify(tool ?? { error: "Tool not found" }),
+              },
+            ],
           },
         })
       }
@@ -251,7 +266,12 @@ export const POST = async (request: NextRequest) => {
           jsonrpc: "2.0",
           id,
           result: {
-            content: [{ type: "text", text: JSON.stringify(product ?? { error: "Product not found" }) }],
+            content: [
+              {
+                type: "text",
+                text: JSON.stringify(product ?? { error: "Product not found" }),
+              },
+            ],
           },
         })
       }
@@ -280,7 +300,12 @@ export const POST = async (request: NextRequest) => {
           jsonrpc: "2.0",
           id,
           result: {
-            content: [{ type: "text", text: JSON.stringify(maker ?? { error: "Maker not found" }) }],
+            content: [
+              {
+                type: "text",
+                text: JSON.stringify(maker ?? { error: "Maker not found" }),
+              },
+            ],
           },
         })
       }
@@ -319,7 +344,10 @@ export const POST = async (request: NextRequest) => {
       return sendJsonRpc({
         jsonrpc: "2.0",
         id,
-        error: { code: -32000, message: err instanceof Error ? err.message : "Execution error" },
+        error: {
+          code: -32000,
+          message: err instanceof Error ? err.message : "Execution error",
+        },
       })
     }
   }

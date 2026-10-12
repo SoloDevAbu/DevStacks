@@ -25,11 +25,16 @@ export const GET = async (
     )
   }
 
-  const builtWithProducts = await getProductsBuiltWithTool(tool.slug, tool.name, 50)
+  const builtWithProducts = await getProductsBuiltWithTool(
+    tool.slug,
+    tool.name,
+    50
+  )
   const canonicalUrl = `${SITE_CONFIG.url}/built-with/${tool.slug}`
 
-  const productsTable = builtWithProducts.length > 0
-    ? `| Product | Tagline | Category | Pricing | Tier |
+  const productsTable =
+    builtWithProducts.length > 0
+      ? `| Product | Tagline | Category | Pricing | Tier |
 |---|---|:---:|:---:|:---:|
 ${builtWithProducts
   .map(
@@ -37,11 +42,14 @@ ${builtWithProducts
       `| [${p.name}](${SITE_CONFIG.url}/products/${p.slug}) | ${p.tagline.replace(/\|/g, "-")} | ${p.category ?? "Product"} | ${p.pricing} | ${p.tier} |`
   )
   .join("\n")}`
-    : "No verified products currently cataloged using this tool."
+      : "No verified products currently cataloged using this tool."
 
   const productsDetailList = builtWithProducts
     .map(
-      (p, idx) => `### ${idx + 1}. [${p.name}](${SITE_CONFIG.url}/products/${p.slug})
+      (
+        p,
+        idx
+      ) => `### ${idx + 1}. [${p.name}](${SITE_CONFIG.url}/products/${p.slug})
 - **Tagline**: ${p.tagline}
 - **Category**: ${p.category ?? "Developer Product"}
 - **Pricing**: ${p.pricing}

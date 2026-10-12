@@ -32,8 +32,9 @@ export const GET = async (
 
   const canonicalUrl = `${SITE_CONFIG.url}/alternatives/${tool.slug}`
 
-  const comparisonTable = alternatives.length > 0
-    ? `| Tool | Pricing | Builds | Upvotes | Category | Status |
+  const comparisonTable =
+    alternatives.length > 0
+      ? `| Tool | Pricing | Builds | Upvotes | Category | Status |
 |---|:---:|:---:|:---:|:---:|:---:|
 | **[${tool.name}](${SITE_CONFIG.url}/tools/${tool.slug})** | ${tool.pricing} | ${tool.buildsCount} | ${tool.upvotesCount} | ${tool.category ?? "Tool"} | **Target** |
 ${alternatives
@@ -42,11 +43,14 @@ ${alternatives
       `| [${alt.name}](${SITE_CONFIG.url}/tools/${alt.slug}) | ${alt.pricing} | ${alt.buildsCount} | ${alt.upvotesCount} | ${alt.category ?? "Tool"} | Alternative |`
   )
   .join("\n")}`
-    : "No verified alternatives currently cataloged in this category."
+      : "No verified alternatives currently cataloged in this category."
 
   const alternativeDetails = alternatives
     .map(
-      (alt, idx) => `### ${idx + 1}. [${alt.name}](${SITE_CONFIG.url}/tools/${alt.slug})
+      (
+        alt,
+        idx
+      ) => `### ${idx + 1}. [${alt.name}](${SITE_CONFIG.url}/tools/${alt.slug})
 - **Tagline**: ${alt.tagline}
 - **Pricing Model**: ${alt.pricing}
 - **Verified Production Builds**: ${alt.buildsCount} projects

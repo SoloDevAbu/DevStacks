@@ -71,7 +71,8 @@ export const POST = async (req: NextRequest) => {
         )
       }
     } else {
-      const allowed = STORAGE_CONFIG.SCREENSHOTS.ALLOWED_TYPES as readonly string[]
+      const allowed = STORAGE_CONFIG.SCREENSHOTS
+        .ALLOWED_TYPES as readonly string[]
       if (!allowed.includes(contentType)) {
         return NextResponse.json(
           {
@@ -106,10 +107,8 @@ export const POST = async (req: NextRequest) => {
       key,
     })
   } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : "Failed to generate upload URL"
-    return NextResponse.json(
-      { error: message },
-      { status: 500 }
-    )
+    const message =
+      err instanceof Error ? err.message : "Failed to generate upload URL"
+    return NextResponse.json({ error: message }, { status: 500 })
   }
 }

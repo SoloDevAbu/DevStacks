@@ -7,7 +7,10 @@ import type { DbTool } from "@/types/entities"
 import { useInfiniteTools } from "@/hooks/tools/use-tools"
 import { useIntersectionObserver } from "@/hooks/shared/use-intersection-observer"
 import { InfiniteScrollSentinel } from "@/components/shared/infinite-scroll-sentinel"
-import { ToolsFilterBar, type SortOption } from "@/components/tools/tools-filter-bar"
+import {
+  ToolsFilterBar,
+  type SortOption,
+} from "@/components/tools/tools-filter-bar"
 import { ROUTES } from "@/constants/routes"
 
 interface ToolsDirectoryContentProps {
@@ -26,7 +29,9 @@ export const ToolsDirectoryContent = ({
   initialTools = [],
 }: ToolsDirectoryContentProps) => {
   const router = useRouter()
-  const [selectedCategory, setSelectedCategory] = useState<string | undefined>(initialCategory)
+  const [selectedCategory, setSelectedCategory] = useState<string | undefined>(
+    initialCategory
+  )
   const [selectedPricing, setSelectedPricing] = useState<string>(initialPricing)
   const [sortBy, setSortBy] = useState<SortOption>(initialSortBy)
 
@@ -43,7 +48,9 @@ export const ToolsDirectoryContent = ({
       if (initialQuery) params.set("q", initialQuery)
 
       const qs = params.toString()
-      router.push(qs ? `${ROUTES.TOOLS}?${qs}` : ROUTES.TOOLS, { scroll: false })
+      router.push(qs ? `${ROUTES.TOOLS}?${qs}` : ROUTES.TOOLS, {
+        scroll: false,
+      })
     },
     [router, selectedCategory, selectedPricing, sortBy, initialQuery]
   )
@@ -90,7 +97,8 @@ export const ToolsDirectoryContent = ({
     enabled: hasNextPage && !isFetchingNextPage,
   })
 
-  const displayedTools = data?.pages.flatMap((page) => page) ?? (isInitialParams ? initialTools : [])
+  const displayedTools =
+    data?.pages.flatMap((page) => page) ?? (isInitialParams ? initialTools : [])
 
   return (
     <div className="flex w-full flex-1 flex-col">
@@ -104,10 +112,7 @@ export const ToolsDirectoryContent = ({
       />
 
       <div className="flex w-full flex-1 flex-col pb-8">
-        <ToolList
-          tools={displayedTools}
-          showMedals
-        />
+        <ToolList tools={displayedTools} showMedals />
         <InfiniteScrollSentinel
           sentinelRef={sentinelRef}
           isFetchingNextPage={isFetchingNextPage}
