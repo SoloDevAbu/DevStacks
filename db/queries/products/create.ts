@@ -3,7 +3,7 @@ import { products, productTools, tools, productFaqs } from "@/db/schema"
 import type { NewProduct } from "@/db/schema"
 import { getOrCreateCategory } from "@/db/queries/categories/list"
 import { getFaviconUrl } from "@/utils/urls"
-import { eq, ilike, or, sql } from "drizzle-orm"
+import { and, eq, ilike, or, sql } from "drizzle-orm"
 import {
   resolveAndValidateLaunchSlot,
   recordLaunchEntry,
@@ -102,7 +102,7 @@ export const createProduct = async (data: CreateProductInput) => {
         const [found] = await db
           .select({ id: tools.id })
           .from(tools)
-          .where(eq(tools.slug, item.toolSlug))
+          .where(and(eq(tools.slug, item.toolSlug), eq(tools.isDeleted, false)))
           .limit(1)
         if (found) toolId = found.id
       }
@@ -111,7 +111,7 @@ export const createProduct = async (data: CreateProductInput) => {
         const [found] = await db
           .select({ id: tools.id })
           .from(tools)
-          .where(ilike(tools.name, name))
+          .where(and(ilike(tools.name, name), eq(tools.isDeleted, false)))
           .limit(1)
         if (found) toolId = found.id
       }

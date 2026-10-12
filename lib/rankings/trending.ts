@@ -1,7 +1,11 @@
 import { db } from "@/db"
 import { tools, products, categories, productTools } from "@/db/schema"
 import { and, eq, ilike, inArray, or } from "drizzle-orm"
-import type { TimeframeOption, RankedItem, RankedProduct } from "@/lib/rankings/types"
+import type {
+  TimeframeOption,
+  RankedItem,
+  RankedProduct,
+} from "@/lib/rankings/types"
 import type { ProductBuiltWith } from "@/types/entities"
 
 export const getTrending = async (
@@ -11,8 +15,14 @@ export const getTrending = async (
 ): Promise<RankedItem[]> => {
   const safeLimit = Math.min(50, Math.max(1, limit))
 
-  const toolConditions = [eq(tools.status, "approved")]
-  const productConditions = [eq(products.status, "approved")]
+  const toolConditions = [
+    eq(tools.status, "approved"),
+    eq(tools.isDeleted, false),
+  ]
+  const productConditions = [
+    eq(products.status, "approved"),
+    eq(products.isDeleted, false),
+  ]
 
   if (category && category.trim() && category.toLowerCase() !== "all") {
     const trimmed = category.trim()
@@ -137,7 +147,10 @@ export const getTrending = async (
         toolSlug: tools.slug,
       })
       .from(productTools)
-      .leftJoin(tools, eq(productTools.toolId, tools.id))
+      .leftJoin(
+        tools,
+        and(eq(productTools.toolId, tools.id), eq(tools.isDeleted, false))
+      )
       .where(inArray(productTools.productId, topProductIds))
 
     const toolsMap = new Map<string, ProductBuiltWith[]>()
