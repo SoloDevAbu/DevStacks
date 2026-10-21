@@ -1,37 +1,14 @@
-import ws from "ws"
-import { Pool, neonConfig, neon } from "@neondatabase/serverless"
-import { drizzle } from "drizzle-orm/neon-serverless"
+import "dotenv/config"
+import { drizzle } from "drizzle-orm/postgres-js"
+import postgres from "postgres"
 import * as schema from "./schema"
 
-const sql = neon(process.env.DATABASE_URL!)
+const connectionString = process.env.DATABASE_URL!
 
-neonConfig.webSocketConstructor = ws
+// Supabase Connection Pooling requires prepare: false when using transaction pooler (port 6543)
+// and works seamlessly across both direct and pooled connections.
+const client = postgres(connectionString, { prepare: false })
 
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL!,
-})
-
-export const db = drizzle({
-  client: pool,
-})
-
-sql`ALTER TABLE "accounts" ADD COLUMN IF NOT EXISTS "issuer" text NOT NULL DEFAULT 'google';`.catch(
-  () => {}
-)
-sql`ALTER TABLE "accounts" ALTER COLUMN "issuer" SET DEFAULT 'google';`.catch(
-  () => {}
-)
-sql`CREATE UNIQUE INDEX IF NOT EXISTS "accounts_providerId_accountId_uidx" ON "accounts" ("provider_id", "account_id");`.catch(
-  () => {}
-)
-sql`CREATE UNIQUE INDEX IF NOT EXISTS "accounts_issuer_accountId_uidx" ON "accounts" ("issuer", "account_id");`.catch(
-  () => {}
-)
-sql`CREATE INDEX IF NOT EXISTS "accounts_userId_idx" ON "accounts" ("user_id");`.catch(
-  () => {}
-)
-sql`ALTER TABLE "tools" ALTER COLUMN "submitter_id" DROP NOT NULL;`.catch(
-  () => {}
-)
+export const db = drizzle({ client })
 
 export { schema }
