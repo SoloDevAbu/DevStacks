@@ -261,8 +261,7 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
     answer: f.answer,
   }))
 
-  const faqJsonLd = productFaqs.length > 0 ? faqSchema(productFaqs) : null
-  const aiPrompt = AI_PROMPTS.product(
+    const aiPrompt = AI_PROMPTS.product(
     product.name,
     product.tagline,
     product.aiContext || product.description,
@@ -270,7 +269,7 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
     `${productUrl}.md`
   )
 
-  const entitySchemas = [prodJsonLd, breadcrumbJsonLd, faqJsonLd].filter(
+  const entitySchemas = [prodJsonLd, breadcrumbJsonLd].filter(
     Boolean
   ) as Record<string, unknown>[]
   const unifiedJsonLd = buildEntityGraph(entitySchemas)

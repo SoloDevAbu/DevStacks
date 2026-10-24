@@ -258,8 +258,7 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
     answer: f.answer,
   }))
 
-  const faqJsonLd = toolFaqs.length > 0 ? faqSchema(toolFaqs) : null
-  const aiPrompt = AI_PROMPTS.tool(
+    const aiPrompt = AI_PROMPTS.tool(
     tool.name,
     tool.tagline,
     tool.aiContext || tool.description,
@@ -281,7 +280,6 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
   const entitySchemas = [
     prodJsonLd,
     breadcrumbJsonLd,
-    faqJsonLd,
     builtWithJsonLd,
   ].filter(Boolean) as Record<string, unknown>[]
   const unifiedJsonLd = buildEntityGraph(entitySchemas)

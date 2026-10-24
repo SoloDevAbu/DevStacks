@@ -90,8 +90,7 @@ export const ComparisonPageView = ({ comparison }: ComparisonPageViewProps) => {
     { name: comparison.name, url: comparison.canonicalUrl },
   ])
 
-  const faqJsonLd = faqSchema(comparison.faqs)
-
+  
   const competitorProfile = (comparison.comparedPlatformProfile ??
     comparison.productHuntProfile)!
 
@@ -121,7 +120,6 @@ export const ComparisonPageView = ({ comparison }: ComparisonPageViewProps) => {
 
   const unifiedJsonLd = buildEntityGraph([
     breadcrumbsJsonLd,
-    faqJsonLd,
     webPageJsonLd,
   ])
 
