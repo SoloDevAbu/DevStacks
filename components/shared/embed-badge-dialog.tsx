@@ -34,6 +34,8 @@ interface EmbedBadgeDialogProps {
   onBackToSubmit?: () => void
 }
 
+type BadgeStyle = "card" | "dark" | "ranked" | "shield"
+
 export const EmbedBadgeDialog = ({
   isOpen,
   onClose,
@@ -44,7 +46,7 @@ export const EmbedBadgeDialog = ({
   onBackToSubmit,
 }: EmbedBadgeDialogProps) => {
   const router = useRouter()
-  const [style, setStyle] = useState<"card" | "shield">("card")
+  const [style, setStyle] = useState<BadgeStyle>("card")
   const [copiedCode, setCopiedCode] = useState(false)
   const [copiedPrompt, setCopiedPrompt] = useState(false)
   const [isVerifying, setIsVerifying] = useState(false)
@@ -55,9 +57,9 @@ export const EmbedBadgeDialog = ({
   const badgeImageUrl = `${SITE_CONFIG.url}/api/badge/${slug}?style=${style}&type=${type}`
 
   const embedCodeSnippet =
-    style === "card"
-      ? `<a href="${canonicalUrl}?ref=badge" target="_blank">\n  <img src="${badgeImageUrl}" alt="Featured on LaunchNests" />\n</a>`
-      : `[![Featured on LaunchNests](${badgeImageUrl})](${canonicalUrl}?ref=badge)`
+    style === "shield"
+      ? `[![Featured on LaunchNests](${badgeImageUrl})](${canonicalUrl}?ref=badge)`
+      : `<a href="${canonicalUrl}?ref=badge" target="_blank">\n  <img src="${badgeImageUrl}" alt="Featured on LaunchNests" />\n</a>`
 
   const aiPromptSnippet =
     style === "shield"
@@ -118,15 +120,15 @@ Style it cleanly matching our site design.`
         )
       } else {
         toast.error(
-          "Badge Not Detected Yet",
+          "Badge Not Detected",
           data.message ||
-            "Please ensure the badge is deployed to your homepage, or click 'Add later' to verify anytime."
+            "We couldn't detect the badge snippet at that URL. Ensure the page is published."
         )
       }
     } catch {
       toast.error(
-        "Verification Failed",
-        "Could not reach website to check badge. Ensure your domain is accessible."
+        "Verification Error",
+        "Network error checking website. Please try again."
       )
     } finally {
       setIsVerifying(false)
@@ -135,17 +137,21 @@ Style it cleanly matching our site design.`
 
   const handleAddLater = () => {
     onClose()
-    router.push(ROUTES.DASHBOARD)
+    if (type === "product") {
+      router.push(ROUTES.DASHBOARD_PRODUCTS)
+    } else {
+      router.push(ROUTES.DASHBOARD_TOOLS)
+    }
   }
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className={embedModalContainer}>
-        {/* FIXED HEADER: Icon on left, Title + Subtitle on right */}
-        <DialogHeader className="shrink-0 border-b border-slate-100 bg-white p-6 pb-4 text-left">
-          <div className="flex items-start gap-3.5 pr-8">
+        {/* FIXED HEADER: Never scrolls away */}
+        <DialogHeader className="shrink-0 border-b border-slate-100 px-6 pt-6 pb-4">
+          <div className="flex items-center gap-3">
             <div className={badgeShieldIconBox}>
-              <ShieldCheck className="size-6 text-blue-600" />
+              <ShieldCheck className="size-5 text-blue-600" />
             </div>
             <div className="flex flex-col gap-1">
               <DialogTitle className="font-sans text-lg font-bold tracking-tight text-slate-900">
@@ -163,29 +169,53 @@ Style it cleanly matching our site design.`
         <div className="flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto px-6 py-4">
           {/* Section 1: Badge Preview & Style Toggle */}
           <div className="flex w-full min-w-0 flex-col gap-2.5">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-wrap items-center justify-between gap-2">
               <span className="flex items-center gap-1.5 font-sans text-xs font-bold tracking-wider text-blue-600 uppercase">
                 <span className="size-1.5 rounded-full bg-blue-600" />
-                Badge Preview
+                Badge Style
               </span>
-              <div className="flex items-center gap-1 rounded-lg border border-slate-200 bg-slate-100/90 p-0.5">
+              <div className="flex flex-wrap items-center gap-1 rounded-lg border border-slate-200 bg-slate-100/90 p-0.5">
                 <button
                   type="button"
                   onClick={() => setStyle("card")}
                   className={cn(
-                    "cursor-pointer rounded-md px-2.5 py-1 font-sans text-xs font-semibold transition-all",
+                    "cursor-pointer rounded-md px-2 py-1 font-sans text-xs font-semibold transition-all",
                     style === "card"
                       ? "bg-white text-slate-900 shadow-2xs"
                       : "text-slate-500 hover:text-slate-800"
                   )}
                 >
-                  Showcase Card
+                  Light Card
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setStyle("dark")}
+                  className={cn(
+                    "cursor-pointer rounded-md px-2 py-1 font-sans text-xs font-semibold transition-all",
+                    style === "dark"
+                      ? "bg-white text-slate-900 shadow-2xs"
+                      : "text-slate-500 hover:text-slate-800"
+                  )}
+                >
+                  Dark Card
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setStyle("ranked")}
+                  className={cn(
+                    "cursor-pointer rounded-md px-2 py-1 font-sans text-xs font-semibold transition-all",
+                    style === "ranked"
+                      ? "bg-white text-slate-900 shadow-2xs"
+                      : "text-slate-500 hover:text-slate-800"
+                  )}
+                >
+                  Ranked Gold
                 </button>
                 <button
                   type="button"
                   onClick={() => setStyle("shield")}
                   className={cn(
-                    "cursor-pointer rounded-md px-2.5 py-1 font-sans text-xs font-semibold transition-all",
+                    "cursor-pointer rounded-md px-2 py-1 font-sans text-xs font-semibold transition-all",
                     style === "shield"
                       ? "bg-white text-slate-900 shadow-2xs"
                       : "text-slate-500 hover:text-slate-800"
@@ -197,111 +227,12 @@ Style it cleanly matching our site design.`
             </div>
 
             <div className={badgePreviewContainer}>
-              {style === "card" ? (
-                // Authentic LaunchNests Showcase Card (White Card with LaunchNests isometric mark & orbit)
-                <div className="flex items-center justify-center rounded-2xl border border-slate-200/90 bg-white py-3 pr-7 pl-3.5 shadow-xs transition-transform hover:scale-[1.02]">
-                  <div className="flex items-center gap-3">
-                    {/* LaunchNests Official Vector Logo Mark */}
-                    <svg
-                      width="34"
-                      height="34"
-                      viewBox="0 0 40 40"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="shrink-0"
-                    >
-                      <defs>
-                        <linearGradient
-                          id="pv-ln-arc"
-                          x1="6"
-                          y1="18"
-                          x2="34"
-                          y2="18"
-                          gradientUnits="userSpaceOnUse"
-                        >
-                          <stop offset="0%" stopColor="#0091FF" />
-                          <stop offset="50%" stopColor="#00D084" />
-                          <stop offset="100%" stopColor="#FF9500" />
-                        </linearGradient>
-                        <linearGradient
-                          id="pv-ln-top"
-                          x1="12"
-                          y1="12"
-                          x2="28"
-                          y2="22"
-                          gradientUnits="userSpaceOnUse"
-                        >
-                          <stop offset="0%" stopColor="#00E599" />
-                          <stop offset="100%" stopColor="#00B4D8" />
-                        </linearGradient>
-                        <linearGradient
-                          id="pv-ln-mid"
-                          x1="10"
-                          y1="18"
-                          x2="30"
-                          y2="26"
-                          gradientUnits="userSpaceOnUse"
-                        >
-                          <stop offset="0%" stopColor="#0070F3" />
-                          <stop offset="100%" stopColor="#0051C7" />
-                        </linearGradient>
-                        <linearGradient
-                          id="pv-ln-bot"
-                          x1="10"
-                          y1="23"
-                          x2="30"
-                          y2="33"
-                          gradientUnits="userSpaceOnUse"
-                        >
-                          <stop offset="0%" stopColor="#FF7700" />
-                          <stop offset="100%" stopColor="#FF4500" />
-                        </linearGradient>
-                      </defs>
-                      <path
-                        d="M 8.5 17.5 A 13 13 0 0 1 31.5 17.5"
-                        stroke="url(#pv-ln-arc)"
-                        strokeWidth="2.2"
-                        strokeLinecap="round"
-                        fill="none"
-                      />
-                      <circle cx="8.5" cy="17.5" r="3.2" fill="#0091FF" />
-                      <circle cx="20" cy="6.5" r="3.5" fill="#00D084" />
-                      <circle cx="31.5" cy="17.5" r="3.2" fill="#FF9500" />
-                      <path
-                        d="M 19.3 12.8 C 19.7 12.4 20.3 12.4 20.7 12.8 L 27.2 16.5 C 27.6 16.7 27.6 17.3 27.2 17.5 L 20.7 21.2 C 20.3 21.6 19.7 21.6 19.3 21.2 L 12.8 17.5 C 12.4 17.3 12.4 16.7 12.8 16.5 Z"
-                        fill="url(#pv-ln-top)"
-                      />
-                      <path
-                        d="M 12.8 21.2 L 19.3 24.9 C 19.7 25.1 20.3 25.1 20.7 24.9 L 27.2 21.2 C 27.8 20.8 28.5 21.3 28.5 22.0 L 27.4 23.3 C 27.2 23.6 26.8 23.8 26.5 24.0 L 20.7 27.3 C 20.3 27.5 19.7 27.5 19.3 27.3 L 13.5 24.0 C 13.2 23.8 12.8 23.6 12.6 23.3 L 11.5 22.0 C 11.5 21.3 12.2 20.8 12.8 21.2 Z"
-                        fill="url(#pv-ln-mid)"
-                      />
-                      <path
-                        d="M 12.8 26.5 L 19.3 30.2 C 19.7 30.4 20.3 30.4 20.7 30.2 L 27.2 26.5 C 27.8 26.1 28.5 26.6 28.5 27.3 L 27.4 28.6 C 27.2 28.9 26.8 29.1 26.5 29.3 L 20.7 32.6 C 20.3 32.8 19.7 32.8 19.3 32.6 L 13.5 29.3 C 13.2 29.1 12.8 28.9 12.6 28.6 L 11.5 27.3 C 11.5 26.6 12.2 26.1 12.8 26.5 Z"
-                        fill="url(#pv-ln-bot)"
-                      />
-                    </svg>
-
-                    <div className="flex flex-col text-left">
-                      <span className="font-sans text-[9px] font-bold tracking-widest text-slate-400 uppercase">
-                        FEATURED ON
-                      </span>
-                      <span className="font-sans text-base font-extrabold tracking-tight text-slate-900">
-                        LaunchNests
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                // LaunchNests Shield Style
-                <div className="inline-flex items-center overflow-hidden rounded text-[11px] font-semibold shadow-2xs">
-                  <span className="bg-slate-900 px-3 py-1 font-sans text-white">
-                    LaunchNests
-                  </span>
-                  <span className="bg-blue-600 px-3 py-1 font-sans text-white">
-                    featured
-                  </span>
-                </div>
-              )}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={badgeImageUrl}
+                alt={`LaunchNests ${style} badge preview`}
+                className="h-auto max-w-full drop-shadow-xs transition-transform hover:scale-[1.02]"
+              />
             </div>
           </div>
 
@@ -433,14 +364,6 @@ Style it cleanly matching our site design.`
               </Button>
             </div>
           </div>
-
-          {/* <p className="text-center font-sans text-xs text-slate-400">
-            Want to skip?{" "}
-            <span className="font-semibold text-amber-600">
-              Free Lifetime Premium
-            </span>{" "}
-            includes permanent dofollow SEO backlinks.
-          </p> */}
         </div>
       </DialogContent>
     </Dialog>

@@ -31,6 +31,8 @@ export const ROUTES = {
   SAAS_DIRECTORY: "/saas-directory",
   DEVELOPER_TOOLS_DIRECTORY: "/developer-tools-directory",
   PRODUCT_LAUNCH_PLATFORM: "/product-launch-platform",
+  GUIDE_SAAS_DIRECTORIES: "/guides/free-saas-directories-for-backlinks-2026",
+  GUIDE_LAUNCH_DEVTOOLS: "/guides/where-to-launch-developer-tools-2026",
   COMPARE: (slug: string) => `/compare/${encodeURIComponent(slug)}`,
   BUILT_WITH: (slug: string) => `/built-with/${encodeURIComponent(slug)}`,
   PRIVACY: "/privacy",

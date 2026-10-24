@@ -128,6 +128,18 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
       changeFrequency: "weekly",
       priority: 0.9,
     },
+    {
+      url: normalizeSitemapUrl(ROUTES.GUIDE_SAAS_DIRECTORIES),
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.85,
+    },
+    {
+      url: normalizeSitemapUrl(ROUTES.GUIDE_LAUNCH_DEVTOOLS),
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.85,
+    },
     ...getAllComparisons().map((comparison) => ({
       url: normalizeSitemapUrl(comparison.routePath || comparison.canonicalUrl),
       lastModified: comparison.lastVerifiedDate
