@@ -53,7 +53,7 @@ export const generateMetadata = async (
   }
 
   const stats = await getCategoryStats(category.id)
-  const isIndexable = stats.toolCount >= 3
+  const isIndexable = stats.toolCount >= 1
 
   const baseTitle = `${category.name} Developer Tools & APIs`
   const title = baseTitle

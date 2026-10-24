@@ -14,6 +14,8 @@ export const ROUTES = {
     `/submit?type=product&tool=${encodeURIComponent(toolSlug)}`,
   PRODUCTS: "/products",
   PRODUCT: (slug: string) => `/products/${slug}`,
+  PRODUCT_CATEGORY: (slug: string) =>
+    `/products/category/${encodeURIComponent(slug)}`,
   TOOLS: "/tools",
   TOOL: (slug: string) => `/tools/${slug}`,
   TOOL_CATEGORY: (slug: string) =>
