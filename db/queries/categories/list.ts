@@ -2,6 +2,7 @@ import { db } from "@/db"
 import { tools, products, categories } from "@/db/schema"
 import { and, eq, ilike, or, sql } from "drizzle-orm"
 import { slugify } from "@/utils/slug"
+import { unstable_cache } from "next/cache"
 
 export type DbCategoryItem = {
   id: string
@@ -214,3 +215,15 @@ export const getCategoryStats = async (categoryId: string) => {
     productCount: Number(productStats?.productCount ?? 0),
   }
 }
+
+export const getCachedToolCategories = unstable_cache(
+  async (query?: string) => getToolCategories(query),
+  ["tool-categories"],
+  { revalidate: 3600, tags: ["tool-categories"] }
+)
+
+export const getCachedProductCategories = unstable_cache(
+  async (query?: string) => getProductCategories(query),
+  ["product-categories"],
+  { revalidate: 3600, tags: ["product-categories"] }
+)

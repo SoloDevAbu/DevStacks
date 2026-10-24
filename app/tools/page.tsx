@@ -9,8 +9,12 @@ import {
 import { SITE_CONFIG } from "@/constants/site"
 import { ROUTES } from "@/constants/routes"
 import { AI_PROMPTS } from "@/lib/prompts"
-import { getTools, getToolsStats } from "@/db/queries/tools/list"
-import { getToolCategories } from "@/db/queries/categories/list"
+import {
+  getTools,
+  getCachedTools,
+  getCachedToolsStats,
+} from "@/db/queries/tools/list"
+import { getCachedToolCategories } from "@/db/queries/categories/list"
 import type { DbTool } from "@/types/entities"
 import { ToolsDirectoryContent } from "./tools-content"
 import type { SortOption } from "@/components/tools/tools-filter-bar"
@@ -152,8 +156,10 @@ const ToolsPage = async (props: {
   }
   const breadcrumbs = breadcrumbSchema(breadcrumbItems)
 
+  const hasTextQuery = Boolean(q && q.trim())
+
   const [initialTools, stats, categories] = await Promise.all([
-    getTools({
+    (hasTextQuery ? getTools : getCachedTools)({
       category,
       q,
       pricing: pricing && pricing.toLowerCase() !== "all" ? pricing : undefined,
@@ -161,8 +167,8 @@ const ToolsPage = async (props: {
       limit: pageSize,
       page: currentPage,
     }).catch(() => []),
-    getToolsStats().catch(() => ({ totalCount: 0, totalBuilds: 0 })),
-    getToolCategories().catch(() => []),
+    getCachedToolsStats().catch(() => ({ totalCount: 0, totalBuilds: 0 })),
+    getCachedToolCategories().catch(() => []),
   ])
 
   const totalPages = Math.ceil(stats.totalCount / pageSize)

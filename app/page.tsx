@@ -8,8 +8,8 @@ import {
 } from "@/lib/seo/schema"
 import { SITE_CONFIG } from "@/constants/site"
 import { HOMEPAGE_LIMITS } from "@/constants/rankings"
-import { getWeeklyLaunches } from "@/lib/launches/weekly-launches"
-import { getPopularBuildingBlocks } from "@/lib/rankings/popular"
+import { getCachedWeeklyLaunches } from "@/lib/launches/weekly-launches"
+import { getCachedPopularBuildingBlocks } from "@/lib/rankings/popular"
 import { getCurrentWeek } from "@/lib/launches/week-utils"
 import type { FeedItem } from "@/components/shared/feed-card"
 
@@ -67,14 +67,12 @@ const Page = async () => {
   const { year, week } = getCurrentWeek()
 
   const [weeklyLaunches, popularBuildingBlocks] = await Promise.all([
-    getWeeklyLaunches({
-      year,
-      week,
-      limit: HOMEPAGE_LIMITS.WEEKLY_LAUNCHES_MAX,
-    }).catch(() => []),
-    getPopularBuildingBlocks({
-      limit: HOMEPAGE_LIMITS.POPULAR_BUILDING_BLOCKS,
-    }).catch(() => []),
+    getCachedWeeklyLaunches(year, week, HOMEPAGE_LIMITS.WEEKLY_LAUNCHES_MAX).catch(
+      () => []
+    ),
+    getCachedPopularBuildingBlocks(
+      HOMEPAGE_LIMITS.POPULAR_BUILDING_BLOCKS
+    ).catch(() => []),
   ])
   const featuredItems = (weeklyLaunches as FeedItem[])
     .slice(0, 10)

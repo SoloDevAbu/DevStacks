@@ -1,6 +1,7 @@
 import { db } from "@/db"
 import { products, categories, productTools, tools, users } from "@/db/schema"
 import { and, desc, eq, ilike, inArray, or, sql } from "drizzle-orm"
+import { unstable_cache } from "next/cache"
 import type { DbProduct, ProductBuiltWith } from "@/types/entities"
 import type { Pricing, Tier } from "@/constants/plans"
 
@@ -197,3 +198,15 @@ export const getProductsStats = async () => {
     totalLikes: Number(row?.totalLikes ?? 0),
   }
 }
+
+export const getCachedProducts = unstable_cache(
+  async (filters: ProductListFilters) => getProducts(filters),
+  ["products-list"],
+  { revalidate: 300, tags: ["products-list"] }
+)
+
+export const getCachedProductsStats = unstable_cache(
+  async () => getProductsStats(),
+  ["products-stats"],
+  { revalidate: 300, tags: ["products-stats"] }
+)

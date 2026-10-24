@@ -9,8 +9,12 @@ import {
 import { SITE_CONFIG } from "@/constants/site"
 import { ROUTES } from "@/constants/routes"
 import { AI_PROMPTS } from "@/lib/prompts"
-import { getProducts, getProductsStats } from "@/db/queries/products/list"
-import { getProductCategories } from "@/db/queries/categories/list"
+import {
+  getProducts,
+  getCachedProducts,
+  getCachedProductsStats,
+} from "@/db/queries/products/list"
+import { getCachedProductCategories } from "@/db/queries/categories/list"
 import type { DbProduct } from "@/types/entities"
 import { ProductsDirectoryContent } from "./products-content"
 import type { ProductSortOption } from "@/components/products/products-filter-bar"
@@ -152,8 +156,10 @@ const ProductsPage = async (props: {
   }
   const breadcrumbs = breadcrumbSchema(breadcrumbItems)
 
+  const hasTextQuery = Boolean(q && q.trim())
+
   const [initialProducts, stats, categories] = await Promise.all([
-    getProducts({
+    (hasTextQuery ? getProducts : getCachedProducts)({
       category,
       q,
       pricing: pricing && pricing.toLowerCase() !== "all" ? pricing : undefined,
@@ -161,8 +167,8 @@ const ProductsPage = async (props: {
       limit: pageSize,
       page: currentPage,
     }).catch(() => []),
-    getProductsStats().catch(() => ({ totalCount: 0, totalLikes: 0 })),
-    getProductCategories().catch(() => []),
+    getCachedProductsStats().catch(() => ({ totalCount: 0, totalLikes: 0 })),
+    getCachedProductCategories().catch(() => []),
   ])
 
   const totalPages = Math.ceil(stats.totalCount / pageSize)
