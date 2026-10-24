@@ -104,6 +104,30 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
       changeFrequency: "daily",
       priority: 0.85,
     },
+    {
+      url: normalizeSitemapUrl(ROUTES.PRODUCTHUNT_ALTERNATIVES),
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.85,
+    },
+    {
+      url: normalizeSitemapUrl(ROUTES.SAAS_DIRECTORY),
+      lastModified: now,
+      changeFrequency: "daily",
+      priority: 0.9,
+    },
+    {
+      url: normalizeSitemapUrl(ROUTES.DEVELOPER_TOOLS_DIRECTORY),
+      lastModified: now,
+      changeFrequency: "daily",
+      priority: 0.9,
+    },
+    {
+      url: normalizeSitemapUrl(ROUTES.PRODUCT_LAUNCH_PLATFORM),
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.9,
+    },
     ...getAllComparisons().map((comparison) => ({
       url: normalizeSitemapUrl(comparison.routePath || comparison.canonicalUrl),
       lastModified: comparison.lastVerifiedDate
