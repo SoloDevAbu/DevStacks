@@ -1,6 +1,7 @@
 import { db } from "@/db"
 import { tools, products, categories } from "@/db/schema"
 import { and, eq, ilike, or, sql } from "drizzle-orm"
+import { slugify } from "@/utils/slug"
 
 export type DbCategoryItem = {
   id: string
@@ -8,14 +9,6 @@ export type DbCategoryItem = {
   slug: string
   count: number
 }
-
-const slugify = (text: string) =>
-  text
-    .toLowerCase()
-    .trim()
-    .replace(/[^\w\s-]/g, "")
-    .replace(/[\s_-]+/g, "-")
-    .replace(/^-+|-+$/g, "")
 
 export const getToolCategories = async (
   query?: string
@@ -112,7 +105,7 @@ export const getOrCreateCategory = async (rawName: string): Promise<string> => {
     throw new Error("Category name cannot be empty")
   }
 
-  const baseSlug = slugify(name)
+  const baseSlug = slugify(name, "category")
   const slug = baseSlug || `cat-${Math.random().toString(36).substring(2, 7)}`
 
   const existing = await db

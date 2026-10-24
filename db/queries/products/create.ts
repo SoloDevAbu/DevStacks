@@ -3,6 +3,7 @@ import { products, productTools, tools, productFaqs } from "@/db/schema"
 import type { NewProduct } from "@/db/schema"
 import { getOrCreateCategory } from "@/db/queries/categories/list"
 import { getFaviconUrl } from "@/utils/urls"
+import { slugify } from "@/utils/slug"
 import { and, eq, ilike, or, sql } from "drizzle-orm"
 import {
   resolveAndValidateLaunchSlot,
@@ -10,14 +11,6 @@ import {
 } from "@/db/queries/launches/book"
 
 import { randomBytes } from "crypto"
-
-const slugify = (text: string) =>
-  text
-    .toLowerCase()
-    .trim()
-    .replace(/[^\w\s-]/g, "")
-    .replace(/[\s_-]+/g, "-")
-    .replace(/^-+|-+$/g, "")
 
 const nanoid = (len = 6) =>
   randomBytes(Math.ceil(len / 2))
@@ -61,7 +54,7 @@ export const createProduct = async (data: CreateProductInput) => {
     categoryId = await getOrCreateCategory(category)
   }
 
-  const baseSlug = slugify(rest.name)
+  const baseSlug = slugify(rest.name, "product")
   const slug = `${baseSlug}-${nanoid()}`
 
   const logoUrl = rest.logoUrl?.trim() || getFaviconUrl(rest.websiteUrl)
