@@ -44,7 +44,7 @@ export const generateMetadata = async (
 
   if (!category) {
     return {
-      title: `Category Not Found — ${SITE_CONFIG.name}`,
+      title: "Category Not Found",
       robots: {
         index: false,
         follow: false,
@@ -55,7 +55,8 @@ export const generateMetadata = async (
   const stats = await getCategoryStats(category.id)
   const isIndexable = stats.toolCount >= 3
 
-  const title = `${category.name} Developer Tools & APIs | ${SITE_CONFIG.name}`
+  const baseTitle = `${category.name} Developer Tools & APIs`
+  const title = baseTitle
   const description = `Discover ${stats.toolCount} verified ${category.name} developer tools, APIs, and infrastructure layers on ${SITE_CONFIG.name}. Ranked by community upvotes and ${stats.totalBuilds.toLocaleString()} verified production builds.`
   const canonicalUrl = `${SITE_CONFIG.url}/tools/category/${category.slug}`
 
@@ -77,7 +78,7 @@ export const generateMetadata = async (
       follow: true,
     },
     openGraph: {
-      title,
+      title: `${baseTitle} | ${SITE_CONFIG.name}`,
       description,
       url: canonicalUrl,
       type: "website",
@@ -93,7 +94,7 @@ export const generateMetadata = async (
     },
     twitter: {
       card: "summary_large_image",
-      title,
+      title: `${baseTitle} | ${SITE_CONFIG.name}`,
       description,
       images: [SITE_CONFIG.ogImageUrl],
     },

@@ -45,7 +45,7 @@ export const generateMetadata = async (
 
   if (!tool) {
     return {
-      title: `Alternatives Not Found — ${SITE_CONFIG.name}`,
+      title: "Alternatives Not Found",
       robots: {
         index: false,
         follow: false,
@@ -60,7 +60,8 @@ export const generateMetadata = async (
 
   const isIndexable = alternatives.length >= 3
 
-  const title = `Top ${tool.name} Alternatives & Competitors (${currentYear}) | ${SITE_CONFIG.name}`
+  const baseTitle = `Top ${tool.name} Alternatives & Competitors (${currentYear})`
+  const title = baseTitle
   const description = `Compare the best verified ${tool.name} alternatives in ${tool.category ?? "developer tools"} for ${currentYear}. Ranked by real-world production builds, pricing models, and developer upvotes on ${SITE_CONFIG.name}.`
   const canonicalUrl = `${SITE_CONFIG.url}/alternatives/${tool.slug}`
 
@@ -84,7 +85,7 @@ export const generateMetadata = async (
       follow: true,
     },
     openGraph: {
-      title,
+      title: `${baseTitle} | ${SITE_CONFIG.name}`,
       description,
       url: canonicalUrl,
       type: "website",
@@ -100,7 +101,7 @@ export const generateMetadata = async (
     },
     twitter: {
       card: "summary_large_image",
-      title,
+      title: `${baseTitle} | ${SITE_CONFIG.name}`,
       description,
       images: [SITE_CONFIG.ogImageUrl],
     },
