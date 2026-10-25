@@ -1,18 +1,19 @@
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import Link from "next/link"
-import Image from "next/image"
 import {
   ArrowLeft,
   ChevronRight,
   Scale,
   Sparkles,
-  Target,
   DollarSign,
   Hammer,
   ThumbsUp,
   Globe,
-  ExternalLink,
+  Layers,
+  CheckCircle2,
+  AlertCircle,
+  Code2,
 } from "lucide-react"
 import { resolveTool } from "@/lib/tools/resolve-tool"
 import { getRelatedTools } from "@/db/queries/tools/get"
@@ -23,7 +24,6 @@ import { Badge } from "@/components/ui/badge"
 import { GaAlternativeViewTracker } from "@/components/shared/ga-alternative-view-tracker"
 import {
   breadcrumbSchema,
-  itemListSchema,
   collectionPageSchema,
   buildEntityGraph,
   safeJsonLd,
@@ -37,6 +37,15 @@ type AlternativesPageProps = {
   params: Promise<{ slug: string }>
 }
 
+const isToolOpenSource = (t: {
+  githubUrl?: string | null
+  tags?: string[]
+}): boolean =>
+  Boolean(
+    t.githubUrl ||
+      t.tags?.some((tag) => tag.toLowerCase().includes("open source"))
+  )
+
 export const generateMetadata = async (
   props: AlternativesPageProps
 ): Promise<Metadata> => {
@@ -45,7 +54,7 @@ export const generateMetadata = async (
 
   if (!tool) {
     return {
-      title: `Alternatives Not Found — ${SITE_CONFIG.name}`,
+      title: "Alternatives Not Found",
       robots: {
         index: false,
         follow: false,
@@ -58,9 +67,10 @@ export const generateMetadata = async (
     ? await getRelatedTools(tool.categoryId, tool.id, 20)
     : []
 
-  const isIndexable = alternatives.length >= 3
+  const isIndexable = alternatives.length >= 1
 
-  const title = `Top ${tool.name} Alternatives & Competitors (${currentYear}) | ${SITE_CONFIG.name}`
+  const baseTitle = `Top ${tool.name} Alternatives & Competitors (${currentYear})`
+  const title = baseTitle
   const description = `Compare the best verified ${tool.name} alternatives in ${tool.category ?? "developer tools"} for ${currentYear}. Ranked by real-world production builds, pricing models, and developer upvotes on ${SITE_CONFIG.name}.`
   const canonicalUrl = `${SITE_CONFIG.url}/alternatives/${tool.slug}`
 
@@ -84,7 +94,7 @@ export const generateMetadata = async (
       follow: true,
     },
     openGraph: {
-      title,
+      title: `${baseTitle} | ${SITE_CONFIG.name}`,
       description,
       url: canonicalUrl,
       type: "website",
@@ -100,7 +110,7 @@ export const generateMetadata = async (
     },
     twitter: {
       card: "summary_large_image",
-      title,
+      title: `${baseTitle} | ${SITE_CONFIG.name}`,
       description,
       images: [SITE_CONFIG.ogImageUrl],
     },
@@ -122,6 +132,7 @@ const AlternativesPage = async (props: AlternativesPageProps) => {
   const currentYear = new Date().getFullYear()
   const pageUrl = `${SITE_CONFIG.url}/alternatives/${tool.slug}`
   const markdownTwinUrl = `${SITE_CONFIG.url}/api/md/alternatives/${tool.slug}`
+  const targetIsOpenSource = isToolOpenSource(tool)
 
   const breadcrumbs = breadcrumbSchema([
     { name: "Home", url: SITE_CONFIG.url },
@@ -198,7 +209,11 @@ const AlternativesPage = async (props: AlternativesPageProps) => {
                 </li>
                 <li className="flex items-center">
                   <Link
-                    href={`/tools/category/${tool.categorySlug ?? encodeURIComponent(tool.category)}`}
+                    href={
+                      tool.categorySlug
+                        ? ROUTES.TOOL_CATEGORY(tool.categorySlug)
+                        : `/tools/category/${encodeURIComponent(tool.category)}`
+                    }
                     className="hover:text-slate-900"
                   >
                     {tool.category}
@@ -284,6 +299,14 @@ const AlternativesPage = async (props: AlternativesPageProps) => {
                     <Badge variant="outline" className="text-[11px]">
                       {tool.pricing}
                     </Badge>
+                    {targetIsOpenSource && (
+                      <Badge
+                        variant="secondary"
+                        className="bg-emerald-50 text-[10px] text-emerald-700"
+                      >
+                        Open Source
+                      </Badge>
+                    )}
                   </div>
                   <p className="text-xs text-slate-600">{tool.tagline}</p>
                 </div>
@@ -308,6 +331,31 @@ const AlternativesPage = async (props: AlternativesPageProps) => {
               </div>
             </div>
 
+            {/* Contextual Architecture Cross-Link Banner */}
+            <div className="mt-2 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-dashed border-slate-200 bg-slate-50/50 px-4 py-3 text-xs">
+              <div className="flex items-center gap-2 text-slate-700">
+                <Layers className="size-4 text-blue-600" />
+                <span>
+                  Want to inspect real projects using this stack? See live tech
+                  stacks in the{" "}
+                  <Link
+                    href={ROUTES.BUILT_WITH(tool.slug)}
+                    className="font-semibold text-blue-600 hover:underline"
+                  >
+                    Built with {tool.name} showcase →
+                  </Link>
+                </span>
+              </div>
+              {tool.categorySlug && (
+                <Link
+                  href={ROUTES.TOOL_CATEGORY(tool.categorySlug)}
+                  className="font-medium text-slate-500 hover:text-slate-800"
+                >
+                  Browse all {tool.category} tools →
+                </Link>
+              )}
+            </div>
+
             {/* Machine/Agent Discovery bar */}
             <div className="mt-1 flex items-center gap-2 text-xs text-slate-500">
               <Globe className="size-3 text-slate-400" />
@@ -326,13 +374,14 @@ const AlternativesPage = async (props: AlternativesPageProps) => {
         {alternatives.length > 0 && (
           <section className="border-b border-dashed border-border bg-slate-50/20 px-6 py-6 md:px-8">
             <h2 className="mb-3 text-sm font-bold tracking-tight text-slate-900 sm:text-base">
-              Quick Comparison: {tool.name} vs Top Alternatives
+              Feature Comparison Matrix: {tool.name} vs Top Alternatives
             </h2>
             <div className="overflow-x-auto rounded-lg border border-dashed border-border bg-white shadow-2xs">
               <table className="w-full text-left text-xs sm:text-sm">
                 <thead className="border-b border-border bg-slate-50 font-semibold text-slate-700">
                   <tr>
                     <th className="px-4 py-3">Tool</th>
+                    <th className="px-4 py-3">License</th>
                     <th className="px-4 py-3">Pricing</th>
                     <th className="px-4 py-3">Production Builds</th>
                     <th className="px-4 py-3">Upvotes</th>
@@ -344,12 +393,27 @@ const AlternativesPage = async (props: AlternativesPageProps) => {
                   {/* Target Tool Row */}
                   <tr className="bg-blue-50/30 font-medium">
                     <td className="px-4 py-3 font-semibold text-slate-900">
-                      {tool.name}{" "}
-                      <span className="text-[11px] text-blue-600">
-                        (This Tool)
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span>{tool.name}</span>
+                        <span className="rounded bg-blue-100 px-1.5 py-0.5 text-[10px] font-semibold text-blue-700">
+                          Current
+                        </span>
+                      </div>
                     </td>
-                    <td className="px-4 py-3">{tool.pricing}</td>
+                    <td className="px-4 py-3">
+                      {targetIsOpenSource ? (
+                        <span className="inline-flex items-center gap-1 font-medium text-emerald-600">
+                          <CheckCircle2 className="size-3" /> Open Source
+                        </span>
+                      ) : (
+                        <span className="text-slate-500">Commercial</span>
+                      )}
+                    </td>
+                    <td className="px-4 py-3">
+                      <Badge variant="outline" className="text-xs">
+                        {tool.pricing}
+                      </Badge>
+                    </td>
                     <td className="px-4 py-3 font-semibold text-blue-600">
                       {tool.buildsCount} builds
                     </td>
@@ -368,39 +432,161 @@ const AlternativesPage = async (props: AlternativesPageProps) => {
                   </tr>
 
                   {/* Alternative Tools Rows */}
-                  {alternatives.map((alt) => (
-                    <tr key={alt.id} className="hover:bg-slate-50/50">
-                      <td className="px-4 py-3 font-semibold text-slate-900">
-                        <Link
-                          href={ROUTES.TOOL(alt.slug)}
-                          className="hover:text-blue-600 hover:underline"
-                        >
-                          {alt.name}
-                        </Link>
-                      </td>
-                      <td className="px-4 py-3">{alt.pricing}</td>
-                      <td className="px-4 py-3 font-semibold text-slate-800">
-                        {alt.buildsCount} builds
-                      </td>
-                      <td className="px-4 py-3">{alt.upvotesCount}</td>
-                      <td className="px-4 py-3 text-xs text-slate-500">
-                        {(alt.platforms ?? []).join(", ") || "Web / Cloud"}
-                      </td>
-                      <td className="px-4 py-3 text-right">
-                        <Link
-                          href={ROUTES.TOOL(alt.slug)}
-                          className="text-xs font-semibold text-blue-600 hover:underline"
-                        >
-                          Explore
-                        </Link>
-                      </td>
-                    </tr>
-                  ))}
+                  {alternatives.map((alt) => {
+                    const altIsOpenSource = isToolOpenSource(alt)
+                    return (
+                      <tr key={alt.id} className="hover:bg-slate-50/50">
+                        <td className="px-4 py-3 font-semibold text-slate-900">
+                          <Link
+                            href={ROUTES.TOOL(alt.slug)}
+                            className="hover:text-blue-600 hover:underline"
+                          >
+                            {alt.name}
+                          </Link>
+                        </td>
+                        <td className="px-4 py-3">
+                          {altIsOpenSource ? (
+                            <span className="inline-flex items-center gap-1 font-medium text-emerald-600">
+                              <CheckCircle2 className="size-3" /> Open Source
+                            </span>
+                          ) : (
+                            <span className="text-slate-500">Commercial</span>
+                          )}
+                        </td>
+                        <td className="px-4 py-3">
+                          <Badge variant="outline" className="text-xs">
+                            {alt.pricing}
+                          </Badge>
+                        </td>
+                        <td className="px-4 py-3 font-semibold text-slate-800">
+                          {alt.buildsCount} builds
+                        </td>
+                        <td className="px-4 py-3">{alt.upvotesCount}</td>
+                        <td className="px-4 py-3 text-xs text-slate-500">
+                          {(alt.platforms ?? []).join(", ") || "Web / Cloud"}
+                        </td>
+                        <td className="px-4 py-3 text-right">
+                          <Link
+                            href={ROUTES.TOOL(alt.slug)}
+                            className="text-xs font-semibold text-blue-600 hover:underline"
+                          >
+                            Explore
+                          </Link>
+                        </td>
+                      </tr>
+                    )
+                  })}
                 </tbody>
               </table>
             </div>
           </section>
         )}
+
+        {/* Evaluation & Decision Framework */}
+        <section className="border-b border-dashed border-border bg-white px-6 py-8 md:px-8">
+          <div className="flex flex-col gap-6">
+            <div>
+              <div className="flex items-center gap-2 text-xs font-bold tracking-wider text-slate-500 uppercase">
+                <Code2 className="size-4 text-slate-600" />
+                <span>Buyer & Developer Guide</span>
+              </div>
+              <h2 className="mt-1 text-lg font-bold tracking-tight text-slate-900 sm:text-xl">
+                How to Choose Between {tool.name} and Competitors
+              </h2>
+              <p className="mt-1 max-w-2xl text-xs text-slate-600 sm:text-sm">
+                Selecting developer tools requires balancing developer velocity,
+                vendor lock-in, and infrastructure budget. Use these three
+                evaluation pillars:
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+              <div className="rounded-xl border border-dashed border-border bg-slate-50/50 p-4">
+                <div className="flex items-center gap-2 text-xs font-bold text-slate-900">
+                  <Hammer className="size-4 text-blue-600" />
+                  <span>1. Production Adoption</span>
+                </div>
+                <p className="mt-2 text-xs leading-relaxed text-slate-600">
+                  {tool.name} has {tool.buildsCount} verified indie and SaaS
+                  deployments recorded in {SITE_CONFIG.name}. Tools with higher
+                  adoption typically offer better SDK stability and community
+                  troubleshooting.
+                </p>
+              </div>
+
+              <div className="rounded-xl border border-dashed border-border bg-slate-50/50 p-4">
+                <div className="flex items-center gap-2 text-xs font-bold text-slate-900">
+                  <DollarSign className="size-4 text-emerald-600" />
+                  <span>2. Total Cost of Ownership</span>
+                </div>
+                <p className="mt-2 text-xs leading-relaxed text-slate-600">
+                  Current pricing model:{" "}
+                  <strong className="font-semibold text-slate-800">
+                    {tool.pricing}
+                  </strong>
+                  . Compare usage-based vs seat-based pricing among competitors
+                  to avoid surprise billing spikes as your user base scales.
+                </p>
+              </div>
+
+              <div className="rounded-xl border border-dashed border-border bg-slate-50/50 p-4">
+                <div className="flex items-center gap-2 text-xs font-bold text-slate-900">
+                  <Sparkles className="size-4 text-indigo-600" />
+                  <span>3. Deployment & Licensing</span>
+                </div>
+                <p className="mt-2 text-xs leading-relaxed text-slate-600">
+                  {targetIsOpenSource
+                    ? `${tool.name} is open source, allowing self-hosting and maximum code sovereignty.`
+                    : `${tool.name} is proprietary/managed SaaS. Check alternatives if self-hosting or data privacy compliance is non-negotiable.`}
+                </p>
+              </div>
+            </div>
+
+            {/* Quick Decision Box */}
+            <div className="grid grid-cols-1 gap-4 rounded-xl border border-slate-200 bg-slate-50 p-5 md:grid-cols-2">
+              <div className="flex flex-col gap-2">
+                <div className="flex items-center gap-2 text-xs font-bold text-emerald-800">
+                  <CheckCircle2 className="size-4 text-emerald-600" />
+                  <span>Stick with {tool.name} if:</span>
+                </div>
+                <ul className="space-y-1.5 text-xs text-slate-600">
+                  <li>
+                    • Your tech stack is already integrated with its APIs and
+                    SDKs.
+                  </li>
+                  <li>
+                    • Its feature roadmap aligns with your core delivery
+                    velocity.
+                  </li>
+                  <li>
+                    • You value its established community and verified
+                    production track record.
+                  </li>
+                </ul>
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <div className="flex items-center gap-2 text-xs font-bold text-amber-800">
+                  <AlertCircle className="size-4 text-amber-600" />
+                  <span>Consider switching to an alternative if:</span>
+                </div>
+                <ul className="space-y-1.5 text-xs text-slate-600">
+                  <li>
+                    • You require an open-source or self-hosted architecture.
+                  </li>
+                  <li>
+                    • Alternative pricing tiers provide a cheaper runway for
+                    early-stage validation.
+                  </li>
+                  <li>
+                    • A competitor provides specialized edge or regional
+                    infrastructure you need.
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
 
         {/* Detailed Alternative Cards */}
         <main className="flex-1">

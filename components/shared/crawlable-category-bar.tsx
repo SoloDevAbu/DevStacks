@@ -50,11 +50,15 @@ export const CrawlableCategoryBar = ({
           const isActive =
             activeCategory?.toLowerCase() === cat.name.toLowerCase() ||
             activeCategory?.toLowerCase() === cat.slug.toLowerCase()
+          const categoryHref =
+            type === "tools"
+              ? ROUTES.TOOL_CATEGORY(cat.slug)
+              : ROUTES.PRODUCT_CATEGORY(cat.slug)
 
           return (
             <Link
               key={cat.id}
-              href={`${basePath}?category=${encodeURIComponent(cat.name)}`}
+              href={categoryHref}
               className={cn(
                 "inline-flex shrink-0 items-center gap-1.5 rounded-md border px-2.5 py-1 text-xs font-medium shadow-2xs transition-all",
                 isActive

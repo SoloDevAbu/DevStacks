@@ -148,6 +148,10 @@ export const productSchema = (product: ProductSchemaInput) => {
   if (product.playStoreUrl) downloadUrls.push(product.playStoreUrl)
   if (product.chromeExtensionUrl) downloadUrls.push(product.chromeExtensionUrl)
 
+  const cleanCountryOfOrigin = product.countryOfOrigin?.trim()
+  const cleanSpatialCoverage = product.spatialCoverage?.trim()
+  const cleanKeywords = product.keywords?.trim()
+
   return {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
@@ -157,19 +161,21 @@ export const productSchema = (product: ProductSchemaInput) => {
     url: product.url,
     image: product.logoUrl ?? SITE_CONFIG.ogImageUrl,
     applicationCategory:
-      product.asoCategory ?? product.category ?? "DeveloperApplication",
-    applicationSubCategory: product.category ?? undefined,
+      product.asoCategory?.trim() ||
+      product.category?.trim() ||
+      "DeveloperApplication",
+    applicationSubCategory: product.category?.trim() || undefined,
     operatingSystem:
       product.platforms && product.platforms.length > 0
         ? product.platforms.join(", ")
         : "Web, Cloud, Cross-Platform",
-    keywords: product.keywords ?? undefined,
+    keywords: cleanKeywords || undefined,
     featureList: featureList.length > 0 ? featureList : undefined,
     sameAs: sameAs.length > 0 ? sameAs : undefined,
-    audience: product.targetAudience
+    audience: product.targetAudience?.trim()
       ? {
           "@type": "Audience",
-          audienceType: product.targetAudience,
+          audienceType: product.targetAudience.trim(),
         }
       : undefined,
     downloadUrl:
@@ -220,30 +226,29 @@ export const productSchema = (product: ProductSchemaInput) => {
       name: SITE_CONFIG.name,
       url: SITE_CONFIG.url,
     },
-    author: product.author
+    author: product.author?.name?.trim()
       ? {
           "@type": "Person",
-          name: product.author.name,
-          url: product.author.url,
-          nationality: product.author.country
+          name: product.author.name.trim(),
+          url: product.author.url?.trim() || undefined,
+          nationality: product.author.country?.trim()
             ? {
                 "@type": "Country",
                 name:
-                  countryCodeToName(product.author.country) ||
-                  product.author.country,
+                  countryCodeToName(product.author.country.trim()) ||
+                  product.author.country.trim(),
               }
             : undefined,
         }
       : undefined,
-    countryOfOrigin: product.countryOfOrigin
+    countryOfOrigin: cleanCountryOfOrigin
       ? {
           "@type": "Country",
           name:
-            countryCodeToName(product.countryOfOrigin) ||
-            product.countryOfOrigin,
+            countryCodeToName(cleanCountryOfOrigin) || cleanCountryOfOrigin,
         }
       : undefined,
-    spatialCoverage: product.spatialCoverage ?? undefined,
+    spatialCoverage: cleanSpatialCoverage || undefined,
     screenshot:
       product.screenshots && product.screenshots.length > 0
         ? product.screenshots
@@ -415,6 +420,10 @@ export const toolSchema = (tool: ToolSchemaInput) => {
   if (tool.websiteUrl && tool.websiteUrl !== tool.url)
     sameAs.push(tool.websiteUrl)
 
+  const cleanCountryOfOrigin = tool.countryOfOrigin?.trim()
+  const cleanSpatialCoverage = tool.spatialCoverage?.trim()
+  const cleanKeywords = tool.keywords?.trim()
+
   return {
     "@context": "https://schema.org",
     "@type": ["SoftwareApplication", "WebAPI"],
@@ -424,19 +433,19 @@ export const toolSchema = (tool: ToolSchemaInput) => {
     url: tool.url,
     image: tool.logoUrl ?? SITE_CONFIG.ogImageUrl,
     applicationCategory:
-      tool.asoCategory ?? tool.category ?? "DeveloperApplication",
-    applicationSubCategory: tool.category ?? undefined,
+      tool.asoCategory?.trim() || tool.category?.trim() || "DeveloperApplication",
+    applicationSubCategory: tool.category?.trim() || undefined,
     operatingSystem:
       tool.platforms && tool.platforms.length > 0
         ? tool.platforms.join(", ")
         : "Web, Cloud, Cross-Platform",
-    keywords: tool.keywords ?? undefined,
+    keywords: cleanKeywords || undefined,
     featureList: featureList.length > 0 ? featureList : undefined,
     sameAs: sameAs.length > 0 ? sameAs : undefined,
-    audience: tool.targetAudience
+    audience: tool.targetAudience?.trim()
       ? {
           "@type": "Audience",
-          audienceType: tool.targetAudience,
+          audienceType: tool.targetAudience.trim(),
         }
       : undefined,
     interactionStatistic:
@@ -475,26 +484,29 @@ export const toolSchema = (tool: ToolSchemaInput) => {
       name: SITE_CONFIG.name,
       url: SITE_CONFIG.url,
     },
-    author: tool.author
+    author: tool.author?.name?.trim()
       ? {
           "@type": "Person",
-          name: tool.author.name,
-          url: tool.author.url,
-          nationality: tool.author.country
+          name: tool.author.name.trim(),
+          url: tool.author.url?.trim() || undefined,
+          nationality: tool.author.country?.trim()
             ? {
                 "@type": "Country",
                 name:
-                  countryCodeToName(tool.author.country) || tool.author.country,
+                  countryCodeToName(tool.author.country.trim()) ||
+                  tool.author.country.trim(),
               }
             : undefined,
         }
       : undefined,
-    countryOfOrigin: tool.countryOfOrigin
+    countryOfOrigin: cleanCountryOfOrigin
       ? {
           "@type": "Country",
-          name: countryCodeToName(tool.countryOfOrigin) || tool.countryOfOrigin,
+          name:
+            countryCodeToName(cleanCountryOfOrigin) || cleanCountryOfOrigin,
         }
       : undefined,
+    spatialCoverage: cleanSpatialCoverage || undefined,
     screenshot:
       tool.screenshots && tool.screenshots.length > 0
         ? tool.screenshots

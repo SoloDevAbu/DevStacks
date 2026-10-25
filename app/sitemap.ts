@@ -1,7 +1,10 @@
 import type { MetadataRoute } from "next"
 import { getProducts } from "@/db/queries/products/list"
 import { getTools } from "@/db/queries/tools/list"
-import { getToolCategories } from "@/db/queries/categories/list"
+import {
+  getToolCategories,
+  getProductCategories,
+} from "@/db/queries/categories/list"
 import { getActiveMakersForSitemap } from "@/db/queries/users/get-profile"
 import { ROUTES } from "@/constants/routes"
 import { normalizeSitemapUrl } from "@/utils/urls"
@@ -101,6 +104,42 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
       changeFrequency: "daily",
       priority: 0.85,
     },
+    {
+      url: normalizeSitemapUrl(ROUTES.PRODUCTHUNT_ALTERNATIVES),
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.85,
+    },
+    {
+      url: normalizeSitemapUrl(ROUTES.SAAS_DIRECTORY),
+      lastModified: now,
+      changeFrequency: "daily",
+      priority: 0.9,
+    },
+    {
+      url: normalizeSitemapUrl(ROUTES.DEVELOPER_TOOLS_DIRECTORY),
+      lastModified: now,
+      changeFrequency: "daily",
+      priority: 0.9,
+    },
+    {
+      url: normalizeSitemapUrl(ROUTES.PRODUCT_LAUNCH_PLATFORM),
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.9,
+    },
+    {
+      url: normalizeSitemapUrl(ROUTES.GUIDE_SAAS_DIRECTORIES),
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.85,
+    },
+    {
+      url: normalizeSitemapUrl(ROUTES.GUIDE_LAUNCH_DEVTOOLS),
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.85,
+    },
     ...getAllComparisons().map((comparison) => ({
       url: normalizeSitemapUrl(comparison.routePath || comparison.canonicalUrl),
       lastModified: comparison.lastVerifiedDate
@@ -112,22 +151,43 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
   ]
 
   try {
-    const [dbProducts, dbTools, dbMakers, toolCategories] = await Promise.all([
+    const [
+      dbProducts,
+      dbTools,
+      dbMakers,
+      toolCategories,
+      productCategories,
+    ] = await Promise.all([
       getProducts({ limit: 5000 }),
       getTools({ limit: 5000 }),
       getActiveMakersForSitemap(5000).catch(() => []),
       getToolCategories().catch(() => []),
+      getProductCategories().catch(() => []),
     ])
 
     const dynamicRoutes: MetadataRoute.Sitemap = []
 
-    // Category Hubs with >= 3 approved tools
+    // Tool Category Hubs with >= 1 approved tools
     if (toolCategories && toolCategories.length > 0) {
       dynamicRoutes.push(
         ...toolCategories
-          .filter((cat) => cat.count >= 3)
+          .filter((cat) => cat.count >= 1)
           .map((cat) => ({
             url: normalizeSitemapUrl(`/tools/category/${cat.slug}`),
+            lastModified: now,
+            changeFrequency: "daily" as const,
+            priority: 0.85,
+          }))
+      )
+    }
+
+    // Product Category Hubs with >= 1 approved products
+    if (productCategories && productCategories.length > 0) {
+      dynamicRoutes.push(
+        ...productCategories
+          .filter((cat) => cat.count >= 1)
+          .map((cat) => ({
+            url: normalizeSitemapUrl(`/products/category/${cat.slug}`),
             lastModified: now,
             changeFrequency: "daily" as const,
             priority: 0.85,
@@ -157,10 +217,10 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
         }))
       )
 
-      // Dedicated Built-With showcase pages for tools with >= 3 verified builds
+      // Dedicated Built-With showcase pages for tools with >= 1 verified builds
       dynamicRoutes.push(
         ...dbTools
-          .filter((tool) => (tool.buildsCount ?? 0) >= 3)
+          .filter((tool) => (tool.buildsCount ?? 0) >= 1)
           .map((tool) => ({
             url: normalizeSitemapUrl(`/built-with/${tool.slug}`),
             lastModified: tool.updatedAt ?? now,
@@ -169,7 +229,7 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
           }))
       )
 
-      // Dedicated Alternatives pages for tools with >= 3 siblings in the same category
+      // Dedicated Alternatives pages for tools with >= 1 sibling in the same category
       const categoryCountMap = new Map<string, number>()
       for (const cat of toolCategories) {
         categoryCountMap.set(cat.id, cat.count)
@@ -180,7 +240,7 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
           .filter((tool) => {
             if (!tool.categoryId) return false
             const count = categoryCountMap.get(tool.categoryId) ?? 0
-            return count >= 4 // self + 3 alternatives
+            return count >= 2 // self + at least 1 sibling
           })
           .map((tool) => ({
             url: normalizeSitemapUrl(`/alternatives/${tool.slug}`),

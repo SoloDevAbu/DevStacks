@@ -31,6 +31,12 @@
       "skillPath": "skills/seo/on-page/schema/SKILL.md",
       "computedHash": "7b46b91030de5d71b2e23e60c434c0b2072efac3a5ec3d4df6882f3e93b7bad6"
     },
+    "seo": {
+      "source": "bhanunamikaze/agentic-seo-skill",
+      "sourceType": "github",
+      "skillPath": "SKILL.md",
+      "computedHash": "2fe38397a7e887205982261a2b027194d40ac90bb074427f64aa445a4441bf39"
+    },
     "seo-audit": {
       "source": "coreyhaines31/marketingskills",
       "sourceType": "github",

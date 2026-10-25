@@ -10,13 +10,20 @@ import {
   Sparkles,
   Globe,
   Layers,
+  Scale,
+  Code2,
+  CheckCircle2,
+  ArrowRight,
+  ExternalLink,
 } from "lucide-react"
 import { resolveTool, getProductsBuiltWithTool } from "@/lib/tools/resolve-tool"
+import { getRelatedTools } from "@/db/queries/tools/get"
 import { ProductCard } from "@/components/shared/product-card"
 import { ProductLogo } from "@/components/shared/product-logo"
 import { getFaviconUrl } from "@/utils/urls"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { ToolCard } from "@/components/shared/tool-card"
 import {
   breadcrumbSchema,
   collectionPageSchema,
@@ -40,7 +47,7 @@ export const generateMetadata = async (
 
   if (!tool) {
     return {
-      title: `Showcase Not Found — ${SITE_CONFIG.name}`,
+      title: "Showcase Not Found",
       robots: {
         index: false,
         follow: false,
@@ -53,9 +60,10 @@ export const generateMetadata = async (
     tool.name,
     50
   )
-  const isIndexable = builtWithProducts.length >= 3
+  const isIndexable = builtWithProducts.length >= 1
 
-  const title = `Products Built With ${tool.name} — Production Showcase | ${SITE_CONFIG.name}`
+  const baseTitle = `Products Built With ${tool.name} — Production Showcase`
+  const title = baseTitle
   const description = `Discover ${builtWithProducts.length} verified live apps, SaaS products, and developer projects built with ${tool.name}. Explore tech stacks, maker profiles, and architectures on ${SITE_CONFIG.name}.`
   const canonicalUrl = `${SITE_CONFIG.url}/built-with/${tool.slug}`
 
@@ -79,7 +87,7 @@ export const generateMetadata = async (
       follow: true,
     },
     openGraph: {
-      title,
+      title: `${baseTitle} | ${SITE_CONFIG.name}`,
       description,
       url: canonicalUrl,
       type: "website",
@@ -95,7 +103,7 @@ export const generateMetadata = async (
     },
     twitter: {
       card: "summary_large_image",
-      title,
+      title: `${baseTitle} | ${SITE_CONFIG.name}`,
       description,
       images: [SITE_CONFIG.ogImageUrl],
     },
@@ -110,11 +118,12 @@ const BuiltWithPage = async (props: BuiltWithPageProps) => {
     notFound()
   }
 
-  const builtWithProducts = await getProductsBuiltWithTool(
-    tool.slug,
-    tool.name,
-    50
-  )
+  const [builtWithProducts, relatedTools] = await Promise.all([
+    getProductsBuiltWithTool(tool.slug, tool.name, 50),
+    tool.categoryId
+      ? getRelatedTools(tool.categoryId, tool.id, 4)
+      : Promise.resolve([]),
+  ])
 
   // Anti-thin circuit breaker: If 0 builds, redirect to the tool's main profile
   if (builtWithProducts.length === 0) {
@@ -258,7 +267,7 @@ const BuiltWithPage = async (props: BuiltWithPageProps) => {
                   <strong className="font-semibold text-slate-800">
                     {tool.name}
                   </strong>
-                  . Inspect full stacks and architectures.
+                  . Inspect real-world tech stacks and production architectures.
                 </p>
 
                 <div className="mt-2 flex flex-wrap items-center gap-2.5 text-xs text-slate-600">
@@ -274,7 +283,16 @@ const BuiltWithPage = async (props: BuiltWithPageProps) => {
                     href={ROUTES.TOOL(tool.slug)}
                     className="font-medium text-slate-700 hover:text-slate-900 hover:underline"
                   >
-                    View {tool.name} Tool Profile ↗
+                    View {tool.name} Profile ↗
+                  </Link>
+
+                  <span className="text-slate-300">•</span>
+
+                  <Link
+                    href={`/alternatives/${tool.slug}`}
+                    className="font-medium text-indigo-600 hover:text-indigo-800 hover:underline"
+                  >
+                    Compare {tool.name} Alternatives ↗
                   </Link>
                 </div>
               </div>
@@ -304,6 +322,18 @@ const BuiltWithPage = async (props: BuiltWithPageProps) => {
           </div>
         </header>
 
+        {/* Section Heading */}
+        <div className="border-b border-dashed border-border bg-slate-50/50 px-6 py-4 md:px-8">
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm font-bold tracking-tight text-slate-900 sm:text-base">
+              Verified Production Applications ({builtWithProducts.length})
+            </h2>
+            <span className="text-xs text-slate-500">
+              Ranked by community likes & adoption
+            </span>
+          </div>
+        </div>
+
         {/* Products List */}
         <main className="flex-1">
           <div className="flex flex-col">
@@ -317,6 +347,118 @@ const BuiltWithPage = async (props: BuiltWithPageProps) => {
               />
             ))}
           </div>
+
+          {/* Architectural Deep Dive Section */}
+          <section className="border-t border-dashed border-border bg-slate-50/30 px-6 py-10 md:px-8 md:py-12">
+            <div className="mx-auto max-w-4xl space-y-8">
+              <div>
+                <div className="flex items-center gap-2 text-xs font-bold tracking-wider text-blue-700 uppercase">
+                  <Code2 className="size-4 text-blue-600" />
+                  <span>Architecture Guide</span>
+                </div>
+                <h2 className="mt-1 text-xl font-bold tracking-tight text-slate-900 sm:text-2xl">
+                  Why Developers Choose {tool.name} for Production
+                </h2>
+                <p className="mt-2 text-sm leading-relaxed text-slate-600">
+                  {tool.description ||
+                    tool.tagline ||
+                    `${tool.name} provides critical infrastructure for modern web applications and APIs.`}
+                </p>
+              </div>
+
+              {(tool.problemStatement || tool.solution || tool.uniqueValue) && (
+                <div className="grid gap-4 sm:grid-cols-3">
+                  {tool.problemStatement && (
+                    <div className="rounded-lg border border-dashed border-border bg-white p-4">
+                      <h3 className="text-xs font-bold uppercase text-slate-500">
+                        Problem Solved
+                      </h3>
+                      <p className="mt-1.5 text-xs leading-relaxed text-slate-700">
+                        {tool.problemStatement}
+                      </p>
+                    </div>
+                  )}
+                  {tool.solution && (
+                    <div className="rounded-lg border border-dashed border-border bg-white p-4">
+                      <h3 className="text-xs font-bold uppercase text-slate-500">
+                        Core Solution
+                      </h3>
+                      <p className="mt-1.5 text-xs leading-relaxed text-slate-700">
+                        {tool.solution}
+                      </p>
+                    </div>
+                  )}
+                  {tool.uniqueValue && (
+                    <div className="rounded-lg border border-dashed border-border bg-white p-4">
+                      <h3 className="text-xs font-bold uppercase text-slate-500">
+                        Key Differentiator
+                      </h3>
+                      <p className="mt-1.5 text-xs leading-relaxed text-slate-700">
+                        {tool.uniqueValue}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Cross-Link Ecosystem Box */}
+              <div className="rounded-xl border border-dashed border-border bg-white p-6 shadow-2xs">
+                <h3 className="text-base font-bold text-slate-900">
+                  Explore Related Tools in {tool.category ?? "Developer Tools"}
+                </h3>
+                <p className="mt-1 text-xs text-slate-600">
+                  Compare tooling stacks, evaluate alternative libraries, and
+                  inspect competitor features.
+                </p>
+                <div className="mt-4 flex flex-wrap items-center gap-3">
+                  <Link
+                    href={`/alternatives/${tool.slug}`}
+                    className="inline-flex items-center gap-1.5 rounded-none bg-slate-900 px-3.5 py-2 text-xs font-semibold text-white hover:bg-slate-800"
+                  >
+                    <Scale className="size-3.5" />
+                    Top {tool.name} Alternatives
+                  </Link>
+
+                  {tool.category && (
+                    <Link
+                      href={`/tools/category/${tool.categorySlug ?? encodeURIComponent(tool.category)}`}
+                      className="inline-flex items-center gap-1.5 rounded-none border border-slate-300 bg-white px-3.5 py-2 text-xs font-semibold text-slate-800 hover:bg-slate-50"
+                    >
+                      <Layers className="size-3.5 text-blue-600" />
+                      Browse {tool.category} Category Hub
+                    </Link>
+                  )}
+
+                  <Link
+                    href={ROUTES.TOOL(tool.slug)}
+                    className="inline-flex items-center gap-1.5 rounded-none border border-slate-300 bg-white px-3.5 py-2 text-xs font-semibold text-slate-800 hover:bg-slate-50"
+                  >
+                    Full {tool.name} Specifications ↗
+                  </Link>
+                </div>
+              </div>
+
+              {/* Sibling Related Tools Feed */}
+              {relatedTools.length > 0 && (
+                <div>
+                  <h3 className="mb-3 text-sm font-bold text-slate-900">
+                    Popular Related Developer Tools
+                  </h3>
+                  <div className="flex flex-col border border-dashed border-border bg-white">
+                    {relatedTools.map((rel, idx) => (
+                      <ToolCard
+                        key={rel.id}
+                        tool={rel}
+                        index={idx}
+                        showMedals={false}
+                        showTrendingBadge={false}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </section>
         </main>
       </div>
     </>

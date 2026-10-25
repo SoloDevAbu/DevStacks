@@ -261,8 +261,7 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
     answer: f.answer,
   }))
 
-  const faqJsonLd = productFaqs.length > 0 ? faqSchema(productFaqs) : null
-  const aiPrompt = AI_PROMPTS.product(
+    const aiPrompt = AI_PROMPTS.product(
     product.name,
     product.tagline,
     product.aiContext || product.description,
@@ -270,7 +269,7 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
     `${productUrl}.md`
   )
 
-  const entitySchemas = [prodJsonLd, breadcrumbJsonLd, faqJsonLd].filter(
+  const entitySchemas = [prodJsonLd, breadcrumbJsonLd].filter(
     Boolean
   ) as Record<string, unknown>[]
   const unifiedJsonLd = buildEntityGraph(entitySchemas)
@@ -681,6 +680,15 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
                   </Link>
                 )
               )}
+            </div>
+            <div className="border-t border-dashed border-border bg-slate-50/50 px-6 py-3 text-xs text-slate-600 md:px-8">
+              <span>Looking for live tech-stack architectures? Explore developer tools in the </span>
+              <Link
+                href={ROUTES.DISCOVER_POPULAR_BUILDING_BLOCKS}
+                className="font-semibold text-indigo-600 hover:underline"
+              >
+                Building Blocks Directory →
+              </Link>
             </div>
           </section>
         )}

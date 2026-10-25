@@ -3,20 +3,13 @@ import { tools, toolFaqs } from "@/db/schema"
 import type { NewTool } from "@/db/schema"
 import { getOrCreateCategory } from "@/db/queries/categories/list"
 import { getFaviconUrl } from "@/utils/urls"
+import { slugify } from "@/utils/slug"
 import {
   resolveAndValidateLaunchSlot,
   recordLaunchEntry,
 } from "@/db/queries/launches/book"
 
 import { randomBytes } from "crypto"
-
-const slugify = (text: string) =>
-  text
-    .toLowerCase()
-    .trim()
-    .replace(/[^\w\s-]/g, "")
-    .replace(/[\s_-]+/g, "-")
-    .replace(/^-+|-+$/g, "")
 
 const nanoid = (len = 6) =>
   randomBytes(Math.ceil(len / 2))
@@ -55,7 +48,7 @@ export const createTool = async (data: CreateToolInput) => {
     categoryId = await getOrCreateCategory(category)
   }
 
-  const baseSlug = slugify(rest.name)
+  const baseSlug = slugify(rest.name, "tool")
   const slug = `${baseSlug}-${nanoid()}`
 
   const logoUrl = rest.logoUrl?.trim() || getFaviconUrl(rest.websiteUrl)

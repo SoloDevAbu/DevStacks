@@ -1,6 +1,7 @@
 import { db } from "@/db"
 import { tools, categories, users } from "@/db/schema"
 import { and, desc, eq, ilike, or, sql } from "drizzle-orm"
+import { unstable_cache } from "next/cache"
 import type { DbTool } from "@/types/entities"
 import type { Pricing, Tier } from "@/constants/plans"
 
@@ -147,3 +148,15 @@ export const getToolsStats = async () => {
     totalBuilds: Number(row?.totalBuilds ?? 0),
   }
 }
+
+export const getCachedTools = unstable_cache(
+  async (filters: ToolListFilters) => getTools(filters),
+  ["tools-list"],
+  { revalidate: 300, tags: ["tools-list"] }
+)
+
+export const getCachedToolsStats = unstable_cache(
+  async () => getToolsStats(),
+  ["tools-stats"],
+  { revalidate: 300, tags: ["tools-stats"] }
+)

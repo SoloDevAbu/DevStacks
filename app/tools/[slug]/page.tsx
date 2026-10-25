@@ -21,6 +21,7 @@ import {
   Globe,
   Laptop,
   HelpCircle,
+  Scale,
 } from "lucide-react"
 import { resolveTool, getProductsBuiltWithTool } from "@/lib/tools/resolve-tool"
 import { getRelatedTools } from "@/db/queries/tools/get"
@@ -258,8 +259,7 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
     answer: f.answer,
   }))
 
-  const faqJsonLd = toolFaqs.length > 0 ? faqSchema(toolFaqs) : null
-  const aiPrompt = AI_PROMPTS.tool(
+    const aiPrompt = AI_PROMPTS.tool(
     tool.name,
     tool.tagline,
     tool.aiContext || tool.description,
@@ -281,7 +281,6 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
   const entitySchemas = [
     prodJsonLd,
     breadcrumbJsonLd,
-    faqJsonLd,
     builtWithJsonLd,
   ].filter(Boolean) as Record<string, unknown>[]
   const unifiedJsonLd = buildEntityGraph(entitySchemas)
@@ -420,9 +419,21 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
                       {tag}
                     </Badge>
                   ))}
-                  <span className="text-xs font-semibold text-blue-600">
-                    {tool.buildsCount} builds
-                  </span>
+                  <Link
+                    href={ROUTES.BUILT_WITH(tool.slug)}
+                    className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 hover:underline"
+                  >
+                    <Hammer className="size-3" />
+                    {tool.buildsCount} {tool.buildsCount === 1 ? "build" : "builds"}
+                  </Link>
+                  <span className="text-slate-300">•</span>
+                  <Link
+                    href={ROUTES.ALTERNATIVES(tool.slug)}
+                    className="inline-flex items-center gap-1 text-xs font-medium text-slate-600 hover:text-slate-900 hover:underline"
+                  >
+                    <Scale className="size-3" />
+                    Alternatives
+                  </Link>
                   {tool.createdAt && (
                     <span className="text-xs text-slate-500">
                       Added{" "}
@@ -884,7 +895,7 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
                   showTrendingBadge={false}
                 />
               ))}
-              {builtWithProducts.length >= 3 && (
+              {builtWithProducts.length >= 1 && (
                 <div className="border-t border-dashed border-border bg-slate-50/50 px-6 py-3 text-center md:px-8">
                   <Link
                     href={ROUTES.BUILT_WITH(tool.slug)}

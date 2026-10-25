@@ -55,7 +55,11 @@ export const runDatabaseMigration = async ({
   }
 
   const source = postgres(sourceUrl, { max: 5, onnotice: () => {} })
-  const target = postgres(targetUrl, { max: 5, prepare: false, onnotice: () => {} })
+  const target = postgres(targetUrl, {
+    max: 5,
+    prepare: false,
+    onnotice: () => {},
+  })
 
   try {
     // 1. Connectivity test
@@ -162,29 +166,46 @@ export const runDatabaseMigration = async ({
       const targetColSet = new Set(targetColumns.map((c) => c.column_name))
 
       // Check if source has columns missing in target (e.g. is_deleted)
-      const sourceColumns = await source<{ column_name: string; udt_name: string; is_nullable: string; column_default: string | null }[]>`
+      const sourceColumns = await source<
+        {
+          column_name: string
+          udt_name: string
+          is_nullable: string
+          column_default: string | null
+        }[]
+      >`
         SELECT column_name, udt_name, is_nullable, column_default
         FROM information_schema.columns 
         WHERE table_schema = 'public' AND table_name = ${tableName}
       `
       for (const col of sourceColumns) {
         if (!targetColSet.has(col.column_name)) {
-          console.log(`\n   Auto-adding missing column "${col.column_name}" to Supabase table "${tableName}"...`)
+          console.log(
+            `\n   Auto-adding missing column "${col.column_name}" to Supabase table "${tableName}"...`
+          )
           let colType = col.udt_name
           if (colType === "bool") colType = "boolean"
           if (colType.startsWith("_")) colType = `${colType.slice(1)}[]`
-          const defaultClause = col.column_default ? ` DEFAULT ${col.column_default}` : ""
+          const defaultClause = col.column_default
+            ? ` DEFAULT ${col.column_default}`
+            : ""
           try {
-            await target.unsafe(`ALTER TABLE "${tableName}" ADD COLUMN IF NOT EXISTS "${col.column_name}" ${colType}${defaultClause};`)
+            await target.unsafe(
+              `ALTER TABLE "${tableName}" ADD COLUMN IF NOT EXISTS "${col.column_name}" ${colType}${defaultClause};`
+            )
             targetColSet.add(col.column_name)
           } catch (e: any) {
-            console.warn(`   Could not auto-add column ${col.column_name}: ${e.message}`)
+            console.warn(
+              `   Could not auto-add column ${col.column_name}: ${e.message}`
+            )
           }
         }
       }
 
       // Filter insert batch to columns that exist on target
-      const validColumns = Object.keys(rows[0]).filter((col) => targetColSet.has(col))
+      const validColumns = Object.keys(rows[0]).filter((col) =>
+        targetColSet.has(col)
+      )
 
       // Batch insert into target
       for (let i = 0; i < rows.length; i += batchSize) {
@@ -266,7 +287,7 @@ const main = async () => {
     process.env.MIGRATION_SOURCE_URL ||
     process.env.NEON_DATABASE_URL ||
     process.env.DATABASE_URL_PROD ||
-    "postgresql://neondb_owner:npg_Big0olY3Fnqc@ep-hidden-block-b54kmns1-pooler.c-7.us-east-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
+    ""
 
   let targetUrl =
     process.env.MIGRATION_TARGET_URL ||
@@ -280,7 +301,9 @@ const main = async () => {
 
   // Supabase migration/DDL best practice: Use session pooler (port 5432) instead of transaction pooler (port 6543)
   if (targetUrl.includes(":6543/")) {
-    console.log("ℹ️  Switching from transaction pooler (port 6543) to session pooler (port 5432) for migration compatibility...")
+    console.log(
+      "ℹ️  Switching from transaction pooler (port 6543) to session pooler (port 5432) for migration compatibility..."
+    )
     targetUrl = targetUrl.replace(":6543/", ":5432/")
   }
 
@@ -293,4 +316,3 @@ main()
     console.error("\n❌ Migration halted:", err.message || err)
     process.exit(1)
   })
-

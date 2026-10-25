@@ -1,6 +1,8 @@
 import { db } from "@/db"
 import { tools, products, categories } from "@/db/schema"
 import { and, eq, ilike, or, sql } from "drizzle-orm"
+import { slugify } from "@/utils/slug"
+import { unstable_cache } from "next/cache"
 
 export type DbCategoryItem = {
   id: string
@@ -8,14 +10,6 @@ export type DbCategoryItem = {
   slug: string
   count: number
 }
-
-const slugify = (text: string) =>
-  text
-    .toLowerCase()
-    .trim()
-    .replace(/[^\w\s-]/g, "")
-    .replace(/[\s_-]+/g, "-")
-    .replace(/^-+|-+$/g, "")
 
 export const getToolCategories = async (
   query?: string
@@ -112,7 +106,7 @@ export const getOrCreateCategory = async (rawName: string): Promise<string> => {
     throw new Error("Category name cannot be empty")
   }
 
-  const baseSlug = slugify(name)
+  const baseSlug = slugify(name, "category")
   const slug = baseSlug || `cat-${Math.random().toString(36).substring(2, 7)}`
 
   const existing = await db
@@ -221,3 +215,15 @@ export const getCategoryStats = async (categoryId: string) => {
     productCount: Number(productStats?.productCount ?? 0),
   }
 }
+
+export const getCachedToolCategories = unstable_cache(
+  async (query?: string) => getToolCategories(query),
+  ["tool-categories"],
+  { revalidate: 3600, tags: ["tool-categories"] }
+)
+
+export const getCachedProductCategories = unstable_cache(
+  async (query?: string) => getProductCategories(query),
+  ["product-categories"],
+  { revalidate: 3600, tags: ["product-categories"] }
+)

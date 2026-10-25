@@ -1,16 +1,31 @@
 import { SITE_CONFIG } from "@/constants/site"
 
+export const cleanTitle = (title: string): string => {
+  const brandEscaped = SITE_CONFIG.name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
+  const brandRegex = new RegExp(
+    `\\s*[|—–-]\\s*(${brandEscaped}|LaunchNests)\\s*$`,
+    "i"
+  )
+  let cleaned = title.trim()
+  while (brandRegex.test(cleaned)) {
+    cleaned = cleaned.replace(brandRegex, "").trim()
+  }
+  return cleaned
+}
+
 export const formatTitle = (
   name: string,
   tagline?: string | null,
   maxChars = 58
 ): string => {
-  if (!tagline) return name
-  const full = `${name}: ${tagline}`
+  const sanitizedName = cleanTitle(name)
+  if (!tagline) return sanitizedName
+  const cleanTagline = cleanTitle(tagline)
+  const full = `${sanitizedName}: ${cleanTagline}`
   if (full.length <= maxChars) return full
-  const availableTaglineLength = maxChars - name.length - 2
-  if (availableTaglineLength <= 10) return name
-  return `${name}: ${tagline.slice(0, availableTaglineLength).trim()}…`
+  const availableTaglineLength = maxChars - sanitizedName.length - 2
+  if (availableTaglineLength <= 10) return sanitizedName
+  return `${sanitizedName}: ${cleanTagline.slice(0, availableTaglineLength).trim()}…`
 }
 
 export const formatMetaDescription = (

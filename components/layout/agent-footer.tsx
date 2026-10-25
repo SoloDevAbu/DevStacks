@@ -215,7 +215,7 @@ export const AgentFooter = () => (
           <div className={footerFeaturedMarqueeFadeLeft} />
           <div className={footerFeaturedMarqueeFadeRight} />
 
-          {[0, 1, 2, 3].map((copyIndex) => (
+          {[0, 1].map((copyIndex) => (
             <div
               key={copyIndex}
               aria-hidden={copyIndex > 0 ? "true" : undefined}
@@ -235,6 +235,8 @@ export const AgentFooter = () => (
                     src={badge.src}
                     alt={badge.alt}
                     width={badge.width}
+                    loading="lazy"
+                    decoding="async"
                     {...(badge.height !== undefined
                       ? { height: badge.height }
                       : {})}

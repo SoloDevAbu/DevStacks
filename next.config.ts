@@ -15,6 +15,11 @@ const nextConfig: NextConfig = {
   },
   redirects: async () => [
     {
+      source: "/tools/-c6c56e",
+      destination: "/tools",
+      permanent: true,
+    },
+    {
       source: "/discover/daily-launches",
       destination: "/",
       permanent: true,
