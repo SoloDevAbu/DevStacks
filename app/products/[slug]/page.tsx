@@ -681,6 +681,15 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
                 )
               )}
             </div>
+            <div className="border-t border-dashed border-border bg-slate-50/50 px-6 py-3 text-xs text-slate-600 md:px-8">
+              <span>Looking for live tech-stack architectures? Explore developer tools in the </span>
+              <Link
+                href={ROUTES.DISCOVER_POPULAR_BUILDING_BLOCKS}
+                className="font-semibold text-indigo-600 hover:underline"
+              >
+                Building Blocks Directory →
+              </Link>
+            </div>
           </section>
         )}
 
