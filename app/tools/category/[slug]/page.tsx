@@ -154,7 +154,7 @@ const CategoryToolsPage = async (props: CategoryPageProps) => {
             <li className="flex items-center gap-1">
               <Link
                 href={ROUTES.HOME}
-                className="flex items-center gap-1 hover:text-slate-900 transition-colors"
+                className="flex items-center gap-1 transition-colors hover:text-slate-900"
               >
                 <ArrowLeft className="size-3" />
                 Home
@@ -166,7 +166,7 @@ const CategoryToolsPage = async (props: CategoryPageProps) => {
             <li className="flex items-center">
               <Link
                 href={ROUTES.TOOLS}
-                className="hover:text-slate-900 transition-colors"
+                className="transition-colors hover:text-slate-900"
               >
                 Tools
               </Link>
@@ -177,7 +177,7 @@ const CategoryToolsPage = async (props: CategoryPageProps) => {
             <li className="flex items-center">
               <Link
                 href={ROUTES.TOOL_CATEGORIES}
-                className="hover:text-slate-900 transition-colors"
+                className="transition-colors hover:text-slate-900"
               >
                 Categories
               </Link>
@@ -199,11 +199,6 @@ const CategoryToolsPage = async (props: CategoryPageProps) => {
         {/* Category Hero Header */}
         <header className="border-b border-dashed border-border bg-white px-6 py-8 md:px-8 md:py-10">
           <div className="flex flex-col gap-4">
-            <div className="flex items-center gap-2 text-xs font-bold tracking-wider text-blue-700 uppercase">
-              <FolderGit2 className="size-4 text-blue-600" />
-              <span>Category Hub</span>
-            </div>
-
             <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl md:text-4xl">
               {category.name} Developer Tools & APIs
             </h1>
