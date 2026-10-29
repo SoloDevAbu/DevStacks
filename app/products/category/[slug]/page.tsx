@@ -119,7 +119,8 @@ const CategoryProductsPage = async (props: ProductCategoryPageProps) => {
 
   const breadcrumbs = breadcrumbSchema([
     { name: "Home", url: SITE_CONFIG.url },
-    { name: "Products", url: `${SITE_CONFIG.url}/products` },
+    { name: "Products", url: `${SITE_CONFIG.url}${ROUTES.PRODUCTS}` },
+    { name: "Categories", url: `${SITE_CONFIG.url}${ROUTES.PRODUCT_CATEGORIES}` },
     { name: category.name, url: categoryUrl },
   ])
 
@@ -153,7 +154,7 @@ const CategoryProductsPage = async (props: ProductCategoryPageProps) => {
             <li className="flex items-center gap-1">
               <Link
                 href={ROUTES.HOME}
-                className="flex items-center gap-1 hover:text-slate-900"
+                className="flex items-center gap-1 hover:text-slate-900 transition-colors"
               >
                 <ArrowLeft className="size-3" />
                 Home
@@ -163,8 +164,22 @@ const CategoryProductsPage = async (props: ProductCategoryPageProps) => {
               <ChevronRight className="size-3" />
             </li>
             <li className="flex items-center">
-              <Link href={ROUTES.PRODUCTS} className="hover:text-slate-900">
+              <Link
+                href={ROUTES.PRODUCTS}
+                className="hover:text-slate-900 transition-colors"
+              >
                 Products
+              </Link>
+            </li>
+            <li className="flex items-center text-slate-400" aria-hidden="true">
+              <ChevronRight className="size-3" />
+            </li>
+            <li className="flex items-center">
+              <Link
+                href={ROUTES.PRODUCT_CATEGORIES}
+                className="hover:text-slate-900 transition-colors"
+              >
+                Categories
               </Link>
             </li>
             <li className="flex items-center text-slate-400" aria-hidden="true">

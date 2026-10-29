@@ -28,7 +28,6 @@ import {
 import { SITE_CONFIG } from "@/constants/site"
 import { ROUTES } from "@/constants/routes"
 import { Badge } from "@/components/ui/badge"
-import { cn } from "@/lib/utils"
 
 export const revalidate = 3600
 
@@ -120,7 +119,8 @@ const CategoryToolsPage = async (props: CategoryPageProps) => {
 
   const breadcrumbs = breadcrumbSchema([
     { name: "Home", url: SITE_CONFIG.url },
-    { name: "Tools", url: `${SITE_CONFIG.url}/tools` },
+    { name: "Tools", url: `${SITE_CONFIG.url}${ROUTES.TOOLS}` },
+    { name: "Categories", url: `${SITE_CONFIG.url}${ROUTES.TOOL_CATEGORIES}` },
     { name: category.name, url: categoryUrl },
   ])
 
@@ -154,7 +154,7 @@ const CategoryToolsPage = async (props: CategoryPageProps) => {
             <li className="flex items-center gap-1">
               <Link
                 href={ROUTES.HOME}
-                className="flex items-center gap-1 hover:text-slate-900"
+                className="flex items-center gap-1 hover:text-slate-900 transition-colors"
               >
                 <ArrowLeft className="size-3" />
                 Home
@@ -164,8 +164,22 @@ const CategoryToolsPage = async (props: CategoryPageProps) => {
               <ChevronRight className="size-3" />
             </li>
             <li className="flex items-center">
-              <Link href={ROUTES.TOOLS} className="hover:text-slate-900">
+              <Link
+                href={ROUTES.TOOLS}
+                className="hover:text-slate-900 transition-colors"
+              >
                 Tools
+              </Link>
+            </li>
+            <li className="flex items-center text-slate-400" aria-hidden="true">
+              <ChevronRight className="size-3" />
+            </li>
+            <li className="flex items-center">
+              <Link
+                href={ROUTES.TOOL_CATEGORIES}
+                className="hover:text-slate-900 transition-colors"
+              >
+                Categories
               </Link>
             </li>
             <li className="flex items-center text-slate-400" aria-hidden="true">
