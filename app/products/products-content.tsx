@@ -13,6 +13,7 @@ import {
   ProductsFilterBar,
   type ProductSortOption,
 } from "@/components/products/products-filter-bar"
+import { directoryTelemetryBar } from "@/utils/styles"
 import { ROUTES } from "@/constants/routes"
 
 interface ProductsDirectoryContentProps {
@@ -23,6 +24,7 @@ interface ProductsDirectoryContentProps {
   initialPage?: number
   totalPages?: number
   initialProducts?: DbProduct[]
+  totalCount?: number
 }
 
 export const ProductsDirectoryContent = ({
@@ -33,6 +35,7 @@ export const ProductsDirectoryContent = ({
   initialPage = 1,
   totalPages,
   initialProducts = [],
+  totalCount,
 }: ProductsDirectoryContentProps) => {
   const router = useRouter()
   const [selectedCategory, setSelectedCategory] = useState<string | undefined>(
@@ -98,6 +101,9 @@ export const ProductsDirectoryContent = ({
     data?.pages.flatMap((page) => page) ??
     (isInitialParams ? initialProducts : [])
 
+  const currentCount = displayedProducts.length
+  const total = hasNextPage ? (totalCount ?? currentCount) : currentCount
+
   const currentPageParam =
     data?.pageParams && data.pageParams.length > 0
       ? (data.pageParams[data.pageParams.length - 1] as number)
@@ -114,6 +120,14 @@ export const ProductsDirectoryContent = ({
 
   return (
     <div className="flex w-full flex-1 flex-col">
+      {/* Full width telemetry bar */}
+      <div className={directoryTelemetryBar}>
+        <div>
+          Showing <span className="font-semibold text-slate-900">{currentCount}</span> of{" "}
+          <span className="font-semibold text-slate-900">{total}</span>
+        </div>
+      </div>
+
       <ProductsFilterBar
         selectedCategory={selectedCategory}
         onSelectCategory={handleCategoryChange}

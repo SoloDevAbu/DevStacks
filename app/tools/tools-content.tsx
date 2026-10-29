@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from "react"
 import { useRouter } from "next/navigation"
+import { Sparkles } from "lucide-react"
 import { ToolList } from "@/components/shared/tool-list"
 import type { DbTool } from "@/types/entities"
 import { useInfiniteTools } from "@/hooks/tools/use-tools"
@@ -13,6 +14,7 @@ import {
   ToolsFilterBar,
   type SortOption,
 } from "@/components/tools/tools-filter-bar"
+import { directoryTelemetryBar } from "@/utils/styles"
 import { ROUTES } from "@/constants/routes"
 
 interface ToolsDirectoryContentProps {
@@ -23,6 +25,8 @@ interface ToolsDirectoryContentProps {
   initialPage?: number
   totalPages?: number
   initialTools?: DbTool[]
+  totalCount?: number
+  totalBuilds?: number
 }
 
 export const ToolsDirectoryContent = ({
@@ -33,6 +37,8 @@ export const ToolsDirectoryContent = ({
   initialPage = 1,
   totalPages,
   initialTools = [],
+  totalCount,
+  totalBuilds,
 }: ToolsDirectoryContentProps) => {
   const router = useRouter()
   const [selectedCategory, setSelectedCategory] = useState<string | undefined>(
@@ -97,6 +103,9 @@ export const ToolsDirectoryContent = ({
   const displayedTools =
     data?.pages.flatMap((page) => page) ?? (isInitialParams ? initialTools : [])
 
+  const currentCount = displayedTools.length
+  const total = hasNextPage ? (totalCount ?? currentCount) : currentCount
+
   const currentPageParam =
     data?.pageParams && data.pageParams.length > 0
       ? (data.pageParams[data.pageParams.length - 1] as number)
@@ -113,6 +122,23 @@ export const ToolsDirectoryContent = ({
 
   return (
     <div className="flex w-full flex-1 flex-col">
+      {/* Full width telemetry bar */}
+      <div className={directoryTelemetryBar}>
+        <div>
+          Showing <span className="font-semibold text-slate-900">{currentCount}</span> of{" "}
+          <span className="font-semibold text-slate-900">{total}</span>
+        </div>
+
+        {totalBuilds !== undefined && totalBuilds > 0 && (
+          <div className="flex items-center gap-1.5 font-medium text-slate-700">
+            <Sparkles className="size-3.5 text-amber-500" />
+            <span>
+              <strong className="font-semibold text-slate-900">{totalBuilds.toLocaleString()}</strong> Connected Builds
+            </span>
+          </div>
+        )}
+      </div>
+
       <ToolsFilterBar
         selectedCategory={selectedCategory}
         onSelectCategory={handleCategoryChange}
