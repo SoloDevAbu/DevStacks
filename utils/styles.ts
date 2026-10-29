@@ -879,3 +879,14 @@ export const uploaderThumbnailCard =
 
 export const uploaderAspectNotice =
   "inline-flex items-center gap-1.5 rounded-md border border-slate-200/80 bg-slate-50 px-2.5 py-1 text-[11px] font-medium text-slate-600"
+
+export const sidebarFeedbackCard =
+  "group relative flex w-full cursor-pointer items-center justify-between border border-dashed border-border bg-white px-3.5 py-3 text-left transition-all hover:border-slate-400 hover:bg-slate-50/70"
+
+export const feedbackTypeButton = (isSelected: boolean) =>
+  cn(
+    "flex items-center gap-1.5 rounded-none border px-2.5 py-1.5 text-xs font-semibold transition-all",
+    isSelected
+      ? "border-slate-900 bg-slate-900 text-white shadow-2xs"
+      : "border-dashed border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900"
+  )
