@@ -39,9 +39,13 @@ export const ProductsHero = ({
         </div>
       </div>
 
-      {/* Ask AI strip */}
-      <div className="relative z-10 flex w-full max-w-[320px] flex-col gap-3 lg:max-w-100 lg:items-end">
-        <AskAiBar prompt={aiPrompt} label="ASK AI ABOUT PRODUCTS" align="end" />
+      {/* Ask AI strip - left-aligned on mobile, right-aligned on desktop */}
+      <div className="relative z-10 flex w-full flex-col gap-2.5 sm:gap-3 lg:max-w-100 lg:items-end">
+        <AskAiBar
+          prompt={aiPrompt}
+          label="ASK AI ABOUT PRODUCTS"
+          align="responsive"
+        />
       </div>
     </div>
   )
