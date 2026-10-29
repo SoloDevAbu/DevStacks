@@ -27,10 +27,22 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
       priority: 0.9,
     },
     {
+      url: normalizeSitemapUrl(ROUTES.TOOL_CATEGORIES),
+      lastModified: now,
+      changeFrequency: "daily",
+      priority: 0.85,
+    },
+    {
       url: normalizeSitemapUrl(ROUTES.PRODUCTS),
       lastModified: now,
       changeFrequency: "daily",
       priority: 0.9,
+    },
+    {
+      url: normalizeSitemapUrl(ROUTES.PRODUCT_CATEGORIES),
+      lastModified: now,
+      changeFrequency: "daily",
+      priority: 0.85,
     },
     {
       url: normalizeSitemapUrl(ROUTES.TRENDING),
@@ -173,7 +185,7 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
         ...toolCategories
           .filter((cat) => cat.count >= 1)
           .map((cat) => ({
-            url: normalizeSitemapUrl(`/tools/category/${cat.slug}`),
+            url: normalizeSitemapUrl(ROUTES.TOOL_CATEGORY(cat.slug)),
             lastModified: now,
             changeFrequency: "daily" as const,
             priority: 0.85,
@@ -187,7 +199,7 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
         ...productCategories
           .filter((cat) => cat.count >= 1)
           .map((cat) => ({
-            url: normalizeSitemapUrl(`/products/category/${cat.slug}`),
+            url: normalizeSitemapUrl(ROUTES.PRODUCT_CATEGORY(cat.slug)),
             lastModified: now,
             changeFrequency: "daily" as const,
             priority: 0.85,
