@@ -42,7 +42,7 @@ export const directoryCard =
   "group relative z-0 cursor-pointer rounded-none p-0 transition-colors"
 
 export const directoryCardContent =
-  "relative flex items-center gap-3 overflow-hidden px-3.5 py-3.5 backdrop-blur-sm sm:gap-4 sm:px-6 sm:py-4 md:gap-6 md:py-5"
+  "relative flex items-center gap-3 overflow-hidden px-3.5 py-3.5 sm:gap-4 sm:px-6 sm:py-4 md:gap-6 md:py-5"
 
 export const tagBadge =
   "inline-flex items-center rounded-md border border-slate-200/60 bg-slate-100/50 px-2 py-0.5 text-xs text-slate-600 hover:bg-slate-100 transition-colors"
