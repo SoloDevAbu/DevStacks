@@ -171,3 +171,50 @@ export const FAQ_CATEGORIES: FaqCategory[] = [
 export const LAUNCHNESTS_FAQS: FaqItem[] = FAQ_CATEGORIES.flatMap(
   (category) => category.items
 )
+
+
+export const TOOL_CATEGORY_FAQS: FaqItem[] = [
+  {
+    question: `What are developer tool categories on ${SITE_CONFIG.name}?`,
+    answer:
+      "Developer tool categories organize building blocks, APIs, cloud infrastructure, SDKs, and libraries by their technical role in a software stack (such as Database, Authentication, Payments, AI & LLMs, and DevOps). This allows engineers and architects to evaluate alternatives and discover infrastructure layers for their projects.",
+  },
+  {
+    question: "How are developer tools assigned to categories?",
+    answer:
+      `When a creator submits a tool on ${SITE_CONFIG.name}, they select the primary technical category that best reflects the tool's core functionality. Our moderation team reviews every submission before publication to ensure accurate classification across our taxonomy.`,
+  },
+  {
+    question: "How can I suggest or request a new tool category?",
+    answer:
+      `If you are launching a developer tool that doesn't fit neatly into existing categories, choose the closest match during submission and include your requested category in the project notes, or email us at ${SITE_CONFIG.supportEmail}. We continuously update our taxonomy as modern architectural patterns emerge.`,
+  },
+  {
+    question: "Can a developer tool belong to multiple categories?",
+    answer:
+      "To preserve a clean, spam-resistant directory structure, each tool is assigned one primary canonical category. However, tools can have multiple technical tags and platform badges, allowing them to appear in related architectural graphs, tech stack searches, and Built With showcases.",
+  },
+]
+
+export const PRODUCT_CATEGORY_FAQS: FaqItem[] = [
+  {
+    question: `What are software product categories on ${SITE_CONFIG.name}?`,
+    answer:
+      "Product categories organize end-user software applications, SaaS platforms, developer utilities, and indie projects by their functional domain (such as Developer Productivity, AI Apps, Marketing & SEO, Design Tools, and Analytics). This helps makers, early adopters, and founders discover software built by fellow developers.",
+  },
+  {
+    question: "How do I choose the right category when launching a product?",
+    answer:
+      "When launching your product via the submission form, pick the category that best represents the primary problem your product solves. Choosing the most accurate category maximizes visibility among target users and builders searching for solutions in your domain.",
+  },
+  {
+    question: "How can I request a new product category?",
+    answer:
+      `If your product introduces a novel concept or serves an emerging industry not covered by our existing categories, you can select the closest category during launch and request a new one in the submission notes, or contact our support team at ${SITE_CONFIG.supportEmail}.`,
+  },
+  {
+    question: "How are products ranked within each category?",
+    answer:
+      "Products within category hubs are ranked transparently using community upvotes, verified maker reviews, and engagement telemetry. Products that link their verified 'Built With' tech stacks also gain organic cross-discovery from the developer tools they use.",
+  },
+]

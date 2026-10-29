@@ -890,3 +890,13 @@ export const feedbackTypeButton = (isSelected: boolean) =>
       ? "border-slate-900 bg-slate-900 text-white shadow-2xs"
       : "border-dashed border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900"
   )
+
+
+export const categoryFaqHeaderBg = (theme: "indigo" | "violet" = "indigo") =>
+  theme === "indigo"
+    ? "bg-linear-to-r from-indigo-100/60 via-blue-50/40 to-white"
+    : "bg-linear-to-r from-violet-100/60 via-purple-50/40 to-white"
+
+
+export const directoryTelemetryBar =
+  "flex w-full items-center justify-between border-b border-dashed border-border bg-slate-50/60 px-6 py-2.5 md:px-8 text-xs text-slate-600"
