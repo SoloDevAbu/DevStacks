@@ -5,8 +5,10 @@ import { useRouter } from "next/navigation"
 import { ToolList } from "@/components/shared/tool-list"
 import type { DbTool } from "@/types/entities"
 import { useInfiniteTools } from "@/hooks/tools/use-tools"
-import { useIntersectionObserver } from "@/hooks/shared/use-intersection-observer"
-import { InfiniteScrollSentinel } from "@/components/shared/infinite-scroll-sentinel"
+import {
+  LoadMoreButton,
+  buildPageHref,
+} from "@/components/shared/load-more-button"
 import {
   ToolsFilterBar,
   type SortOption,
@@ -18,6 +20,8 @@ interface ToolsDirectoryContentProps {
   initialQuery?: string
   initialPricing?: string
   initialSortBy?: SortOption
+  initialPage?: number
+  totalPages?: number
   initialTools?: DbTool[]
 }
 
@@ -26,6 +30,8 @@ export const ToolsDirectoryContent = ({
   initialQuery,
   initialPricing = "all",
   initialSortBy = "upvotes",
+  initialPage = 1,
+  totalPages,
   initialTools = [],
 }: ToolsDirectoryContentProps) => {
   const router = useRouter()
@@ -83,22 +89,27 @@ export const ToolsDirectoryContent = ({
       pricing: selectedPricing === "all" ? undefined : selectedPricing,
       sortBy,
       limit: 20,
+      initialPage,
+      totalPages,
       initialData: isInitialParams ? initialTools : undefined,
     })
 
-  const handleIntersect = useCallback(() => {
-    if (hasNextPage && !isFetchingNextPage) {
-      fetchNextPage()
-    }
-  }, [hasNextPage, isFetchingNextPage, fetchNextPage])
-
-  const sentinelRef = useIntersectionObserver({
-    onIntersect: handleIntersect,
-    enabled: hasNextPage && !isFetchingNextPage,
-  })
-
   const displayedTools =
     data?.pages.flatMap((page) => page) ?? (isInitialParams ? initialTools : [])
+
+  const currentPageParam =
+    data?.pageParams && data.pageParams.length > 0
+      ? (data.pageParams[data.pageParams.length - 1] as number)
+      : initialPage
+
+  const nextPage = currentPageParam + 1
+
+  const nextPageHref = buildPageHref(ROUTES.TOOLS, nextPage, {
+    category: selectedCategory,
+    pricing: selectedPricing,
+    sortBy: sortBy !== "upvotes" ? sortBy : undefined,
+    q: initialQuery,
+  })
 
   return (
     <div className="flex w-full flex-1 flex-col">
@@ -113,11 +124,11 @@ export const ToolsDirectoryContent = ({
 
       <div className="flex w-full flex-1 flex-col pb-8">
         <ToolList tools={displayedTools} showMedals />
-        <InfiniteScrollSentinel
-          sentinelRef={sentinelRef}
-          isFetchingNextPage={isFetchingNextPage}
+        <LoadMoreButton
+          href={nextPageHref}
+          onLoadMore={fetchNextPage}
+          isLoading={isFetchingNextPage}
           hasNextPage={Boolean(hasNextPage)}
-          hasItems={displayedTools.length > 0}
         />
       </div>
     </div>

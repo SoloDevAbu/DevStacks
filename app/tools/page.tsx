@@ -18,7 +18,6 @@ import { getCachedToolCategories } from "@/db/queries/categories/list"
 import type { DbTool } from "@/types/entities"
 import { ToolsDirectoryContent } from "./tools-content"
 import type { SortOption } from "@/components/tools/tools-filter-bar"
-import { CrawlablePagination } from "@/components/shared/crawlable-pagination"
 import { CrawlableCategoryBar } from "@/components/shared/crawlable-category-bar"
 
 export const revalidate = 60
@@ -224,19 +223,9 @@ const ToolsPage = async (props: {
           initialQuery={q}
           initialPricing={pricing ?? "all"}
           initialSortBy={sortBy}
-          initialTools={toolsList}
-        />
-
-        <CrawlablePagination
-          currentPage={currentPage}
+          initialPage={currentPage}
           totalPages={totalPages}
-          basePath={ROUTES.TOOLS}
-          params={{
-            category,
-            pricing:
-              pricing && pricing.toLowerCase() !== "all" ? pricing : undefined,
-            sortBy: sortBy !== "upvotes" ? sortBy : undefined,
-          }}
+          initialTools={toolsList}
         />
       </div>
     </>

@@ -18,7 +18,6 @@ import { getCachedProductCategories } from "@/db/queries/categories/list"
 import type { DbProduct } from "@/types/entities"
 import { ProductsDirectoryContent } from "./products-content"
 import type { ProductSortOption } from "@/components/products/products-filter-bar"
-import { CrawlablePagination } from "@/components/shared/crawlable-pagination"
 import { CrawlableCategoryBar } from "@/components/shared/crawlable-category-bar"
 
 export const revalidate = 60
@@ -63,7 +62,7 @@ export const generateMetadata = async (props: {
 
   const description = category
     ? `Browse developer-built products and software in the ${category} category on ${SITE_CONFIG.name}. Explore built-with tech stacks, likes, and community reviews.`
-    : `Browse the complete directory of developer products, software, and tools on ${SITE_CONFIG.name}.`
+    : `Browse the complete directory of developer tools, software, and products on ${SITE_CONFIG.name}.`
 
   const cleanCategory = category?.trim()
   const hasSearchQuery = Boolean(q && q.trim())
@@ -225,19 +224,9 @@ const ProductsPage = async (props: {
           initialQuery={q}
           initialPricing={pricing ?? "all"}
           initialSortBy={sortBy}
-          initialProducts={initialProducts as DbProduct[]}
-        />
-
-        <CrawlablePagination
-          currentPage={currentPage}
+          initialPage={currentPage}
           totalPages={totalPages}
-          basePath={ROUTES.PRODUCTS}
-          params={{
-            category,
-            pricing:
-              pricing && pricing.toLowerCase() !== "all" ? pricing : undefined,
-            sortBy: sortBy !== "upvotes" ? sortBy : undefined,
-          }}
+          initialProducts={initialProducts as DbProduct[]}
         />
       </div>
     </>

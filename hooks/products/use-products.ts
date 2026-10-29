@@ -19,11 +19,9 @@ export const useProducts = (
   })
 }
 
-export const PRODUCTS_INFINITE_QUERY_KEY = (params: ProductListParams) => [
-  "products",
-  "infinite",
-  params,
-]
+export const PRODUCTS_INFINITE_QUERY_KEY = (
+  params: ProductListParams & { initialPage?: number }
+) => ["products", "infinite", params]
 
 export const useInfiniteProducts = ({
   category,
@@ -34,8 +32,14 @@ export const useInfiniteProducts = ({
   tier,
   sortBy,
   limit = 20,
+  initialPage = 1,
+  totalPages,
   initialData,
-}: ProductListParams & { initialData?: DbProduct[] } = {}) => {
+}: ProductListParams & {
+  initialPage?: number
+  totalPages?: number
+  initialData?: DbProduct[]
+} = {}) => {
   const queryFilterParams = {
     category,
     q,
@@ -45,26 +49,29 @@ export const useInfiniteProducts = ({
     tier,
     sortBy,
     limit,
+    initialPage,
   }
 
   return useInfiniteQuery({
     queryKey: PRODUCTS_INFINITE_QUERY_KEY(queryFilterParams),
-    queryFn: async ({ pageParam = 1 }) => {
+    queryFn: async ({ pageParam = initialPage }) => {
       const data = await fetchProducts({
         ...queryFilterParams,
         page: pageParam,
       })
       return (data ?? []) as DbProduct[]
     },
-    initialPageParam: 1,
-    getNextPageParam: (lastPage, allPages) => {
+    initialPageParam: initialPage,
+    getNextPageParam: (lastPage, _allPages, lastPageParam) => {
       if (!lastPage || lastPage.length < limit) return undefined
-      return allPages.length + 1
+      const next = (lastPageParam as number) + 1
+      if (totalPages && next > totalPages) return undefined
+      return next
     },
     initialData: initialData
       ? {
           pages: [initialData],
-          pageParams: [1],
+          pageParams: [initialPage],
         }
       : undefined,
     staleTime: 60_000,

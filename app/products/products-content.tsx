@@ -5,8 +5,10 @@ import { useRouter } from "next/navigation"
 import { ProductList } from "@/components/shared/product-list"
 import type { DbProduct } from "@/types/entities"
 import { useInfiniteProducts } from "@/hooks/products/use-products"
-import { useIntersectionObserver } from "@/hooks/shared/use-intersection-observer"
-import { InfiniteScrollSentinel } from "@/components/shared/infinite-scroll-sentinel"
+import {
+  LoadMoreButton,
+  buildPageHref,
+} from "@/components/shared/load-more-button"
 import {
   ProductsFilterBar,
   type ProductSortOption,
@@ -18,6 +20,8 @@ interface ProductsDirectoryContentProps {
   initialQuery?: string
   initialPricing?: string
   initialSortBy?: ProductSortOption
+  initialPage?: number
+  totalPages?: number
   initialProducts?: DbProduct[]
 }
 
@@ -26,6 +30,8 @@ export const ProductsDirectoryContent = ({
   initialQuery,
   initialPricing = "all",
   initialSortBy = "upvotes",
+  initialPage = 1,
+  totalPages,
   initialProducts = [],
 }: ProductsDirectoryContentProps) => {
   const router = useRouter()
@@ -83,23 +89,28 @@ export const ProductsDirectoryContent = ({
       pricing: selectedPricing === "all" ? undefined : selectedPricing,
       sortBy: sortBy === "upvotes" ? "likes" : sortBy,
       limit: 20,
+      initialPage,
+      totalPages,
       initialData: isInitialParams ? initialProducts : undefined,
     })
-
-  const handleIntersect = useCallback(() => {
-    if (hasNextPage && !isFetchingNextPage) {
-      fetchNextPage()
-    }
-  }, [hasNextPage, isFetchingNextPage, fetchNextPage])
-
-  const sentinelRef = useIntersectionObserver({
-    onIntersect: handleIntersect,
-    enabled: hasNextPage && !isFetchingNextPage,
-  })
 
   const displayedProducts =
     data?.pages.flatMap((page) => page) ??
     (isInitialParams ? initialProducts : [])
+
+  const currentPageParam =
+    data?.pageParams && data.pageParams.length > 0
+      ? (data.pageParams[data.pageParams.length - 1] as number)
+      : initialPage
+
+  const nextPage = currentPageParam + 1
+
+  const nextPageHref = buildPageHref(ROUTES.PRODUCTS, nextPage, {
+    category: selectedCategory,
+    pricing: selectedPricing,
+    sortBy: sortBy !== "upvotes" ? sortBy : undefined,
+    q: initialQuery,
+  })
 
   return (
     <div className="flex w-full flex-1 flex-col">
@@ -114,11 +125,11 @@ export const ProductsDirectoryContent = ({
 
       <div className="flex w-full flex-1 flex-col pb-8">
         <ProductList products={displayedProducts} showMedals />
-        <InfiniteScrollSentinel
-          sentinelRef={sentinelRef}
-          isFetchingNextPage={isFetchingNextPage}
+        <LoadMoreButton
+          href={nextPageHref}
+          onLoadMore={fetchNextPage}
+          isLoading={isFetchingNextPage}
           hasNextPage={Boolean(hasNextPage)}
-          hasItems={displayedProducts.length > 0}
         />
       </div>
     </div>
