@@ -211,9 +211,7 @@ const ProductsPage = async (props: {
       <div className="relative flex min-h-full flex-col bg-slate-50/50">
         <ProductsHero
           heading={
-            category
-              ? `${category} Products & Software`
-              : "Developer Products Directory"
+            category ? `${category} Products & Software` : "Products Directory"
           }
           description={
             category

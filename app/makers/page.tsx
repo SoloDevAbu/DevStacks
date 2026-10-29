@@ -1,10 +1,8 @@
 import type { Metadata } from "next"
 import Link from "next/link"
-import { Users, Wrench, Package, ArrowUpRight } from "lucide-react"
+import { Users } from "lucide-react"
 import { PageHeader } from "@/components/shared/page-header"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
-import { Card, CardContent } from "@/components/ui/card"
 import {
   breadcrumbSchema,
   collectionPageSchema,
@@ -22,6 +20,7 @@ import {
 } from "@/db/queries/users/get-profile"
 import { CrawlablePagination } from "@/components/shared/crawlable-pagination"
 import { countryCodeToFlag, formatLocation } from "@/utils/country"
+import { cn } from "@/lib/utils"
 
 export const revalidate = 60
 
@@ -179,122 +178,88 @@ const MakersPage = async ({ searchParams }: MakersPageProps) => {
           )}
         </div>
 
-        {/* Directory Grid */}
-        <div className="p-6 md:p-8">
+        {/* Full-Width Two-Column Dashed Makers Grid */}
+        <main className="w-full flex-1">
           {makers.length === 0 ? (
-            <div className="rounded-xl border border-dashed border-border bg-white p-12 text-center">
-              <Users className="mx-auto size-10 text-slate-400" />
-              <h3 className="mt-3 text-base font-semibold text-slate-900">
-                No makers found
-              </h3>
-              <p className="mt-1 text-sm text-slate-500">
-                Be the first maker to publish your developer profile and tools.
-              </p>
+            <div className="flex w-full items-center justify-center border-b border-dashed border-border bg-white px-6 py-16 text-center text-xs text-slate-500">
+              No makers listed yet.
             </div>
           ) : (
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {makers.map((maker) => {
+            <nav
+              aria-label="Developers & Makers Directory"
+              className="grid w-full grid-cols-1 bg-white md:grid-cols-2"
+            >
+              {makers.map((maker, idx) => {
                 const displayName = maker.name || `@${maker.username}`
                 const flag = countryCodeToFlag(maker.country)
                 const location = formatLocation(maker.country, maker.state)
                 const profileUrl = ROUTES.MAKER(maker.username || "")
+                const avatarSrc = maker.avatarUrl || maker.image
+                const isOdd = idx % 2 === 1
+                const totalCreations = maker.toolsCount + maker.productsCount
 
                 return (
                   <Link
                     key={maker.id}
                     href={profileUrl}
-                    className="group block focus-visible:outline-none"
+                    className={cn(
+                      "group flex items-center justify-between border-b border-dashed border-border px-6 py-4.5 transition-colors hover:bg-slate-50/80 md:px-8",
+                      !isOdd && "md:border-r md:border-dashed md:border-border"
+                    )}
                   >
-                    <Card className="h-full border border-dashed border-border bg-white transition-all duration-200 hover:-translate-y-0.5 hover:border-indigo-200 hover:shadow-md">
-                      <CardContent className="flex h-full flex-col justify-between p-5">
-                        <div>
-                          <div className="flex items-start justify-between gap-3">
-                            <div className="flex min-w-0 items-center gap-3">
-                              <Avatar className="size-11 shrink-0 border border-border/80">
-                                {maker.avatarUrl && (
-                                  <AvatarImage
-                                    src={maker.avatarUrl}
-                                    alt={displayName}
-                                  />
-                                )}
-                                <AvatarFallback className="bg-slate-900 text-xs font-bold text-white">
-                                  {displayName.slice(0, 2).toUpperCase()}
-                                </AvatarFallback>
-                              </Avatar>
+                    {/* Left: Maker Image, Name, and tools/products count */}
+                    <div className="flex min-w-0 items-center gap-3.5">
+                      <Avatar className="size-10 shrink-0 border border-border/80">
+                        {avatarSrc && (
+                          <AvatarImage
+                            src={avatarSrc}
+                            alt={displayName}
+                          />
+                        )}
+                        <AvatarFallback className="bg-slate-100 text-xs font-semibold text-slate-700">
+                          {displayName.slice(0, 2).toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
 
-                              <div className="min-w-0 flex-1">
-                                <div className="flex items-center gap-1.5">
-                                  <span className="truncate text-sm font-bold text-slate-900 transition-colors group-hover:text-indigo-600">
-                                    {displayName}
-                                  </span>
-                                  {flag && (
-                                    <span
-                                      className="shrink-0 text-xs select-none"
-                                      title={location}
-                                    >
-                                      {flag}
-                                    </span>
-                                  )}
-                                </div>
-                                <p className="truncate text-xs text-slate-500">
-                                  @{maker.username}
-                                </p>
-                              </div>
-                            </div>
-
-                            <ArrowUpRight className="size-4 shrink-0 text-slate-300 transition-all group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-indigo-600" />
-                          </div>
-
-                          {(maker.bio || maker.description) && (
-                            <p className="mt-3 line-clamp-2 text-xs leading-relaxed text-slate-600">
-                              {maker.bio || maker.description}
-                            </p>
-                          )}
-                        </div>
-
-                        <div className="mt-4 flex items-center justify-between border-t border-dashed border-border/70 pt-3 text-[11px] text-slate-500">
-                          <div className="flex items-center gap-3">
-                            {maker.toolsCount > 0 && (
-                              <span className="flex items-center gap-1 font-medium text-slate-700">
-                                <Wrench className="size-3 text-indigo-500" />
-                                {maker.toolsCount}{" "}
-                                {maker.toolsCount === 1 ? "tool" : "tools"}
-                              </span>
-                            )}
-                            {maker.productsCount > 0 && (
-                              <span className="flex items-center gap-1 font-medium text-slate-700">
-                                <Package className="size-3 text-emerald-500" />
-                                {maker.productsCount}{" "}
-                                {maker.productsCount === 1
-                                  ? "product"
-                                  : "products"}
-                              </span>
-                            )}
-                            {maker.toolsCount === 0 &&
-                              maker.productsCount === 0 && (
-                                <Badge
-                                  variant="secondary"
-                                  className="h-5 px-1.5 text-[10px] font-normal"
-                                >
-                                  Maker
-                                </Badge>
-                              )}
-                          </div>
-
-                          {location && (
-                            <span className="max-w-30 truncate text-slate-400">
-                              {location}
+                      <div className="flex min-w-0 flex-col gap-0.5">
+                        <div className="flex items-center gap-1.5 truncate">
+                          <span className="truncate text-sm font-semibold text-slate-900 transition-colors group-hover:text-indigo-600">
+                            {displayName}
+                          </span>
+                          {flag && (
+                            <span
+                              className="shrink-0 text-xs select-none"
+                              title={location}
+                            >
+                              {flag}
                             </span>
                           )}
                         </div>
-                      </CardContent>
-                    </Card>
+                        <div className="text-xs font-normal text-slate-500">
+                          {maker.toolsCount} {maker.toolsCount === 1 ? "tool" : "tools"}, {maker.productsCount} {maker.productsCount === 1 ? "product" : "products"}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Right: Total Count */}
+                    <div className="shrink-0 pl-3">
+                      <span className="font-mono text-xs text-slate-500">
+                        <strong className="font-semibold text-slate-800">
+                          {totalCreations}
+                        </strong>{" "}
+                        <span>total</span>
+                      </span>
+                    </div>
                   </Link>
                 )
               })}
-            </div>
+
+              {makers.length % 2 === 1 && (
+                <div className="hidden border-b border-dashed border-border md:block" />
+              )}
+            </nav>
           )}
-        </div>
+        </main>
 
         <CrawlablePagination
           currentPage={currentPage}
