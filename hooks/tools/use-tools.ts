@@ -1,12 +1,8 @@
-import { useInfiniteQuery, useQuery } from "@tanstack/react-query"
+import { useInfiniteQuery, useQuery, useQueryClient } from "@tanstack/react-query"
 import { fetchTools, type ToolListParams } from "@/lib/api/tools"
 import type { DbTool } from "@/types/entities"
 
 export const TOOLS_QUERY_KEY = (params: ToolListParams) => ["tools", params]
-
-export const TOOLS_INFINITE_QUERY_KEY = (
-  params: ToolListParams & { initialPage?: number }
-) => ["tools", "infinite", params]
 
 export const useTools = (
   params: ToolListParams = {},
@@ -19,6 +15,10 @@ export const useTools = (
     ...options,
   })
 }
+
+export const TOOLS_INFINITE_QUERY_KEY = (
+  params: ToolListParams & { initialPage?: number }
+) => ["tools", "infinite", params]
 
 export const useInfiniteTools = ({
   category,
@@ -37,6 +37,7 @@ export const useInfiniteTools = ({
   totalPages?: number
   initialData?: DbTool[]
 } = {}) => {
+  const queryClient = useQueryClient()
   const queryFilterParams = {
     category,
     q,
@@ -49,8 +50,11 @@ export const useInfiniteTools = ({
     initialPage,
   }
 
+  const queryKey = TOOLS_INFINITE_QUERY_KEY(queryFilterParams)
+  const existingCache = queryClient.getQueryData(queryKey)
+
   return useInfiniteQuery({
-    queryKey: TOOLS_INFINITE_QUERY_KEY(queryFilterParams),
+    queryKey,
     queryFn: async ({ pageParam = initialPage }) => {
       const data = await fetchTools({
         ...queryFilterParams,
@@ -65,12 +69,16 @@ export const useInfiniteTools = ({
       if (totalPages && next > totalPages) return undefined
       return next
     },
-    initialData: initialData
-      ? {
-          pages: [initialData],
-          pageParams: [initialPage],
-        }
-      : undefined,
-    staleTime: 60_000,
+    // Preserve multi-page cache when user navigates back within the session
+    initialData: existingCache
+      ? undefined
+      : initialData
+        ? {
+            pages: [initialData],
+            pageParams: [initialPage],
+          }
+        : undefined,
+    staleTime: 5 * 60_000,
+    gcTime: 30 * 60_000,
   })
 }

@@ -13,6 +13,7 @@ import {
   ProductsFilterBar,
   type ProductSortOption,
 } from "@/components/products/products-filter-bar"
+import { useScrollRestoration } from "@/hooks/shared/use-scroll-restoration"
 import { directoryTelemetryBar } from "@/utils/styles"
 import { ROUTES } from "@/constants/routes"
 
@@ -100,6 +101,14 @@ export const ProductsDirectoryContent = ({
   const displayedProducts =
     data?.pages.flatMap((page) => page) ??
     (isInitialParams ? initialProducts : [])
+
+  const filterKey = `${selectedCategory ?? "all"}-${selectedPricing}-${sortBy}-${initialQuery ?? ""}`
+
+  useScrollRestoration({
+    key: "bmnl_products_scroll",
+    filterKey,
+    hasData: displayedProducts.length > 0,
+  })
 
   const currentCount = displayedProducts.length
   const total = hasNextPage ? (totalCount ?? currentCount) : currentCount

@@ -14,6 +14,7 @@ import {
   ToolsFilterBar,
   type SortOption,
 } from "@/components/tools/tools-filter-bar"
+import { useScrollRestoration } from "@/hooks/shared/use-scroll-restoration"
 import { directoryTelemetryBar } from "@/utils/styles"
 import { ROUTES } from "@/constants/routes"
 
@@ -102,6 +103,14 @@ export const ToolsDirectoryContent = ({
 
   const displayedTools =
     data?.pages.flatMap((page) => page) ?? (isInitialParams ? initialTools : [])
+
+  const filterKey = `${selectedCategory ?? "all"}-${selectedPricing}-${sortBy}-${initialQuery ?? ""}`
+
+  useScrollRestoration({
+    key: "bmnl_tools_scroll",
+    filterKey,
+    hasData: displayedTools.length > 0,
+  })
 
   const currentCount = displayedTools.length
   const total = hasNextPage ? (totalCount ?? currentCount) : currentCount

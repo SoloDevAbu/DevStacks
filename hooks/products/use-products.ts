@@ -1,4 +1,4 @@
-import { useInfiniteQuery, useQuery } from "@tanstack/react-query"
+import { useInfiniteQuery, useQuery, useQueryClient } from "@tanstack/react-query"
 import { fetchProducts, type ProductListParams } from "@/lib/api/products"
 import type { DbProduct } from "@/types/entities"
 
@@ -40,6 +40,7 @@ export const useInfiniteProducts = ({
   totalPages?: number
   initialData?: DbProduct[]
 } = {}) => {
+  const queryClient = useQueryClient()
   const queryFilterParams = {
     category,
     q,
@@ -52,8 +53,11 @@ export const useInfiniteProducts = ({
     initialPage,
   }
 
+  const queryKey = PRODUCTS_INFINITE_QUERY_KEY(queryFilterParams)
+  const existingCache = queryClient.getQueryData(queryKey)
+
   return useInfiniteQuery({
-    queryKey: PRODUCTS_INFINITE_QUERY_KEY(queryFilterParams),
+    queryKey,
     queryFn: async ({ pageParam = initialPage }) => {
       const data = await fetchProducts({
         ...queryFilterParams,
@@ -68,12 +72,16 @@ export const useInfiniteProducts = ({
       if (totalPages && next > totalPages) return undefined
       return next
     },
-    initialData: initialData
-      ? {
-          pages: [initialData],
-          pageParams: [initialPage],
-        }
-      : undefined,
-    staleTime: 60_000,
+    // Preserve multi-page cache when user navigates back within the session
+    initialData: existingCache
+      ? undefined
+      : initialData
+        ? {
+            pages: [initialData],
+            pageParams: [initialPage],
+          }
+        : undefined,
+    staleTime: 5 * 60_000,
+    gcTime: 30 * 60_000,
   })
 }

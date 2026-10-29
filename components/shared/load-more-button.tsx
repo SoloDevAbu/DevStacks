@@ -4,6 +4,7 @@ import * as React from "react"
 import { Loader2 } from "lucide-react"
 import { buttonVariants } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
+import { useIntersectionObserver } from "@/hooks/shared/use-intersection-observer"
 
 export const buildPageHref = (
   basePath: string,
@@ -30,6 +31,7 @@ interface LoadMoreButtonProps {
   onLoadMore: () => void
   isLoading?: boolean
   hasNextPage?: boolean
+  autoTrigger?: boolean
   className?: string
 }
 
@@ -38,8 +40,15 @@ export const LoadMoreButton = ({
   onLoadMore,
   isLoading = false,
   hasNextPage = true,
+  autoTrigger = true,
   className,
 }: LoadMoreButtonProps) => {
+  const containerRef = useIntersectionObserver({
+    onIntersect: onLoadMore,
+    enabled: autoTrigger && hasNextPage && !isLoading,
+    rootMargin: "350px 0px",
+  })
+
   if (!hasNextPage) return null
 
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
@@ -63,6 +72,7 @@ export const LoadMoreButton = ({
 
   return (
     <div
+      ref={containerRef}
       className={cn(
         "flex w-full items-center justify-center border-t border-dashed border-border bg-white/50 px-4 py-8",
         className
