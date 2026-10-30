@@ -41,6 +41,7 @@ import {
   submitSectionHeaderOptional,
   submitSectionHeaderDiscoverability,
   submitAiAutofillContainer,
+  primaryActionButton,
 } from "@/utils/styles"
 import { cn } from "@/lib/utils"
 import { LAUNCH_PROMO } from "@/constants/promo"
@@ -119,6 +120,7 @@ const isValidHttpsUrl = (rawUrl: string): boolean => {
 interface SubmitContentProps {
   initialType?: "product" | "tool"
   initialTool?: BuiltWithToolItem | null
+  initialUrl?: string
 }
 
 const CornerBorders = ({ active }: { active: boolean }) => (
@@ -158,10 +160,12 @@ const CornerBorders = ({ active }: { active: boolean }) => (
 export const SubmitContent = ({
   initialType = "product",
   initialTool = null,
+  initialUrl = "",
 }: SubmitContentProps) => {
   const [activeType, setActiveType] = useState<"product" | "tool">(initialType)
   const [form, setForm] = useState(() => ({
     ...emptyForm,
+    websiteUrl: initialUrl || "",
     builtWithTools: initialTool ? [initialTool] : [],
   }))
   const [errors, setErrors] = useState<Record<string, string[]>>({})
@@ -173,10 +177,11 @@ export const SubmitContent = ({
     type: "product" | "tool"
     websiteUrl: string
   } | null>(null)
-  const [autofillUrl, setAutofillUrl] = useState("")
+  const [autofillUrl, setAutofillUrl] = useState(initialUrl || "")
   const [undoSnapshot, setUndoSnapshot] = useState<typeof emptyForm | null>(
     null
   )
+
 
   const { data: session, isPending: isSessionPending } = useSession()
   const {
@@ -668,6 +673,7 @@ export const SubmitContent = ({
                       value={autofillUrl}
                       onChange={(e) => setAutofillUrl(e.target.value)}
                       placeholder="https://yourproduct.com"
+                      aria-label="Website URL for AI Autofill"
                       className="bg-white pl-9"
                       onKeyDown={(e) => {
                         if (
@@ -685,19 +691,10 @@ export const SubmitContent = ({
                     type="button"
                     onClick={handleAiAutofill}
                     disabled={isAutofilling || !isAutofillUrlValid}
-                    className="shrink-0 gap-2 bg-indigo-600 font-medium text-white hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-50"
+                    aria-label="Autofill form details with AI"
+                    className={primaryActionButton}
                   >
-                    {isAutofilling ? (
-                      <>
-                        <Spinner className="size-4" />
-                        <span>Analyzing URL...</span>
-                      </>
-                    ) : (
-                      <>
-                        <Sparkles className="size-4" />
-                        <span>Autofill with AI</span>
-                      </>
-                    )}
+                    {isAutofilling ? "Analyzing URL..." : "Autofill with AI"}
                   </Button>
                 </div>
 

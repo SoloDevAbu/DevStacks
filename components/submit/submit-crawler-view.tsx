@@ -4,22 +4,14 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import {
-  Globe,
   Sparkles,
-  Layers,
-  Cpu,
   Package,
   Wrench,
   CheckCircle2,
   ArrowRight,
-  Code2,
-  Terminal,
   ShieldCheck,
-  Search,
-  Share2,
 } from "lucide-react"
 import { SITE_CONFIG } from "@/constants/site"
-import { ROUTES } from "@/constants/routes"
 import { AI_PROMPTS } from "@/lib/prompts"
 import { LAUNCH_PROMO } from "@/constants/promo"
 import {
@@ -38,9 +30,22 @@ import {
   crawlerTrackPerkItem,
 } from "@/utils/styles"
 
-export const SubmitCrawlerView = () => {
+interface SubmitCrawlerViewProps {
+  initialUrl?: string
+}
+
+export const SubmitCrawlerView = ({
+  initialUrl = "",
+}: SubmitCrawlerViewProps) => {
   const productTrack = LAUNCH_TRACKS.product
   const toolTrack = LAUNCH_TRACKS.tool
+
+  const redirectProduct = initialUrl
+    ? `/?redirect=${encodeURIComponent(`/submit?type=product&url=${initialUrl}`)}`
+    : "/?redirect=/submit?type=product"
+  const redirectTool = initialUrl
+    ? `/?redirect=${encodeURIComponent(`/submit?type=tool&url=${initialUrl}`)}`
+    : "/?redirect=/submit?type=tool"
 
   return (
     <div className="relative flex min-h-full flex-col bg-slate-50/50">
@@ -180,7 +185,7 @@ export const SubmitCrawlerView = () => {
                   Ready to launch your SaaS or application?
                 </p>
                 <Button
-                  render={<Link href="/?redirect=/submit?type=product" />}
+                  render={<Link href={redirectProduct} />}
                   size="sm"
                   className="gap-1.5 text-xs font-semibold"
                 >
@@ -262,7 +267,7 @@ export const SubmitCrawlerView = () => {
                   Ready to launch your dev tool or API?
                 </p>
                 <Button
-                  render={<Link href="/?redirect=/submit?type=tool" />}
+                  render={<Link href={redirectTool} />}
                   size="sm"
                   className="gap-1.5 text-xs font-semibold"
                 >
@@ -401,7 +406,7 @@ export const SubmitCrawlerView = () => {
           </div>
           <div className="flex shrink-0 flex-wrap items-center justify-center gap-3">
             <Button
-              render={<Link href="/?redirect=/submit?type=product" />}
+              render={<Link href={redirectProduct} />}
               className="text-xs font-semibold"
             >
               <Package className="mr-1.5 size-3.5" />
@@ -409,7 +414,7 @@ export const SubmitCrawlerView = () => {
             </Button>
             <Button
               variant="outline"
-              render={<Link href="/?redirect=/submit?type=tool" />}
+              render={<Link href={redirectTool} />}
               className="text-xs font-semibold"
             >
               <Wrench className="mr-1.5 size-3.5" />

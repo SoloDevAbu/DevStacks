@@ -302,6 +302,12 @@ export const homeHeroBadge =
 export const homeHeroBadgeDot =
   "size-1.5 shrink-0 rounded-full bg-blue-600 dark:bg-blue-400"
 
+export const homeLaunchSectionContainer =
+  "flex flex-col gap-3 border-b border-dashed border-border bg-linear-to-r from-blue-50/70 via-indigo-50/40 to-white px-4 py-5 sm:px-6 md:px-8"
+
+export const primaryActionButton =
+  "shrink-0 rounded-lg px-3.5 py-1.5 text-xs font-semibold text-white shadow-xs transition-all hover:bg-slate-800 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
+
 export const toolFilterButton =
   "relative z-10 h-7.5 gap-1.5 rounded-lg px-2.5 text-xs transition-colors"
 
