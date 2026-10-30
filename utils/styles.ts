@@ -490,7 +490,7 @@ export const submissionStatusBadge = (status?: string) => {
 export * from "@/utils/dashboard/styles"
 
 export const launchPromoBannerWrapper =
-  "relative z-50 flex w-full items-center justify-between border-b border-amber-200/80 bg-linear-to-r from-amber-500/10 via-yellow-500/10 to-amber-500/10 px-4 py-2 text-xs text-amber-950 transition-colors"
+  "relative z-50 hidden md:flex w-full items-center justify-between border-b border-amber-200/80 bg-linear-to-r from-amber-500/10 via-yellow-500/10 to-amber-500/10 px-4 py-2 text-xs text-amber-950 transition-colors"
 
 export const launchPromoBadge =
   "inline-flex items-center gap-1 rounded-md border border-amber-300/80 bg-amber-100/60 px-2 py-0.5 text-[11px] font-semibold text-amber-900 shadow-2xs"
