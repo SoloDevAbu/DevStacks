@@ -1113,3 +1113,6 @@ export type NewExternalLinkVisit = typeof externalLinkVisits.$inferInsert
 
 export type Feedback = typeof feedbacks.$inferSelect
 export type NewFeedback = typeof feedbacks.$inferInsert
+
+
+export * from "./schema/ai"
