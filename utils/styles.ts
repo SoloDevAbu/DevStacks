@@ -476,6 +476,9 @@ export const submitTypeTabActive =
 export const submitTypeTabInactive =
   "text-slate-500 hover:text-slate-800 hover:bg-white/50"
 
+export const submitAiAutofillContainer =
+  "flex flex-col gap-3 border-b border-dashed border-border bg-linear-to-r from-indigo-50/70 via-purple-50/30 to-white px-6 py-5 md:px-8"
+
 export const socialInputWrapper = "relative"
 
 export const socialInputIconContainer =
@@ -900,12 +903,10 @@ export const feedbackTypeButton = (isSelected: boolean) =>
       : "border-dashed border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900"
   )
 
-
 export const categoryFaqHeaderBg = (theme: "indigo" | "violet" = "indigo") =>
   theme === "indigo"
     ? "bg-linear-to-r from-indigo-100/60 via-blue-50/40 to-white"
     : "bg-linear-to-r from-violet-100/60 via-purple-50/40 to-white"
-
 
 export const directoryTelemetryBar =
   "flex w-full items-center justify-between border-b border-dashed border-border bg-slate-50/60 px-6 py-2.5 md:px-8 text-xs text-slate-600"
