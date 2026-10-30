@@ -69,6 +69,7 @@ export const GET = async () => {
 - [Pricing](${SITE_CONFIG.url}/pricing): Platform sponsorship and promotional listing options for tool creators (twin at /pricing.md).
 - [MCP docs](${SITE_CONFIG.url}/mcp): Human + agent documentation for the public Model Context Protocol server (twin at /mcp.md).
 - [Public REST API](${SITE_CONFIG.url}/cli): OpenAPI 3.1 REST API documentation at /v1 (twin at /cli.md).
+- [Launch Stories & Editorial Reviews](${SITE_CONFIG.url}/blog): Verified developer tool architectures, launch breakdowns, and editorial reviews.
 
 ## Launch Platform Comparisons & Alternatives
 ${getAllComparisons()
@@ -78,6 +79,8 @@ ${getAllComparisons()
 ## Markdown-addressable routes
 
 - [/](${SITE_CONFIG.url}/): Homepage overview
+- [/blog](${SITE_CONFIG.url}/blog): Launch stories directory and editorial radar
+- [/blog/{slug}](${SITE_CONFIG.url}/blog/<param>): Detailed editorial launch story and architecture breakdown (markdown twin at /blog/{slug}.md)
 - [/tools](${SITE_CONFIG.url}/tools): Developer tools directory
 - [/tools/{slug}](${SITE_CONFIG.url}/tools/<param>): Single developer tool detail (tagline, categories, pricing, verified builds, upvotes)
 - [/products](${SITE_CONFIG.url}/products): Developer products directory
