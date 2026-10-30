@@ -1,10 +1,8 @@
 "use client"
 
 import { useState } from "react"
-import Link from "next/link"
 import Image from "next/image"
 import { PageHeader } from "@/components/shared/page-header"
-import { SITE_CONFIG } from "@/constants/site"
 import { AI_PROMPTS } from "@/lib/prompts"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -14,7 +12,6 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
 import {
   Globe,
-  CheckCircle2,
   AlertCircle,
   Video,
   Plus,
@@ -34,6 +31,7 @@ import { PRICING } from "@/constants/plans"
 import { PLATFORMS } from "@/constants/platforms"
 import { useSubmitTool } from "@/hooks/tools/use-submit-tool"
 import { useSubmitProduct } from "@/hooks/products/use-submit-product"
+import { useAiAutofill } from "@/hooks/submit/use-ai-autofill"
 import { submitToolSchema } from "@/lib/validation/tool"
 import { submitProductSchema } from "@/lib/validation/product"
 import { useSession } from "@/lib/auth/client"
@@ -42,10 +40,10 @@ import {
   submitSectionHeaderRequired,
   submitSectionHeaderOptional,
   submitSectionHeaderDiscoverability,
+  submitAiAutofillContainer,
 } from "@/utils/styles"
 import { cn } from "@/lib/utils"
 import { LAUNCH_PROMO } from "@/constants/promo"
-import { ROUTES } from "@/constants/routes"
 import {
   BuiltWithToolsInput,
   type BuiltWithToolItem,
@@ -55,7 +53,7 @@ import {
   type FaqBuilderItem,
 } from "@/components/shared/faq-builder"
 import { toast } from "@/components/ui/toast"
-import { getFaviconUrl, getDuckDuckGoFaviconUrl } from "@/utils/urls"
+import { getFaviconUrl } from "@/utils/urls"
 import { LaunchWeekPicker } from "@/components/shared/launch-week-picker"
 import { ScheduleConfirmDialog } from "./schedule-confirm-dialog"
 import { EmbedBadgeDialog } from "@/components/shared/embed-badge-dialog"
@@ -99,6 +97,23 @@ const emptyForm = {
   faqs: [] as FaqBuilderItem[],
   launchYear: undefined as number | undefined,
   launchWeek: undefined as number | undefined,
+}
+
+const isValidHttpsUrl = (rawUrl: string): boolean => {
+  const trimmed = rawUrl.trim()
+  if (!trimmed.startsWith("https://")) return false
+  try {
+    const url = new URL(trimmed)
+    if (url.protocol !== "https:") return false
+    const hostname = url.hostname
+    if (!hostname || !hostname.includes(".")) return false
+    const parts = hostname.split(".").filter(Boolean)
+    if (parts.length < 2) return false
+    const tld = parts[parts.length - 1]
+    return tld.length >= 2 && !hostname.includes(" ")
+  } catch {
+    return false
+  }
 }
 
 interface SubmitContentProps {
@@ -158,6 +173,10 @@ export const SubmitContent = ({
     type: "product" | "tool"
     websiteUrl: string
   } | null>(null)
+  const [autofillUrl, setAutofillUrl] = useState("")
+  const [undoSnapshot, setUndoSnapshot] = useState<typeof emptyForm | null>(
+    null
+  )
 
   const { data: session, isPending: isSessionPending } = useSession()
   const {
@@ -170,6 +189,11 @@ export const SubmitContent = ({
     isPending: isProductSubmitting,
     error: productError,
   } = useSubmitProduct()
+  const { mutateAsync: runAiAutofill, isPending: isAutofilling } =
+    useAiAutofill()
+
+  const currentAutofillCandidate = autofillUrl.trim() || form.websiteUrl.trim()
+  const isAutofillUrlValid = isValidHttpsUrl(currentAutofillCandidate)
 
   const isSubmitting = isToolSubmitting || isProductSubmitting
   const submissionError = activeType === "product" ? productError : toolError
@@ -219,6 +243,82 @@ export const SubmitContent = ({
       websiteUrl: val,
     }))
     setErrors((prev) => ({ ...prev, websiteUrl: [] }))
+  }
+
+  const handleAiAutofill = async () => {
+    const targetUrl = autofillUrl.trim() || form.websiteUrl.trim()
+    if (!isValidHttpsUrl(targetUrl)) {
+      toast.error(
+        "Invalid HTTPS URL",
+        "Please provide a complete and secure HTTPS website URL (e.g. https://yourproduct.com)."
+      )
+      return
+    }
+
+    try {
+      setUndoSnapshot({ ...form })
+      const res = await runAiAutofill({ url: targetUrl })
+      const data = res.data
+
+      setForm((prev) => ({
+        ...prev,
+        websiteUrl: prev.websiteUrl.trim() ? prev.websiteUrl : targetUrl,
+        name: data.name || prev.name,
+        tagline: data.tagline || prev.tagline,
+        description: data.description || prev.description,
+        problemStatement: data.problemStatement || prev.problemStatement,
+        solution: data.solution || prev.solution,
+        uniqueValue: data.uniqueValue || prev.uniqueValue,
+        useCases: data.useCases || prev.useCases,
+        platforms:
+          data.platforms && data.platforms.length > 0
+            ? data.platforms
+            : prev.platforms,
+        tags:
+          data.tags && data.tags.length > 0 ? data.tags.join(", ") : prev.tags,
+        builtWithTools:
+          activeType === "product" &&
+          data.builtWithTools &&
+          data.builtWithTools.length > 0
+            ? data.builtWithTools
+            : prev.builtWithTools,
+        githubUrl: data.githubUrl || prev.githubUrl,
+        twitterUrl: data.twitterUrl || prev.twitterUrl,
+        linkedinUrl: data.linkedinUrl || prev.linkedinUrl,
+        discordUrl: data.discordUrl || prev.discordUrl,
+        appStoreUrl: data.appStoreUrl || prev.appStoreUrl,
+        playStoreUrl: data.playStoreUrl || prev.playStoreUrl,
+        chromeExtensionUrl: data.chromeExtensionUrl || prev.chromeExtensionUrl,
+        logoUrl: prev.logoUrl,
+      }))
+
+      if (!autofillUrl) {
+        setAutofillUrl(targetUrl)
+      }
+
+      toast.success(
+        res.cached ? "Autofilled from Cache!" : "Autofilled with AI!",
+        "Review the generated details before submitting."
+      )
+    } catch (err: unknown) {
+      toast.error(
+        "Autofill Failed",
+        err instanceof Error
+          ? err.message
+          : "Unable to analyze the website URL."
+      )
+    }
+  }
+
+  const handleUndoAutofill = () => {
+    if (undoSnapshot) {
+      setForm(undoSnapshot)
+      setUndoSnapshot(null)
+      toast.info(
+        "Autofill Reverted",
+        "Your previous form inputs have been restored."
+      )
+    }
   }
 
   const togglePlatform = (platform: string) => {
@@ -319,7 +419,8 @@ export const SubmitContent = ({
 
     try {
       if (valid.type === "product") {
-        const { submitterId: _unused, ...clientPayload } = valid.data
+        const clientPayload = { ...valid.data }
+        delete (clientPayload as { submitterId?: string }).submitterId
         const res = (await submitProductMutation(clientPayload)) as DbProduct
         trackSubmitProduct({
           itemId: res.id,
@@ -527,6 +628,100 @@ export const SubmitContent = ({
               {errors.launchWeek && (
                 <p className="text-xs text-red-500">{errors.launchWeek[0]}</p>
               )}
+            </div>
+
+            {/* AI Autofill Quickstart */}
+            <div className={submitAiAutofillContainer}>
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <div className="flex items-center gap-2">
+                  <Sparkles className="size-4 text-indigo-600" />
+                  <Label
+                    htmlFor="ai-autofill-url"
+                    className="text-xs font-bold tracking-wider text-slate-900 uppercase"
+                  >
+                    Autofill with AI (Optional)
+                  </Label>
+                </div>
+                {undoSnapshot && (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleUndoAutofill}
+                    className="h-7 text-xs text-slate-600 hover:text-slate-900"
+                  >
+                    Undo Autofill
+                  </Button>
+                )}
+              </div>
+              <p className="text-xs text-slate-500">
+                Paste your landing page URL and AI will automatically populate
+                your name, tagline, description, tech stack, and links.
+              </p>
+              <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-2 sm:flex-row">
+                  <div className="relative flex-1">
+                    <Globe className="absolute top-2.5 left-3 size-4 text-slate-400" />
+                    <Input
+                      id="ai-autofill-url"
+                      type="url"
+                      value={autofillUrl}
+                      onChange={(e) => setAutofillUrl(e.target.value)}
+                      placeholder="https://yourproduct.com"
+                      className="bg-white pl-9"
+                      onKeyDown={(e) => {
+                        if (
+                          e.key === "Enter" &&
+                          isAutofillUrlValid &&
+                          !isAutofilling
+                        ) {
+                          e.preventDefault()
+                          handleAiAutofill()
+                        }
+                      }}
+                    />
+                  </div>
+                  <Button
+                    type="button"
+                    onClick={handleAiAutofill}
+                    disabled={isAutofilling || !isAutofillUrlValid}
+                    className="shrink-0 gap-2 bg-indigo-600 font-medium text-white hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    {isAutofilling ? (
+                      <>
+                        <Spinner className="size-4" />
+                        <span>Analyzing URL...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="size-4" />
+                        <span>Autofill with AI</span>
+                      </>
+                    )}
+                  </Button>
+                </div>
+
+                {autofillUrl.trim().startsWith("http://") ? (
+                  <p className="text-[11px] font-medium text-amber-600">
+                    Only secure HTTPS URLs (starting with https://) are
+                    supported.
+                  </p>
+                ) : autofillUrl.trim().length > 0 &&
+                  !autofillUrl.trim().startsWith("https://") ? (
+                  <p className="text-[11px] text-slate-500">
+                    Must start with{" "}
+                    <code className="rounded bg-slate-100 px-1 font-mono text-indigo-600">
+                      https://
+                    </code>{" "}
+                    (e.g. https://yourproduct.com)
+                  </p>
+                ) : autofillUrl.trim().length >= 8 && !isAutofillUrlValid ? (
+                  <p className="text-[11px] text-slate-500">
+                    Please provide a complete domain (e.g.
+                    https://yourproduct.com)
+                  </p>
+                ) : null}
+              </div>
             </div>
 
             {/* Name, Tagline & Website */}
