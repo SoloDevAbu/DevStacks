@@ -4,6 +4,7 @@ import {
   Package,
   TrendingUp,
   Users,
+  BookOpen,
   type LucideIcon,
 } from "lucide-react"
 import { ROUTES } from "@/constants/routes"
@@ -41,6 +42,12 @@ export const SIDEBAR_NAV: NavSection[] = [
         icon: TrendingUp,
         href: ROUTES.TRENDING,
         badge: { text: "HOT", variant: "hot" },
+      },
+      {
+        name: "Launch Stories",
+        icon: BookOpen,
+        href: ROUTES.BLOG,
+        badge: { text: "NEW", variant: "new" },
       },
     ],
   },
