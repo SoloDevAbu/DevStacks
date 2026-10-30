@@ -293,6 +293,15 @@ export const toolHeroStatPill =
 
 export const heroStatPill = toolHeroStatPill
 
+export const homeHeroRotatingText =
+  "inline-block font-bold text-blue-600 dark:text-blue-400 transition-all duration-200 ease-out"
+
+export const homeHeroBadge =
+  "h-6.5 gap-1.5 rounded-full border-slate-200/90 bg-white/90 px-3 py-1 text-xs font-medium text-slate-700 shadow-2xs backdrop-blur-xs transition-colors hover:border-blue-300 hover:bg-blue-50/50 hover:text-blue-900"
+
+export const homeHeroBadgeDot =
+  "size-1.5 shrink-0 rounded-full bg-blue-600 dark:bg-blue-400"
+
 export const toolFilterButton =
   "relative z-10 h-7.5 gap-1.5 rounded-lg px-2.5 text-xs transition-colors"
 

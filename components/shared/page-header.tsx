@@ -13,7 +13,7 @@ export type PageHeaderVariant =
   | "makers"
 
 interface PageHeaderProps {
-  heading: string
+  heading: React.ReactNode
   description: string
   aiPrompt?: string
   variant?: PageHeaderVariant
