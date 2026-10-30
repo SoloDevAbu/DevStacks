@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import { SITE_CONFIG } from "@/constants/site"
 import { PLATFORMS } from "@/constants/platforms"
-import { LAUNCHNESTS_FAQS, FAQ_CATEGORIES } from "@/constants/faqs"
+import { FAQ_CATEGORIES } from "@/constants/faqs"
 import { getTools } from "@/db/queries/tools/list"
 import { getTrending } from "@/lib/rankings/trending"
 import {
@@ -127,6 +127,7 @@ ${SITE_CONFIG.name} is used by:
 
 ## 7. Submission & Discoverability Guidelines
 Developers and founders can list their tools or products at ${SITE_CONFIG.url}/submit with metadata tailored for search engines and AI assistants:
+- Instant AI Autofill: Enter an HTTPS URL to automatically extract project name, tagline, description, problem/solution breakdown, detected tech stack, and store links in seconds
 - Problem Statement, Solution, and Unique Value Proposition
 - Target Search Keywords & Target Audience
 - Direct AI Context prompt for LLM answer engines

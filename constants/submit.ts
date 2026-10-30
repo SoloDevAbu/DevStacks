@@ -143,9 +143,9 @@ export const SUBMISSION_STEPS: SubmissionStep[] = [
   },
   {
     step: 2,
-    title: "Provide Core Information",
+    title: "Instant AI Autofill or Manual Entry",
     description:
-      "Fill in your project name, tagline, official URL, description, pricing model, and choose your launch week.",
+      "Enter your HTTPS URL to autofill name, tagline, description, tech stack, and links in seconds using AI, or fill fields manually.",
     icon: CheckCircle2,
   },
   {
@@ -167,7 +167,11 @@ export const SUBMISSION_STEPS: SubmissionStep[] = [
 export const SUBMISSION_FAQS: SubmissionFaq[] = [
   {
     question: `How do I list my product or developer tool on ${SITE_CONFIG.name}?`,
-    answer: `Sign in with your Google account, navigate to ${ROUTES.SUBMIT}, select whether you are launching a Product or a Developer Tool, complete the submission form detailing your problem statement, solution, target audience, and launch week schedule, then submit for review.`,
+    answer: `Sign in with your Google account, navigate to ${ROUTES.SUBMIT}, enter your website URL to instantly autofill details with AI (or input manually), select your launch track (Product or Developer Tool), review your architecture and media, choose an upcoming launch week, and submit for editorial verification.`,
+  },
+  {
+    question: `How does the AI Autofill feature work during submission?`,
+    answer: `Enter your product or developer tool's official HTTPS website URL and click "Autofill with AI". Our secure analysis engine inspects your public website metadata and tech stack, automatically populating your project name, tagline, description, problem and solution breakdown, detected framework or tools, and store links in seconds. You can review, edit, or adjust any field before submitting.`,
   },
   {
     question: `What is the difference between launching a Product vs. a Developer Tool?`,

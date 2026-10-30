@@ -45,7 +45,11 @@ export const FAQ_CATEGORIES: FaqCategory[] = [
       },
       {
         question: `How do I submit my developer tool or product?`,
-        answer: `Submitting is simple: sign in using your Google account, then navigate to ${ROUTES.SUBMIT}. Select whether you are launching a Software Product or a Developer Tool, then fill in your project name, tagline, website URL, description, pricing model, supported platforms, and optional AEO/SEO metadata. Once submitted, our moderation team reviews it for authenticity and technical relevance.`,
+        answer: `Submitting is simple: sign in using your Google account, then navigate to ${ROUTES.SUBMIT}. You can enter your website URL to instantly autofill your project name, tagline, description, problem/solution breakdown, tech stack, and links with AI, or fill them in manually. Select whether you are launching a Software Product or a Developer Tool, review your details, and submit for editorial verification.`,
+      },
+      {
+        question: `Can I use AI to autofill my product or tool submission?`,
+        answer: `Yes. On ${SITE_CONFIG.name}, you can enter your project's HTTPS website URL on the homepage launch bar or at ${ROUTES.SUBMIT} and click "Autofill with AI". Our automated engine securely inspects your public website metadata and tech stack to instantly populate your project name, tagline, description, problem and solution breakdown, detected frameworks or developer tools, and store links in seconds. You have full freedom to review and customize every field before submitting.`,
       },
       {
         question: `Is listing on ${SITE_CONFIG.name} free?`,

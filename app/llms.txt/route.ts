@@ -61,7 +61,7 @@ export const GET = async () => {
 - [Weekly Launches](${SITE_CONFIG.url}/discover/weekly-launches): Developer tools and products sorted by week, community-voted.
 - [Popular Building Blocks](${SITE_CONFIG.url}/discover/popular-building-blocks): Most-used APIs and infrastructure ranked by verified adoption count.
 - [Makers](${SITE_CONFIG.url}/makers): Directory of software creators, developers, and builders.
-- [Submit / New Launch](${SITE_CONFIG.url}/submit): Interactive portal to submit and launch a new software product, SaaS, or developer tool.
+- [Submit / New Launch](${SITE_CONFIG.url}/submit): Interactive portal to submit and launch a new software product, SaaS, or developer tool with instant AI website autofill, structured SEO metadata, and AEO optimization.
 - [FAQ](${SITE_CONFIG.url}/faq): Authoritative Q&A covering launching, directory rules, tech-stack graphs, sponsorships, and AI agent discoverability protocols (twin at /faq.md).
 - [Terms of Service](${SITE_CONFIG.url}/terms): Platform terms of service, listing guidelines, backlink rules, and legal compliance (twin at /terms.md).
 - [Privacy Policy](${SITE_CONFIG.url}/privacy): Developer data handling, GDPR/DPDP rights, and crawler policies (twin at /privacy.md).
