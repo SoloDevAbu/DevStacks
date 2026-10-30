@@ -18,8 +18,6 @@ import { getCachedProductCategories } from "@/db/queries/categories/list"
 import type { DbProduct } from "@/types/entities"
 import { ProductsDirectoryContent } from "./products-content"
 import type { ProductSortOption } from "@/components/products/products-filter-bar"
-import { CrawlablePagination } from "@/components/shared/crawlable-pagination"
-import { CrawlableCategoryBar } from "@/components/shared/crawlable-category-bar"
 
 export const revalidate = 60
 
@@ -63,7 +61,7 @@ export const generateMetadata = async (props: {
 
   const description = category
     ? `Browse developer-built products and software in the ${category} category on ${SITE_CONFIG.name}. Explore built-with tech stacks, likes, and community reviews.`
-    : `Browse the complete directory of developer products, software, and tools on ${SITE_CONFIG.name}.`
+    : `Browse the complete directory of developer tools, software, and products on ${SITE_CONFIG.name}.`
 
   const cleanCategory = category?.trim()
   const hasSearchQuery = Boolean(q && q.trim())
@@ -171,7 +169,21 @@ const ProductsPage = async (props: {
     getCachedProductCategories().catch(() => []),
   ])
 
-  const totalPages = Math.ceil(stats.totalCount / pageSize)
+  const matchedCategory = category
+    ? categories.find(
+        (c) =>
+          c.slug.toLowerCase() === category.toLowerCase() ||
+          c.name.toLowerCase() === category.toLowerCase()
+      )
+    : undefined
+
+  const effectiveTotalCount = matchedCategory
+    ? matchedCategory.count
+    : hasTextQuery
+      ? (initialProducts?.length ?? 0)
+      : stats.totalCount
+
+  const totalPages = Math.max(1, Math.ceil(effectiveTotalCount / pageSize))
 
   const collectionJsonLd = collectionPageSchema({
     name: category ? `${category} Products` : "Products Directory",
@@ -199,9 +211,7 @@ const ProductsPage = async (props: {
       <div className="relative flex min-h-full flex-col bg-slate-50/50">
         <ProductsHero
           heading={
-            category
-              ? `${category} Products & Software`
-              : "Developer Products Directory"
+            category ? `${category} Products & Software` : "Products Directory"
           }
           description={
             category
@@ -209,14 +219,6 @@ const ProductsPage = async (props: {
               : "Browse the complete directory of developer tools, APIs, and software products."
           }
           aiPrompt={AI_PROMPTS.products}
-          totalCount={stats.totalCount}
-          totalLikes={stats.totalLikes}
-        />
-
-        <CrawlableCategoryBar
-          type="products"
-          categories={categories}
-          activeCategory={category}
         />
 
         <ProductsDirectoryContent
@@ -225,19 +227,10 @@ const ProductsPage = async (props: {
           initialQuery={q}
           initialPricing={pricing ?? "all"}
           initialSortBy={sortBy}
-          initialProducts={initialProducts as DbProduct[]}
-        />
-
-        <CrawlablePagination
-          currentPage={currentPage}
+          initialPage={currentPage}
           totalPages={totalPages}
-          basePath={ROUTES.PRODUCTS}
-          params={{
-            category,
-            pricing:
-              pricing && pricing.toLowerCase() !== "all" ? pricing : undefined,
-            sortBy: sortBy !== "upvotes" ? sortBy : undefined,
-          }}
+          initialProducts={initialProducts as DbProduct[]}
+          totalCount={effectiveTotalCount}
         />
       </div>
     </>

@@ -42,7 +42,7 @@ export const directoryCard =
   "group relative z-0 cursor-pointer rounded-none p-0 transition-colors"
 
 export const directoryCardContent =
-  "relative flex items-center gap-3 overflow-hidden px-3.5 py-3.5 backdrop-blur-sm sm:gap-4 sm:px-6 sm:py-4 md:gap-6 md:py-5"
+  "relative flex items-center gap-3 overflow-hidden px-3.5 py-3.5 sm:gap-4 sm:px-6 sm:py-4 md:gap-6 md:py-5"
 
 export const tagBadge =
   "inline-flex items-center rounded-md border border-slate-200/60 bg-slate-100/50 px-2 py-0.5 text-xs text-slate-600 hover:bg-slate-100 transition-colors"
@@ -293,6 +293,15 @@ export const toolHeroStatPill =
 
 export const heroStatPill = toolHeroStatPill
 
+export const homeHeroRotatingText =
+  "inline-block font-bold text-blue-600 dark:text-blue-400 transition-all duration-200 ease-out"
+
+export const homeHeroBadge =
+  "h-6.5 gap-1.5 rounded-full border-slate-200/90 bg-white/90 px-3 py-1 text-xs font-medium text-slate-700 shadow-2xs backdrop-blur-xs transition-colors hover:border-blue-300 hover:bg-blue-50/50 hover:text-blue-900"
+
+export const homeHeroBadgeDot =
+  "size-1.5 shrink-0 rounded-full bg-blue-600 dark:bg-blue-400"
+
 export const toolFilterButton =
   "relative z-10 h-7.5 gap-1.5 rounded-lg px-2.5 text-xs transition-colors"
 
@@ -490,7 +499,7 @@ export const submissionStatusBadge = (status?: string) => {
 export * from "@/utils/dashboard/styles"
 
 export const launchPromoBannerWrapper =
-  "relative z-50 flex w-full items-center justify-between border-b border-amber-200/80 bg-linear-to-r from-amber-500/10 via-yellow-500/10 to-amber-500/10 px-4 py-2 text-xs text-amber-950 transition-colors"
+  "relative z-50 hidden md:flex w-full items-center justify-between border-b border-amber-200/80 bg-linear-to-r from-amber-500/10 via-yellow-500/10 to-amber-500/10 px-4 py-2 text-xs text-amber-950 transition-colors"
 
 export const launchPromoBadge =
   "inline-flex items-center gap-1 rounded-md border border-amber-300/80 bg-amber-100/60 px-2 py-0.5 text-[11px] font-semibold text-amber-900 shadow-2xs"
@@ -879,3 +888,24 @@ export const uploaderThumbnailCard =
 
 export const uploaderAspectNotice =
   "inline-flex items-center gap-1.5 rounded-md border border-slate-200/80 bg-slate-50 px-2.5 py-1 text-[11px] font-medium text-slate-600"
+
+export const sidebarFeedbackCard =
+  "group relative flex w-full cursor-pointer items-center justify-between border border-dashed border-border bg-white px-3.5 py-3 text-left transition-all hover:border-slate-400 hover:bg-slate-50/70"
+
+export const feedbackTypeButton = (isSelected: boolean) =>
+  cn(
+    "flex items-center gap-1.5 rounded-none border px-2.5 py-1.5 text-xs font-semibold transition-all",
+    isSelected
+      ? "border-slate-900 bg-slate-900 text-white shadow-2xs"
+      : "border-dashed border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900"
+  )
+
+
+export const categoryFaqHeaderBg = (theme: "indigo" | "violet" = "indigo") =>
+  theme === "indigo"
+    ? "bg-linear-to-r from-indigo-100/60 via-blue-50/40 to-white"
+    : "bg-linear-to-r from-violet-100/60 via-purple-50/40 to-white"
+
+
+export const directoryTelemetryBar =
+  "flex w-full items-center justify-between border-b border-dashed border-border bg-slate-50/60 px-6 py-2.5 md:px-8 text-xs text-slate-600"

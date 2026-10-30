@@ -27,10 +27,22 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
       priority: 0.9,
     },
     {
+      url: normalizeSitemapUrl(ROUTES.TOOL_CATEGORIES),
+      lastModified: now,
+      changeFrequency: "daily",
+      priority: 0.85,
+    },
+    {
       url: normalizeSitemapUrl(ROUTES.PRODUCTS),
       lastModified: now,
       changeFrequency: "daily",
       priority: 0.9,
+    },
+    {
+      url: normalizeSitemapUrl(ROUTES.PRODUCT_CATEGORIES),
+      lastModified: now,
+      changeFrequency: "daily",
+      priority: 0.85,
     },
     {
       url: normalizeSitemapUrl(ROUTES.TRENDING),
@@ -173,7 +185,7 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
         ...toolCategories
           .filter((cat) => cat.count >= 1)
           .map((cat) => ({
-            url: normalizeSitemapUrl(`/tools/category/${cat.slug}`),
+            url: normalizeSitemapUrl(ROUTES.TOOL_CATEGORY(cat.slug)),
             lastModified: now,
             changeFrequency: "daily" as const,
             priority: 0.85,
@@ -187,7 +199,7 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
         ...productCategories
           .filter((cat) => cat.count >= 1)
           .map((cat) => ({
-            url: normalizeSitemapUrl(`/products/category/${cat.slug}`),
+            url: normalizeSitemapUrl(ROUTES.PRODUCT_CATEGORY(cat.slug)),
             lastModified: now,
             changeFrequency: "daily" as const,
             priority: 0.85,
@@ -196,6 +208,15 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
     }
 
     if (dbProducts && dbProducts.length > 0) {
+      const totalProductPages = Math.ceil(dbProducts.length / 20)
+      for (let p = 2; p <= totalProductPages; p++) {
+        dynamicRoutes.push({
+          url: normalizeSitemapUrl(`/products?page=${p}`),
+          lastModified: now,
+          changeFrequency: "daily" as const,
+          priority: 0.8,
+        })
+      }
       dynamicRoutes.push(
         ...dbProducts.map((product) => ({
           url: normalizeSitemapUrl(`/products/${product.slug}`),
@@ -207,6 +228,15 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
     }
 
     if (dbTools && dbTools.length > 0) {
+      const totalToolPages = Math.ceil(dbTools.length / 20)
+      for (let p = 2; p <= totalToolPages; p++) {
+        dynamicRoutes.push({
+          url: normalizeSitemapUrl(`/tools?page=${p}`),
+          lastModified: now,
+          changeFrequency: "daily" as const,
+          priority: 0.8,
+        })
+      }
       // Base tool profile URLs
       dynamicRoutes.push(
         ...dbTools.map((tool) => ({

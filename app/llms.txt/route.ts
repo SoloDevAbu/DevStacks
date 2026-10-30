@@ -8,6 +8,7 @@ import {
   type DbCategoryItem,
 } from "@/db/queries/categories/list"
 import { getAllComparisons } from "@/constants/comparisons"
+import { ROUTES } from "@/constants/routes"
 
 export const revalidate = 86400
 
@@ -53,7 +54,9 @@ export const GET = async () => {
 
 - [Homepage](${SITE_CONFIG.url}/): Trending tools, fresh launches, and ecosystem highlights.
 - [Tools](${SITE_CONFIG.url}/tools): Complete developer tools and APIs directory, filterable by category and pricing model.
+- [Tool Categories Directory](${SITE_CONFIG.url}${ROUTES.TOOL_CATEGORIES}): Complete directory of developer tool categories, APIs, and infrastructure layers.
 - [Products](${SITE_CONFIG.url}/products): Live developer software directory with declared tech stacks.
+- [Product Categories Directory](${SITE_CONFIG.url}${ROUTES.PRODUCT_CATEGORIES}): Complete directory of software product categories, SaaS platforms, and indie apps.
 - [Trending](${SITE_CONFIG.url}/trending): Community-upvoted leaderboard with algorithmic freshness and momentum ranking.
 - [Weekly Launches](${SITE_CONFIG.url}/discover/weekly-launches): Developer tools and products sorted by week, community-voted.
 - [Popular Building Blocks](${SITE_CONFIG.url}/discover/popular-building-blocks): Most-used APIs and infrastructure ranked by verified adoption count.
@@ -119,11 +122,11 @@ ${getAllComparisons()
 
 ## Developer Tool Categories
 
-${toolCats.map((c) => `- [${c.name}](${SITE_CONFIG.url}/tools?category=${encodeURIComponent(c.name)}): ${c.count} verified tools`).join("\n")}
+${toolCats.map((c) => `- [${c.name}](${SITE_CONFIG.url}${ROUTES.TOOL_CATEGORY(c.slug)}): ${c.count} verified tools`).join("\n")}
 
 ## Developer Product Categories
 
-${productCats.map((c) => `- [${c.name}](${SITE_CONFIG.url}/products?category=${encodeURIComponent(c.name)}): ${c.count} verified products`).join("\n")}
+${productCats.map((c) => `- [${c.name}](${SITE_CONFIG.url}${ROUTES.PRODUCT_CATEGORY(c.slug)}): ${c.count} verified products`).join("\n")}
 
 ## Public endpoints
 

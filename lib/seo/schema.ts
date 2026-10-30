@@ -349,6 +349,7 @@ export const itemListSchema = (
     position: i + 1,
     name: item.name,
     url: item.url,
+    item: item.url,
     description: item.description,
   })),
 })

@@ -12,6 +12,11 @@ export const useIntersectionObserver = ({
   rootMargin = "200px",
 }: UseIntersectionObserverProps) => {
   const targetRef = useRef<HTMLDivElement>(null)
+  const onIntersectRef = useRef(onIntersect)
+
+  useEffect(() => {
+    onIntersectRef.current = onIntersect
+  }, [onIntersect])
 
   useEffect(() => {
     if (!enabled) return
@@ -19,11 +24,15 @@ export const useIntersectionObserver = ({
     const element = targetRef.current
     if (!element) return
 
+    if (typeof window === "undefined" || !("IntersectionObserver" in window)) {
+      return
+    }
+
     const observer = new IntersectionObserver(
       (entries) => {
         const [entry] = entries
         if (entry?.isIntersecting) {
-          onIntersect()
+          onIntersectRef.current()
         }
       },
       { rootMargin }
@@ -34,7 +43,7 @@ export const useIntersectionObserver = ({
     return () => {
       observer.disconnect()
     }
-  }, [onIntersect, enabled, rootMargin])
+  }, [enabled, rootMargin])
 
   return targetRef
 }

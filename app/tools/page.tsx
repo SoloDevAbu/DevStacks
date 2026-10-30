@@ -18,8 +18,6 @@ import { getCachedToolCategories } from "@/db/queries/categories/list"
 import type { DbTool } from "@/types/entities"
 import { ToolsDirectoryContent } from "./tools-content"
 import type { SortOption } from "@/components/tools/tools-filter-bar"
-import { CrawlablePagination } from "@/components/shared/crawlable-pagination"
-import { CrawlableCategoryBar } from "@/components/shared/crawlable-category-bar"
 
 export const revalidate = 60
 
@@ -171,7 +169,21 @@ const ToolsPage = async (props: {
     getCachedToolCategories().catch(() => []),
   ])
 
-  const totalPages = Math.ceil(stats.totalCount / pageSize)
+  const matchedCategory = category
+    ? categories.find(
+        (c) =>
+          c.slug.toLowerCase() === category.toLowerCase() ||
+          c.name.toLowerCase() === category.toLowerCase()
+      )
+    : undefined
+
+  const effectiveTotalCount = matchedCategory
+    ? matchedCategory.count
+    : hasTextQuery
+      ? (initialTools?.length ?? 0)
+      : stats.totalCount
+
+  const totalPages = Math.max(1, Math.ceil(effectiveTotalCount / pageSize))
 
   const collectionJsonLd = collectionPageSchema({
     name: category ? `${category} Tools` : "Developer Tools Directory",
@@ -208,14 +220,6 @@ const ToolsPage = async (props: {
               : "Browse the complete directory of developer tools, APIs, and building blocks powering modern applications."
           }
           aiPrompt={AI_PROMPTS.tools}
-          totalCount={stats.totalCount}
-          totalBuilds={stats.totalBuilds}
-        />
-
-        <CrawlableCategoryBar
-          type="tools"
-          categories={categories}
-          activeCategory={category}
         />
 
         <ToolsDirectoryContent
@@ -224,19 +228,11 @@ const ToolsPage = async (props: {
           initialQuery={q}
           initialPricing={pricing ?? "all"}
           initialSortBy={sortBy}
-          initialTools={toolsList}
-        />
-
-        <CrawlablePagination
-          currentPage={currentPage}
+          initialPage={currentPage}
           totalPages={totalPages}
-          basePath={ROUTES.TOOLS}
-          params={{
-            category,
-            pricing:
-              pricing && pricing.toLowerCase() !== "all" ? pricing : undefined,
-            sortBy: sortBy !== "upvotes" ? sortBy : undefined,
-          }}
+          initialTools={toolsList}
+          totalCount={effectiveTotalCount}
+          totalBuilds={stats.totalBuilds}
         />
       </div>
     </>

@@ -1,7 +1,8 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Layers, ChevronDown, X } from "lucide-react"
+import Link from "next/link"
+import { Layers, ChevronDown, X, ArrowUpRight } from "lucide-react"
 import { Spinner } from "@/components/ui/spinner"
 import { Button } from "@/components/ui/button"
 import { Kbd, KbdGroup } from "@/components/ui/kbd"
@@ -18,6 +19,7 @@ import { HoverOutline } from "@/components/shared/hover-outline"
 import { useCategories } from "@/hooks/categories/use-categories"
 import { useDebounce } from "@/hooks/shared/use-debounce"
 import { commandFooter } from "@/utils/styles"
+import { ROUTES } from "@/constants/routes"
 import { cn } from "@/lib/utils"
 
 import type { CategoryFilterType } from "@/lib/api/categories"
@@ -81,6 +83,9 @@ export const CategoryCommandFilter = ({
   }
 
   const isAllSelected = !selectedCategory || selectedCategory === "all"
+
+  const categoriesDirectoryHref =
+    type === "products" ? ROUTES.PRODUCT_CATEGORIES : ROUTES.TOOL_CATEGORIES
 
   return (
     <>
@@ -192,6 +197,22 @@ export const CategoryCommandFilter = ({
               </>
             )}
           </CommandList>
+
+          <div className="border-t border-border/70 bg-slate-50/60 px-3 py-2">
+            <Link
+              href={categoriesDirectoryHref}
+              onClick={() => setOpen(false)}
+              className="flex items-center justify-between rounded-md px-2 py-1.5 text-xs font-medium text-slate-700 transition-colors hover:bg-white hover:text-slate-900 shadow-2xs border border-transparent hover:border-slate-200"
+            >
+              <span className="flex items-center gap-1.5">
+                <Layers className="size-3.5 text-indigo-600" />
+                <span>
+                  Browse all {type === "products" ? "product" : type === "tools" ? "tool" : ""} categories directory
+                </span>
+              </span>
+              <ArrowUpRight className="size-3.5 text-slate-400" />
+            </Link>
+          </div>
 
           <div className={commandFooter}>
             <div className="flex items-center gap-3.5">

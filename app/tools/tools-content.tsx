@@ -2,15 +2,20 @@
 
 import { useState, useCallback } from "react"
 import { useRouter } from "next/navigation"
+import { Sparkles } from "lucide-react"
 import { ToolList } from "@/components/shared/tool-list"
 import type { DbTool } from "@/types/entities"
 import { useInfiniteTools } from "@/hooks/tools/use-tools"
-import { useIntersectionObserver } from "@/hooks/shared/use-intersection-observer"
-import { InfiniteScrollSentinel } from "@/components/shared/infinite-scroll-sentinel"
+import {
+  LoadMoreButton,
+  buildPageHref,
+} from "@/components/shared/load-more-button"
 import {
   ToolsFilterBar,
   type SortOption,
 } from "@/components/tools/tools-filter-bar"
+import { useScrollRestoration } from "@/hooks/shared/use-scroll-restoration"
+import { directoryTelemetryBar } from "@/utils/styles"
 import { ROUTES } from "@/constants/routes"
 
 interface ToolsDirectoryContentProps {
@@ -18,7 +23,11 @@ interface ToolsDirectoryContentProps {
   initialQuery?: string
   initialPricing?: string
   initialSortBy?: SortOption
+  initialPage?: number
+  totalPages?: number
   initialTools?: DbTool[]
+  totalCount?: number
+  totalBuilds?: number
 }
 
 export const ToolsDirectoryContent = ({
@@ -26,7 +35,11 @@ export const ToolsDirectoryContent = ({
   initialQuery,
   initialPricing = "all",
   initialSortBy = "upvotes",
+  initialPage = 1,
+  totalPages,
   initialTools = [],
+  totalCount,
+  totalBuilds,
 }: ToolsDirectoryContentProps) => {
   const router = useRouter()
   const [selectedCategory, setSelectedCategory] = useState<string | undefined>(
@@ -83,25 +96,58 @@ export const ToolsDirectoryContent = ({
       pricing: selectedPricing === "all" ? undefined : selectedPricing,
       sortBy,
       limit: 20,
+      initialPage,
+      totalPages,
       initialData: isInitialParams ? initialTools : undefined,
     })
-
-  const handleIntersect = useCallback(() => {
-    if (hasNextPage && !isFetchingNextPage) {
-      fetchNextPage()
-    }
-  }, [hasNextPage, isFetchingNextPage, fetchNextPage])
-
-  const sentinelRef = useIntersectionObserver({
-    onIntersect: handleIntersect,
-    enabled: hasNextPage && !isFetchingNextPage,
-  })
 
   const displayedTools =
     data?.pages.flatMap((page) => page) ?? (isInitialParams ? initialTools : [])
 
+  const filterKey = `${selectedCategory ?? "all"}-${selectedPricing}-${sortBy}-${initialQuery ?? ""}`
+
+  useScrollRestoration({
+    key: "bmnl_tools_scroll",
+    filterKey,
+    hasData: displayedTools.length > 0,
+  })
+
+  const currentCount = displayedTools.length
+  const total = hasNextPage ? (totalCount ?? currentCount) : currentCount
+
+  const currentPageParam =
+    data?.pageParams && data.pageParams.length > 0
+      ? (data.pageParams[data.pageParams.length - 1] as number)
+      : initialPage
+
+  const nextPage = currentPageParam + 1
+
+  const nextPageHref = buildPageHref(ROUTES.TOOLS, nextPage, {
+    category: selectedCategory,
+    pricing: selectedPricing,
+    sortBy: sortBy !== "upvotes" ? sortBy : undefined,
+    q: initialQuery,
+  })
+
   return (
     <div className="flex w-full flex-1 flex-col">
+      {/* Full width telemetry bar */}
+      <div className={directoryTelemetryBar}>
+        <div>
+          Showing <span className="font-semibold text-slate-900">{currentCount}</span> of{" "}
+          <span className="font-semibold text-slate-900">{total}</span>
+        </div>
+
+        {totalBuilds !== undefined && totalBuilds > 0 && (
+          <div className="flex items-center gap-1.5 font-medium text-slate-700">
+            <Sparkles className="size-3.5 text-amber-500" />
+            <span>
+              <strong className="font-semibold text-slate-900">{totalBuilds.toLocaleString()}</strong> Connected Builds
+            </span>
+          </div>
+        )}
+      </div>
+
       <ToolsFilterBar
         selectedCategory={selectedCategory}
         onSelectCategory={handleCategoryChange}
@@ -113,11 +159,11 @@ export const ToolsDirectoryContent = ({
 
       <div className="flex w-full flex-1 flex-col pb-8">
         <ToolList tools={displayedTools} showMedals />
-        <InfiniteScrollSentinel
-          sentinelRef={sentinelRef}
-          isFetchingNextPage={isFetchingNextPage}
+        <LoadMoreButton
+          href={nextPageHref}
+          onLoadMore={fetchNextPage}
+          isLoading={isFetchingNextPage}
           hasNextPage={Boolean(hasNextPage)}
-          hasItems={displayedTools.length > 0}
         />
       </div>
     </div>

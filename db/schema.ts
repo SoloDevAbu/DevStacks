@@ -73,6 +73,13 @@ export const launchStatusEnum = pgEnum("launch_status", [
   "cancelled",
 ])
 
+export const feedbackTypeEnum = pgEnum("feedback_type", [
+  "bug",
+  "improvement",
+  "feature",
+  "other",
+])
+
 // ---------------------------------------------------------------------------
 // users (Better Auth user table)
 // ---------------------------------------------------------------------------
@@ -823,6 +830,34 @@ export const externalLinkVisits = pgTable(
 )
 
 // ---------------------------------------------------------------------------
+// feedbacks — user feedback, bug reports, improvements & feature requests
+// ---------------------------------------------------------------------------
+
+export const feedbacks = pgTable(
+  "feedbacks",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: text("user_id").references(() => users.id, {
+      onDelete: "set null",
+    }),
+    type: feedbackTypeEnum("type").notNull().default("improvement"),
+    title: text("title"),
+    message: text("message").notNull(),
+    email: text("email"),
+    pageUrl: text("page_url"),
+    status: text("status").notNull().default("new"),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (t) => [
+    index("feedbacks_user_id_idx").on(t.userId),
+    index("feedbacks_type_idx").on(t.type),
+    index("feedbacks_created_at_idx").on(t.createdAt),
+  ]
+)
+
+// ---------------------------------------------------------------------------
 // Relations (Drizzle ORM v1 API)
 // ---------------------------------------------------------------------------
 
@@ -1075,3 +1110,6 @@ export type NewLaunch = typeof launches.$inferInsert
 
 export type ExternalLinkVisit = typeof externalLinkVisits.$inferSelect
 export type NewExternalLinkVisit = typeof externalLinkVisits.$inferInsert
+
+export type Feedback = typeof feedbacks.$inferSelect
+export type NewFeedback = typeof feedbacks.$inferInsert

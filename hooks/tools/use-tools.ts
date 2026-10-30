@@ -1,14 +1,8 @@
-import { useInfiniteQuery, useQuery } from "@tanstack/react-query"
+import { useInfiniteQuery, useQuery, useQueryClient } from "@tanstack/react-query"
 import { fetchTools, type ToolListParams } from "@/lib/api/tools"
 import type { DbTool } from "@/types/entities"
 
 export const TOOLS_QUERY_KEY = (params: ToolListParams) => ["tools", params]
-
-export const TOOLS_INFINITE_QUERY_KEY = (params: ToolListParams) => [
-  "tools",
-  "infinite",
-  params,
-]
 
 export const useTools = (
   params: ToolListParams = {},
@@ -22,6 +16,10 @@ export const useTools = (
   })
 }
 
+export const TOOLS_INFINITE_QUERY_KEY = (
+  params: ToolListParams & { initialPage?: number }
+) => ["tools", "infinite", params]
+
 export const useInfiniteTools = ({
   category,
   q,
@@ -31,8 +29,15 @@ export const useInfiniteTools = ({
   tier,
   sortBy,
   limit = 20,
+  initialPage = 1,
+  totalPages,
   initialData,
-}: ToolListParams & { initialData?: DbTool[] } = {}) => {
+}: ToolListParams & {
+  initialPage?: number
+  totalPages?: number
+  initialData?: DbTool[]
+} = {}) => {
+  const queryClient = useQueryClient()
   const queryFilterParams = {
     category,
     q,
@@ -42,28 +47,38 @@ export const useInfiniteTools = ({
     tier,
     sortBy,
     limit,
+    initialPage,
   }
 
+  const queryKey = TOOLS_INFINITE_QUERY_KEY(queryFilterParams)
+  const existingCache = queryClient.getQueryData(queryKey)
+
   return useInfiniteQuery({
-    queryKey: TOOLS_INFINITE_QUERY_KEY(queryFilterParams),
-    queryFn: async ({ pageParam = 1 }) => {
+    queryKey,
+    queryFn: async ({ pageParam = initialPage }) => {
       const data = await fetchTools({
         ...queryFilterParams,
         page: pageParam,
       })
       return (data ?? []) as DbTool[]
     },
-    initialPageParam: 1,
-    getNextPageParam: (lastPage, allPages) => {
+    initialPageParam: initialPage,
+    getNextPageParam: (lastPage, _allPages, lastPageParam) => {
       if (!lastPage || lastPage.length < limit) return undefined
-      return allPages.length + 1
+      const next = (lastPageParam as number) + 1
+      if (totalPages && next > totalPages) return undefined
+      return next
     },
-    initialData: initialData
-      ? {
-          pages: [initialData],
-          pageParams: [1],
-        }
-      : undefined,
-    staleTime: 60_000,
+    // Preserve multi-page cache when user navigates back within the session
+    initialData: existingCache
+      ? undefined
+      : initialData
+        ? {
+            pages: [initialData],
+            pageParams: [initialPage],
+          }
+        : undefined,
+    staleTime: 5 * 60_000,
+    gcTime: 30 * 60_000,
   })
 }

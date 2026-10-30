@@ -1,21 +1,17 @@
-import { Sparkles, Rocket } from "lucide-react"
+import Link from "next/link"
 import { AskAiBar } from "@/components/shared/ask-ai-bar"
-import { heroStatPill } from "@/utils/styles"
+import { ROUTES } from "@/constants/routes"
 
 interface ProductsHeroProps {
   heading: string
   description: string
   aiPrompt?: string
-  totalCount?: number
-  totalLikes?: number
 }
 
 export const ProductsHero = ({
   heading,
   description,
   aiPrompt = "",
-  totalCount = 0,
-  totalLikes = 0,
 }: ProductsHeroProps) => {
   return (
     <div className="relative flex flex-col justify-between gap-6 overflow-hidden border-b border-dashed border-border bg-linear-to-b from-violet-50/40 via-white to-slate-50/30 px-6 pt-8 pb-6 md:px-8 lg:flex-row lg:items-start">
@@ -31,21 +27,25 @@ export const ProductsHero = ({
           <p className="mt-1.5 text-sm leading-relaxed text-slate-600">
             {description}
           </p>
-        </div>
-
-        {/* Live Metrics Ribbon */}
-        <div className="mt-1 flex flex-wrap items-center gap-2.5">
-          <div className={heroStatPill}>
-            <Rocket className="size-3.5 text-violet-600" />
-            <span className="font-bold text-slate-900">{totalCount}</span>
-            <span className="text-slate-500">Products</span>
+          <div className="mt-2 text-xs text-slate-600 sm:text-sm">
+            <span>Browse by </span>
+            <Link
+              href={ROUTES.PRODUCT_CATEGORIES}
+              className="font-bold text-slate-900 underline underline-offset-4 decoration-slate-400 hover:text-violet-600 hover:decoration-violet-600 transition-colors"
+            >
+              category
+            </Link>
           </div>
         </div>
       </div>
 
-      {/* Ask AI strip */}
-      <div className="relative z-10 flex w-full max-w-[320px] flex-col gap-3 lg:max-w-100 lg:items-end">
-        <AskAiBar prompt={aiPrompt} label="ASK AI ABOUT PRODUCTS" align="end" />
+      {/* Ask AI strip - left-aligned on mobile, right-aligned on desktop */}
+      <div className="relative z-10 flex w-full flex-col gap-2.5 sm:gap-3 lg:max-w-100 lg:items-end">
+        <AskAiBar
+          prompt={aiPrompt}
+          label="ASK AI ABOUT PRODUCTS"
+          align="responsive"
+        />
       </div>
     </div>
   )

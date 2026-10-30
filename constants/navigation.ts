@@ -30,12 +30,12 @@ export const SIDEBAR_NAV: NavSection[] = [
     label: "Explore",
     items: [
       { name: "Home", icon: Home, href: ROUTES.HOME },
+      { name: "Products", icon: Package, href: ROUTES.PRODUCTS },
       {
         name: "Tools Directory",
         icon: Wrench,
         href: ROUTES.TOOLS,
       },
-      { name: "Products", icon: Package, href: ROUTES.PRODUCTS },
       {
         name: "Trending",
         icon: TrendingUp,

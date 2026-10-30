@@ -10,6 +10,7 @@ import {
   type DbCategoryItem,
 } from "@/db/queries/categories/list"
 import { getAllComparisons } from "@/constants/comparisons"
+import { ROUTES } from "@/constants/routes"
 
 export const revalidate = 86400
 
@@ -63,10 +64,12 @@ ${SITE_CONFIG.name} is a developer-focused platform cataloging modern tools, lib
 ${PLATFORMS.map((p) => `- **${p.label}**`).join("\n")}
 
 ### Developer Tool Categories (${toolCats.length} Active Categories)
-${toolCats.map((c) => `- **${c.name}**: ${c.count} verified tools (${SITE_CONFIG.url}/tools?category=${encodeURIComponent(c.name)})`).join("\n")}
+- **All Tool Categories Hub**: ${SITE_CONFIG.url}${ROUTES.TOOL_CATEGORIES}
+${toolCats.map((c) => `- **${c.name}**: ${c.count} verified tools (${SITE_CONFIG.url}${ROUTES.TOOL_CATEGORY(c.slug)})`).join("\n")}
 
 ### Developer Product Categories (${productCats.length} Active Categories)
-${productCats.map((c) => `- **${c.name}**: ${c.count} verified products (${SITE_CONFIG.url}/products?category=${encodeURIComponent(c.name)})`).join("\n")}
+- **All Product Categories Hub**: ${SITE_CONFIG.url}${ROUTES.PRODUCT_CATEGORIES}
+${productCats.map((c) => `- **${c.name}**: ${c.count} verified products (${SITE_CONFIG.url}${ROUTES.PRODUCT_CATEGORY(c.slug)})`).join("\n")}
 
 ---
 

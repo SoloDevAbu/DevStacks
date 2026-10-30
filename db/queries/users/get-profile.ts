@@ -349,6 +349,7 @@ export const getMakersDirectory = async (
 
   return makers.map((maker) => ({
     ...maker,
+    avatarUrl: maker.avatarUrl ?? maker.image,
     toolsCount: toolCountMap.get(maker.id) ?? 0,
     productsCount: productCountMap.get(maker.id) ?? 0,
   }))

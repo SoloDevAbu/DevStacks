@@ -119,7 +119,11 @@ const CategoryProductsPage = async (props: ProductCategoryPageProps) => {
 
   const breadcrumbs = breadcrumbSchema([
     { name: "Home", url: SITE_CONFIG.url },
-    { name: "Products", url: `${SITE_CONFIG.url}/products` },
+    { name: "Products", url: `${SITE_CONFIG.url}${ROUTES.PRODUCTS}` },
+    {
+      name: "Categories",
+      url: `${SITE_CONFIG.url}${ROUTES.PRODUCT_CATEGORIES}`,
+    },
     { name: category.name, url: categoryUrl },
   ])
 
@@ -153,7 +157,7 @@ const CategoryProductsPage = async (props: ProductCategoryPageProps) => {
             <li className="flex items-center gap-1">
               <Link
                 href={ROUTES.HOME}
-                className="flex items-center gap-1 hover:text-slate-900"
+                className="flex items-center gap-1 transition-colors hover:text-slate-900"
               >
                 <ArrowLeft className="size-3" />
                 Home
@@ -163,8 +167,22 @@ const CategoryProductsPage = async (props: ProductCategoryPageProps) => {
               <ChevronRight className="size-3" />
             </li>
             <li className="flex items-center">
-              <Link href={ROUTES.PRODUCTS} className="hover:text-slate-900">
+              <Link
+                href={ROUTES.PRODUCTS}
+                className="transition-colors hover:text-slate-900"
+              >
                 Products
+              </Link>
+            </li>
+            <li className="flex items-center text-slate-400" aria-hidden="true">
+              <ChevronRight className="size-3" />
+            </li>
+            <li className="flex items-center">
+              <Link
+                href={ROUTES.PRODUCT_CATEGORIES}
+                className="transition-colors hover:text-slate-900"
+              >
+                Categories
               </Link>
             </li>
             <li className="flex items-center text-slate-400" aria-hidden="true">
@@ -184,11 +202,6 @@ const CategoryProductsPage = async (props: ProductCategoryPageProps) => {
         {/* Category Hero Header */}
         <header className="border-b border-dashed border-border bg-white px-6 py-8 md:px-8 md:py-10">
           <div className="flex flex-col gap-4">
-            <div className="flex items-center gap-2 text-xs font-bold tracking-wider text-blue-700 uppercase">
-              <FolderGit2 className="size-4 text-blue-600" />
-              <span>Product Category Hub</span>
-            </div>
-
             <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl md:text-4xl">
               {category.name} Developer Products & Software
             </h1>

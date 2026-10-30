@@ -14,10 +14,12 @@ export const ROUTES = {
     `/submit?type=product&tool=${encodeURIComponent(toolSlug)}`,
   PRODUCTS: "/products",
   PRODUCT: (slug: string) => `/products/${slug}`,
+  PRODUCT_CATEGORIES: "/products/categories",
   PRODUCT_CATEGORY: (slug: string) =>
     `/products/category/${encodeURIComponent(slug)}`,
   TOOLS: "/tools",
   TOOL: (slug: string) => `/tools/${slug}`,
+  TOOL_CATEGORIES: "/tools/categories",
   TOOL_CATEGORY: (slug: string) =>
     `/tools/category/${encodeURIComponent(slug)}`,
   ALTERNATIVES: (slug: string) => `/alternatives/${encodeURIComponent(slug)}`,
