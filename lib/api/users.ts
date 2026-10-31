@@ -1,4 +1,5 @@
 import { apiClient } from "@/lib/api/axios-instance"
+import type { Tier } from "@/constants/plans"
 
 export type UserInteractionsData = {
   upvotedToolIds: string[]
@@ -36,4 +37,18 @@ export const checkUsernameAvailability = async (
     }
   )
   return data
+}
+
+export interface UserListingCreditDto {
+  id: string
+  tier: Tier
+  amount: number
+  createdAt: string
+}
+
+export const fetchUserListingCredit = async (): Promise<UserListingCreditDto | null> => {
+  const { data } = await apiClient.get<{ data: UserListingCreditDto | null }>(
+    "/users/credits"
+  )
+  return data.data
 }

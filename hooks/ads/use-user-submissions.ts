@@ -3,10 +3,10 @@
 import { useQuery } from "@tanstack/react-query"
 import { fetchUserSubmissions, type UserSubmissionDto } from "@/lib/api/ads"
 
-export const useUserSubmissions = () =>
+export const useUserSubmissions = (includePending = false) =>
   useQuery<UserSubmissionDto[]>({
-    queryKey: ["user-submissions"],
-    queryFn: fetchUserSubmissions,
+    queryKey: ["user-submissions", { includePending }],
+    queryFn: () => fetchUserSubmissions(includePending),
     staleTime: 1000 * 60 * 5,
     refetchOnWindowFocus: false,
   })

@@ -1,6 +1,7 @@
 import { Webhooks } from "@dodopayments/nextjs"
 import { db } from "@/db"
-import { tools, products } from "@/db/schema"
+import { tools, products, launches } from "@/db/schema"
+import { generateAndSaveLaunchBlog } from "@/lib/ai/launch-blog-service"
 import { eq } from "drizzle-orm"
 import {
   getPaymentById,
@@ -138,17 +139,53 @@ export const POST = Webhooks({
       // Upgrade tool or product tier for listing payments
       if (payment.tier) {
         if (payment.toolId) {
-          await db
+          const [updatedTool] = await db
             .update(tools)
             .set({ tier: payment.tier, updatedAt: new Date() })
             .where(eq(tools.id, payment.toolId))
+            .returning({ id: tools.id, status: tools.status })
+
+          await db
+            .update(launches)
+            .set({ tier: payment.tier, updatedAt: new Date() })
+            .where(eq(launches.toolId, payment.toolId))
+
+          // Auto-generate AI blog immediately ONLY if already approved by admin
+          if (updatedTool?.status === "approved") {
+            try {
+              await generateAndSaveLaunchBlog({
+                itemType: "tool",
+                itemId: payment.toolId,
+              })
+            } catch (blogErr) {
+              console.error("[Dodo Webhook] Error generating blog for tool:", blogErr)
+            }
+          }
         }
 
         if (payment.productId) {
-          await db
+          const [updatedProduct] = await db
             .update(products)
             .set({ tier: payment.tier, updatedAt: new Date() })
             .where(eq(products.id, payment.productId))
+            .returning({ id: products.id, status: products.status })
+
+          await db
+            .update(launches)
+            .set({ tier: payment.tier, updatedAt: new Date() })
+            .where(eq(launches.productId, payment.productId))
+
+          // Auto-generate AI blog immediately ONLY if already approved by admin
+          if (updatedProduct?.status === "approved") {
+            try {
+              await generateAndSaveLaunchBlog({
+                itemType: "product",
+                itemId: payment.productId,
+              })
+            } catch (blogErr) {
+              console.error("[Dodo Webhook] Error generating blog for product:", blogErr)
+            }
+          }
         }
       }
     }
@@ -211,6 +248,11 @@ export const POST = Webhooks({
           .update(tools)
           .set({ tier: "free", updatedAt: new Date() })
           .where(eq(tools.id, payment.toolId))
+
+        await db
+          .update(launches)
+          .set({ tier: "free", updatedAt: new Date() })
+          .where(eq(launches.toolId, payment.toolId))
       }
 
       if (payment.productId) {
@@ -218,6 +260,11 @@ export const POST = Webhooks({
           .update(products)
           .set({ tier: "free", updatedAt: new Date() })
           .where(eq(products.id, payment.productId))
+
+        await db
+          .update(launches)
+          .set({ tier: "free", updatedAt: new Date() })
+          .where(eq(launches.productId, payment.productId))
       }
     }
   },

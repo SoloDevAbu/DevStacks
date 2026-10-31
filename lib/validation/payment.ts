@@ -23,7 +23,7 @@ export const checkoutAdSchema = z
       .min(2, "CTA text too short")
       .max(30, "CTA text too long")
       .default("Learn More"),
-    idempotencyKey: z.uuid().optional(),
+    idempotencyKey: z.string().uuid().optional(),
   })
   .refine((d) => d.toolId || d.productId, {
     message: "Either toolId or productId must be provided",
@@ -31,10 +31,11 @@ export const checkoutAdSchema = z
 
 export const checkoutListingSchema = z.object({
   paymentType: z.literal("listing"),
-  itemType: z.enum(["tool", "product"]),
-  itemId: z.uuid("Item ID must be a valid UUID"),
+  itemType: z.enum(["tool", "product"]).optional(),
+  itemId: z.string().uuid("Item ID must be a valid UUID").optional(),
   tier: z.enum([TIER.PREMIUM, TIER.PREMIUM_PLUS]),
-  idempotencyKey: z.uuid().optional(),
+  idempotencyKey: z.string().uuid().optional(),
+  returnToSubmit: z.boolean().optional(),
 })
 
 export const checkoutRequestSchema = z.discriminatedUnion("paymentType", [
