@@ -20,6 +20,7 @@ export const platformEnumSchema = z.enum([
 
 export const submitProductSchema = z.object({
   submitterId: z.string().min(1, "User ID required"),
+  paymentId: z.string().uuid().optional(),
 
   // General
   name: z.string().min(2, "Name must be at least 2 characters").max(100),

@@ -5,6 +5,7 @@ import { STORAGE_CONFIG } from "@/constants/storage"
 const urlSchema = z.string().url("Must be a valid URL").or(z.literal(""))
 
 export const submitToolSchema = z.object({
+  paymentId: z.string().uuid().optional(),
   name: z.string().min(2, "Name must be at least 2 characters").max(100),
   tagline: z.string().min(10, "Tagline too short").max(200),
   description: z.string().min(20, "Description too short").max(3000),

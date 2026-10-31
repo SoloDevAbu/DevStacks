@@ -3,6 +3,8 @@ import {
   boolean,
   index,
   integer,
+  jsonb,
+  numeric,
   pgEnum,
   pgTable,
   text,
@@ -78,6 +80,20 @@ export const feedbackTypeEnum = pgEnum("feedback_type", [
   "improvement",
   "feature",
   "other",
+])
+
+export const blogStatusEnum = pgEnum("blog_status", [
+  "draft",
+  "scheduled",
+  "published",
+  "archived",
+])
+
+export const blogGenerationStatusEnum = pgEnum("blog_generation_status", [
+  "pending",
+  "generating",
+  "completed",
+  "failed",
 ])
 
 // ---------------------------------------------------------------------------
@@ -178,6 +194,7 @@ export const tools = pgTable(
     // Pricing & tier
     pricing: pricingEnum("pricing").notNull().default("Free"),
     tier: tierEnum("tier").notNull().default("free"),
+    badgeVerified: boolean("badge_verified").notNull().default(false),
 
     // Moderation
     status: statusEnum("status").notNull().default("pending"),
@@ -275,6 +292,7 @@ export const products = pgTable(
     // Pricing & tier
     pricing: pricingEnum("pricing").notNull().default("Free"),
     tier: tierEnum("tier").notNull().default("free"),
+    badgeVerified: boolean("badge_verified").notNull().default(false),
 
     // Moderation
     status: statusEnum("status").notNull().default("pending"),
@@ -858,6 +876,71 @@ export const feedbacks = pgTable(
 )
 
 // ---------------------------------------------------------------------------
+// blogs — AI-generated and curated launch spotlights for Premium listings
+// ---------------------------------------------------------------------------
+
+export const blogs = pgTable(
+  "blogs",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    slug: text("slug").notNull().unique(),
+    title: text("title").notNull(),
+    metaTitle: text("meta_title").notNull(),
+    metaDescription: text("meta_description").notNull(),
+    excerpt: text("excerpt").notNull(),
+    content: text("content").notNull(), // Full Markdown body
+    coverImageUrl: text("cover_image_url"),
+
+    // Evaluation & Structured Data
+    verdictRating: numeric("verdict_rating", { precision: 2, scale: 1 }),
+    verdictSummary: text("verdict_summary"),
+    pros: text("pros").array().notNull().default([]),
+    cons: text("cons").array().notNull().default([]),
+    faqs: jsonb("faqs")
+      .$type<Array<{ question: string; answer: string }>>()
+      .default([]),
+    readingTimeMinutes: integer("reading_time_minutes").notNull().default(5),
+
+    // Polymorphic association to either a Product or a Tool
+    itemType: launchItemTypeEnum("item_type").notNull(),
+    productId: uuid("product_id").references(() => products.id, {
+      onDelete: "cascade",
+    }),
+    toolId: uuid("tool_id").references(() => tools.id, {
+      onDelete: "cascade",
+    }),
+    submitterId: text("submitter_id").references(() => users.id, {
+      onDelete: "set null",
+    }),
+
+    status: blogStatusEnum("status").notNull().default("scheduled"),
+    generationStatus: blogGenerationStatusEnum("generation_status")
+      .notNull()
+      .default("pending"),
+    generationError: text("generation_error"),
+    isAiGenerated: boolean("is_ai_generated").notNull().default(true),
+    viewsCount: integer("views_count").notNull().default(0),
+
+    // Publication gating: visible only when now >= publishedAt
+    publishedAt: timestamp("published_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (t) => [
+    index("blogs_slug_idx").on(t.slug),
+    index("blogs_status_published_at_idx").on(t.status, t.publishedAt),
+    index("blogs_product_id_idx").on(t.productId),
+    index("blogs_tool_id_idx").on(t.toolId),
+    index("blogs_submitter_id_idx").on(t.submitterId),
+    index("blogs_generation_status_idx").on(t.generationStatus),
+  ]
+)
+
+// ---------------------------------------------------------------------------
 // Relations (Drizzle ORM v1 API)
 // ---------------------------------------------------------------------------
 
@@ -884,6 +967,8 @@ export const relations = defineRelations(
     payments,
     launches,
     externalLinkVisits,
+    feedbacks,
+    blogs,
   },
   (r) => ({
     users: {
@@ -1038,6 +1123,14 @@ export const relations = defineRelations(
         to: r.products.id,
       }),
     },
+    blogs: {
+      submitter: r.one.users({ from: r.blogs.submitterId, to: r.users.id }),
+      tool: r.one.tools({ from: r.blogs.toolId, to: r.tools.id }),
+      product: r.one.products({
+        from: r.blogs.productId,
+        to: r.products.id,
+      }),
+    },
   })
 )
 
@@ -1114,5 +1207,7 @@ export type NewExternalLinkVisit = typeof externalLinkVisits.$inferInsert
 export type Feedback = typeof feedbacks.$inferSelect
 export type NewFeedback = typeof feedbacks.$inferInsert
 
+export type Blog = typeof blogs.$inferSelect
+export type NewBlog = typeof blogs.$inferInsert
 
 export * from "./schema/ai"

@@ -61,7 +61,7 @@ export const GET = async () => {
 - [Weekly Launches](${SITE_CONFIG.url}/discover/weekly-launches): Developer tools and products sorted by week, community-voted.
 - [Popular Building Blocks](${SITE_CONFIG.url}/discover/popular-building-blocks): Most-used APIs and infrastructure ranked by verified adoption count.
 - [Makers](${SITE_CONFIG.url}/makers): Directory of software creators, developers, and builders.
-- [Submit / New Launch](${SITE_CONFIG.url}/submit): Interactive portal to submit and launch a new software product, SaaS, or developer tool.
+- [Submit / New Launch](${SITE_CONFIG.url}/submit): Interactive portal to submit and launch a new software product, SaaS, or developer tool with instant AI website autofill, structured SEO metadata, and AEO optimization.
 - [FAQ](${SITE_CONFIG.url}/faq): Authoritative Q&A covering launching, directory rules, tech-stack graphs, sponsorships, and AI agent discoverability protocols (twin at /faq.md).
 - [Terms of Service](${SITE_CONFIG.url}/terms): Platform terms of service, listing guidelines, backlink rules, and legal compliance (twin at /terms.md).
 - [Privacy Policy](${SITE_CONFIG.url}/privacy): Developer data handling, GDPR/DPDP rights, and crawler policies (twin at /privacy.md).
@@ -69,6 +69,7 @@ export const GET = async () => {
 - [Pricing](${SITE_CONFIG.url}/pricing): Platform sponsorship and promotional listing options for tool creators (twin at /pricing.md).
 - [MCP docs](${SITE_CONFIG.url}/mcp): Human + agent documentation for the public Model Context Protocol server (twin at /mcp.md).
 - [Public REST API](${SITE_CONFIG.url}/cli): OpenAPI 3.1 REST API documentation at /v1 (twin at /cli.md).
+- [Launch Stories & Editorial Reviews](${SITE_CONFIG.url}/blog): Verified developer tool architectures, launch breakdowns, and editorial reviews.
 
 ## Launch Platform Comparisons & Alternatives
 ${getAllComparisons()
@@ -78,6 +79,8 @@ ${getAllComparisons()
 ## Markdown-addressable routes
 
 - [/](${SITE_CONFIG.url}/): Homepage overview
+- [/blog](${SITE_CONFIG.url}/blog): Launch stories directory and editorial radar
+- [/blog/{slug}](${SITE_CONFIG.url}/blog/<param>): Detailed editorial launch story and architecture breakdown (markdown twin at /blog/{slug}.md)
 - [/tools](${SITE_CONFIG.url}/tools): Developer tools directory
 - [/tools/{slug}](${SITE_CONFIG.url}/tools/<param>): Single developer tool detail (tagline, categories, pricing, verified builds, upvotes)
 - [/products](${SITE_CONFIG.url}/products): Developer products directory

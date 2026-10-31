@@ -18,6 +18,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
 import { ROUTES } from "@/constants/routes"
+import { UpgradeTierDialog } from "@/components/dashboard/upgrade-tier-dialog"
 import { useUpdateProduct } from "@/hooks/products/use-update-product"
 import {
   dashboardPageContainer,
@@ -48,6 +49,8 @@ export const ProductEditForm = ({ product }: ProductEditFormProps) => {
   )
   const [websiteUrl, setWebsiteUrl] = useState<string>(product.websiteUrl || "")
   const [logoUrl, setLogoUrl] = useState(product.logoUrl || "")
+  const [isUpgradeOpen, setIsUpgradeOpen] = useState(false)
+  const isFree = product.tier === "free"
   const [images, setImages] = useState<string[]>(product.images || [])
   const [category, setCategory] = useState(product.category || "")
   const [tags, setTags] = useState(product.tags?.join(", ") || "")
@@ -377,10 +380,11 @@ export const ProductEditForm = ({ product }: ProductEditFormProps) => {
 
             <div className="flex flex-col gap-1.5">
               <Label className="text-xs font-semibold">
-                Product Screenshots (Max 3)
+                Product Screenshots (Max {isFree ? 1 : 3})
               </Label>
               <ScreenshotsUploader
                 value={images}
+                maxCount={isFree ? 1 : 3}
                 onChange={(newImages) => setImages(newImages)}
               />
             </div>
@@ -495,19 +499,35 @@ export const ProductEditForm = ({ product }: ProductEditFormProps) => {
                 customers.
               </p>
             </div>
-            <Button
-              type="button"
-              size="sm"
-              variant="outline"
-              onClick={addFaq}
-              className="h-8 gap-1 text-xs"
-            >
-              <Plus className="size-3.5" />
-              <span>Add FAQ</span>
-            </Button>
+            {!isFree && (
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={addFaq}
+                className="h-8 gap-1 text-xs"
+              >
+                <Plus className="size-3.5" />
+                <span>Add FAQ</span>
+              </Button>
+            )}
           </div>
 
-          {faqs.length === 0 ? (
+          {isFree ? (
+            <div className="flex flex-col items-center justify-center gap-2.5 rounded-xl border border-dashed border-amber-300 bg-amber-50/50 p-6 text-center">
+              <p className="text-xs font-semibold text-amber-900">
+                Interactive FAQs are exclusive to Featured Builder (Premium) and Ecosystem Partner tiers.
+              </p>
+              <Button
+                type="button"
+                size="sm"
+                onClick={() => setIsUpgradeOpen(true)}
+                className="h-8 bg-blue-600 hover:bg-blue-700 text-xs font-semibold text-white shadow-xs cursor-pointer"
+              >
+                Upgrade to Premium ($15)
+              </Button>
+            </div>
+          ) : faqs.length === 0 ? (
             <p className="text-xs text-slate-400 italic">No FAQs added yet.</p>
           ) : (
             <div className="flex flex-col gap-3">
@@ -577,6 +597,19 @@ export const ProductEditForm = ({ product }: ProductEditFormProps) => {
             )}
           </Button>
         </div>
+      {isUpgradeOpen && (
+        <UpgradeTierDialog
+          isOpen={isUpgradeOpen}
+          onOpenChange={setIsUpgradeOpen}
+          item={{
+            id: product.id,
+            name: product.name,
+            slug: product.slug,
+            tier: product.tier as any,
+            itemType: "product",
+          }}
+        />
+      )}
       </form>
     </div>
   )

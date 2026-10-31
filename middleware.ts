@@ -102,6 +102,14 @@ export const middleware = (request: NextRequest) => {
                   "Link",
                   `<${origin}/makers/${makerMatch[1]}.md>; rel="alternate"; type="text/markdown"`
                 )
+              } else if (pathname.match(/^\/blog\/([^/]+)$/)) {
+                const blogMatch = pathname.match(/^\/blog\/([^/]+)$/)
+                if (blogMatch && blogMatch[1]) {
+                  res.headers.set(
+                    "Link",
+                    `<${origin}/blog/${blogMatch[1]}.md>; rel="alternate"; type="text/markdown"`
+                  )
+                }
               } else if (pathname === "/pricing") {
                 res.headers.set(
                   "Link",
@@ -221,6 +229,12 @@ export const middleware = (request: NextRequest) => {
     return rewriteWithHeaders(`/api/md/products/${productMdMatch[1]}`)
   }
 
+  // Support .md suffix on blogs: /blog/slug.md -> /api/md/blog/slug
+  const blogMdMatch = pathname.match(/^\/blog\/([^/]+)\.md$/)
+  if (blogMdMatch && blogMdMatch[1]) {
+    return rewriteWithHeaders(`/api/md/blog/${blogMdMatch[1]}`)
+  }
+
   // Support .md suffix on makers: /makers/alice.md -> /api/md/makers/alice
   const makerMdMatch = pathname.match(/^\/makers\/([^/]+)\.md$/)
   if (makerMdMatch && makerMdMatch[1]) {
@@ -255,6 +269,11 @@ export const middleware = (request: NextRequest) => {
     const productMatch = pathname.match(/^\/products\/([^/]+)$/)
     if (productMatch && productMatch[1]) {
       return rewriteWithHeaders(`/api/md/products/${productMatch[1]}`)
+    }
+
+    const blogMatch = pathname.match(/^\/blog\/([^/]+)$/)
+    if (blogMatch && blogMatch[1]) {
+      return rewriteWithHeaders(`/api/md/blog/${blogMatch[1]}`)
     }
 
     const makerMatch = pathname.match(/^\/makers\/([^/]+)$/)
@@ -301,6 +320,7 @@ export const config = {
     "/.well-known/mcp",
     "/tools/:path*",
     "/products/:path*",
+    "/blog/:path*",
     "/makers/:path*",
     "/categories/:path*",
     "/alternatives/:path*",

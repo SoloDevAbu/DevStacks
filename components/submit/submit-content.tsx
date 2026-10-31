@@ -1,10 +1,8 @@
 "use client"
 
-import { useState } from "react"
-import Link from "next/link"
+import { useState, useEffect } from "react"
 import Image from "next/image"
 import { PageHeader } from "@/components/shared/page-header"
-import { SITE_CONFIG } from "@/constants/site"
 import { AI_PROMPTS } from "@/lib/prompts"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -14,7 +12,6 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
 import {
   Globe,
-  CheckCircle2,
   AlertCircle,
   Video,
   Plus,
@@ -30,10 +27,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { PRICING } from "@/constants/plans"
+import { useSearchParams } from "next/navigation"
+import { useLaunchAvailability } from "@/hooks/launches/use-launch-availability"
+import { useUserListingCredit } from "@/hooks/users/use-user-listing-credit"
+import { useCheckout } from "@/hooks/payments/use-checkout"
+import { TierSelector } from "./tier-selector"
+import { LockedSectionBanner } from "./locked-section-banner"
+import { PRICING, TIER, type Tier } from "@/constants/plans"
 import { PLATFORMS } from "@/constants/platforms"
 import { useSubmitTool } from "@/hooks/tools/use-submit-tool"
 import { useSubmitProduct } from "@/hooks/products/use-submit-product"
+import { useAiAutofill } from "@/hooks/submit/use-ai-autofill"
 import { submitToolSchema } from "@/lib/validation/tool"
 import { submitProductSchema } from "@/lib/validation/product"
 import { useSession } from "@/lib/auth/client"
@@ -42,10 +46,11 @@ import {
   submitSectionHeaderRequired,
   submitSectionHeaderOptional,
   submitSectionHeaderDiscoverability,
+  submitAiAutofillContainer,
+  primaryActionButton,
 } from "@/utils/styles"
 import { cn } from "@/lib/utils"
 import { LAUNCH_PROMO } from "@/constants/promo"
-import { ROUTES } from "@/constants/routes"
 import {
   BuiltWithToolsInput,
   type BuiltWithToolItem,
@@ -55,7 +60,7 @@ import {
   type FaqBuilderItem,
 } from "@/components/shared/faq-builder"
 import { toast } from "@/components/ui/toast"
-import { getFaviconUrl, getDuckDuckGoFaviconUrl } from "@/utils/urls"
+import { getFaviconUrl } from "@/utils/urls"
 import { LaunchWeekPicker } from "@/components/shared/launch-week-picker"
 import { ScheduleConfirmDialog } from "./schedule-confirm-dialog"
 import { EmbedBadgeDialog } from "@/components/shared/embed-badge-dialog"
@@ -101,9 +106,27 @@ const emptyForm = {
   launchWeek: undefined as number | undefined,
 }
 
+const isValidHttpsUrl = (rawUrl: string): boolean => {
+  const trimmed = rawUrl.trim()
+  if (!trimmed.startsWith("https://")) return false
+  try {
+    const url = new URL(trimmed)
+    if (url.protocol !== "https:") return false
+    const hostname = url.hostname
+    if (!hostname || !hostname.includes(".")) return false
+    const parts = hostname.split(".").filter(Boolean)
+    if (parts.length < 2) return false
+    const tld = parts[parts.length - 1]
+    return tld.length >= 2 && !hostname.includes(" ")
+  } catch {
+    return false
+  }
+}
+
 interface SubmitContentProps {
   initialType?: "product" | "tool"
   initialTool?: BuiltWithToolItem | null
+  initialUrl?: string
 }
 
 const CornerBorders = ({ active }: { active: boolean }) => (
@@ -143,10 +166,12 @@ const CornerBorders = ({ active }: { active: boolean }) => (
 export const SubmitContent = ({
   initialType = "product",
   initialTool = null,
+  initialUrl = "",
 }: SubmitContentProps) => {
   const [activeType, setActiveType] = useState<"product" | "tool">(initialType)
   const [form, setForm] = useState(() => ({
     ...emptyForm,
+    websiteUrl: initialUrl || "",
     builtWithTools: initialTool ? [initialTool] : [],
   }))
   const [errors, setErrors] = useState<Record<string, string[]>>({})
@@ -158,8 +183,91 @@ export const SubmitContent = ({
     type: "product" | "tool"
     websiteUrl: string
   } | null>(null)
+  const [autofillUrl, setAutofillUrl] = useState(initialUrl || "")
+  const [undoSnapshot, setUndoSnapshot] = useState<typeof emptyForm | null>(
+    null
+  )
 
+
+  const searchParams = useSearchParams()
   const { data: session, isPending: isSessionPending } = useSession()
+  const currentUserId = session?.user?.id
+
+  const { data: launchAvailability } = useLaunchAvailability()
+  const promoStatus = launchAvailability?.promo
+  const isPromoActive = promoStatus?.isPromoActive ?? LAUNCH_PROMO.IS_ACTIVE
+  const promoRemaining = promoStatus?.promoRemaining ?? 0
+
+  const { data: userCredit } = useUserListingCredit(Boolean(currentUserId))
+  const hasPaidCredit = Boolean(userCredit?.id)
+  const isUnlockedFromUrl = searchParams.get("unlocked") === "true"
+
+  const urlTierParam = searchParams.get("tier") as Tier | null
+  const validUrlTier =
+    urlTierParam === TIER.PREMIUM || urlTierParam === TIER.PREMIUM_PLUS
+      ? urlTierParam
+      : null
+
+  const [selectedTier, setSelectedTier] = useState<Tier>(() => {
+    if (isPromoActive) return TIER.PREMIUM
+    if (validUrlTier) return validUrlTier
+    if (hasPaidCredit && userCredit?.tier) return userCredit.tier
+    return TIER.FREE
+  })
+
+  const checkoutMutation = useCheckout()
+
+  // Sync selectedTier when credit or tier param changes
+  useEffect(() => {
+    if (validUrlTier) {
+      setSelectedTier(validUrlTier)
+    } else if (hasPaidCredit && userCredit?.tier) {
+      setSelectedTier(userCredit.tier)
+    }
+  }, [validUrlTier, hasPaidCredit, userCredit?.tier])
+
+  // Restore draft from localStorage on mount
+  useEffect(() => {
+    try {
+      const savedDraft = localStorage.getItem("launchnests_submit_draft")
+      const savedType = localStorage.getItem("launchnests_submit_active_type")
+      if (savedType === "product" || savedType === "tool") {
+        setActiveType(savedType)
+      }
+      if (savedDraft) {
+        const parsed = JSON.parse(savedDraft)
+        setForm((prev) => ({ ...prev, ...parsed }))
+        if (isUnlockedFromUrl) {
+          toast.success(
+            "Premium Unlocked!",
+            "Your draft has been restored with all premium features unlocked."
+          )
+        }
+      }
+    } catch (e) {
+      console.error("Failed to restore submit draft:", e)
+    }
+  }, [isUnlockedFromUrl])
+
+  const hasActiveAccess =
+    selectedTier !== TIER.FREE &&
+    (isPromoActive || hasPaidCredit || isUnlockedFromUrl)
+
+  const handleUnlockClick = (targetTier: Tier) => {
+    if (!currentUserId) {
+      toast.error("Sign in required", "Please sign in before unlocking premium features.")
+      return
+    }
+    try {
+      localStorage.setItem("launchnests_submit_draft", JSON.stringify(form))
+      localStorage.setItem("launchnests_submit_active_type", activeType)
+    } catch {}
+    checkoutMutation.mutate({
+      paymentType: "listing",
+      tier: targetTier as typeof TIER.PREMIUM | typeof TIER.PREMIUM_PLUS,
+      returnToSubmit: true,
+    })
+  }
   const {
     mutateAsync: submitToolMutation,
     isPending: isToolSubmitting,
@@ -170,6 +278,11 @@ export const SubmitContent = ({
     isPending: isProductSubmitting,
     error: productError,
   } = useSubmitProduct()
+  const { mutateAsync: runAiAutofill, isPending: isAutofilling } =
+    useAiAutofill()
+
+  const currentAutofillCandidate = autofillUrl.trim() || form.websiteUrl.trim()
+  const isAutofillUrlValid = isValidHttpsUrl(currentAutofillCandidate)
 
   const isSubmitting = isToolSubmitting || isProductSubmitting
   const submissionError = activeType === "product" ? productError : toolError
@@ -221,6 +334,82 @@ export const SubmitContent = ({
     setErrors((prev) => ({ ...prev, websiteUrl: [] }))
   }
 
+  const handleAiAutofill = async () => {
+    const targetUrl = autofillUrl.trim() || form.websiteUrl.trim()
+    if (!isValidHttpsUrl(targetUrl)) {
+      toast.error(
+        "Invalid HTTPS URL",
+        "Please provide a complete and secure HTTPS website URL (e.g. https://yourproduct.com)."
+      )
+      return
+    }
+
+    try {
+      setUndoSnapshot({ ...form })
+      const res = await runAiAutofill({ url: targetUrl })
+      const data = res.data
+
+      setForm((prev) => ({
+        ...prev,
+        websiteUrl: prev.websiteUrl.trim() ? prev.websiteUrl : targetUrl,
+        name: data.name || prev.name,
+        tagline: data.tagline || prev.tagline,
+        description: data.description || prev.description,
+        problemStatement: data.problemStatement || prev.problemStatement,
+        solution: data.solution || prev.solution,
+        uniqueValue: data.uniqueValue || prev.uniqueValue,
+        useCases: data.useCases || prev.useCases,
+        platforms:
+          data.platforms && data.platforms.length > 0
+            ? data.platforms
+            : prev.platforms,
+        tags:
+          data.tags && data.tags.length > 0 ? data.tags.join(", ") : prev.tags,
+        builtWithTools:
+          activeType === "product" &&
+          data.builtWithTools &&
+          data.builtWithTools.length > 0
+            ? data.builtWithTools
+            : prev.builtWithTools,
+        githubUrl: data.githubUrl || prev.githubUrl,
+        twitterUrl: data.twitterUrl || prev.twitterUrl,
+        linkedinUrl: data.linkedinUrl || prev.linkedinUrl,
+        discordUrl: data.discordUrl || prev.discordUrl,
+        appStoreUrl: data.appStoreUrl || prev.appStoreUrl,
+        playStoreUrl: data.playStoreUrl || prev.playStoreUrl,
+        chromeExtensionUrl: data.chromeExtensionUrl || prev.chromeExtensionUrl,
+        logoUrl: prev.logoUrl,
+      }))
+
+      if (!autofillUrl) {
+        setAutofillUrl(targetUrl)
+      }
+
+      toast.success(
+        res.cached ? "Autofilled from Cache!" : "Autofilled with AI!",
+        "Review the generated details before submitting."
+      )
+    } catch (err: unknown) {
+      toast.error(
+        "Autofill Failed",
+        err instanceof Error
+          ? err.message
+          : "Unable to analyze the website URL."
+      )
+    }
+  }
+
+  const handleUndoAutofill = () => {
+    if (undoSnapshot) {
+      setForm(undoSnapshot)
+      setUndoSnapshot(null)
+      toast.info(
+        "Autofill Reverted",
+        "Your previous form inputs have been restored."
+      )
+    }
+  }
+
   const togglePlatform = (platform: string) => {
     setForm((prev) => ({
       ...prev,
@@ -251,11 +440,27 @@ export const SubmitContent = ({
     const faviconUrl = getFaviconUrl(form.websiteUrl)
     const resolvedLogoUrl = form.logoUrl?.trim() || faviconUrl || ""
 
+    const effectiveFaqs = hasActiveAccess ? nonBlankFaqs : []
+    const effectiveImages = hasActiveAccess ? form.images.slice(0, 3) : form.images.slice(0, 1)
+    const effectiveMetaTitle = hasActiveAccess ? form.metaTitle : ""
+    const effectiveMetaDescription = hasActiveAccess ? form.metaDescription : ""
+    const effectiveAiContext = hasActiveAccess ? form.aiContext : ""
+    const effectiveGeoTarget = hasActiveAccess ? form.geoTarget : ""
+    const effectiveAsoCategory = hasActiveAccess ? form.asoCategory : ""
+    const effectiveKeywords = hasActiveAccess ? form.keywords : ""
+
     if (activeType === "product") {
       const payload = {
         ...form,
         logoUrl: resolvedLogoUrl,
-        faqs: nonBlankFaqs,
+        faqs: effectiveFaqs,
+        images: effectiveImages,
+        metaTitle: effectiveMetaTitle,
+        metaDescription: effectiveMetaDescription,
+        aiContext: effectiveAiContext,
+        geoTarget: effectiveGeoTarget,
+        asoCategory: effectiveAsoCategory,
+        keywords: effectiveKeywords,
         builtWithTools: form.builtWithTools,
       }
 
@@ -280,7 +485,14 @@ export const SubmitContent = ({
       const payload = {
         ...form,
         logoUrl: resolvedLogoUrl,
-        faqs: nonBlankFaqs,
+        faqs: effectiveFaqs,
+        images: effectiveImages,
+        metaTitle: effectiveMetaTitle,
+        metaDescription: effectiveMetaDescription,
+        aiContext: effectiveAiContext,
+        geoTarget: effectiveGeoTarget,
+        asoCategory: effectiveAsoCategory,
+        keywords: effectiveKeywords,
       }
 
       const parsed = submitToolSchema.safeParse(payload)
@@ -318,8 +530,10 @@ export const SubmitContent = ({
     }
 
     try {
+      const paymentId = userCredit?.id || searchParams.get("payment_id") || undefined
       if (valid.type === "product") {
-        const { submitterId: _unused, ...clientPayload } = valid.data
+        const clientPayload = { ...valid.data, paymentId }
+        delete (clientPayload as { submitterId?: string }).submitterId
         const res = (await submitProductMutation(clientPayload)) as DbProduct
         trackSubmitProduct({
           itemId: res.id,
@@ -339,12 +553,23 @@ export const SubmitContent = ({
         setIsBadgeDialogOpen(true)
         setForm(emptyForm)
         setErrors({})
+        try {
+          localStorage.removeItem("launchnests_submit_draft")
+          localStorage.removeItem("launchnests_submit_active_type")
+          if (typeof window !== "undefined") {
+            const cleanUrl = new URL(window.location.href)
+            cleanUrl.searchParams.delete("unlocked")
+            cleanUrl.searchParams.delete("payment_id")
+            cleanUrl.searchParams.delete("tier")
+            window.history.replaceState(null, "", cleanUrl.pathname + (cleanUrl.search ? cleanUrl.search : ""))
+          }
+        } catch {}
         toast.success(
           "Product Scheduled!",
           "Your product has been scheduled for launch."
         )
       } else {
-        const res = (await submitToolMutation(valid.data)) as DbTool
+        const res = (await submitToolMutation({ ...valid.data, paymentId })) as DbTool
         trackSubmitProduct({
           itemId: res.id,
           itemName: form.name,
@@ -363,6 +588,17 @@ export const SubmitContent = ({
         setIsBadgeDialogOpen(true)
         setForm(emptyForm)
         setErrors({})
+        try {
+          localStorage.removeItem("launchnests_submit_draft")
+          localStorage.removeItem("launchnests_submit_active_type")
+          if (typeof window !== "undefined") {
+            const cleanUrl = new URL(window.location.href)
+            cleanUrl.searchParams.delete("unlocked")
+            cleanUrl.searchParams.delete("payment_id")
+            cleanUrl.searchParams.delete("tier")
+            window.history.replaceState(null, "", cleanUrl.pathname + (cleanUrl.search ? cleanUrl.search : ""))
+          }
+        } catch {}
         toast.success(
           "Developer Tool Scheduled!",
           "Your developer tool has been scheduled for launch."
@@ -432,6 +668,7 @@ export const SubmitContent = ({
           </Badge>
         </div>
       )}
+
 
       {/* Top Type Selector Tabs - Compact, Full-Width with Corner Outline Style */}
       <div className="w-full border-b border-dashed border-border bg-white px-4 py-3 sm:px-6 md:px-8">
@@ -527,6 +764,92 @@ export const SubmitContent = ({
               {errors.launchWeek && (
                 <p className="text-xs text-red-500">{errors.launchWeek[0]}</p>
               )}
+            </div>
+
+            {/* AI Autofill Quickstart */}
+            <div className={submitAiAutofillContainer}>
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <div className="flex items-center gap-2">
+                  <Sparkles className="size-4 text-indigo-600" />
+                  <Label
+                    htmlFor="ai-autofill-url"
+                    className="text-xs font-bold tracking-wider text-slate-900 uppercase"
+                  >
+                    Autofill with AI (Optional)
+                  </Label>
+                </div>
+                {undoSnapshot && (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleUndoAutofill}
+                    className="h-7 text-xs text-slate-600 hover:text-slate-900"
+                  >
+                    Undo Autofill
+                  </Button>
+                )}
+              </div>
+              <p className="text-xs text-slate-500">
+                Paste your landing page URL and AI will automatically populate
+                your name, tagline, description, tech stack, and links.
+              </p>
+              <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-2 sm:flex-row">
+                  <div className="relative flex-1">
+                    <Globe className="absolute top-2.5 left-3 size-4 text-slate-400" />
+                    <Input
+                      id="ai-autofill-url"
+                      type="url"
+                      value={autofillUrl}
+                      onChange={(e) => setAutofillUrl(e.target.value)}
+                      placeholder="https://yourproduct.com"
+                      aria-label="Website URL for AI Autofill"
+                      className="bg-white pl-9"
+                      onKeyDown={(e) => {
+                        if (
+                          e.key === "Enter" &&
+                          isAutofillUrlValid &&
+                          !isAutofilling
+                        ) {
+                          e.preventDefault()
+                          handleAiAutofill()
+                        }
+                      }}
+                    />
+                  </div>
+                  <Button
+                    type="button"
+                    onClick={handleAiAutofill}
+                    disabled={isAutofilling || !isAutofillUrlValid}
+                    aria-label="Autofill form details with AI"
+                    className={primaryActionButton}
+                  >
+                    {isAutofilling ? "Analyzing URL..." : "Autofill with AI"}
+                  </Button>
+                </div>
+
+                {autofillUrl.trim().startsWith("http://") ? (
+                  <p className="text-[11px] font-medium text-amber-600">
+                    Only secure HTTPS URLs (starting with https://) are
+                    supported.
+                  </p>
+                ) : autofillUrl.trim().length > 0 &&
+                  !autofillUrl.trim().startsWith("https://") ? (
+                  <p className="text-[11px] text-slate-500">
+                    Must start with{" "}
+                    <code className="rounded bg-slate-100 px-1 font-mono text-indigo-600">
+                      https://
+                    </code>{" "}
+                    (e.g. https://yourproduct.com)
+                  </p>
+                ) : autofillUrl.trim().length >= 8 && !isAutofillUrlValid ? (
+                  <p className="text-[11px] text-slate-500">
+                    Please provide a complete domain (e.g.
+                    https://yourproduct.com)
+                  </p>
+                ) : null}
+              </div>
             </div>
 
             {/* Name, Tagline & Website */}
@@ -857,9 +1180,10 @@ export const SubmitContent = ({
 
               <div className="flex flex-col gap-5">
                 <div className="grid gap-2">
-                  <Label>{typeLabel} Screenshots (Max 3)</Label>
+                  <Label>{typeLabel} Screenshots (Max {hasActiveAccess ? 3 : 1})</Label>
                   <ScreenshotsUploader
                     value={form.images}
+                    maxCount={hasActiveAccess ? 3 : 1}
                     onChange={(images) =>
                       setForm((prev) => ({ ...prev, images }))
                     }
@@ -1118,32 +1442,44 @@ export const SubmitContent = ({
                     {typeLabel.toLowerCase()}, integration, or pricing.
                   </p>
                 </div>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() =>
-                    setForm((prev) => ({
-                      ...prev,
-                      faqs: [...prev.faqs, { question: "", answer: "" }],
-                    }))
-                  }
-                  className="gap-1.5"
-                >
-                  <Plus className="size-3.5" />
-                  <span>Add Question</span>
-                </Button>
+                {hasActiveAccess && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() =>
+                      setForm((prev) => ({
+                        ...prev,
+                        faqs: [...prev.faqs, { question: "", answer: "" }],
+                      }))
+                    }
+                    className="gap-1.5"
+                  >
+                    <Plus className="size-3.5" />
+                    <span>Add Question</span>
+                  </Button>
+                )}
               </div>
 
-              <FaqBuilder
-                faqs={form.faqs}
-                onChange={(faqs) => setForm((prev) => ({ ...prev, faqs }))}
-                questionPlaceholder={`e.g. Is this ${typeLabel.toLowerCase()} self-hostable or open source?`}
-                answerPlaceholder="e.g. Yes, you can deploy using Docker or sign up for our managed cloud."
-                emptyPrompt={`No FAQs added yet. Help builders evaluate your ${typeLabel.toLowerCase()} faster by adding answers to common questions.`}
-                addFirstLabel="Add First Question"
-                addAnotherLabel="Add Another Question"
-              />
+              {!hasActiveAccess ? (
+                <LockedSectionBanner
+                  title="Interactive FAQs"
+                  description="Address builder questions directly with expandable FAQ accordions."
+                  tierRequired={TIER.PREMIUM}
+                  onUnlock={() => handleUnlockClick(TIER.PREMIUM)}
+                  isUnlocking={checkoutMutation.isPending}
+                />
+              ) : (
+                <FaqBuilder
+                  faqs={form.faqs}
+                  onChange={(faqs) => setForm((prev) => ({ ...prev, faqs }))}
+                  questionPlaceholder={`e.g. Is this ${typeLabel.toLowerCase()} self-hostable or open source?`}
+                  answerPlaceholder="e.g. Yes, you can deploy using Docker or sign up for our managed cloud."
+                  emptyPrompt={`No FAQs added yet. Help builders evaluate your ${typeLabel.toLowerCase()} faster by adding answers to common questions.`}
+                  addFirstLabel="Add First Question"
+                  addAnotherLabel="Add Another Question"
+                />
+              )}
             </div>
           </div>
 
@@ -1170,7 +1506,19 @@ export const SubmitContent = ({
             </div>
 
             {/* Target Audience & GEO */}
-            <div className="flex flex-col gap-5 border-b border-dashed border-border px-6 py-6 md:px-8 md:py-8">
+            {!hasActiveAccess ? (
+              <div className="border-b border-dashed border-border px-6 py-6 md:px-8 md:py-8">
+                <LockedSectionBanner
+                  title="SEO, GEO & ASO Discoverability"
+                  description="Target global search keywords, meta titles, descriptions, and regional GEO target tags for search engines."
+                  tierRequired={TIER.PREMIUM}
+                  onUnlock={() => handleUnlockClick(TIER.PREMIUM)}
+                  isUnlocking={checkoutMutation.isPending}
+                />
+              </div>
+            ) : (
+              <>
+                <div className="flex flex-col gap-5 border-b border-dashed border-border px-6 py-6 md:px-8 md:py-8">
               <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                 <div className="grid gap-2">
                   <Label htmlFor="audience">Target Audience</Label>
@@ -1258,6 +1606,8 @@ export const SubmitContent = ({
                 </div>
               </div>
             </div>
+            </>
+            )}
 
             {/* AI Assistant Context (AEO) */}
             <div className="flex flex-col gap-5 px-6 py-6 md:px-8 md:py-8">
@@ -1270,23 +1620,45 @@ export const SubmitContent = ({
                 </p>
               </div>
 
-              <div className="grid gap-2">
-                <Label htmlFor="aiContext">
-                  AI Assistant Prompt Context (AEO)
-                </Label>
-                <Textarea
-                  id="aiContext"
-                  value={form.aiContext}
-                  onChange={set("aiContext")}
-                  placeholder={`If an AI like ChatGPT, Claude, or Perplexity is asked about solutions in your category, why should it recommend you? Summarize your pitch for LLMs.`}
-                  rows={3}
+              {!hasActiveAccess ? (
+                <LockedSectionBanner
+                  title="AI Assistant Prompt Context (AEO)"
+                  description="Provide direct instructions and architecture context for ChatGPT, Claude, Perplexity, and Gemini citations."
+                  tierRequired={TIER.PREMIUM}
+                  onUnlock={() => handleUnlockClick(TIER.PREMIUM)}
+                  isUnlocking={checkoutMutation.isPending}
                 />
-                <span className="text-[11px] text-slate-400">
-                  Fed directly into /llms.txt and semantic AI citation feeds.
-                </span>
-              </div>
+              ) : (
+                <div className="grid gap-2">
+                  <Label htmlFor="aiContext">
+                    AI Assistant Prompt Context (AEO)
+                  </Label>
+                  <Textarea
+                    id="aiContext"
+                    value={form.aiContext}
+                    onChange={set("aiContext")}
+                    placeholder={`If an AI like ChatGPT, Claude, or Perplexity is asked about solutions in your category, why should it recommend you? Summarize your pitch for LLMs.`}
+                    rows={3}
+                  />
+                  <span className="text-[11px] text-slate-400">
+                    Fed directly into /llms.txt and semantic AI citation feeds.
+                  </span>
+                </div>
+              )}
             </div>
           </div>
+
+          {/* Launch Tier Selector - Positioned just above schedule button */}
+          <TierSelector
+            selectedTier={selectedTier}
+            onSelectTier={(tier) => setSelectedTier(tier)}
+            isPromoActive={isPromoActive}
+            promoRemaining={promoRemaining}
+            hasPaidCredit={hasPaidCredit}
+            paidCreditTier={userCredit?.tier}
+            onUnlockClick={handleUnlockClick}
+            isUnlocking={checkoutMutation.isPending}
+          />
 
           {/* Form Actions */}
           <div className="flex flex-col gap-3 bg-slate-50/50 px-6 py-6 md:px-8">
@@ -1331,6 +1703,8 @@ export const SubmitContent = ({
         isSubmitting={isSubmitting}
         type={activeType}
         name={form.name}
+        tier={selectedTier}
+        isPromoActive={isPromoActive && selectedTier === TIER.PREMIUM}
         launchYear={form.launchYear}
         launchWeek={form.launchWeek}
       />

@@ -94,7 +94,7 @@ export const ToolCard = ({
     bookmarkMutation.isPending && bookmarkMutation.variables?.slug === tool.slug
 
   const outboundUrl = getOutboundUrl(tool.websiteUrl ?? "", "launchnests")
-  const linkRel = getLinkRel(tool.tier)
+  const linkRel = getLinkRel(tool.tier, tool.badgeVerified)
 
   const handleOutboundClick = (e: React.MouseEvent) => {
     e.stopPropagation()

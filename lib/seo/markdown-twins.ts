@@ -438,6 +438,81 @@ ${f.answer}`
 `
 }
 
+export interface BlogTwinInput {
+  title: string
+  slug: string
+  metaDescription?: string | null
+  excerpt?: string | null
+  verdictRating?: string | null
+  verdictSummary?: string | null
+  pros?: string[] | null
+  cons?: string[] | null
+  content: string
+  readingTimeMinutes?: number | null
+  publishedAt?: Date | string | null
+  updatedAt?: Date | string | null
+  faqs?: Array<{ question: string; answer: string }> | null
+  authorName?: string | null
+  item?: {
+    name: string
+    tagline?: string | null
+    websiteUrl?: string | null
+    canonicalUrl?: string | null
+    pricing?: string | null
+    tier?: string | null
+  } | null
+}
+
+export const generateBlogMarkdown = (data: BlogTwinInput): string => {
+  const canonical = `${SITE_CONFIG.url}/blog/${data.slug}`
+  const publishedDate = data.publishedAt
+    ? new Date(data.publishedAt).toISOString().split("T")[0]
+    : new Date().toISOString().split("T")[0]
+
+  return `# ${data.title}
+
+> ${data.excerpt ?? data.metaDescription ?? `${data.title} — Verified Launch Breakdown on ${SITE_CONFIG.name}`}
+
+\`\`\`yaml
+url: "${canonical}"
+published: "${publishedDate}"
+author: "${data.authorName ?? SITE_CONFIG.creator}"
+reading_time: "${data.readingTimeMinutes ?? 5} min"
+rating: "${data.verdictRating ?? "4.7"} / 5.0"
+target_item: "${data.item?.name ?? ""}"
+website: "${data.item?.websiteUrl ?? ""}"
+\`\`\`
+
+## Quick Verdict
+${data.verdictSummary ?? data.excerpt ?? ""}
+
+### Key Strengths
+${(data.pros ?? []).map((p) => `- ${p}`).join("\n")}
+
+### Tradeoffs & Limitations
+${(data.cons ?? []).map((c) => `- ${c}`).join("\n")}
+
+---
+
+${data.content}
+
+${
+  data.faqs && data.faqs.length > 0
+    ? `\n---\n\n## Frequently Asked Questions\n\n${data.faqs
+        .map((f) => `### ${f.question}\n${f.answer}`)
+        .join("\n\n")}\n`
+    : ""
+}
+---
+
+## About ${data.item?.name ?? "This Project"}
+- **Product Name**: ${data.item?.name ?? ""}
+- **Official Website**: ${data.item?.websiteUrl ?? ""}
+- **Pricing**: ${data.item?.pricing ?? "Not specified"}
+- **Verified Directory Profile**: ${data.item?.canonicalUrl ?? `${SITE_CONFIG.url}/blog`}
+`
+}
+
 export const createMarkdownResponse = (
   content: string,
   canonicalUrl: string

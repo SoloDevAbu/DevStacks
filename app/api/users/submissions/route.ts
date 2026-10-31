@@ -2,7 +2,7 @@ import { type NextRequest, NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { db } from "@/db"
 import { tools, products } from "@/db/schema"
-import { eq, and } from "drizzle-orm"
+import { eq, and, ne } from "drizzle-orm"
 
 export const GET = async (req: NextRequest) => {
   try {
@@ -13,6 +13,16 @@ export const GET = async (req: NextRequest) => {
     }
 
     const userId = session.user.id
+    const includePending =
+      req.nextUrl.searchParams.get("includePending") === "true"
+
+    const toolStatusFilter = includePending
+      ? ne(tools.status, "rejected")
+      : eq(tools.status, "approved")
+
+    const productStatusFilter = includePending
+      ? ne(products.status, "rejected")
+      : eq(products.status, "approved")
 
     const [userTools, userProducts] = await Promise.all([
       db
@@ -24,12 +34,14 @@ export const GET = async (req: NextRequest) => {
           websiteUrl: tools.websiteUrl,
           slug: tools.slug,
           tier: tools.tier,
+          badgeVerified: tools.badgeVerified,
+          status: tools.status,
         })
         .from(tools)
         .where(
           and(
             eq(tools.submitterId, userId),
-            eq(tools.status, "approved"),
+            toolStatusFilter,
             eq(tools.isDeleted, false)
           )
         ),
@@ -42,12 +54,14 @@ export const GET = async (req: NextRequest) => {
           websiteUrl: products.websiteUrl,
           slug: products.slug,
           tier: products.tier,
+          badgeVerified: products.badgeVerified,
+          status: products.status,
         })
         .from(products)
         .where(
           and(
             eq(products.submitterId, userId),
-            eq(products.status, "approved"),
+            productStatusFilter,
             eq(products.isDeleted, false)
           )
         ),

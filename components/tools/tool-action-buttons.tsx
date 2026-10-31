@@ -17,6 +17,7 @@ interface ToolActionButtonsProps {
   slug: string
   toolId?: string
   tier?: string | null
+  badgeVerified?: boolean
   initialUpvotes: number
   websiteUrl?: string | null
   githubUrl?: string | null
@@ -29,6 +30,7 @@ export const ToolActionButtons = ({
   slug,
   toolId,
   tier,
+  badgeVerified,
   initialUpvotes,
   websiteUrl,
 }: ToolActionButtonsProps) => {
@@ -84,7 +86,7 @@ export const ToolActionButtons = ({
   }
 
   const outboundUrl = getOutboundUrl(websiteUrl, "launchnests")
-  const linkRel = getLinkRel(tier)
+  const linkRel = getLinkRel(tier, badgeVerified)
 
   return (
     <div className="flex flex-wrap items-center gap-3">

@@ -19,7 +19,10 @@ export const isStandaloneComparisonRoute = (pathname: string): boolean => {
   return (
     pathname === "/producthunt-alternative" ||
     pathname.endsWith("-alternative") ||
-    pathname.startsWith("/compare")
+    pathname.startsWith("/compare") ||
+    pathname.startsWith("/blog/") ||
+    pathname === "/pricing" ||
+    pathname.startsWith("/pricing/")
   )
 }
 

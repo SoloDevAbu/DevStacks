@@ -1,3 +1,4 @@
+import { Suspense } from "react"
 import type { Metadata } from "next"
 import { headers } from "next/headers"
 import { auth } from "@/lib/auth"
@@ -8,10 +9,11 @@ import { breadcrumbSchema, faqSchema, safeJsonLd } from "@/lib/seo/schema"
 import { getToolBySlugOrName } from "@/db/queries/tools/get"
 import type { BuiltWithToolItem } from "@/components/shared/built-with-tools-input"
 import { SUBMISSION_FAQS } from "@/constants/submit"
+import { Spinner } from "@/components/ui/spinner"
 
 export const metadata: Metadata = {
   title: "New Launch — Submit a Product or Developer Tool",
-  description: `Launch your product, SaaS, developer tool, or API on ${SITE_CONFIG.name} for the community and AI models to discover. Includes structured SEO, AEO, GEO, and ASO metadata.`,
+  description: `Launch your product, SaaS, developer tool, or API on ${SITE_CONFIG.name} in seconds with AI Autofill. Permanent indexing, verified dofollow backlinks, and structured discovery across Google, ChatGPT, Claude, and Perplexity.`,
   keywords: [
     "submit product",
     "launch product",
@@ -23,13 +25,16 @@ export const metadata: Metadata = {
     "devtools submission",
     "promote dev tools",
     "developer platform discovery",
+    "ai autofill submit",
+    "ai product submission",
+    "instant saas launch",
   ],
   alternates: {
     canonical: `${SITE_CONFIG.url}/submit`,
   },
   openGraph: {
     title: `New Launch — Submit a Product or Developer Tool | ${SITE_CONFIG.name}`,
-    description: `Launch your product, SaaS, developer tool, or API on ${SITE_CONFIG.name} to reach thousands of builders.`,
+    description: `Launch your product, SaaS, developer tool, or API on ${SITE_CONFIG.name} in seconds with AI Autofill. Reach thousands of builders and AI search engines.`,
     type: "website",
     url: `${SITE_CONFIG.url}/submit`,
     siteName: SITE_CONFIG.name,
@@ -45,7 +50,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: `New Launch — Submit a Product or Developer Tool | ${SITE_CONFIG.name}`,
-    description: `Launch your product, SaaS, developer tool, or API on ${SITE_CONFIG.name}.`,
+    description: `Launch your product, SaaS, developer tool, or API on ${SITE_CONFIG.name} in seconds with AI Autofill.`,
     images: [SITE_CONFIG.ogImageUrl],
   },
   robots: {
@@ -55,7 +60,12 @@ export const metadata: Metadata = {
 }
 
 type SubmitPageProps = {
-  searchParams?: Promise<{ type?: string; tool?: string; toolSlug?: string }>
+  searchParams?: Promise<{
+    type?: string
+    tool?: string
+    toolSlug?: string
+    url?: string
+  }>
 }
 
 const SubmitPage = async (props: SubmitPageProps) => {
@@ -63,6 +73,7 @@ const SubmitPage = async (props: SubmitPageProps) => {
   const initialType: "product" | "tool" =
     searchParams?.type === "tool" ? "tool" : "product"
   const toolSlugOrName = searchParams?.tool ?? searchParams?.toolSlug
+  const initialUrl = searchParams?.url?.trim() || ""
 
   let session = null
   try {
@@ -108,9 +119,22 @@ const SubmitPage = async (props: SubmitPageProps) => {
         dangerouslySetInnerHTML={{ __html: safeJsonLd(faqs) }}
       />
       {session?.user ? (
-        <SubmitContent initialType={initialType} initialTool={initialTool} />
+        <Suspense
+          fallback={
+            <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4 bg-slate-50/50 p-12 text-center">
+              <Spinner className="size-8 text-slate-400" />
+              <p className="text-sm text-slate-500">Loading submission studio...</p>
+            </div>
+          }
+        >
+          <SubmitContent
+            initialType={initialType}
+            initialTool={initialTool}
+            initialUrl={initialUrl}
+          />
+        </Suspense>
       ) : (
-        <SubmitCrawlerView />
+        <SubmitCrawlerView initialUrl={initialUrl} />
       )}
     </>
   )

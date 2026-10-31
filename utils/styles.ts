@@ -302,6 +302,12 @@ export const homeHeroBadge =
 export const homeHeroBadgeDot =
   "size-1.5 shrink-0 rounded-full bg-blue-600 dark:bg-blue-400"
 
+export const homeLaunchSectionContainer =
+  "flex flex-col gap-3 border-b border-dashed border-border bg-linear-to-r from-blue-50/70 via-indigo-50/40 to-white px-4 py-5 sm:px-6 md:px-8"
+
+export const primaryActionButton =
+  "shrink-0 rounded-lg px-3.5 py-1.5 text-xs font-semibold text-white shadow-xs transition-all hover:bg-slate-800 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
+
 export const toolFilterButton =
   "relative z-10 h-7.5 gap-1.5 rounded-lg px-2.5 text-xs transition-colors"
 
@@ -476,6 +482,9 @@ export const submitTypeTabActive =
 export const submitTypeTabInactive =
   "text-slate-500 hover:text-slate-800 hover:bg-white/50"
 
+export const submitAiAutofillContainer =
+  "flex flex-col gap-3 border-b border-dashed border-border bg-linear-to-r from-indigo-50/70 via-purple-50/30 to-white px-6 py-5 md:px-8"
+
 export const socialInputWrapper = "relative"
 
 export const socialInputIconContainer =
@@ -511,7 +520,7 @@ export const launchPromoCard =
   "relative overflow-hidden rounded-xl border border-dashed border-amber-300/80 bg-linear-to-br from-amber-50/70 via-white to-yellow-50/50 p-5 shadow-xs"
 
 export const launchPromoFullWidthSection =
-  "border-b border-dashed border-border bg-linear-to-r from-amber-50/50 via-amber-50/20 to-white px-6 py-6 md:px-8"
+  "border-b border-dashed border-border bg-linear-to-r from-amber-50/50 via-amber-50/20 to-white px-4 py-5 sm:px-6 sm:py-6 md:px-8"
 
 export const launchPromoFullWidthPerksGrid =
   "mt-5 grid grid-cols-1 gap-2.5 border-t border-dashed border-amber-200/80 pt-4 sm:grid-cols-2 lg:grid-cols-4"
@@ -664,10 +673,19 @@ export const submissionSelectorItem = (selected: boolean) =>
       : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/60"
   )
 
+export const pricingPageWrapper =
+  "flex w-full flex-col overflow-x-clip bg-white min-h-[calc(100vh-4rem)]"
+
+export const pricingPageContainer =
+  "mx-auto flex w-full max-w-7xl min-h-[calc(100vh-4rem)] min-w-0 flex-col bg-white sm:border-x border-dashed border-border"
+
+export const pricingBreadcrumbNav =
+  "flex flex-wrap items-center justify-between gap-2 border-b border-dashed border-border bg-slate-50/40 px-4 py-2.5 text-xs font-medium text-slate-500 sm:px-6 md:px-8"
+
 export const pricingSection = "border-b border-dashed border-border bg-white"
 
 export const pricingSectionHeader =
-  "flex flex-col gap-3 border-b border-dashed border-border bg-slate-50/50 px-6 py-6 sm:flex-row sm:items-center sm:justify-between md:px-8"
+  "flex flex-col gap-3 border-b border-dashed border-border bg-slate-50/50 px-4 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-6 md:px-8"
 
 export const pricingSectionTitle =
   "text-xl font-extrabold text-slate-900 sm:text-2xl"
@@ -681,7 +699,7 @@ export const pricingTiersGrid =
   "relative grid grid-cols-1 divide-y divide-dashed divide-border bg-white md:grid-cols-3 md:divide-y-0 md:divide-x"
 
 export const pricingColumn =
-  "group/col relative flex flex-col justify-between p-6 transition-colors hover:bg-slate-50/30 md:p-8"
+  "group/col relative flex flex-col justify-between p-5 sm:p-6 md:p-8 transition-colors hover:bg-slate-50/30"
 
 export const pricingPriceBox = "mt-4 flex items-baseline gap-2 rounded-lg p-3"
 
@@ -900,12 +918,76 @@ export const feedbackTypeButton = (isSelected: boolean) =>
       : "border-dashed border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900"
   )
 
-
 export const categoryFaqHeaderBg = (theme: "indigo" | "violet" = "indigo") =>
   theme === "indigo"
     ? "bg-linear-to-r from-indigo-100/60 via-blue-50/40 to-white"
     : "bg-linear-to-r from-violet-100/60 via-purple-50/40 to-white"
 
-
 export const directoryTelemetryBar =
   "flex w-full items-center justify-between border-b border-dashed border-border bg-slate-50/60 px-6 py-2.5 md:px-8 text-xs text-slate-600"
+
+
+export const upgradeModalContainer =
+  "w-[94vw] max-w-[540px] sm:max-w-[540px] p-0 overflow-hidden border border-slate-200/90 shadow-2xl rounded-2xl bg-white font-sans flex flex-col max-h-[88vh]"
+
+export const upgradeListingCard = (selected: boolean, disabled: boolean) =>
+  cn(
+    "relative flex items-center justify-between gap-3 rounded-xl border p-3.5 transition-all text-left",
+    selected
+      ? "border-blue-600 bg-blue-50/50 ring-1 ring-blue-600/30 shadow-xs"
+      : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/50",
+    disabled
+      ? "opacity-50 cursor-not-allowed pointer-events-none bg-slate-50 border-slate-100"
+      : "cursor-pointer"
+  )
+
+export const lockedSectionBanner =
+  "relative flex flex-col items-center justify-center gap-2.5 rounded-xl border border-dashed border-amber-300/80 bg-linear-to-b from-amber-50/50 via-white to-amber-50/30 p-6 text-center shadow-2xs"
+
+export const submitSectionHeaderTier =
+  "flex flex-col gap-3 border-b border-dashed border-border bg-linear-to-r from-blue-100/60 via-indigo-50/40 to-white px-6 py-6 sm:flex-row sm:items-center sm:justify-between md:px-8"
+
+export const submitTierFullWidthGrid =
+  "relative grid grid-cols-1 divide-y divide-dashed divide-border bg-white md:grid-cols-2 md:divide-y-0 md:divide-x border-b border-dashed border-border"
+
+export const submitTierFullWidthColumn = (isSelected: boolean, tier: Tier) =>
+  cn(
+    "group relative flex flex-col justify-between p-6 md:p-8 transition-colors cursor-pointer",
+    isSelected
+      ? tier === TIER.PREMIUM_PLUS
+        ? "bg-linear-to-b from-amber-50/50 via-amber-50/20 to-white"
+        : "bg-linear-to-b from-blue-50/50 via-blue-50/20 to-white"
+      : "bg-white hover:bg-slate-50/50"
+  )
+
+export const submitTierGrid = "grid grid-cols-1 gap-3 sm:grid-cols-3"
+
+export const submitPricingSection =
+  "flex flex-col gap-4 border-b border-dashed border-border bg-slate-50/40 px-6 py-6 md:px-8"
+
+export const submitPricingHeader =
+  "flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
+
+export const submitCompactTierGrid = "grid grid-cols-1 gap-4 sm:grid-cols-2"
+
+export const submitCompactTierCard = (
+  isSelected: boolean,
+  tier: Tier
+) =>
+  cn(
+    "relative flex flex-col justify-between rounded-xl border p-4 sm:p-5 text-left transition-all cursor-pointer shadow-2xs",
+    isSelected
+      ? tier === TIER.PREMIUM_PLUS
+        ? "border-amber-400 bg-linear-to-b from-amber-50/60 via-white to-amber-50/30 ring-2 ring-amber-500/30 shadow-xs"
+        : "border-blue-400 bg-linear-to-b from-blue-50/60 via-white to-blue-50/30 ring-2 ring-blue-500/30 shadow-xs"
+      : "border-slate-200/90 bg-white hover:border-slate-300 hover:bg-slate-50/50"
+  )
+
+
+export const submitTierCard = (isSelected: boolean) =>
+  cn(
+    "relative flex flex-col justify-between rounded-xl border p-4 text-left transition-all cursor-pointer",
+    isSelected
+      ? "border-blue-600 bg-blue-50/40 ring-1 ring-blue-600/30 shadow-xs"
+      : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/50"
+  )

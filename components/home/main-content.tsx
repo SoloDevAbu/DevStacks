@@ -1,6 +1,7 @@
 import { PageHeader } from "@/components/shared/page-header"
 import { WeeklyLaunchesSection } from "@/components/home/weekly-launches-section"
 import { PopularBuildingBlocksSection } from "@/components/home/popular-building-blocks-section"
+import { HomeLaunchSection } from "@/components/home/home-launch-section"
 import { AI_PROMPTS } from "@/lib/prompts"
 import { Badge } from "@/components/ui/badge"
 import { RotatingHeadline } from "@/components/home/rotating-headline"
@@ -43,6 +44,8 @@ export const MainContent = ({
           </>
         }
       />
+
+      <HomeLaunchSection />
 
       <div className="flex w-full flex-1 flex-col">
         <WeeklyLaunchesSection initialItems={weeklyLaunches} />

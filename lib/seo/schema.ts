@@ -514,3 +514,53 @@ export const toolSchema = (tool: ToolSchemaInput) => {
         : undefined,
   }
 }
+
+export type TechArticleSchemaInput = {
+  title: string
+  description: string
+  url: string
+  publishedAt?: Date | null
+  updatedAt?: Date | null
+  authorName?: string
+  authorUrl?: string
+  coverImageUrl?: string | null
+  keywords?: string[]
+}
+
+export const techArticleSchema = (input: TechArticleSchemaInput) => ({
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  headline: input.title,
+  description: input.description,
+  url: input.url,
+  mainEntityOfPage: {
+    "@type": "WebPage",
+    "@id": input.url,
+  },
+  datePublished: input.publishedAt
+    ? input.publishedAt.toISOString()
+    : new Date().toISOString(),
+  dateModified: input.updatedAt
+    ? input.updatedAt.toISOString()
+    : new Date().toISOString(),
+  inLanguage: "en-US",
+  author: {
+    "@type": "Person",
+    name: input.authorName || SITE_CONFIG.creator,
+    ...(input.authorUrl ? { url: input.authorUrl } : {}),
+  },
+  publisher: {
+    "@type": "Organization",
+    "@id": `${SITE_CONFIG.url}/#organization`,
+    name: SITE_CONFIG.name,
+    url: SITE_CONFIG.url,
+    logo: {
+      "@type": "ImageObject",
+      url: SITE_CONFIG.ogImageUrl,
+    },
+  },
+  ...(input.coverImageUrl ? { image: [input.coverImageUrl] } : {}),
+  ...(input.keywords && input.keywords.length > 0
+    ? { keywords: input.keywords.join(", ") }
+    : {}),
+})

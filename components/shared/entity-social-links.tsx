@@ -14,6 +14,7 @@ export interface EntitySocialLinksProps {
   playStoreUrl?: string | null
   chromeExtensionUrl?: string | null
   tier?: string | null
+  badgeVerified?: boolean
   className?: string
 }
 
@@ -27,6 +28,7 @@ export const EntitySocialLinks = ({
   playStoreUrl,
   chromeExtensionUrl,
   tier,
+  badgeVerified,
   className,
 }: EntitySocialLinksProps) => {
   const urlMap: Record<string, string | null | undefined> = {
@@ -55,7 +57,7 @@ export const EntitySocialLinks = ({
         const isWebsite = config.key === "websiteUrl"
         const href = isWebsite ? getOutboundUrl(rawUrl, "launchnests") : rawUrl
         const rel = isWebsite
-          ? getLinkRel(tier)
+          ? getLinkRel(tier, badgeVerified)
           : "noopener noreferrer nofollow"
 
         return (

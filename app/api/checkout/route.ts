@@ -13,6 +13,7 @@ import {
   getAdDodoProductId,
 } from "@/constants/ads"
 import { PLANS, TIER, type Tier, getPlanDodoProductId } from "@/constants/plans"
+import { SITE_CONFIG } from "@/constants/site"
 import {
   createAd,
   createAdWeeks,
@@ -449,7 +450,7 @@ export const POST = async (req: NextRequest) => {
     }
 
     // Listing payment (Premium / Premium+)
-    const { itemType, itemId, tier } = parsed.data
+    const { itemType, itemId, tier, returnToSubmit } = parsed.data
     const plan = PLANS[tier as Tier]
 
     if (!plan || plan.priceInCents <= 0) {
@@ -459,60 +460,72 @@ export const POST = async (req: NextRequest) => {
       )
     }
 
-    // Verify ownership and approval status of the item being upgraded
-    if (itemType === "tool") {
-      const [tool] = await db
-        .select({
-          id: tools.id,
-          submitterId: tools.submitterId,
-          status: tools.status,
-          tier: tools.tier,
-        })
-        .from(tools)
-        .where(and(eq(tools.id, itemId), eq(tools.isDeleted, false)))
-        .limit(1)
+    // Verify ownership and eligibility of the item being upgraded (if itemId provided)
+    if (itemId) {
+      if (itemType === "tool") {
+        const [tool] = await db
+          .select({
+            id: tools.id,
+            submitterId: tools.submitterId,
+            status: tools.status,
+            tier: tools.tier,
+          })
+          .from(tools)
+          .where(and(eq(tools.id, itemId), eq(tools.isDeleted, false)))
+          .limit(1)
 
-      if (!tool || tool.submitterId !== user.id || tool.status !== "approved") {
-        return NextResponse.json(
-          { error: "Tool not found, not owned by you, or not yet approved" },
-          { status: 403 }
-        )
-      }
+        if (!tool || tool.submitterId !== user.id) {
+          return NextResponse.json(
+            { error: "Tool not found or not owned by you" },
+            { status: 403 }
+          )
+        }
 
-      if (tool.tier === tier) {
-        return NextResponse.json(
-          { error: `This tool is already on the ${plan.name} tier.` },
-          { status: 400 }
-        )
-      }
-    } else {
-      const [product] = await db
-        .select({
-          id: products.id,
-          submitterId: products.submitterId,
-          status: products.status,
-          tier: products.tier,
-        })
-        .from(products)
-        .where(and(eq(products.id, itemId), eq(products.isDeleted, false)))
-        .limit(1)
+        if (tool.status === "rejected") {
+          return NextResponse.json(
+            { error: "Cannot upgrade a rejected listing." },
+            { status: 400 }
+          )
+        }
 
-      if (
-        !product ||
-        product.submitterId !== user.id ||
-        product.status !== "approved"
-      ) {
-        return NextResponse.json(
-          { error: "Product not found, not owned by you, or not yet approved" },
-          { status: 403 }
-        )
-      }
+        if (tool.tier === tier) {
+          return NextResponse.json(
+            { error: `This tool is already on the ${plan.name} tier.` },
+            { status: 400 }
+          )
+        }
+      } else if (itemType === "product") {
+        const [product] = await db
+          .select({
+            id: products.id,
+            submitterId: products.submitterId,
+            status: products.status,
+            tier: products.tier,
+          })
+          .from(products)
+          .where(and(eq(products.id, itemId), eq(products.isDeleted, false)))
+          .limit(1)
 
-      if (product.tier === tier) {
-        return NextResponse.json(
-          { error: `This product is already on the ${plan.name} tier.` },
-          { status: 400 }
-        )
+        if (!product || product.submitterId !== user.id) {
+          return NextResponse.json(
+            { error: "Product not found or not owned by you" },
+            { status: 403 }
+          )
+        }
+
+        if (product.status === "rejected") {
+          return NextResponse.json(
+            { error: "Cannot upgrade a rejected listing." },
+            { status: 400 }
+          )
+        }
+
+        if (product.tier === tier) {
+          return NextResponse.json(
+            { error: `This product is already on the ${plan.name} tier.` },
+            { status: 400 }
+          )
+        }
       }
     }
 
@@ -524,16 +537,17 @@ export const POST = async (req: NextRequest) => {
             userId: user.id,
             paymentType: "listing",
             tier: tier as Tier,
-            toolId: itemType === "tool" ? itemId : null,
-            productId: itemType === "product" ? itemId : null,
+            toolId: itemType === "tool" && itemId ? itemId : null,
+            productId: itemType === "product" && itemId ? itemId : null,
             amount: plan.priceInCents,
             currency: "USD",
             status: "pending",
             idempotencyKey: idempotencyKey ?? undefined,
             metadata: JSON.stringify({
-              itemType,
-              itemId,
+              itemType: itemType ?? null,
+              itemId: itemId ?? null,
               tier,
+              isPreSubmit: !itemId,
             }),
           },
           tx
@@ -574,7 +588,14 @@ export const POST = async (req: NextRequest) => {
       const productCartItem = {
         product_id: listingProductId,
         quantity: 1,
+        amount: plan.priceInCents,
       }
+
+      const origin = req.nextUrl.origin || SITE_CONFIG.url
+      const returnUrl =
+        returnToSubmit || !itemId
+          ? `${origin}/submit?unlocked=true&payment_id=${payment.id}&tier=${tier}`
+          : `${origin}/dashboard/${itemType === "tool" ? "tools" : "products"}?upgraded=true&id=${itemId}`
 
       const dodoSession = await createDodoCheckoutSession({
         productCart: [productCartItem],
@@ -582,6 +603,7 @@ export const POST = async (req: NextRequest) => {
           email: user.email,
           name: user.name,
         },
+        returnUrl,
         billingCurrency: "USD",
         featureFlags: {
           allow_currency_selection: false,
@@ -590,9 +612,10 @@ export const POST = async (req: NextRequest) => {
           paymentId: payment.id,
           userId: user.id,
           paymentType: "listing",
-          itemType,
-          itemId,
+          itemType: itemType ?? "",
+          itemId: itemId ?? "",
           tier,
+          isPreSubmit: itemId ? "false" : "true",
         },
       })
 

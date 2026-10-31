@@ -25,6 +25,8 @@ export interface UserSubmissionDto {
   slug: string
   tier: Tier
   type: "tool" | "product"
+  status?: string
+  badgeVerified?: boolean
 }
 
 export const fetchActiveAds = async (
@@ -47,9 +49,14 @@ export const fetchWeekAvailability = async (
   return data.data
 }
 
-export const fetchUserSubmissions = async (): Promise<UserSubmissionDto[]> => {
+export const fetchUserSubmissions = async (
+  includePending = false
+): Promise<UserSubmissionDto[]> => {
   const { data } = await apiClient.get<{ data: UserSubmissionDto[] }>(
-    "/users/submissions"
+    "/users/submissions",
+    {
+      params: includePending ? { includePending: true } : {},
+    }
   )
   return data.data
 }
@@ -57,6 +64,14 @@ export const fetchUserSubmissions = async (): Promise<UserSubmissionDto[]> => {
 export const recordAdImpression = async (adId: string): Promise<void> => {
   try {
     await apiClient.post(`/ads/${adId}/impression`)
+  } catch {
+    // Non-critical tracking failure is swallowed
+  }
+}
+
+export const recordAdClick = async (adId: string): Promise<void> => {
+  try {
+    await apiClient.post(`/ads/${adId}/click`)
   } catch {
     // Non-critical tracking failure is swallowed
   }

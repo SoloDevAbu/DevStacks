@@ -6,6 +6,7 @@ import {
   getProductCategories,
 } from "@/db/queries/categories/list"
 import { getActiveMakersForSitemap } from "@/db/queries/users/get-profile"
+import { listPublishedBlogs } from "@/db/queries/blogs"
 import { ROUTES } from "@/constants/routes"
 import { normalizeSitemapUrl } from "@/utils/urls"
 import { getAllComparisons } from "@/constants/comparisons"
@@ -79,6 +80,12 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
       lastModified: now,
       changeFrequency: "weekly",
       priority: 0.8,
+    },
+    {
+      url: normalizeSitemapUrl(ROUTES.BLOG),
+      lastModified: now,
+      changeFrequency: "daily",
+      priority: 0.85,
     },
     {
       url: normalizeSitemapUrl(ROUTES.PRICING),
@@ -169,12 +176,14 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
       dbMakers,
       toolCategories,
       productCategories,
+      publishedBlogs,
     ] = await Promise.all([
       getProducts({ limit: 5000 }),
       getTools({ limit: 5000 }),
       getActiveMakersForSitemap(5000).catch(() => []),
       getToolCategories().catch(() => []),
       getProductCategories().catch(() => []),
+      listPublishedBlogs({ limit: 5000 }).catch(() => ({ items: [] })),
     ])
 
     const dynamicRoutes: MetadataRoute.Sitemap = []
@@ -291,6 +300,17 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
             changeFrequency: "weekly" as const,
             priority: 0.75,
           }))
+      )
+    }
+
+    if (publishedBlogs?.items && publishedBlogs.items.length > 0) {
+      dynamicRoutes.push(
+        ...publishedBlogs.items.map(({ blog }) => ({
+          url: normalizeSitemapUrl(ROUTES.BLOG_POST(blog.slug)),
+          lastModified: blog.updatedAt ?? blog.publishedAt ?? now,
+          changeFrequency: "weekly" as const,
+          priority: 0.8,
+        }))
       )
     }
 

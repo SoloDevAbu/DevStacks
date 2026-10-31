@@ -17,6 +17,7 @@ interface ProductActionButtonsProps {
   slug: string
   productId?: string
   tier?: string | null
+  badgeVerified?: boolean
   initialLikes: number
   websiteUrl: string
 }
@@ -25,6 +26,7 @@ export const ProductActionButtons = ({
   slug,
   productId,
   tier,
+  badgeVerified,
   initialLikes,
   websiteUrl,
 }: ProductActionButtonsProps) => {
@@ -96,7 +98,7 @@ export const ProductActionButtons = ({
   }
 
   const outboundUrl = getOutboundUrl(websiteUrl, "launchnests")
-  const linkRel = getLinkRel(tier)
+  const linkRel = getLinkRel(tier, badgeVerified)
 
   return (
     <div className="flex flex-wrap items-center gap-3">

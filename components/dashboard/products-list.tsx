@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import {
@@ -38,6 +38,7 @@ import {
 import { ProductLogo } from "@/components/shared/product-logo"
 import { UpgradeTierDialog } from "@/components/dashboard/upgrade-tier-dialog"
 import { EmbedBadgeDialog } from "@/components/shared/embed-badge-dialog"
+import { toast } from "@/components/ui/toast"
 import {
   DeleteItemDialog,
   type DeleteItemTarget,
@@ -77,6 +78,22 @@ export const ProductsList = ({ products }: ProductsListProps) => {
   const [deletingProduct, setDeletingProduct] =
     useState<DeleteItemTarget | null>(null)
   const [deletedIds, setDeletedIds] = useState<Set<string>>(new Set())
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search)
+      if (params.get("upgraded") === "true") {
+        toast.success(
+          "Listing Upgraded!",
+          "Your product has been upgraded. Premium features, AI launch review, and verified status are now active."
+        )
+        params.delete("upgraded")
+        params.delete("id")
+        const newSearch = params.toString() ? `?${params.toString()}` : ""
+        window.history.replaceState(null, "", `${window.location.pathname}${newSearch}`)
+      }
+    }
+  }, [])
 
   const activeProducts = useMemo(() => {
     return products.filter((p) => !deletedIds.has(p.id))

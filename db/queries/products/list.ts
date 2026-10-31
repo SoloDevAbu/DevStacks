@@ -126,6 +126,7 @@ export const getProducts = async ({
       platforms: products.platforms,
       pricing: products.pricing,
       tier: products.tier,
+      badgeVerified: products.badgeVerified,
       status: products.status,
       likesCount: products.likesCount,
       commentsCount: products.commentsCount,
