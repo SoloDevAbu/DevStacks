@@ -1,6 +1,6 @@
 "use client"
 
-import { Bell, Sparkles, Check } from "lucide-react"
+import { Bell, Sparkles, Check, BadgeCheck, Shield } from "lucide-react"
 import {
   Dialog,
   DialogContent,
@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
 import { getCurrentWeek, getWeekRange } from "@/lib/launches/week-utils"
 import { LAUNCH_PROMO } from "@/constants/promo"
+import { PLANS, TIER, type Tier } from "@/constants/plans"
 import {
   scheduleModalContainer,
   scheduleIconBox,
@@ -41,6 +42,8 @@ interface ScheduleConfirmDialogProps {
   isSubmitting: boolean
   type: "product" | "tool"
   name: string
+  tier?: Tier
+  isPromoActive?: boolean
   launchYear?: number
   launchWeek?: number
 }
@@ -52,6 +55,8 @@ export const ScheduleConfirmDialog = ({
   isSubmitting,
   type,
   name,
+  tier = TIER.FREE,
+  isPromoActive = false,
   launchYear,
   launchWeek,
 }: ScheduleConfirmDialogProps) => {
@@ -66,6 +71,7 @@ export const ScheduleConfirmDialog = ({
 
   const isProduct = type === "product"
   const itemTypeLabel = isProduct ? "product" : "tool"
+  const plan = PLANS[tier] || PLANS[TIER.FREE]
 
   return (
     <Dialog
@@ -105,36 +111,56 @@ export const ScheduleConfirmDialog = ({
             </div>
           </div>
 
-          {/* Launch Celebration Promo Card */}
-          <div className={schedulePromoBox}>
-            <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-700">
-              <Sparkles className="size-3.5" />
-              <span>Launch Celebration: Free Lifetime Premium</span>
+          {/* Tier / Promo Summary Card */}
+          {isPromoActive ? (
+            <div className={schedulePromoBox}>
+              <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-700">
+                <Sparkles className="size-3.5" />
+                <span>Launch Celebration: Free Lifetime Premium</span>
+              </div>
+              <p className="text-xs leading-relaxed text-slate-600">
+                Your listing qualifies for our First 50 Launch celebration! Get a{" "}
+                <strong className="text-slate-900">
+                  Free Lifetime Premium Tier ({LAUNCH_PROMO.VALUE_GIFTED} value)
+                </strong>{" "}
+                with a permanent Do-Follow SEO backlink and verified checkmark.
+              </p>
+              <div className="mt-1 flex flex-col gap-1.5 border-t border-slate-100 pt-2 text-[11px] text-slate-600">
+                <div className="flex items-center gap-1.5">
+                  <Check className="size-3 shrink-0 text-emerald-600" />
+                  <span>Permanent Do-Follow SEO Backlink on live launch</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <Check className="size-3 shrink-0 text-emerald-600" />
+                  <span>Verified Checkmark Badge across directory feeds</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <Check className="size-3 shrink-0 text-emerald-600" />
+                  <span>Dedicated AI launch spotlight & review upon approval</span>
+                </div>
+              </div>
             </div>
-            <p className="text-xs leading-relaxed text-slate-600">
-              Your listing qualifies for our First 50 Launch celebration! Get a{" "}
-              <strong className="text-slate-900">
-                Free Lifetime Premium Tier ({LAUNCH_PROMO.VALUE_GIFTED} value)
-              </strong>{" "}
-              with a permanent Do-Follow SEO backlink and verified checkmark.
-            </p>
-            <div className="mt-1 flex flex-col gap-1.5 border-t border-slate-100 pt-2 text-[11px] text-slate-600">
-              <div className="flex items-center gap-1.5">
-                <Check className="size-3 shrink-0 text-emerald-600" />
-                <span>Permanent Do-Follow SEO Backlink on live launch</span>
+          ) : tier === TIER.FREE ? (
+            <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-3.5 text-xs text-slate-600 flex flex-col gap-2">
+              <div className="flex items-center gap-1.5 font-bold text-slate-800">
+                <Shield className="size-3.5 text-slate-500" />
+                <span>{plan.name} Listing ({plan.price})</span>
               </div>
-              <div className="flex items-center gap-1.5">
-                <Check className="size-3 shrink-0 text-emerald-600" />
-                <span>
-                  Verified Checkmark Badge across search &amp; directory feeds
-                </span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <Check className="size-3 shrink-0 text-emerald-600" />
-                <span>Priority inclusion in upcoming Weekly AI digest</span>
-              </div>
+              <p className="text-[11px] leading-relaxed text-slate-500">
+                Standard chronological directory feed inclusion with community upvotes & comments. Outbound links are no-follow unless you add our embed badge.
+              </p>
             </div>
-          </div>
+          ) : (
+            <div className="rounded-xl border border-blue-200 bg-blue-50/60 p-3.5 text-xs text-blue-950 flex flex-col gap-2">
+              <div className="flex items-center gap-1.5 font-bold text-blue-900">
+                <BadgeCheck className="size-4 text-blue-600" />
+                <span>{plan.name} Launch ({plan.price})</span>
+              </div>
+              <p className="text-[11px] leading-relaxed text-blue-800">
+                Includes permanent Do-Follow SEO backlink, verified badge, and dedicated AI launch technical review upon admin approval.
+              </p>
+            </div>
+          )}
 
           {/* Dialog Action Buttons */}
           <div className="mt-2 flex items-center justify-end gap-2.5">

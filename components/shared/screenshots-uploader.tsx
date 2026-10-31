@@ -16,6 +16,7 @@ interface ScreenshotsUploaderProps {
   onChange: (urls: string[]) => void
   disabled?: boolean
   className?: string
+  maxCount?: number
 }
 
 export const ScreenshotsUploader = ({
@@ -23,6 +24,7 @@ export const ScreenshotsUploader = ({
   onChange,
   disabled = false,
   className,
+  maxCount = STORAGE_CONFIG.SCREENSHOTS.MAX_COUNT,
 }: ScreenshotsUploaderProps) => {
   const [draggedOverSlot, setDraggedOverSlot] = useState<number | null>(null)
   const [activePreviewIndex, setActivePreviewIndex] = useState<number | null>(
@@ -36,7 +38,6 @@ export const ScreenshotsUploader = ({
   const { uploadImage, isPending: isUploading, progress } = useUploadImage()
   const { deleteImage } = useDeleteImage()
 
-  const maxCount = STORAGE_CONFIG.SCREENSHOTS.MAX_COUNT
   const isFull = value.length >= maxCount
 
   const handleFileProcess = async (file: File, targetSlot: number) => {

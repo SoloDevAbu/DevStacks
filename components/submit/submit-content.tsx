@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Image from "next/image"
 import { PageHeader } from "@/components/shared/page-header"
 import { AI_PROMPTS } from "@/lib/prompts"
@@ -27,7 +27,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { PRICING } from "@/constants/plans"
+import { useSearchParams } from "next/navigation"
+import { useLaunchAvailability } from "@/hooks/launches/use-launch-availability"
+import { useUserListingCredit } from "@/hooks/users/use-user-listing-credit"
+import { useCheckout } from "@/hooks/payments/use-checkout"
+import { TierSelector } from "./tier-selector"
+import { LockedSectionBanner } from "./locked-section-banner"
+import { PRICING, TIER, type Tier } from "@/constants/plans"
 import { PLATFORMS } from "@/constants/platforms"
 import { useSubmitTool } from "@/hooks/tools/use-submit-tool"
 import { useSubmitProduct } from "@/hooks/products/use-submit-product"
@@ -183,7 +189,85 @@ export const SubmitContent = ({
   )
 
 
+  const searchParams = useSearchParams()
   const { data: session, isPending: isSessionPending } = useSession()
+  const currentUserId = session?.user?.id
+
+  const { data: launchAvailability } = useLaunchAvailability()
+  const promoStatus = launchAvailability?.promo
+  const isPromoActive = promoStatus?.isPromoActive ?? LAUNCH_PROMO.IS_ACTIVE
+  const promoRemaining = promoStatus?.promoRemaining ?? 0
+
+  const { data: userCredit } = useUserListingCredit(Boolean(currentUserId))
+  const hasPaidCredit = Boolean(userCredit?.id)
+  const isUnlockedFromUrl = searchParams.get("unlocked") === "true"
+
+  const urlTierParam = searchParams.get("tier") as Tier | null
+  const validUrlTier =
+    urlTierParam === TIER.PREMIUM || urlTierParam === TIER.PREMIUM_PLUS
+      ? urlTierParam
+      : null
+
+  const [selectedTier, setSelectedTier] = useState<Tier>(() => {
+    if (isPromoActive) return TIER.PREMIUM
+    if (validUrlTier) return validUrlTier
+    if (hasPaidCredit && userCredit?.tier) return userCredit.tier
+    return TIER.FREE
+  })
+
+  const checkoutMutation = useCheckout()
+
+  // Sync selectedTier when credit or promo loads
+  useEffect(() => {
+    if (isPromoActive) {
+      setSelectedTier(TIER.PREMIUM)
+    } else if (validUrlTier) {
+      setSelectedTier(validUrlTier)
+    } else if (hasPaidCredit && userCredit?.tier) {
+      setSelectedTier(userCredit.tier)
+    }
+  }, [isPromoActive, validUrlTier, hasPaidCredit, userCredit?.tier])
+
+  // Restore draft from localStorage on mount
+  useEffect(() => {
+    try {
+      const savedDraft = localStorage.getItem("launchnests_submit_draft")
+      const savedType = localStorage.getItem("launchnests_submit_active_type")
+      if (savedType === "product" || savedType === "tool") {
+        setActiveType(savedType)
+      }
+      if (savedDraft) {
+        const parsed = JSON.parse(savedDraft)
+        setForm((prev) => ({ ...prev, ...parsed }))
+        if (isUnlockedFromUrl) {
+          toast.success(
+            "Premium Unlocked!",
+            "Your draft has been restored with all premium features unlocked."
+          )
+        }
+      }
+    } catch (e) {
+      console.error("Failed to restore submit draft:", e)
+    }
+  }, [isUnlockedFromUrl])
+
+  const hasActiveAccess = isPromoActive || hasPaidCredit || isUnlockedFromUrl
+
+  const handleUnlockClick = (targetTier: Tier) => {
+    if (!currentUserId) {
+      toast.error("Sign in required", "Please sign in before unlocking premium features.")
+      return
+    }
+    try {
+      localStorage.setItem("launchnests_submit_draft", JSON.stringify(form))
+      localStorage.setItem("launchnests_submit_active_type", activeType)
+    } catch {}
+    checkoutMutation.mutate({
+      paymentType: "listing",
+      tier: targetTier as typeof TIER.PREMIUM | typeof TIER.PREMIUM_PLUS,
+      returnToSubmit: true,
+    })
+  }
   const {
     mutateAsync: submitToolMutation,
     isPending: isToolSubmitting,
@@ -356,11 +440,27 @@ export const SubmitContent = ({
     const faviconUrl = getFaviconUrl(form.websiteUrl)
     const resolvedLogoUrl = form.logoUrl?.trim() || faviconUrl || ""
 
+    const effectiveFaqs = hasActiveAccess ? nonBlankFaqs : []
+    const effectiveImages = hasActiveAccess ? form.images.slice(0, 3) : form.images.slice(0, 1)
+    const effectiveMetaTitle = hasActiveAccess ? form.metaTitle : ""
+    const effectiveMetaDescription = hasActiveAccess ? form.metaDescription : ""
+    const effectiveAiContext = hasActiveAccess ? form.aiContext : ""
+    const effectiveGeoTarget = hasActiveAccess ? form.geoTarget : ""
+    const effectiveAsoCategory = hasActiveAccess ? form.asoCategory : ""
+    const effectiveKeywords = hasActiveAccess ? form.keywords : ""
+
     if (activeType === "product") {
       const payload = {
         ...form,
         logoUrl: resolvedLogoUrl,
-        faqs: nonBlankFaqs,
+        faqs: effectiveFaqs,
+        images: effectiveImages,
+        metaTitle: effectiveMetaTitle,
+        metaDescription: effectiveMetaDescription,
+        aiContext: effectiveAiContext,
+        geoTarget: effectiveGeoTarget,
+        asoCategory: effectiveAsoCategory,
+        keywords: effectiveKeywords,
         builtWithTools: form.builtWithTools,
       }
 
@@ -385,7 +485,14 @@ export const SubmitContent = ({
       const payload = {
         ...form,
         logoUrl: resolvedLogoUrl,
-        faqs: nonBlankFaqs,
+        faqs: effectiveFaqs,
+        images: effectiveImages,
+        metaTitle: effectiveMetaTitle,
+        metaDescription: effectiveMetaDescription,
+        aiContext: effectiveAiContext,
+        geoTarget: effectiveGeoTarget,
+        asoCategory: effectiveAsoCategory,
+        keywords: effectiveKeywords,
       }
 
       const parsed = submitToolSchema.safeParse(payload)
@@ -423,8 +530,9 @@ export const SubmitContent = ({
     }
 
     try {
+      const paymentId = userCredit?.id || searchParams.get("payment_id") || undefined
       if (valid.type === "product") {
-        const clientPayload = { ...valid.data }
+        const clientPayload = { ...valid.data, paymentId }
         delete (clientPayload as { submitterId?: string }).submitterId
         const res = (await submitProductMutation(clientPayload)) as DbProduct
         trackSubmitProduct({
@@ -445,12 +553,23 @@ export const SubmitContent = ({
         setIsBadgeDialogOpen(true)
         setForm(emptyForm)
         setErrors({})
+        try {
+          localStorage.removeItem("launchnests_submit_draft")
+          localStorage.removeItem("launchnests_submit_active_type")
+          if (typeof window !== "undefined") {
+            const cleanUrl = new URL(window.location.href)
+            cleanUrl.searchParams.delete("unlocked")
+            cleanUrl.searchParams.delete("payment_id")
+            cleanUrl.searchParams.delete("tier")
+            window.history.replaceState(null, "", cleanUrl.pathname + (cleanUrl.search ? cleanUrl.search : ""))
+          }
+        } catch {}
         toast.success(
           "Product Scheduled!",
           "Your product has been scheduled for launch."
         )
       } else {
-        const res = (await submitToolMutation(valid.data)) as DbTool
+        const res = (await submitToolMutation({ ...valid.data, paymentId })) as DbTool
         trackSubmitProduct({
           itemId: res.id,
           itemName: form.name,
@@ -469,6 +588,17 @@ export const SubmitContent = ({
         setIsBadgeDialogOpen(true)
         setForm(emptyForm)
         setErrors({})
+        try {
+          localStorage.removeItem("launchnests_submit_draft")
+          localStorage.removeItem("launchnests_submit_active_type")
+          if (typeof window !== "undefined") {
+            const cleanUrl = new URL(window.location.href)
+            cleanUrl.searchParams.delete("unlocked")
+            cleanUrl.searchParams.delete("payment_id")
+            cleanUrl.searchParams.delete("tier")
+            window.history.replaceState(null, "", cleanUrl.pathname + (cleanUrl.search ? cleanUrl.search : ""))
+          }
+        } catch {}
         toast.success(
           "Developer Tool Scheduled!",
           "Your developer tool has been scheduled for launch."
@@ -538,6 +668,20 @@ export const SubmitContent = ({
           </Badge>
         </div>
       )}
+
+      {/* Tier Selector Ribbon */}
+      <div className="w-full border-b border-dashed border-border bg-slate-50/50 px-4 py-4 sm:px-6 md:px-8">
+        <TierSelector
+          selectedTier={selectedTier}
+          onSelectTier={(tier) => setSelectedTier(tier)}
+          isPromoActive={isPromoActive}
+          promoRemaining={promoRemaining}
+          hasPaidCredit={hasPaidCredit}
+          paidCreditTier={userCredit?.tier}
+          onUnlockClick={handleUnlockClick}
+          isUnlocking={checkoutMutation.isPending}
+        />
+      </div>
 
       {/* Top Type Selector Tabs - Compact, Full-Width with Corner Outline Style */}
       <div className="w-full border-b border-dashed border-border bg-white px-4 py-3 sm:px-6 md:px-8">
@@ -1049,9 +1193,10 @@ export const SubmitContent = ({
 
               <div className="flex flex-col gap-5">
                 <div className="grid gap-2">
-                  <Label>{typeLabel} Screenshots (Max 3)</Label>
+                  <Label>{typeLabel} Screenshots (Max {hasActiveAccess ? 3 : 1})</Label>
                   <ScreenshotsUploader
                     value={form.images}
+                    maxCount={hasActiveAccess ? 3 : 1}
                     onChange={(images) =>
                       setForm((prev) => ({ ...prev, images }))
                     }
@@ -1310,32 +1455,44 @@ export const SubmitContent = ({
                     {typeLabel.toLowerCase()}, integration, or pricing.
                   </p>
                 </div>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() =>
-                    setForm((prev) => ({
-                      ...prev,
-                      faqs: [...prev.faqs, { question: "", answer: "" }],
-                    }))
-                  }
-                  className="gap-1.5"
-                >
-                  <Plus className="size-3.5" />
-                  <span>Add Question</span>
-                </Button>
+                {hasActiveAccess && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() =>
+                      setForm((prev) => ({
+                        ...prev,
+                        faqs: [...prev.faqs, { question: "", answer: "" }],
+                      }))
+                    }
+                    className="gap-1.5"
+                  >
+                    <Plus className="size-3.5" />
+                    <span>Add Question</span>
+                  </Button>
+                )}
               </div>
 
-              <FaqBuilder
-                faqs={form.faqs}
-                onChange={(faqs) => setForm((prev) => ({ ...prev, faqs }))}
-                questionPlaceholder={`e.g. Is this ${typeLabel.toLowerCase()} self-hostable or open source?`}
-                answerPlaceholder="e.g. Yes, you can deploy using Docker or sign up for our managed cloud."
-                emptyPrompt={`No FAQs added yet. Help builders evaluate your ${typeLabel.toLowerCase()} faster by adding answers to common questions.`}
-                addFirstLabel="Add First Question"
-                addAnotherLabel="Add Another Question"
-              />
+              {!hasActiveAccess ? (
+                <LockedSectionBanner
+                  title="Interactive FAQs"
+                  description="Address builder questions directly with expandable FAQ accordions."
+                  tierRequired={TIER.PREMIUM}
+                  onUnlock={() => handleUnlockClick(TIER.PREMIUM)}
+                  isUnlocking={checkoutMutation.isPending}
+                />
+              ) : (
+                <FaqBuilder
+                  faqs={form.faqs}
+                  onChange={(faqs) => setForm((prev) => ({ ...prev, faqs }))}
+                  questionPlaceholder={`e.g. Is this ${typeLabel.toLowerCase()} self-hostable or open source?`}
+                  answerPlaceholder="e.g. Yes, you can deploy using Docker or sign up for our managed cloud."
+                  emptyPrompt={`No FAQs added yet. Help builders evaluate your ${typeLabel.toLowerCase()} faster by adding answers to common questions.`}
+                  addFirstLabel="Add First Question"
+                  addAnotherLabel="Add Another Question"
+                />
+              )}
             </div>
           </div>
 
@@ -1362,7 +1519,19 @@ export const SubmitContent = ({
             </div>
 
             {/* Target Audience & GEO */}
-            <div className="flex flex-col gap-5 border-b border-dashed border-border px-6 py-6 md:px-8 md:py-8">
+            {!hasActiveAccess ? (
+              <div className="border-b border-dashed border-border px-6 py-6 md:px-8 md:py-8">
+                <LockedSectionBanner
+                  title="SEO, GEO & ASO Discoverability"
+                  description="Target global search keywords, meta titles, descriptions, and regional GEO target tags for search engines."
+                  tierRequired={TIER.PREMIUM}
+                  onUnlock={() => handleUnlockClick(TIER.PREMIUM)}
+                  isUnlocking={checkoutMutation.isPending}
+                />
+              </div>
+            ) : (
+              <>
+                <div className="flex flex-col gap-5 border-b border-dashed border-border px-6 py-6 md:px-8 md:py-8">
               <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                 <div className="grid gap-2">
                   <Label htmlFor="audience">Target Audience</Label>
@@ -1450,6 +1619,8 @@ export const SubmitContent = ({
                 </div>
               </div>
             </div>
+            </>
+            )}
 
             {/* AI Assistant Context (AEO) */}
             <div className="flex flex-col gap-5 px-6 py-6 md:px-8 md:py-8">
@@ -1462,21 +1633,31 @@ export const SubmitContent = ({
                 </p>
               </div>
 
-              <div className="grid gap-2">
-                <Label htmlFor="aiContext">
-                  AI Assistant Prompt Context (AEO)
-                </Label>
-                <Textarea
-                  id="aiContext"
-                  value={form.aiContext}
-                  onChange={set("aiContext")}
-                  placeholder={`If an AI like ChatGPT, Claude, or Perplexity is asked about solutions in your category, why should it recommend you? Summarize your pitch for LLMs.`}
-                  rows={3}
+              {!hasActiveAccess ? (
+                <LockedSectionBanner
+                  title="AI Assistant Prompt Context (AEO)"
+                  description="Provide direct instructions and architecture context for ChatGPT, Claude, Perplexity, and Gemini citations."
+                  tierRequired={TIER.PREMIUM}
+                  onUnlock={() => handleUnlockClick(TIER.PREMIUM)}
+                  isUnlocking={checkoutMutation.isPending}
                 />
-                <span className="text-[11px] text-slate-400">
-                  Fed directly into /llms.txt and semantic AI citation feeds.
-                </span>
-              </div>
+              ) : (
+                <div className="grid gap-2">
+                  <Label htmlFor="aiContext">
+                    AI Assistant Prompt Context (AEO)
+                  </Label>
+                  <Textarea
+                    id="aiContext"
+                    value={form.aiContext}
+                    onChange={set("aiContext")}
+                    placeholder={`If an AI like ChatGPT, Claude, or Perplexity is asked about solutions in your category, why should it recommend you? Summarize your pitch for LLMs.`}
+                    rows={3}
+                  />
+                  <span className="text-[11px] text-slate-400">
+                    Fed directly into /llms.txt and semantic AI citation feeds.
+                  </span>
+                </div>
+              )}
             </div>
           </div>
 
@@ -1523,6 +1704,8 @@ export const SubmitContent = ({
         isSubmitting={isSubmitting}
         type={activeType}
         name={form.name}
+        tier={isPromoActive ? TIER.PREMIUM : hasActiveAccess ? selectedTier : TIER.FREE}
+        isPromoActive={isPromoActive}
         launchYear={form.launchYear}
         launchWeek={form.launchWeek}
       />

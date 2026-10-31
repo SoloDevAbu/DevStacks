@@ -1,3 +1,4 @@
+import { Suspense } from "react"
 import type { Metadata } from "next"
 import { headers } from "next/headers"
 import { auth } from "@/lib/auth"
@@ -8,6 +9,7 @@ import { breadcrumbSchema, faqSchema, safeJsonLd } from "@/lib/seo/schema"
 import { getToolBySlugOrName } from "@/db/queries/tools/get"
 import type { BuiltWithToolItem } from "@/components/shared/built-with-tools-input"
 import { SUBMISSION_FAQS } from "@/constants/submit"
+import { Spinner } from "@/components/ui/spinner"
 
 export const metadata: Metadata = {
   title: "New Launch — Submit a Product or Developer Tool",
@@ -117,11 +119,20 @@ const SubmitPage = async (props: SubmitPageProps) => {
         dangerouslySetInnerHTML={{ __html: safeJsonLd(faqs) }}
       />
       {session?.user ? (
-        <SubmitContent
-          initialType={initialType}
-          initialTool={initialTool}
-          initialUrl={initialUrl}
-        />
+        <Suspense
+          fallback={
+            <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4 bg-slate-50/50 p-12 text-center">
+              <Spinner className="size-8 text-slate-400" />
+              <p className="text-sm text-slate-500">Loading submission studio...</p>
+            </div>
+          }
+        >
+          <SubmitContent
+            initialType={initialType}
+            initialTool={initialTool}
+            initialUrl={initialUrl}
+          />
+        </Suspense>
       ) : (
         <SubmitCrawlerView initialUrl={initialUrl} />
       )}

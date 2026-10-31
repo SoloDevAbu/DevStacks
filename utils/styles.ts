@@ -916,3 +916,30 @@ export const categoryFaqHeaderBg = (theme: "indigo" | "violet" = "indigo") =>
 
 export const directoryTelemetryBar =
   "flex w-full items-center justify-between border-b border-dashed border-border bg-slate-50/60 px-6 py-2.5 md:px-8 text-xs text-slate-600"
+
+
+export const upgradeModalContainer =
+  "w-[94vw] max-w-[540px] sm:max-w-[540px] p-0 overflow-hidden border border-slate-200/90 shadow-2xl rounded-2xl bg-white font-sans flex flex-col max-h-[88vh]"
+
+export const upgradeListingCard = (selected: boolean, disabled: boolean) =>
+  cn(
+    "relative flex items-center justify-between gap-3 rounded-xl border p-3.5 transition-all text-left",
+    selected
+      ? "border-blue-600 bg-blue-50/50 ring-1 ring-blue-600/30 shadow-xs"
+      : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/50",
+    disabled
+      ? "opacity-50 cursor-not-allowed pointer-events-none bg-slate-50 border-slate-100"
+      : "cursor-pointer"
+  )
+
+export const lockedSectionBanner =
+  "relative flex flex-col items-center justify-center gap-2.5 rounded-xl border border-dashed border-amber-300/80 bg-linear-to-b from-amber-50/50 via-white to-amber-50/30 p-6 text-center shadow-2xs"
+
+export const submitTierGrid = "grid grid-cols-1 gap-3 sm:grid-cols-3"
+export const submitTierCard = (isSelected: boolean) =>
+  cn(
+    "relative flex flex-col justify-between rounded-xl border p-4 text-left transition-all cursor-pointer",
+    isSelected
+      ? "border-blue-600 bg-blue-50/40 ring-1 ring-blue-600/30 shadow-xs"
+      : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/50"
+  )

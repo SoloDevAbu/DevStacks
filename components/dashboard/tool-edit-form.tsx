@@ -18,6 +18,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
 import { ROUTES } from "@/constants/routes"
+import { UpgradeTierDialog } from "@/components/dashboard/upgrade-tier-dialog"
 import { useUpdateTool } from "@/hooks/tools/use-update-tool"
 import {
   dashboardPageContainer,
@@ -46,6 +47,8 @@ export const ToolEditForm = ({ tool }: ToolEditFormProps) => {
   const [description, setDescription] = useState<string>(tool.description || "")
   const [websiteUrl, setWebsiteUrl] = useState<string>(tool.websiteUrl || "")
   const [logoUrl, setLogoUrl] = useState(tool.logoUrl || "")
+  const [isUpgradeOpen, setIsUpgradeOpen] = useState(false)
+  const isFree = tool.tier === "free"
   const [images, setImages] = useState<string[]>(tool.images || [])
   const [category, setCategory] = useState(tool.category || "")
   const [tags, setTags] = useState(tool.tags?.join(", ") || "")
@@ -374,10 +377,11 @@ export const ToolEditForm = ({ tool }: ToolEditFormProps) => {
 
             <div className="flex flex-col gap-1.5">
               <Label className="text-xs font-semibold">
-                Tool Screenshots (Max 3)
+                Tool Screenshots (Max {isFree ? 1 : 3})
               </Label>
               <ScreenshotsUploader
                 value={images}
+                maxCount={isFree ? 1 : 3}
                 onChange={(newImages) => setImages(newImages)}
               />
             </div>
@@ -491,19 +495,35 @@ export const ToolEditForm = ({ tool }: ToolEditFormProps) => {
                 integrations.
               </p>
             </div>
-            <Button
-              type="button"
-              size="sm"
-              variant="outline"
-              onClick={addFaq}
-              className="h-8 gap-1 text-xs"
-            >
-              <Plus className="size-3.5" />
-              <span>Add FAQ</span>
-            </Button>
+            {!isFree && (
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={addFaq}
+                className="h-8 gap-1 text-xs"
+              >
+                <Plus className="size-3.5" />
+                <span>Add FAQ</span>
+              </Button>
+            )}
           </div>
 
-          {faqs.length === 0 ? (
+          {isFree ? (
+            <div className="flex flex-col items-center justify-center gap-2.5 rounded-xl border border-dashed border-amber-300 bg-amber-50/50 p-6 text-center">
+              <p className="text-xs font-semibold text-amber-900">
+                Interactive FAQs are exclusive to Featured Builder (Premium) and Ecosystem Partner tiers.
+              </p>
+              <Button
+                type="button"
+                size="sm"
+                onClick={() => setIsUpgradeOpen(true)}
+                className="h-8 bg-blue-600 hover:bg-blue-700 text-xs font-semibold text-white shadow-xs cursor-pointer"
+              >
+                Upgrade to Premium ($15)
+              </Button>
+            </div>
+          ) : faqs.length === 0 ? (
             <p className="text-xs text-slate-400 italic">No FAQs added yet.</p>
           ) : (
             <div className="flex flex-col gap-3">
@@ -573,6 +593,19 @@ export const ToolEditForm = ({ tool }: ToolEditFormProps) => {
             )}
           </Button>
         </div>
+      {isUpgradeOpen && (
+        <UpgradeTierDialog
+          isOpen={isUpgradeOpen}
+          onOpenChange={setIsUpgradeOpen}
+          item={{
+            id: tool.id,
+            name: tool.name,
+            slug: tool.slug,
+            tier: tool.tier as any,
+            itemType: "tool",
+          }}
+        />
+      )}
       </form>
     </div>
   )

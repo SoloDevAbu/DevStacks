@@ -1,12 +1,16 @@
+"use client"
+
+import { useState } from "react"
 import Link from "next/link"
 import { Check, Sparkles, BadgeCheck, Gift } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { CornerBrackets } from "@/components/shared/corner-brackets"
-import { PLANS, TIER } from "@/constants/plans"
+import { PLANS, TIER, type Tier } from "@/constants/plans"
 import { AD_TIER_BONUS } from "@/constants/ads"
 import { ROUTES } from "@/constants/routes"
 import type { LaunchPromoStatus } from "@/db/queries/launches/availability"
+import { SelectListingUpgradeModal } from "./select-listing-upgrade-modal"
 import {
   pricingSection,
   pricingSectionHeader,
@@ -26,6 +30,8 @@ interface PricingTiersSectionProps {
 export const PricingTiersSection = ({ promo }: PricingTiersSectionProps) => {
   const isPromoActive = promo.isPromoActive
   const promoRemaining = promo.promoRemaining
+
+  const [upgradeModalTier, setUpgradeModalTier] = useState<Tier | null>(null)
 
   return (
     <section className={pricingSection}>
@@ -175,20 +181,23 @@ export const PricingTiersSection = ({ promo }: PricingTiersSectionProps) => {
             )}
           </div>
 
-          <Button
-            className="mt-6 w-full bg-blue-600 text-xs font-bold text-white shadow-xs hover:bg-blue-700 cursor-pointer"
-            nativeButton={false}
-            render={<Link href={ROUTES.SUBMIT} />}
-          >
-            {isPromoActive ? (
-              <>
-                <Sparkles className="mr-1.5 size-3.5" />
-                Claim Free Premium (${PLANS[TIER.PREMIUM].price} Value)
-              </>
-            ) : (
-              `Get Verified & Featured (${PLANS[TIER.PREMIUM].price})`
-            )}
-          </Button>
+          {isPromoActive ? (
+            <Button
+              className="mt-6 w-full bg-blue-600 text-xs font-bold text-white shadow-xs hover:bg-blue-700 cursor-pointer"
+              nativeButton={false}
+              render={<Link href={ROUTES.SUBMIT} />}
+            >
+              <Sparkles className="mr-1.5 size-3.5" />
+              Claim Free Premium (${PLANS[TIER.PREMIUM].price} Value)
+            </Button>
+          ) : (
+            <Button
+              className="mt-6 w-full bg-blue-600 text-xs font-bold text-white shadow-xs hover:bg-blue-700 cursor-pointer"
+              onClick={() => setUpgradeModalTier(TIER.PREMIUM)}
+            >
+              Get Verified & Featured ({PLANS[TIER.PREMIUM].price})
+            </Button>
+          )}
         </div>
 
         {/* Tier 3: Premium+ (Ecosystem Partner) */}
@@ -239,14 +248,20 @@ export const PricingTiersSection = ({ promo }: PricingTiersSectionProps) => {
           <Button
             variant="outline"
             className="mt-6 w-full border-amber-300 text-xs font-bold text-amber-900 shadow-2xs hover:bg-amber-50 cursor-pointer"
-            nativeButton={false}
-            render={<Link href={ROUTES.SUBMIT} />}
+            onClick={() => setUpgradeModalTier(TIER.PREMIUM_PLUS)}
           >
             Become an Ecosystem Partner ({PLANS[TIER.PREMIUM_PLUS].price})
           </Button>
         </div>
       </div>
+
+      {upgradeModalTier && (
+        <SelectListingUpgradeModal
+          isOpen={Boolean(upgradeModalTier)}
+          onClose={() => setUpgradeModalTier(null)}
+          targetTier={upgradeModalTier}
+        />
+      )}
     </section>
   )
 }
-
