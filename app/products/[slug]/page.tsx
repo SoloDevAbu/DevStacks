@@ -446,6 +446,7 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
               slug={product.slug}
               productId={product.id}
               tier={product.tier}
+              badgeVerified={product.badgeVerified}
               initialLikes={product.likesCount}
               websiteUrl={product.websiteUrl}
             />

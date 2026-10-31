@@ -17,12 +17,20 @@ export const getOutboundUrl = (
   }
 }
 
-export const isDoFollow = (tier?: string | Tier | null): boolean => {
-  return tier === TIER.PREMIUM || tier === TIER.PREMIUM_PLUS
+export const isDoFollow = (
+  tier?: string | Tier | null,
+  badgeVerified?: boolean
+): boolean => {
+  return (
+    tier === TIER.PREMIUM || tier === TIER.PREMIUM_PLUS || Boolean(badgeVerified)
+  )
 }
 
-export const getLinkRel = (tier?: string | Tier | null): string => {
-  if (isDoFollow(tier)) {
+export const getLinkRel = (
+  tier?: string | Tier | null,
+  badgeVerified?: boolean
+): string => {
+  if (isDoFollow(tier, badgeVerified)) {
     return "noopener noreferrer"
   }
   return "noopener noreferrer nofollow"

@@ -27,6 +27,7 @@ export const getUserProducts = async (
       viewsCount: products.viewsCount,
       pricing: products.pricing,
       tier: products.tier,
+      badgeVerified: products.badgeVerified,
       status: products.status,
       logoUrl: products.logoUrl,
       websiteUrl: products.websiteUrl,

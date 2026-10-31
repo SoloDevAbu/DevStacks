@@ -19,6 +19,7 @@ export type DbTool = {
   viewsCount: number
   pricing: Pricing
   tier: Tier
+  badgeVerified?: boolean
   logoUrl?: string | null
   category?: string | null
   categoryId?: string | null
@@ -63,6 +64,7 @@ export type DbProduct = {
   viewsCount: number
   pricing: Pricing
   tier: Tier
+  badgeVerified?: boolean
   logoUrl?: string | null
   category?: string | null
   categoryId?: string | null

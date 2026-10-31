@@ -466,6 +466,7 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
               slug={tool.slug}
               toolId={tool.id}
               tier={tool.tier}
+              badgeVerified={tool.badgeVerified}
               initialUpvotes={tool.upvotesCount}
               websiteUrl={tool.websiteUrl}
             />

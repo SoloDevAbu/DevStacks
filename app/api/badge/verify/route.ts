@@ -1,9 +1,12 @@
 import { NextResponse } from "next/server"
+import { db } from "@/db"
+import { tools, products } from "@/db/schema"
+import { eq } from "drizzle-orm"
 
 export const POST = async (request: Request) => {
   try {
     const body = await request.json()
-    const { url, slug } = body as {
+    const { url, slug, type } = body as {
       url?: string
       slug?: string
       type?: "tool" | "product"
@@ -59,9 +62,32 @@ export const POST = async (request: Request) => {
         html.includes("featured on launchnests")
 
       if (hasLaunchNestsMention && hasBadgeSnippet) {
+        if (slug) {
+          if (type === "product") {
+            await db
+              .update(products)
+              .set({ badgeVerified: true, updatedAt: new Date() })
+              .where(eq(products.slug, slug))
+          } else if (type === "tool") {
+            await db
+              .update(tools)
+              .set({ badgeVerified: true, updatedAt: new Date() })
+              .where(eq(tools.slug, slug))
+          } else {
+            await db
+              .update(products)
+              .set({ badgeVerified: true, updatedAt: new Date() })
+              .where(eq(products.slug, slug))
+            await db
+              .update(tools)
+              .set({ badgeVerified: true, updatedAt: new Date() })
+              .where(eq(tools.slug, slug))
+          }
+        }
+
         return NextResponse.json({
           verified: true,
-          message: "Badge verified! Your listing has been verified.",
+          message: "Badge verified! Your listing has received verified do-follow backlink.",
         })
       }
 

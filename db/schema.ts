@@ -194,6 +194,7 @@ export const tools = pgTable(
     // Pricing & tier
     pricing: pricingEnum("pricing").notNull().default("Free"),
     tier: tierEnum("tier").notNull().default("free"),
+    badgeVerified: boolean("badge_verified").notNull().default(false),
 
     // Moderation
     status: statusEnum("status").notNull().default("pending"),
@@ -291,6 +292,7 @@ export const products = pgTable(
     // Pricing & tier
     pricing: pricingEnum("pricing").notNull().default("Free"),
     tier: tierEnum("tier").notNull().default("free"),
+    badgeVerified: boolean("badge_verified").notNull().default(false),
 
     // Moderation
     status: statusEnum("status").notNull().default("pending"),

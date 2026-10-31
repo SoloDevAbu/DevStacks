@@ -92,7 +92,7 @@ export const ProductCard = ({
     bookmarkMutation.variables?.slug === product.slug
 
   const outboundUrl = getOutboundUrl(product.websiteUrl ?? "", "launchnests")
-  const linkRel = getLinkRel(product.tier)
+  const linkRel = getLinkRel(product.tier, product.badgeVerified)
 
   const handleOutboundClick = (e: React.MouseEvent) => {
     e.stopPropagation()
