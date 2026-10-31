@@ -217,16 +217,14 @@ export const SubmitContent = ({
 
   const checkoutMutation = useCheckout()
 
-  // Sync selectedTier when credit or promo loads
+  // Sync selectedTier when credit or tier param changes
   useEffect(() => {
-    if (isPromoActive) {
-      setSelectedTier(TIER.PREMIUM)
-    } else if (validUrlTier) {
+    if (validUrlTier) {
       setSelectedTier(validUrlTier)
     } else if (hasPaidCredit && userCredit?.tier) {
       setSelectedTier(userCredit.tier)
     }
-  }, [isPromoActive, validUrlTier, hasPaidCredit, userCredit?.tier])
+  }, [validUrlTier, hasPaidCredit, userCredit?.tier])
 
   // Restore draft from localStorage on mount
   useEffect(() => {
@@ -251,7 +249,9 @@ export const SubmitContent = ({
     }
   }, [isUnlockedFromUrl])
 
-  const hasActiveAccess = isPromoActive || hasPaidCredit || isUnlockedFromUrl
+  const hasActiveAccess =
+    selectedTier !== TIER.FREE &&
+    (isPromoActive || hasPaidCredit || isUnlockedFromUrl)
 
   const handleUnlockClick = (targetTier: Tier) => {
     if (!currentUserId) {
@@ -669,19 +669,6 @@ export const SubmitContent = ({
         </div>
       )}
 
-      {/* Tier Selector Ribbon */}
-      <div className="w-full border-b border-dashed border-border bg-slate-50/50 px-4 py-4 sm:px-6 md:px-8">
-        <TierSelector
-          selectedTier={selectedTier}
-          onSelectTier={(tier) => setSelectedTier(tier)}
-          isPromoActive={isPromoActive}
-          promoRemaining={promoRemaining}
-          hasPaidCredit={hasPaidCredit}
-          paidCreditTier={userCredit?.tier}
-          onUnlockClick={handleUnlockClick}
-          isUnlocking={checkoutMutation.isPending}
-        />
-      </div>
 
       {/* Top Type Selector Tabs - Compact, Full-Width with Corner Outline Style */}
       <div className="w-full border-b border-dashed border-border bg-white px-4 py-3 sm:px-6 md:px-8">
@@ -1661,6 +1648,18 @@ export const SubmitContent = ({
             </div>
           </div>
 
+          {/* Launch Tier Selector - Positioned just above schedule button */}
+          <TierSelector
+            selectedTier={selectedTier}
+            onSelectTier={(tier) => setSelectedTier(tier)}
+            isPromoActive={isPromoActive}
+            promoRemaining={promoRemaining}
+            hasPaidCredit={hasPaidCredit}
+            paidCreditTier={userCredit?.tier}
+            onUnlockClick={handleUnlockClick}
+            isUnlocking={checkoutMutation.isPending}
+          />
+
           {/* Form Actions */}
           <div className="flex flex-col gap-3 bg-slate-50/50 px-6 py-6 md:px-8">
             {submissionError && (
@@ -1704,8 +1703,8 @@ export const SubmitContent = ({
         isSubmitting={isSubmitting}
         type={activeType}
         name={form.name}
-        tier={isPromoActive ? TIER.PREMIUM : hasActiveAccess ? selectedTier : TIER.FREE}
-        isPromoActive={isPromoActive}
+        tier={selectedTier}
+        isPromoActive={isPromoActive && selectedTier === TIER.PREMIUM}
         launchYear={form.launchYear}
         launchWeek={form.launchWeek}
       />

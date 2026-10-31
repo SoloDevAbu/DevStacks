@@ -1,6 +1,6 @@
 "use client"
 
-import { Bell, Sparkles, Check, BadgeCheck, Shield } from "lucide-react"
+import { Bell, Sparkles, Check, BadgeCheck, Shield, Crown } from "lucide-react"
 import {
   Dialog,
   DialogContent,
@@ -112,7 +112,17 @@ export const ScheduleConfirmDialog = ({
           </div>
 
           {/* Tier / Promo Summary Card */}
-          {isPromoActive ? (
+          {tier === TIER.PREMIUM_PLUS ? (
+            <div className="rounded-xl border border-amber-200 bg-amber-50/60 p-3.5 text-xs text-amber-950 flex flex-col gap-2">
+              <div className="flex items-center gap-1.5 font-bold text-amber-900">
+                <Crown className="size-4 text-amber-600" />
+                <span>{plan.name} Launch ({plan.price})</span>
+              </div>
+              <p className="text-[11px] leading-relaxed text-amber-800">
+                Includes top sticky placement across all directory pages, exclusive gold shimmer badge, dedicated ~1,800-word blog with custom CTA, and priority support.
+              </p>
+            </div>
+          ) : isPromoActive ? (
             <div className={schedulePromoBox}>
               <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-700">
                 <Sparkles className="size-3.5" />
@@ -136,7 +146,7 @@ export const ScheduleConfirmDialog = ({
                 </div>
                 <div className="flex items-center gap-1.5">
                   <Check className="size-3 shrink-0 text-emerald-600" />
-                  <span>Dedicated AI launch spotlight & review upon approval</span>
+                  <span>Dedicated ~1,000-word AI-written blog upon approval</span>
                 </div>
               </div>
             </div>
