@@ -6,6 +6,7 @@ import { updateProfileSchema } from "@/lib/validation/profile"
 import { db } from "@/db"
 import { users } from "@/db/schema"
 import { eq, and, ne, sql } from "drizzle-orm"
+import { revalidateCatalog } from "@/lib/cache/revalidate"
 
 export const GET = async (req: NextRequest) => {
   try {
@@ -88,6 +89,8 @@ export const PATCH = async (req: NextRequest) => {
       ...rest,
       ...(username ? { username } : {}),
     })
+
+    revalidateCatalog()
 
     const fullProfile = await getCurrentUserProfile(session.user.id)
 

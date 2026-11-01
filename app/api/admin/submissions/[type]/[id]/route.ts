@@ -2,6 +2,7 @@ import { type NextRequest, NextResponse } from "next/server"
 import { getAdminSession } from "@/lib/auth/admin"
 import { updateSubmissionStatusAndTriggerBlog } from "@/db/queries/admin/submissions"
 import { z } from "zod"
+import { revalidateCatalog } from "@/lib/cache/revalidate"
 
 const statusSchema = z.object({
   status: z.enum(["pending", "approved", "rejected"]),
@@ -43,6 +44,7 @@ export const PATCH = async (
       id,
       status: parsed.data.status,
     })
+    revalidateCatalog()
 
     return NextResponse.json(
       {
