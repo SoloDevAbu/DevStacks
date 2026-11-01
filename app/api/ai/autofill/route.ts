@@ -164,6 +164,7 @@ export const POST = async (req: NextRequest) => {
       useCases: geminiData.useCases,
       platforms: geminiData.platforms,
       tags: geminiData.tags,
+      category: geminiData.category,
       builtWithTools,
       githubUrl: parsedHtml.socialLinks.githubUrl,
       twitterUrl: parsedHtml.socialLinks.twitterUrl,

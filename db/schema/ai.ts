@@ -18,6 +18,7 @@ export interface ExtractedAiData {
   useCases?: string
   platforms: string[]
   tags: string[]
+  category?: string
   builtWithTools: Array<{
     name: string
     toolSlug?: string

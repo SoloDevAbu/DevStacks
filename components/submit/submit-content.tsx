@@ -35,6 +35,7 @@ import { TierSelector } from "./tier-selector"
 import { LockedSectionBanner } from "./locked-section-banner"
 import { PRICING, TIER, type Tier } from "@/constants/plans"
 import { PLATFORMS } from "@/constants/platforms"
+import { OFFICIAL_CATEGORIES } from "@/constants/categories"
 import { useSubmitTool } from "@/hooks/tools/use-submit-tool"
 import { useSubmitProduct } from "@/hooks/products/use-submit-product"
 import { useAiAutofill } from "@/hooks/submit/use-ai-autofill"
@@ -365,6 +366,7 @@ export const SubmitContent = ({
             : prev.platforms,
         tags:
           data.tags && data.tags.length > 0 ? data.tags.join(", ") : prev.tags,
+        category: data.category || prev.category,
         builtWithTools:
           activeType === "product" &&
           data.builtWithTools &&
@@ -983,13 +985,30 @@ export const SubmitContent = ({
                   </div>
 
                   <div className="grid gap-2">
-                    <Label htmlFor="category">Primary Category</Label>
-                    <Input
-                      id="category"
+                    <Label htmlFor="category">Primary Category <span className="text-rose-500">*</span></Label>
+                    <Select
                       value={form.category}
-                      onChange={set("category")}
-                      placeholder={`e.g. ${activeType === "product" ? "AI SaaS, Productivity, Fintech" : "Database, Auth, DevTools, AI"}`}
-                    />
+                      onValueChange={(val) =>
+                        setForm((prev) => ({
+                          ...prev,
+                          category: val || "",
+                        }))
+                      }
+                    >
+                      <SelectTrigger id="category" aria-invalid={Boolean(errors.category)}>
+                        <SelectValue placeholder="Select a canonical category" />
+                      </SelectTrigger>
+                      <SelectContent className="max-h-72">
+                        {OFFICIAL_CATEGORIES.map((cat) => (
+                          <SelectItem key={cat.slug} value={cat.name}>
+                            {cat.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    {errors.category && (
+                      <p className="text-xs text-red-500">{errors.category[0]}</p>
+                    )}
                   </div>
                 </div>
               </div>

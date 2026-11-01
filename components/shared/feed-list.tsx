@@ -88,7 +88,7 @@ export const FeedList = ({
     <div className={cn("flex flex-col", className)}>
       {items.map((item, index) => (
         <FeedCard
-          key={item.id}
+          key={`${item.id}-${index}`}
           item={item}
           index={index}
           showMedals={showMedals}
