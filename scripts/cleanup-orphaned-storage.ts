@@ -1,13 +1,70 @@
 import "dotenv/config"
-import { ListObjectsV2Command, DeleteObjectsCommand } from "@aws-sdk/client-s3"
 import { db, schema } from "@/db"
-import { getStorageClient, getStorageKeyFromUrl } from "@/lib/storage/s3"
+import {
+  getSupabaseAdmin,
+  getStorageKeyFromUrl,
+  deleteStorageObjects,
+} from "@/lib/storage"
 import { STORAGE_CONFIG } from "@/constants/storage"
 
 const GRACE_PERIOD_MS = 24 * 60 * 60 * 1000 // 24 hours
 
+interface BucketFileItem {
+  key: string
+  size: number
+  updatedAt: number
+}
+
+const listAllBucketFiles = async (
+  folder: string
+): Promise<BucketFileItem[]> => {
+  const supabase = getSupabaseAdmin()
+  const results: BucketFileItem[] = []
+
+  const walk = async (currentPath: string) => {
+    let offset = 0
+    const limit = 100
+
+    while (true) {
+      const { data, error } = await supabase.storage
+        .from(STORAGE_CONFIG.BUCKET_NAME)
+        .list(currentPath, { limit, offset })
+
+      if (error) {
+        console.error(`Error listing ${currentPath}:`, error.message)
+        break
+      }
+
+      if (!data || data.length === 0) break
+
+      for (const item of data) {
+        const itemPath = currentPath ? `${currentPath}/${item.name}` : item.name
+
+        // In Supabase storage, subdirectories have item.id === null
+        if (item.id === null) {
+          await walk(itemPath)
+        } else {
+          results.push({
+            key: itemPath,
+            size: item.metadata?.size || 0,
+            updatedAt: item.updated_at
+              ? new Date(item.updated_at).getTime()
+              : Date.now(),
+          })
+        }
+      }
+
+      if (data.length < limit) break
+      offset += limit
+    }
+  }
+
+  await walk(folder)
+  return results
+}
+
 const runCleanup = async () => {
-  console.log("Starting orphaned storage cleanup...")
+  console.log("Starting orphaned storage cleanup (Supabase Storage)...")
 
   // 1. Collect all referenced URLs from Database
   const activeKeys = new Set<string>()
@@ -62,96 +119,57 @@ const runCleanup = async () => {
 
   console.log(`Found ${activeKeys.size} active referenced keys in database.`)
 
-  // 2. Scan S3 Bucket objects
-  const client = getStorageClient()
-  let continuationToken: string | undefined = undefined
-  let scannedCount = 0
-  let orphanedKeys: { Key: string }[] = []
-  let totalBytesFreed = 0
+  // 2. Scan Supabase Storage objects in logos/ and screenshots/
+  const folders = ["logos", "screenshots"]
+  const allFiles: BucketFileItem[] = []
+
+  for (const folder of folders) {
+    const files = await listAllBucketFiles(folder)
+    allFiles.push(...files)
+  }
+
   const now = Date.now()
+  const orphanedKeys: string[] = []
+  let totalBytesFreed = 0
 
-  do {
-    const listCommand: ListObjectsV2Command = new ListObjectsV2Command({
-      Bucket: STORAGE_CONFIG.BUCKET_NAME,
-      ContinuationToken: continuationToken,
-    })
+  for (const file of allFiles) {
+    if (activeKeys.has(file.key)) continue
 
-    const response = await client.send(listCommand)
-    const contents = response.Contents || []
-    scannedCount += contents.length
-
-    for (const item of contents) {
-      if (!item.Key) continue
-
-      // Only check logos and screenshots folders
-      if (
-        !item.Key.startsWith("logos/") &&
-        !item.Key.startsWith("screenshots/")
-      ) {
-        continue
-      }
-
-      // Check if active in DB
-      if (activeKeys.has(item.Key)) {
-        continue
-      }
-
-      // Check age (grace period)
-      const lastModified = item.LastModified ? item.LastModified.getTime() : now
-      const ageMs = now - lastModified
-
-      if (ageMs > GRACE_PERIOD_MS) {
-        orphanedKeys.push({ Key: item.Key })
-        totalBytesFreed += item.Size || 0
-      }
+    const ageMs = now - file.updatedAt
+    if (ageMs > GRACE_PERIOD_MS) {
+      orphanedKeys.push(file.key)
+      totalBytesFreed += file.size
     }
-
-    continuationToken = response.NextContinuationToken
-  } while (continuationToken)
+  }
 
   console.log(
-    `Scanned ${scannedCount} bucket objects. Identified ${orphanedKeys.length} orphaned objects older than 24h.`
+    `Scanned ${allFiles.length} storage objects. Identified ${orphanedKeys.length} orphaned objects older than 24h.`
   )
 
-  // 3. Delete orphaned objects in chunks of 500
+  // 3. Delete orphaned objects in chunks of 100
   if (orphanedKeys.length > 0) {
-    const chunkSize = 500
+    const chunkSize = 100
     let successfullyDeletedCount = 0
-    let failedCount = 0
 
     for (let i = 0; i < orphanedKeys.length; i += chunkSize) {
       const chunk = orphanedKeys.slice(i, i + chunkSize)
-      const deleteCommand = new DeleteObjectsCommand({
-        Bucket: STORAGE_CONFIG.BUCKET_NAME,
-        Delete: {
-          Objects: chunk,
-          Quiet: true,
-        },
-      })
-      const response = await client.send(deleteCommand)
-      const batchErrors = response.Errors || []
-      const batchFailed = batchErrors.length
-      const batchSuccess = chunk.length - batchFailed
-
-      successfullyDeletedCount += batchSuccess
-      failedCount += batchFailed
-
-      if (batchFailed > 0) {
-        for (const err of batchErrors) {
-          console.error(
-            `Failed to delete ${err.Key}: [${err.Code}] ${err.Message}`
-          )
-        }
+      try {
+        await deleteStorageObjects(chunk)
+        successfullyDeletedCount += chunk.length
+        console.log(
+          `Batch ${Math.floor(i / chunkSize) + 1}: ${chunk.length} deleted.`
+        )
+      } catch (batchErr) {
+        console.error(
+          `Batch ${Math.floor(i / chunkSize) + 1} failed:`,
+          batchErr
+        )
       }
-
-      console.log(
-        `Batch ${Math.floor(i / chunkSize) + 1}: ${batchSuccess} deleted, ${batchFailed} failed.`
-      )
     }
 
     const mbFreed = (totalBytesFreed / (1024 * 1024)).toFixed(2)
     console.log(
-      `Cleanup complete: Successfully deleted ${successfullyDeletedCount} orphaned files (${failedCount} failed). Freed ${mbFreed} MB.`
+      `Cleanup complete: Successfully deleted ${successfullyDeletedCount} orphaned files. Freed ${mbFreed} MB.`
     )
   } else {
     console.log("No orphaned files to delete. Storage is completely clean.")
