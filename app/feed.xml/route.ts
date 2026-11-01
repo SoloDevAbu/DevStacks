@@ -16,13 +16,12 @@ const escapeXml = (str: string): string =>
 
 export const GET = async () => {
   const { year, week } = getCurrentWeek()
-  let items: FeedItem[] = []
-
-  try {
-    items = (await getWeeklyLaunches({ year, week, limit: 50 })) as FeedItem[]
-  } catch {
-    items = []
-  }
+  // Not caught on purpose: a failed refresh keeps serving the last good feed.
+  const items = (await getWeeklyLaunches({
+    year,
+    week,
+    limit: 50,
+  })) as FeedItem[]
 
   const nowRssDate = new Date().toUTCString()
   const siteUrl = SITE_CONFIG.url

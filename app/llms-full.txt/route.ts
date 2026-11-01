@@ -7,44 +7,30 @@ import { getTrending } from "@/lib/rankings/trending"
 import {
   getToolCategories,
   getProductCategories,
-  type DbCategoryItem,
 } from "@/db/queries/categories/list"
 import { getAllComparisons } from "@/constants/comparisons"
 import { ROUTES } from "@/constants/routes"
 
-export const revalidate = 86400
+export const revalidate = 21600
 
+// Failures are intentionally not caught: a thrown error keeps the last good version cached
+// instead of publishing an empty catalog to AI crawlers.
 export const GET = async () => {
-  let trendingItems: Awaited<ReturnType<typeof getTrending>> = []
-  let buildingBlocks: Awaited<ReturnType<typeof getTools>> = []
-  let toolCats: DbCategoryItem[] = []
-  let productCats: DbCategoryItem[] = []
-
-  try {
-    const [trending, blocks, tCats, pCats] = await Promise.all([
+  const [trendingItems, buildingBlocks, toolCats, productCats] =
+    await Promise.all([
       getTrending(15),
       getTools({ sortBy: "builds", limit: 10 }),
-      getToolCategories().catch(() => []),
-      getProductCategories().catch(() => []),
+      getToolCategories(),
+      getProductCategories(),
     ])
-    trendingItems = trending ?? []
-    buildingBlocks = blocks ?? []
-    toolCats = tCats ?? []
-    productCats = pCats ?? []
-  } catch {
-    trendingItems = []
-    buildingBlocks = []
-    toolCats = []
-    productCats = []
-  }
 
   const content = `# ${SITE_CONFIG.name} — Comprehensive Directory & Ecosystem Specification
 
 > Platform: ${SITE_CONFIG.name} (${SITE_CONFIG.domain})
 > Canonical URL: ${SITE_CONFIG.url}
 > Mission: High-visibility discovery directory for developer tools, APIs, infrastructure, and developer-built products.
-> Last Updated: 2026-10-01
-> Catalog Freshness: Updated daily
+> Last Updated: ${new Date().toISOString().split("T")[0]}
+> Catalog Freshness: Refreshed every 6 hours and whenever a listing changes
 
 ---
 
