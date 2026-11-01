@@ -36,12 +36,8 @@ export const updateProduct = async (
   } = data
 
   let categoryId = existing.categoryId
-  if (category !== undefined) {
-    if (category && category.trim()) {
-      categoryId = await getOrCreateCategory(category)
-    } else {
-      categoryId = null
-    }
+  if (category !== undefined && category && category.trim()) {
+    categoryId = await getOrCreateCategory(category)
   }
 
   let logoUrl = rest.logoUrl ?? existing.logoUrl

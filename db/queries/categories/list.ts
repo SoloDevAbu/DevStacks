@@ -2,6 +2,7 @@ import { db } from "@/db"
 import { tools, products, categories } from "@/db/schema"
 import { and, eq, ilike, or, sql } from "drizzle-orm"
 import { slugify } from "@/utils/slug"
+import { getCanonicalCategory } from "@/constants/categories"
 import { unstable_cache } from "next/cache"
 
 export type DbCategoryItem = {
@@ -101,13 +102,19 @@ export const getAllCategories = async (
 export const getDbCategories = getAllCategories
 
 export const getOrCreateCategory = async (rawName: string): Promise<string> => {
-  const name = rawName.trim()
-  if (!name) {
+  const trimmed = rawName.trim()
+  if (!trimmed) {
     throw new Error("Category name cannot be empty")
   }
 
-  const baseSlug = slugify(name, "category")
-  const slug = baseSlug || `cat-${Math.random().toString(36).substring(2, 7)}`
+  const canonical = getCanonicalCategory(trimmed)
+  if (!canonical) {
+    throw new Error(
+      `Invalid category: "${trimmed}". Must be one of the official canonical categories.`
+    )
+  }
+
+  const { name, slug } = canonical
 
   const existing = await db
     .select({ id: categories.id })
@@ -143,14 +150,7 @@ export const getOrCreateCategory = async (rawName: string): Promise<string> => {
     return fallback[0].id
   }
 
-  const uniqueSlug = `${slug}-${Math.random().toString(36).substring(2, 6)}`
-  const [created] = await db
-    .insert(categories)
-    .values({ name, slug: uniqueSlug })
-    .onConflictDoNothing()
-    .returning({ id: categories.id })
-
-  return created?.id ?? fallback[0]!.id
+  throw new Error(`Failed to resolve canonical category "${name}"`)
 }
 
 export const getCategoryBySlug = async (slug: string) => {

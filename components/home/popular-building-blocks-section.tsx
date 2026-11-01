@@ -24,7 +24,7 @@ export const PopularBuildingBlocksSection = ({
           </div>
         ) : (
           items.map((item, index) => (
-            <FeedCard key={item.id} item={item} index={index} />
+            <FeedCard key={`${item.id}-${index}`} item={item} index={index} />
           ))
         )}
       </div>

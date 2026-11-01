@@ -1,5 +1,6 @@
 import { z } from "zod"
 import { STORAGE_CONFIG } from "@/constants/storage"
+import { canonicalCategorySchema } from "@/lib/validation/category"
 
 const urlSchema = z.string().url("Must be a valid URL").or(z.literal(""))
 
@@ -67,7 +68,7 @@ export const submitProductSchema = z.object({
   launchWeek: z.coerce.number().int().min(1).max(53).optional(),
 
   // Internal
-  category: z.string().max(100).optional().or(z.literal("")),
+  category: canonicalCategorySchema,
   tags: z
     .string()
     .transform((val) =>

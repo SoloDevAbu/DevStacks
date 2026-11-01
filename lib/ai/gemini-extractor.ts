@@ -1,5 +1,6 @@
 import { GoogleGenAI } from "@google/genai"
 import { PLATFORMS, type Platform } from "@/constants/platforms"
+import { OFFICIAL_CATEGORY_NAMES } from "@/constants/categories"
 
 export interface GeminiExtractedFields {
   name: string
@@ -12,6 +13,7 @@ export interface GeminiExtractedFields {
   platforms: string[]
   tags: string[]
   techStack: string[]
+  category?: string
 }
 
 const ALLOWED_PLATFORMS = PLATFORMS.map((p) => p.id)
@@ -55,6 +57,7 @@ Instructions:
 8. "platforms": Select strictly from this list of allowed platform identifiers: ${JSON.stringify(ALLOWED_PLATFORMS)}. Default to ["Web"] if it's a web app or SaaS.
 9. "tags": 4 to 8 relevant lowercase keywords (e.g. ["analytics", "developer-tools", "react", "postgres"]).
 10. "techStack": Detect 3 to 10 technologies, frameworks, libraries, APIs, or databases mentioned or used (e.g. ["Next.js", "Tailwind CSS", "PostgreSQL", "Supabase", "TypeScript", "Vercel", "Stripe", "Docker"]).
+11. "category": Select the single best fitting category strictly from this list: ${JSON.stringify(OFFICIAL_CATEGORY_NAMES)}.
 
 Return strictly a valid JSON object matching this schema:
 {
@@ -67,7 +70,8 @@ Return strictly a valid JSON object matching this schema:
   "useCases": "string",
   "platforms": ["string"],
   "tags": ["string"],
-  "techStack": ["string"]
+  "techStack": ["string"],
+  "category": "string"
 }`
 
   const modelName = process.env.GEMINI_MODEL?.trim() || "gemini-3.5-flash"
@@ -119,6 +123,11 @@ Return strictly a valid JSON object matching this schema:
       techStack: Array.isArray(parsed.techStack)
         ? parsed.techStack.map((t) => String(t))
         : [],
+      category:
+        parsed.category &&
+        OFFICIAL_CATEGORY_NAMES.includes(parsed.category as any)
+          ? parsed.category
+          : undefined,
     }
   } catch {
     throw new Error("Failed to parse AI response into structured JSON.")

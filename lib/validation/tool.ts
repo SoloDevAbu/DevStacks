@@ -1,5 +1,6 @@
 import { z } from "zod"
 import { platformEnumSchema } from "@/lib/validation/product"
+import { canonicalCategorySchema } from "@/lib/validation/category"
 import { STORAGE_CONFIG } from "@/constants/storage"
 
 const urlSchema = z.string().url("Must be a valid URL").or(z.literal(""))
@@ -21,7 +22,7 @@ export const submitToolSchema = z.object({
   appStoreUrl: urlSchema.optional(),
   playStoreUrl: urlSchema.optional(),
   chromeExtensionUrl: urlSchema.optional(),
-  category: z.string().max(100).optional().or(z.literal("")),
+  category: canonicalCategorySchema,
   tags: z
     .string()
     .transform((val) =>

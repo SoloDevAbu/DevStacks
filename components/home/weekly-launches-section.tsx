@@ -73,7 +73,7 @@ export const WeeklyLaunchesSection = ({
         ) : (
           paginatedItems.map((item, index) => (
             <FeedCard
-              key={item.id}
+              key={`${item.id}-${index}`}
               item={item}
               index={(currentPage - 1) * pageSize + index}
               showMedals={true}

@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import { notFound } from "next/navigation"
+import { notFound, permanentRedirect } from "next/navigation"
 import Link from "next/link"
 import {
   ArrowLeft,
@@ -28,6 +28,7 @@ import {
 import { SITE_CONFIG } from "@/constants/site"
 import { ROUTES } from "@/constants/routes"
 import { Badge } from "@/components/ui/badge"
+import { LEGACY_CATEGORY_REDIRECTS } from "@/constants/categories"
 
 export const revalidate = 3600
 
@@ -42,6 +43,9 @@ export const generateMetadata = async (
   const category = await getCategoryBySlug(slug)
 
   if (!category) {
+    if (LEGACY_CATEGORY_REDIRECTS[slug]) {
+      permanentRedirect(ROUTES.TOOL_CATEGORY(LEGACY_CATEGORY_REDIRECTS[slug]))
+    }
     return {
       title: "Category Not Found",
       robots: {
@@ -105,6 +109,9 @@ const CategoryToolsPage = async (props: CategoryPageProps) => {
   const category = await getCategoryBySlug(slug)
 
   if (!category) {
+    if (LEGACY_CATEGORY_REDIRECTS[slug]) {
+      permanentRedirect(ROUTES.TOOL_CATEGORY(LEGACY_CATEGORY_REDIRECTS[slug]))
+    }
     notFound()
   }
 

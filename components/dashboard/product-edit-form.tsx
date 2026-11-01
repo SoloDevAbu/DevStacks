@@ -17,7 +17,16 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { ROUTES } from "@/constants/routes"
+import { PRICING, type Pricing } from "@/constants/plans"
+import { OFFICIAL_CATEGORIES, getCanonicalCategory } from "@/constants/categories"
 import { UpgradeTierDialog } from "@/components/dashboard/upgrade-tier-dialog"
 import { useUpdateProduct } from "@/hooks/products/use-update-product"
 import {
@@ -52,7 +61,12 @@ export const ProductEditForm = ({ product }: ProductEditFormProps) => {
   const [isUpgradeOpen, setIsUpgradeOpen] = useState(false)
   const isFree = product.tier === "free"
   const [images, setImages] = useState<string[]>(product.images || [])
-  const [category, setCategory] = useState(product.category || "")
+  const [category, setCategory] = useState(
+    getCanonicalCategory(product.category || product.categoryName || "")?.name ||
+      product.category ||
+      product.categoryName ||
+      ""
+  )
   const [tags, setTags] = useState(product.tags?.join(", ") || "")
   const [pricing, setPricing] = useState(product.pricing || "Free")
 
@@ -301,13 +315,18 @@ export const ProductEditForm = ({ product }: ProductEditFormProps) => {
               <Label htmlFor="category" className="text-xs font-semibold">
                 Category
               </Label>
-              <Input
-                id="category"
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-                placeholder="e.g. AI, Developer Tools, Productivity"
-                className="h-9 text-xs"
-              />
+              <Select value={category} onValueChange={(val) => setCategory(val || "")}>
+                <SelectTrigger id="category" className="h-9 text-xs">
+                  <SelectValue placeholder="Select a canonical category" />
+                </SelectTrigger>
+                <SelectContent className="max-h-72">
+                  {OFFICIAL_CATEGORIES.map((cat) => (
+                    <SelectItem key={cat.slug} value={cat.name} className="text-xs">
+                      {cat.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="flex flex-col gap-1.5">
@@ -327,17 +346,21 @@ export const ProductEditForm = ({ product }: ProductEditFormProps) => {
               <Label htmlFor="pricing" className="text-xs font-semibold">
                 Pricing Model
               </Label>
-              <select
-                id="pricing"
+              <Select
                 value={pricing}
-                onChange={(e) => setPricing(e.target.value as any)}
-                className="h-9 rounded-md border border-slate-200 bg-white px-3 text-xs text-slate-800"
+                onValueChange={(val) => setPricing(val as Pricing)}
               >
-                <option value="Free">Free</option>
-                <option value="Freemium">Freemium</option>
-                <option value="Paid">Paid</option>
-                <option value="Open Source">Open Source</option>
-              </select>
+                <SelectTrigger id="pricing" className="h-9 text-xs">
+                  <SelectValue placeholder="Select pricing model" />
+                </SelectTrigger>
+                <SelectContent>
+                  {Object.values(PRICING).map((model) => (
+                    <SelectItem key={model} value={model} className="text-xs">
+                      {model}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
         </div>
