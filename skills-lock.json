@@ -13,6 +13,12 @@
       "skillPath": "skills/content-strategy/SKILL.md",
       "computedHash": "4271d06ab1b6669bb39774128e6c0f71fa7f1d5ed4b15efa9353e3b8d8624bce"
     },
+    "find-skills": {
+      "source": "vercel-labs/skills",
+      "sourceType": "github",
+      "skillPath": "skills/find-skills/SKILL.md",
+      "computedHash": "b146008599c31057cef1c145774cea5d5afb30e8f43fa802e47a4b461419aaaf"
+    },
     "neon": {
       "source": "neondatabase/agent-skills",
       "sourceType": "github",
@@ -24,6 +30,12 @@
       "sourceType": "github",
       "skillPath": "skills/neon-object-storage/SKILL.md",
       "computedHash": "b641a3e19ad7c7e9756466bc93d042bd4f9893348c10c65d3228c453603b0262"
+    },
+    "nextjs-on-cloudflare": {
+      "source": "cloudflare/skills",
+      "sourceType": "github",
+      "skillPath": "skills/nextjs-on-cloudflare/SKILL.md",
+      "computedHash": "ded17196a46f36b3c2ac148da7dc3bad5be1edc80f8e9a00479bc9be01f1eba2"
     },
     "schema-markup": {
       "source": "kostja94/marketing-skills",

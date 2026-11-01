@@ -7,7 +7,20 @@ const connectionString = process.env.DATABASE_URL!
 
 // Supabase Connection Pooling requires prepare: false when using transaction pooler (port 6543)
 // and works seamlessly across both direct and pooled connections.
-const client = postgres(connectionString, { prepare: false })
+const globalForDb = globalThis as unknown as {
+  conn: postgres.Sql | undefined
+}
+
+const client =
+  globalForDb.conn ??
+  postgres(connectionString, {
+    prepare: false,
+    max: 1,
+  })
+
+if (process.env.NODE_ENV !== "production") {
+  globalForDb.conn = client
+}
 
 export const db = drizzle({ client })
 
