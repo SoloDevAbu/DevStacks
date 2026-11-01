@@ -33,19 +33,30 @@ export const uploadFileToStorage = async (
 ): Promise<string> => {
   const { uploadUrl, publicUrl } = await requestPresignedUrl(kind, file)
 
-  await axios.put(uploadUrl, file, {
-    headers: {
-      "Content-Type": file.type,
-    },
-    onUploadProgress: (progressEvent) => {
-      if (options?.onProgress && progressEvent.total) {
-        const percent = Math.round(
-          (progressEvent.loaded * 100) / progressEvent.total
-        )
-        options.onProgress(percent)
-      }
-    },
-  })
+  try {
+    await axios.put(uploadUrl, file, {
+      headers: {
+        "Content-Type": file.type,
+      },
+      onUploadProgress: (progressEvent) => {
+        if (options?.onProgress && progressEvent.total) {
+          const percent = Math.round(
+            (progressEvent.loaded * 100) / progressEvent.total
+          )
+          options.onProgress(percent)
+        }
+      },
+    })
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      const errorMsg =
+        error.response?.data?.message ||
+        error.response?.data?.error ||
+        error.message
+      throw new Error(`Upload to storage failed: ${errorMsg}`)
+    }
+    throw error
+  }
 
   return publicUrl
 }

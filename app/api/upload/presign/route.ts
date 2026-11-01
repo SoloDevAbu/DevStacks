@@ -3,7 +3,7 @@ import { auth } from "@/lib/auth"
 import { z } from "zod"
 import { randomUUID } from "crypto"
 import { STORAGE_CONFIG } from "@/constants/storage"
-import { createPresignedUploadUrl } from "@/lib/storage/s3"
+import { createPresignedUploadUrl } from "@/lib/storage"
 
 const presignSchema = z.object({
   kind: z.enum(["logo", "screenshot"]),

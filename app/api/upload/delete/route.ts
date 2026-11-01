@@ -1,7 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { z } from "zod"
-import { deleteStorageObject, getStorageKeyFromUrl } from "@/lib/storage/s3"
+import { deleteStorageObject, getStorageKeyFromUrl } from "@/lib/storage"
 
 const deleteSchema = z
   .object({
