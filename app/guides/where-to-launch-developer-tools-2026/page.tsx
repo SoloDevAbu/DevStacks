@@ -338,9 +338,9 @@ const WhereToLaunchDevtoolsGuidePage = () => {
                 The 4 Pillars of a High-Impact Developer Tool Launch
               </h2>
               <p className="mt-1 max-w-3xl text-xs leading-relaxed text-slate-600 sm:text-sm">
-                Successful devtool founders execute launches across four distinct
-                timeframes: permanent canonical indexing, community launch day,
-                viral developer feedback, and AI agent integration.
+                Successful devtool founders execute launches across four
+                distinct timeframes: permanent canonical indexing, community
+                launch day, viral developer feedback, and AI agent integration.
               </p>
 
               <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2">
@@ -398,11 +398,11 @@ const WhereToLaunchDevtoolsGuidePage = () => {
                     Authentic Technical Show HN
                   </h3>
                   <p className="mt-2 text-xs leading-relaxed text-slate-600">
-                    A front-page Show HN post can deliver 10,000–50,000 developer
-                    visits in 48 hours. The secret: no marketing language. Focus
-                    on the architectural problem you solved, post your GitHub
-                    repository, and personally answer technical questions in the
-                    comments.
+                    A front-page Show HN post can deliver 10,000–50,000
+                    developer visits in 48 hours. The secret: no marketing
+                    language. Focus on the architectural problem you solved,
+                    post your GitHub repository, and personally answer technical
+                    questions in the comments.
                   </p>
                 </div>
 
@@ -468,8 +468,8 @@ const WhereToLaunchDevtoolsGuidePage = () => {
                       <strong className="text-slate-800">
                         3. Interactive Playground or Sandbox:
                       </strong>{" "}
-                      Provide a web-based sandbox (StackBlitz, CodeSandbox, or live
-                      API console) so developers can test your API without
+                      Provide a web-based sandbox (StackBlitz, CodeSandbox, or
+                      live API console) so developers can test your API without
                       registering an account.
                     </span>
                   </div>
@@ -480,9 +480,9 @@ const WhereToLaunchDevtoolsGuidePage = () => {
                       <strong className="text-slate-800">
                         4. Embeddable GitHub README Badges:
                       </strong>{" "}
-                      Include verified LaunchNests and build badges on your GitHub
-                      repository to pass backlink equity and signal active
-                      production adoption.
+                      Include verified LaunchNests and build badges on your
+                      GitHub repository to pass backlink equity and signal
+                      active production adoption.
                     </span>
                   </div>
                 </div>
@@ -509,15 +509,6 @@ const WhereToLaunchDevtoolsGuidePage = () => {
                 >
                   Submit Your Developer Tool
                   <ArrowRight className="ml-1.5 size-4" />
-                </Link>
-                <Link
-                  href={ROUTES.DEVELOPER_TOOLS_DIRECTORY}
-                  className={cn(
-                    buttonVariants({ variant: "outline" }),
-                    "rounded-none border-slate-700 bg-transparent text-white hover:bg-slate-800"
-                  )}
-                >
-                  Explore Developer Tools Directory
                 </Link>
               </div>
             </section>
