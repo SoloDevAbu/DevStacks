@@ -35,6 +35,8 @@ import { ROUTES } from "@/constants/routes"
 
 export const revalidate = 3600
 
+export const generateStaticParams = async () => []
+
 type BuiltWithPageProps = {
   params: Promise<{ slug: string }>
 }

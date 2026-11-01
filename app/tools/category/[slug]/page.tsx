@@ -32,6 +32,8 @@ import { LEGACY_CATEGORY_REDIRECTS } from "@/constants/categories"
 
 export const revalidate = 3600
 
+export const generateStaticParams = async () => []
+
 type CategoryPageProps = {
   params: Promise<{ slug: string }>
 }

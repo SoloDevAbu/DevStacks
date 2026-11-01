@@ -90,6 +90,8 @@ interface ToolPageProps {
   params: Promise<{ slug: string }>
 }
 
+export const revalidate = 3600
+
 export const generateStaticParams = async () => {
   try {
     const toolsList = await getTools({ limit: 50 })
