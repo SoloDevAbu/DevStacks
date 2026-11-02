@@ -5,6 +5,7 @@ import { POPULAR_BUILDING_BLOCKS_WEIGHTS } from "@/constants/rankings"
 import { unstable_cache } from "next/cache"
 import { CACHE_TAGS, CACHE_REVALIDATE_SECONDS } from "@/constants/cache"
 import type { RankedTool, RankingOptions } from "./types"
+import { launchedByNow } from "@/lib/catalog/visibility"
 
 export const calculatePopularScore = (
   buildsCount: number,
@@ -73,7 +74,13 @@ export const getPopularBuildingBlocks = async ({
     })
     .from(tools)
     .leftJoin(categories, eq(tools.categoryId, categories.id))
-    .where(and(eq(tools.status, "approved"), eq(tools.isDeleted, false)))
+    .where(
+      and(
+        eq(tools.status, "approved"),
+        launchedByNow(tools),
+        eq(tools.isDeleted, false)
+      )
+    )
 
   const scored: RankedTool[] = rows.map((t) => ({
     ...t,

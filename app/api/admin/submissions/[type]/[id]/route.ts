@@ -1,8 +1,11 @@
-import { type NextRequest, NextResponse } from "next/server"
+import { type NextRequest, NextResponse, after } from "next/server"
 import { getAdminSession } from "@/lib/auth/admin"
 import { updateSubmissionStatusAndTriggerBlog } from "@/db/queries/admin/submissions"
 import { z } from "zod"
 import { revalidateCatalog } from "@/lib/cache/revalidate"
+import { isPubliclyVisible } from "@/lib/catalog/visibility"
+import { submitToIndexNow } from "@/lib/seo/indexnow"
+import { getListingPath } from "@/utils/urls"
 
 const statusSchema = z.object({
   status: z.enum(["pending", "approved", "rejected"]),
@@ -48,6 +51,11 @@ export const PATCH = async (
       [type === "tool" ? "toolSlug" : "productSlug"]: result.item.slug,
       blogSlug: result.blogResult?.blog?.slug,
     })
+
+    if (isPubliclyVisible(result.item)) {
+      const listingPath = getListingPath({ itemKind: type, slug: result.item.slug })
+      after(() => submitToIndexNow([listingPath]))
+    }
 
     return NextResponse.json(
       {

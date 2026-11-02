@@ -3,6 +3,7 @@ import { db } from "@/db"
 import { users, makerFaqs, tools, products, categories } from "@/db/schema"
 import { eq, desc, asc, and, isNotNull, sql, inArray, or } from "drizzle-orm"
 import type { MakerProfile, DbTool, DbProduct } from "@/types/entities"
+import { launchedByNow } from "@/lib/catalog/visibility"
 
 export const generateUniqueUsername = async (
   name?: string | null,
@@ -102,6 +103,7 @@ export const getMakerProfile = cache(
           and(
             eq(tools.submitterId, user.id),
             eq(tools.status, "approved"),
+            launchedByNow(tools),
             eq(tools.isDeleted, false)
           )
         )
@@ -143,6 +145,7 @@ export const getMakerProfile = cache(
           and(
             eq(products.submitterId, user.id),
             eq(products.status, "approved"),
+            launchedByNow(products),
             eq(products.isDeleted, false)
           )
         )
@@ -315,6 +318,7 @@ export const getMakersDirectory = async (
       .where(
         and(
           eq(tools.status, "approved"),
+          launchedByNow(tools),
           eq(tools.isDeleted, false),
           inArray(tools.submitterId, makerIds)
         )
@@ -329,6 +333,7 @@ export const getMakersDirectory = async (
       .where(
         and(
           eq(products.status, "approved"),
+          launchedByNow(products),
           eq(products.isDeleted, false),
           inArray(products.submitterId, makerIds)
         )

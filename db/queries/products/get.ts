@@ -2,6 +2,7 @@ import { db } from "@/db"
 import { products, users, categories, productTools, tools } from "@/db/schema"
 import { and, desc, eq, ne, sql } from "drizzle-orm"
 import type { DbProduct, ProductBuiltWith } from "@/types/entities"
+import { launchedByNow } from "@/lib/catalog/visibility"
 
 export const getProductBySlug = async (slug: string) => {
   const [product] = await db
@@ -36,6 +37,8 @@ export const getProductBySlug = async (slug: string) => {
       tier: products.tier,
       badgeVerified: products.badgeVerified,
       status: products.status,
+      launchYear: products.launchYear,
+      launchWeek: products.launchWeek,
       likesCount: products.likesCount,
       commentsCount: products.commentsCount,
       viewsCount: products.viewsCount,
@@ -133,6 +136,7 @@ export const getRelatedProducts = async (
       .where(
         and(
           eq(products.status, "approved"),
+          launchedByNow(products),
           eq(products.isDeleted, false),
           eq(products.categoryId, categoryId),
           ne(products.id, currentProductId)

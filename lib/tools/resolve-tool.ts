@@ -3,7 +3,9 @@ import { db } from "@/db"
 import { products, productTools, tools, categories } from "@/db/schema"
 import { and, eq, ilike, or } from "drizzle-orm"
 import { getToolBySlug } from "@/db/queries/tools/get"
+import { isPubliclyVisible } from "@/lib/catalog/visibility"
 import type { DbTool, DbProduct } from "@/types/entities"
+import { launchedByNow } from "@/lib/catalog/visibility"
 
 export interface FullTool extends DbTool {
   description: string
@@ -34,7 +36,7 @@ export const resolveTool = cache(
   async (slug: string): Promise<FullTool | null> => {
     try {
       const dbTool = await getToolBySlug(slug)
-      if (dbTool && !dbTool.isDeleted) {
+      if (dbTool && isPubliclyVisible(dbTool)) {
         return {
           ...dbTool,
           pricing: dbTool.pricing as FullTool["pricing"],
@@ -59,6 +61,7 @@ export const getProductsBuiltWithTool = async (
   try {
     const conditions = [
       eq(products.status, "approved"),
+      launchedByNow(products),
       eq(products.isDeleted, false),
     ]
 

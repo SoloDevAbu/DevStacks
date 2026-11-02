@@ -3,6 +3,7 @@ import { tools, products, categories, productTools } from "@/db/schema"
 import { and, eq, inArray, type SQL } from "drizzle-orm"
 import type { RankedItem, RankedProduct } from "@/lib/rankings/types"
 import type { ProductBuiltWith } from "@/types/entities"
+import { launchedByNow } from "@/lib/catalog/visibility"
 
 const rankedToolColumns = {
   id: tools.id,
@@ -65,7 +66,12 @@ export const selectRankedLaunches = async ({
       .from(tools)
       .leftJoin(categories, eq(tools.categoryId, categories.id))
       .where(
-        and(eq(tools.status, "approved"), eq(tools.isDeleted, false), toolFilter)
+        and(
+          eq(tools.status, "approved"),
+          launchedByNow(tools),
+          eq(tools.isDeleted, false),
+          toolFilter
+        )
       ),
     db
       .select(rankedProductColumns)
@@ -74,6 +80,7 @@ export const selectRankedLaunches = async ({
       .where(
         and(
           eq(products.status, "approved"),
+          launchedByNow(products),
           eq(products.isDeleted, false),
           productFilter
         )

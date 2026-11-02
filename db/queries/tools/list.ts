@@ -5,6 +5,7 @@ import { unstable_cache } from "next/cache"
 import { CACHE_TAGS, CACHE_REVALIDATE_SECONDS } from "@/constants/cache"
 import type { DbTool } from "@/types/entities"
 import type { Pricing, Tier } from "@/constants/plans"
+import { launchedByNow } from "@/lib/catalog/visibility"
 
 export type ToolListFilters = {
   q?: string
@@ -35,7 +36,11 @@ export const getTools = async ({
   const safeLimit = Math.min(5000, Math.max(1, limit))
   const offset = (safePage - 1) * safeLimit
 
-  const conditions = [eq(tools.status, "approved"), eq(tools.isDeleted, false)]
+  const conditions = [
+    eq(tools.status, "approved"),
+    launchedByNow(tools),
+    eq(tools.isDeleted, false),
+  ]
 
   if (q && q.trim()) {
     const pattern = `%${q.trim()}%`
@@ -142,7 +147,13 @@ export const getToolsStats = async () => {
       totalBuilds: sql<number>`coalesce(sum(${tools.buildsCount}), 0)::int`,
     })
     .from(tools)
-    .where(and(eq(tools.status, "approved"), eq(tools.isDeleted, false)))
+    .where(
+      and(
+        eq(tools.status, "approved"),
+        launchedByNow(tools),
+        eq(tools.isDeleted, false)
+      )
+    )
 
   return {
     totalCount: Number(row?.totalCount ?? 0),

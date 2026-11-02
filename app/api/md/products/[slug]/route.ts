@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
-import { getProductBySlug, getRelatedProducts } from "@/db/queries/products/get"
+import { getRelatedProducts } from "@/db/queries/products/get"
+import { resolveProduct } from "@/lib/products/resolve-product"
 import { getProductFaqs } from "@/db/queries/faqs/get-faqs"
 import {
   generateProductMarkdown,
@@ -14,7 +15,7 @@ export const GET = async (
   props: { params: Promise<{ slug: string }> }
 ) => {
   const { slug } = await props.params
-  const product = await getProductBySlug(slug)
+  const product = await resolveProduct(slug)
 
   if (!product) {
     return new NextResponse(

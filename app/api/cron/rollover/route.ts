@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse, after } from "next/server"
-import { revalidateTag } from "next/cache"
+import { revalidatePath, revalidateTag } from "next/cache"
 import { CACHE_TAGS } from "@/constants/cache"
 import { ROUTES } from "@/constants/routes"
 import { HOMEPAGE_LIMITS } from "@/constants/rankings"
@@ -7,6 +7,7 @@ import { getWeeklyLaunches } from "@/lib/launches/weekly-launches"
 import { getCurrentWeek } from "@/utils/iso-weeks"
 import { warmPaths } from "@/lib/cache/warm"
 import { submitToIndexNow } from "@/lib/seo/indexnow"
+import { getListingPath } from "@/utils/urls"
 
 export const dynamic = "force-dynamic"
 
@@ -25,14 +26,15 @@ const isAuthorized = (req: NextRequest) => {
 }
 
 // Scheduled launches go live when the ISO week turns over (Monday 00:00 UTC), which no mutation
-// signals. The cron expires the weekly caches, re-renders the pages that list the new week and
-// pings IndexNow so crawlers and AI search pick up the new launches without waiting for a recrawl.
+// signals. Every listing query hides future-week launches, so the cron expires all listing caches
+// and the new launches' own pages (cached as 404 until now), re-renders the pages that list the
+// new week and pings IndexNow so crawlers and AI search pick them up without waiting for a recrawl.
 export const POST = async (req: NextRequest) => {
   if (!isAuthorized(req)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
 
-  revalidateTag(CACHE_TAGS.WEEKLY_LAUNCHES, { expire: 0 })
+  Object.values(CACHE_TAGS).forEach((tag) => revalidateTag(tag, { expire: 0 }))
 
   const { year, week } = getCurrentWeek()
   const launches = await getWeeklyLaunches({
@@ -40,9 +42,8 @@ export const POST = async (req: NextRequest) => {
     week,
     limit: HOMEPAGE_LIMITS.WEEKLY_LAUNCHES_MAX,
   })
-  const launchPaths = launches.map((item) =>
-    item.itemKind === "tool" ? ROUTES.TOOL(item.slug) : ROUTES.PRODUCT(item.slug)
-  )
+  const launchPaths = launches.map(getListingPath)
+  launchPaths.forEach((path) => revalidatePath(path))
 
   after(async () => {
     await warmPaths([...ROLLOVER_HUB_PATHS, ...ROLLOVER_MACHINE_PATHS])

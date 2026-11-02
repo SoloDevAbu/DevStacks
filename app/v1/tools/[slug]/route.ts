@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import { getToolBySlug } from "@/db/queries/tools/get"
+import { resolveTool } from "@/lib/tools/resolve-tool"
 import { SITE_CONFIG } from "@/constants/site"
 
 export const revalidate = 3600
@@ -9,7 +9,7 @@ export const GET = async (
   props: { params: Promise<{ slug: string }> }
 ) => {
   const { slug } = await props.params
-  const tool = await getToolBySlug(slug)
+  const tool = await resolveTool(slug)
 
   if (!tool) {
     return NextResponse.json(

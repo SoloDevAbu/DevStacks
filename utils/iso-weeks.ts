@@ -9,7 +9,7 @@ export const getISOWeek = (
   date: Date
 ): { isoYear: number; isoWeek: number } => {
   const d = new Date(
-    Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())
+    Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate())
   )
   d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7))
   const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1))

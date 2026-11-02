@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
-import { getToolBySlug, getRelatedTools } from "@/db/queries/tools/get"
+import { getRelatedTools } from "@/db/queries/tools/get"
 import { getToolFaqs } from "@/db/queries/faqs/get-faqs"
-import { getProductsBuiltWithTool } from "@/lib/tools/resolve-tool"
+import { getProductsBuiltWithTool, resolveTool } from "@/lib/tools/resolve-tool"
 import {
   generateToolMarkdown,
   createMarkdownResponse,
@@ -15,7 +15,7 @@ export const GET = async (
   props: { params: Promise<{ slug: string }> }
 ) => {
   const { slug } = await props.params
-  const tool = await getToolBySlug(slug)
+  const tool = await resolveTool(slug)
 
   if (!tool) {
     return new NextResponse(

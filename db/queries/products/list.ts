@@ -5,6 +5,7 @@ import { unstable_cache } from "next/cache"
 import { CACHE_TAGS, CACHE_REVALIDATE_SECONDS } from "@/constants/cache"
 import type { DbProduct, ProductBuiltWith } from "@/types/entities"
 import type { Pricing, Tier } from "@/constants/plans"
+import { launchedByNow } from "@/lib/catalog/visibility"
 
 export type ProductListFilters = {
   q?: string
@@ -37,6 +38,7 @@ export const getProducts = async ({
 
   const conditions = [
     eq(products.status, "approved"),
+    launchedByNow(products),
     eq(products.isDeleted, false),
   ]
 
@@ -193,7 +195,13 @@ export const getProductsStats = async () => {
       totalLikes: sql<number>`coalesce(sum(${products.likesCount}), 0)::int`,
     })
     .from(products)
-    .where(and(eq(products.status, "approved"), eq(products.isDeleted, false)))
+    .where(
+      and(
+        eq(products.status, "approved"),
+        launchedByNow(products),
+        eq(products.isDeleted, false)
+      )
+    )
 
   return {
     totalCount: Number(row?.totalCount ?? 0),
