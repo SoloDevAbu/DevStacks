@@ -60,4 +60,10 @@ export const ROUTES = {
   MAKER: (username: string) => `/makers/${username}`,
   CHECKOUT_SUCCESS: "/",
   CHECKOUT_CANCEL: "/pricing",
+  CRON_ROLLOVER: "/api/cron/rollover",
+  INDEXNOW_KEY: "/indexnow-key.txt",
+  FEED: "/feed.xml",
+  LLMS_TXT: "/llms.txt",
+  LLMS_FULL_TXT: "/llms-full.txt",
+  AI_SNAPSHOT: "/api/ai",
 } as const

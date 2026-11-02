@@ -1,13 +1,17 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "launchnests",
-  "main": ".open-next/worker.js",
+  "main": "worker.ts",
   "keep_vars": true,
   "vars": {
     "NEXT_CACHE_DO_QUEUE_REVALIDATION_TIMEOUT_MS": "30000",
   },
   "compatibility_date": "2026-10-01",
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  // Monday 00:00 UTC is when scheduled launches go live; 00:30 retries the rollover in case the first run failed.
+  "triggers": {
+    "crons": ["0 0 * * 1", "30 0 * * 1"],
+  },
   "assets": {
     "directory": ".open-next/assets",
     "binding": "ASSETS",

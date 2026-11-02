@@ -1,4 +1,8 @@
 import { TIER, type Tier } from "@/constants/plans"
+import { SITE_CONFIG } from "@/constants/site"
+
+export const toAbsoluteUrl = (path: string): string =>
+  path.startsWith("http") ? path : `${SITE_CONFIG.url}${path}`
 
 export const getOutboundUrl = (
   rawUrl?: string | null,
