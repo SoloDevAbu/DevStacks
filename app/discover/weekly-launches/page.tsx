@@ -16,7 +16,7 @@ import { AI_PROMPTS } from "@/lib/prompts"
 import type { FeedItem } from "@/components/shared/feed-card"
 import { WeeklyLaunchesContent } from "./weekly-launches-content"
 
-export const revalidate = 60
+export const revalidate = 3600
 
 export const metadata: Metadata = {
   title: "Weekly Launches — Developer Tools & Products",

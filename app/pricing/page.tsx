@@ -18,7 +18,7 @@ import { getLaunchPromoStatus } from "@/db/queries/launches/availability"
 import { PricingTiersSection } from "@/components/pricing/pricing-tiers-section"
 import { PricingSponsorshipSection } from "@/components/pricing/pricing-sponsorship-section"
 
-export const revalidate = 60
+export const revalidate = 3600
 
 export const metadata: Metadata = {
   title: "Pricing & Promotion Tiers | Launch Listings & Sponsorship",

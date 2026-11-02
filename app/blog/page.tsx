@@ -15,7 +15,7 @@ import {
   buildEntityGraph,
 } from "@/lib/seo/schema"
 
-export const revalidate = 60
+export const revalidate = 3600
 
 export const generateMetadata = async (props: {
   searchParams: Promise<{

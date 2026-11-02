@@ -13,7 +13,7 @@ import { getCachedPopularBuildingBlocks } from "@/lib/rankings/popular"
 import { getCurrentWeek } from "@/lib/launches/week-utils"
 import type { FeedItem } from "@/components/shared/feed-card"
 
-export const revalidate = 60
+export const revalidate = 3600
 
 export const metadata: Metadata = {
   title: {

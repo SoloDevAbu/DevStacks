@@ -33,7 +33,7 @@ import {
 import { SITE_CONFIG } from "@/constants/site"
 import { ROUTES } from "@/constants/routes"
 
-export const revalidate = 3600
+export const revalidate = 86400
 
 export const generateStaticParams = async () => []
 

@@ -4,7 +4,7 @@ import { desc, eq, gte, lte, and, or, isNull, inArray } from "drizzle-orm"
 import { getWeekRange } from "@/lib/launches/week-utils"
 import { TIER } from "@/constants/plans"
 import { unstable_cache } from "next/cache"
-import { CACHE_TAGS } from "@/constants/cache"
+import { CACHE_TAGS, CACHE_REVALIDATE_SECONDS } from "@/constants/cache"
 import type { RankedItem, RankedProduct } from "@/lib/rankings/types"
 import type { ProductBuiltWith } from "@/types/entities"
 
@@ -264,5 +264,5 @@ export const getCachedWeeklyLaunches = unstable_cache(
   async (year: number, week: number, limit: number = 10) =>
     getWeeklyLaunches({ year, week, limit }),
   [CACHE_TAGS.WEEKLY_LAUNCHES],
-  { revalidate: 120, tags: [CACHE_TAGS.WEEKLY_LAUNCHES] }
+  { revalidate: CACHE_REVALIDATE_SECONDS.LISTS, tags: [CACHE_TAGS.WEEKLY_LAUNCHES] }
 )

@@ -22,7 +22,7 @@ import { CrawlablePagination } from "@/components/shared/crawlable-pagination"
 import { countryCodeToFlag, formatLocation } from "@/utils/country"
 import { cn } from "@/lib/utils"
 
-export const revalidate = 60
+export const revalidate = 3600
 
 export const generateMetadata = async (props: {
   searchParams: Promise<{ page?: string }>

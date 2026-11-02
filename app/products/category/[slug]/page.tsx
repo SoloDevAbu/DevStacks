@@ -30,7 +30,7 @@ import { ROUTES } from "@/constants/routes"
 import { Badge } from "@/components/ui/badge"
 import { LEGACY_CATEGORY_REDIRECTS } from "@/constants/categories"
 
-export const revalidate = 3600
+export const revalidate = 21600
 
 export const generateStaticParams = async () => []
 

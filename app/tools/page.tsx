@@ -19,7 +19,7 @@ import type { DbTool } from "@/types/entities"
 import { ToolsDirectoryContent } from "./tools-content"
 import type { SortOption } from "@/components/tools/tools-filter-bar"
 
-export const revalidate = 60
+export const revalidate = 3600
 
 export const generateMetadata = async (props: {
   searchParams: Promise<{

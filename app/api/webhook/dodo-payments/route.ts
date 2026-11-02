@@ -137,6 +137,8 @@ export const POST = Webhooks({
         }
       }
 
+      const upgradedSlugs: { toolSlug?: string; productSlug?: string } = {}
+
       // Upgrade tool or product tier for listing payments
       if (payment.tier) {
         if (payment.toolId) {
@@ -144,12 +146,14 @@ export const POST = Webhooks({
             .update(tools)
             .set({ tier: payment.tier, updatedAt: new Date() })
             .where(eq(tools.id, payment.toolId))
-            .returning({ id: tools.id, status: tools.status })
+            .returning({ id: tools.id, slug: tools.slug, status: tools.status })
 
           await db
             .update(launches)
             .set({ tier: payment.tier, updatedAt: new Date() })
             .where(eq(launches.toolId, payment.toolId))
+
+          upgradedSlugs.toolSlug = updatedTool?.slug
 
           // Auto-generate AI blog immediately ONLY if already approved by admin
           if (updatedTool?.status === "approved") {
@@ -169,12 +173,18 @@ export const POST = Webhooks({
             .update(products)
             .set({ tier: payment.tier, updatedAt: new Date() })
             .where(eq(products.id, payment.productId))
-            .returning({ id: products.id, status: products.status })
+            .returning({
+              id: products.id,
+              slug: products.slug,
+              status: products.status,
+            })
 
           await db
             .update(launches)
             .set({ tier: payment.tier, updatedAt: new Date() })
             .where(eq(launches.productId, payment.productId))
+
+          upgradedSlugs.productSlug = updatedProduct?.slug
 
           // Auto-generate AI blog immediately ONLY if already approved by admin
           if (updatedProduct?.status === "approved") {
@@ -190,7 +200,7 @@ export const POST = Webhooks({
         }
       }
 
-      revalidateCatalog()
+      revalidateCatalog(upgradedSlugs)
     }
   },
 

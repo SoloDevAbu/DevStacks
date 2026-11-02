@@ -44,7 +44,10 @@ export const PATCH = async (
       id,
       status: parsed.data.status,
     })
-    revalidateCatalog()
+    revalidateCatalog({
+      [type === "tool" ? "toolSlug" : "productSlug"]: result.item.slug,
+      blogSlug: result.blogResult?.blog?.slug,
+    })
 
     return NextResponse.json(
       {

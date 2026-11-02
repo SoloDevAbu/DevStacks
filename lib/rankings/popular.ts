@@ -3,7 +3,7 @@ import { tools, categories } from "@/db/schema"
 import { and, eq } from "drizzle-orm"
 import { POPULAR_BUILDING_BLOCKS_WEIGHTS } from "@/constants/rankings"
 import { unstable_cache } from "next/cache"
-import { CACHE_TAGS } from "@/constants/cache"
+import { CACHE_TAGS, CACHE_REVALIDATE_SECONDS } from "@/constants/cache"
 import type { RankedTool, RankingOptions } from "./types"
 
 export const calculatePopularScore = (
@@ -95,5 +95,5 @@ export const getPopularBuildingBlocks = async ({
 export const getCachedPopularBuildingBlocks = unstable_cache(
   async (limit: number = 10) => getPopularBuildingBlocks({ limit }),
   [CACHE_TAGS.POPULAR_BUILDING_BLOCKS],
-  { revalidate: 120, tags: [CACHE_TAGS.POPULAR_BUILDING_BLOCKS] }
+  { revalidate: CACHE_REVALIDATE_SECONDS.LISTS, tags: [CACHE_TAGS.POPULAR_BUILDING_BLOCKS] }
 )

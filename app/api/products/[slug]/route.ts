@@ -70,7 +70,7 @@ export const PATCH = async (
     }
 
     const updated = await updateProduct(slug, session.user.id, parsed.data)
-    revalidateCatalog()
+    revalidateCatalog({ productSlug: slug })
     return NextResponse.json({ data: updated }, { status: 200 })
   } catch (err: unknown) {
     const message =
@@ -104,7 +104,7 @@ export const DELETE = async (
     }
 
     const deleted = await softDeleteProduct(slug, session.user.id)
-    revalidateCatalog()
+    revalidateCatalog({ productSlug: slug })
     return NextResponse.json({ data: deleted }, { status: 200 })
   } catch (err: unknown) {
     const message =

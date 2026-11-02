@@ -44,7 +44,7 @@ export const POST = async (req: NextRequest) => {
       )
     }
 
-    revalidateCatalog()
+    revalidateCatalog({ blogSlug: result.blog?.slug })
 
     return NextResponse.json(
       { success: true, blog: result.blog },

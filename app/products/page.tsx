@@ -19,7 +19,7 @@ import type { DbProduct } from "@/types/entities"
 import { ProductsDirectoryContent } from "./products-content"
 import type { ProductSortOption } from "@/components/products/products-filter-bar"
 
-export const revalidate = 60
+export const revalidate = 3600
 
 export const generateMetadata = async (props: {
   searchParams: Promise<{

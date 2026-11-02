@@ -7,7 +7,7 @@ import {
 } from "@/lib/seo/markdown-twins"
 import { SITE_CONFIG } from "@/constants/site"
 
-export const revalidate = 3600
+export const revalidate = 86400
 
 export const GET = async (
   _request: Request,

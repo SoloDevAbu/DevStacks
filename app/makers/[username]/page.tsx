@@ -36,7 +36,7 @@ import {
   safeJsonLd,
 } from "@/lib/seo/schema"
 
-export const revalidate = 3600
+export const revalidate = 86400
 
 export const generateStaticParams = async () => []
 
