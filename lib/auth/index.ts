@@ -2,6 +2,7 @@ import { betterAuth } from "better-auth"
 import { drizzleAdapter } from "better-auth/adapters/drizzle"
 import { db } from "@/db"
 import * as schema from "@/db/schema"
+import { SITE_CONFIG } from "@/constants/site"
 
 import { randomBytes } from "crypto"
 import { eq } from "drizzle-orm"
@@ -23,7 +24,7 @@ export const auth = betterAuth({
     },
   }),
   secret: process.env.BETTER_AUTH_SECRET,
-  baseURL: process.env.BETTER_AUTH_URL || "http://localhost:3000",
+  baseURL: process.env.BETTER_AUTH_URL || SITE_CONFIG.url,
   socialProviders: {
     google: {
       clientId: process.env.GOOGLE_CLIENT_ID || "",
