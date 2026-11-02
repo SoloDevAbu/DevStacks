@@ -5,42 +5,28 @@ import { getTrending } from "@/lib/rankings/trending"
 import {
   getToolCategories,
   getProductCategories,
-  type DbCategoryItem,
 } from "@/db/queries/categories/list"
 import { getAllComparisons } from "@/constants/comparisons"
 import { ROUTES } from "@/constants/routes"
 
-export const revalidate = 86400
+export const revalidate = 21600
 
+// Failures are intentionally not caught: a thrown error keeps the last good version cached
+// instead of publishing an empty catalog to AI crawlers.
 export const GET = async () => {
-  let buildingBlocks: Awaited<ReturnType<typeof getTools>> = []
-  let featuredTools: Awaited<ReturnType<typeof getTrending>> = []
-  let toolCats: DbCategoryItem[] = []
-  let productCats: DbCategoryItem[] = []
-
-  try {
-    const [blocks, trending, tCats, pCats] = await Promise.all([
+  const [buildingBlocks, featuredTools, toolCats, productCats] =
+    await Promise.all([
       getTools({ sortBy: "builds", limit: 8 }),
       getTrending(8),
-      getToolCategories().catch(() => []),
-      getProductCategories().catch(() => []),
+      getToolCategories(),
+      getProductCategories(),
     ])
-    buildingBlocks = blocks ?? []
-    featuredTools = trending ?? []
-    toolCats = tCats ?? []
-    productCats = pCats ?? []
-  } catch {
-    buildingBlocks = []
-    featuredTools = []
-    toolCats = []
-    productCats = []
-  }
 
   const content = `# ${SITE_CONFIG.name}
 
 > ${SITE_CONFIG.tagline}. Discover developer tools, APIs, and modern tech stacks for software engineers and makers.
-> Last Updated: 2026-10-01
-> Catalog Freshness: Updated daily
+> Last Updated: ${new Date().toISOString().split("T")[0]}
+> Catalog Freshness: Refreshed every 6 hours and whenever a listing changes
 
 ## About
 

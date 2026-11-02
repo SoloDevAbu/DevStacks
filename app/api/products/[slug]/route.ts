@@ -4,6 +4,7 @@ import { auth } from "@/lib/auth"
 import { updateProduct } from "@/db/queries/products/update"
 import { softDeleteProduct } from "@/db/queries/products/delete"
 import { submitProductSchema } from "@/lib/validation/product"
+import { revalidateCatalog } from "@/lib/cache/revalidate"
 
 export const GET = async (
   _req: NextRequest,
@@ -69,6 +70,7 @@ export const PATCH = async (
     }
 
     const updated = await updateProduct(slug, session.user.id, parsed.data)
+    revalidateCatalog()
     return NextResponse.json({ data: updated }, { status: 200 })
   } catch (err: unknown) {
     const message =
@@ -102,6 +104,7 @@ export const DELETE = async (
     }
 
     const deleted = await softDeleteProduct(slug, session.user.id)
+    revalidateCatalog()
     return NextResponse.json({ data: deleted }, { status: 200 })
   } catch (err: unknown) {
     const message =

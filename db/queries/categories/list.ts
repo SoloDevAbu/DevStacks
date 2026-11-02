@@ -4,6 +4,7 @@ import { and, eq, ilike, or, sql } from "drizzle-orm"
 import { slugify } from "@/utils/slug"
 import { getCanonicalCategory } from "@/constants/categories"
 import { unstable_cache } from "next/cache"
+import { CACHE_TAGS } from "@/constants/cache"
 
 export type DbCategoryItem = {
   id: string
@@ -218,12 +219,12 @@ export const getCategoryStats = async (categoryId: string) => {
 
 export const getCachedToolCategories = unstable_cache(
   async (query?: string) => getToolCategories(query),
-  ["tool-categories"],
-  { revalidate: 3600, tags: ["tool-categories"] }
+  [CACHE_TAGS.TOOL_CATEGORIES],
+  { revalidate: 3600, tags: [CACHE_TAGS.TOOL_CATEGORIES] }
 )
 
 export const getCachedProductCategories = unstable_cache(
   async (query?: string) => getProductCategories(query),
-  ["product-categories"],
-  { revalidate: 3600, tags: ["product-categories"] }
+  [CACHE_TAGS.PRODUCT_CATEGORIES],
+  { revalidate: 3600, tags: [CACHE_TAGS.PRODUCT_CATEGORIES] }
 )

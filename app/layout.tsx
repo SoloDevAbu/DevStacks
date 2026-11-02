@@ -20,7 +20,7 @@ import {
 import "./globals.css"
 import { cn } from "@/lib/utils"
 
-import { Analytics } from "@vercel/analytics/next"
+import { CloudflareAnalytics } from "@/components/shared/cloudflare-analytics"
 import { GoogleAnalytics } from "@next/third-parties/google"
 
 export const viewport: Viewport = {
@@ -182,7 +182,7 @@ const RootLayout = ({
             <AppLayoutShell>{children}</AppLayoutShell>
           </div>
         </Providers>
-        <Analytics />
+        <CloudflareAnalytics />
         <GoogleAnalytics gaId="G-YY1Z68R6FZ" />
       </body>
     </html>

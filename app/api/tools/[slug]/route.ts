@@ -7,6 +7,7 @@ import { updateTool } from "@/db/queries/tools/update"
 import { softDeleteTool } from "@/db/queries/tools/delete"
 import { submitToolSchema } from "@/lib/validation/tool"
 import { eq, sql } from "drizzle-orm"
+import { revalidateCatalog } from "@/lib/cache/revalidate"
 
 export const GET = async (
   _req: NextRequest,
@@ -65,6 +66,7 @@ export const PATCH = async (
     }
 
     const updated = await updateTool(slug, session.user.id, parsed.data)
+    revalidateCatalog()
     return NextResponse.json({ data: updated }, { status: 200 })
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : "Failed to update tool"
@@ -94,6 +96,7 @@ export const DELETE = async (
     }
 
     const deleted = await softDeleteTool(slug, session.user.id)
+    revalidateCatalog()
     return NextResponse.json({ data: deleted }, { status: 200 })
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : "Failed to delete tool"

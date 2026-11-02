@@ -86,6 +86,8 @@ interface ProductPageProps {
   params: Promise<{ slug: string }>
 }
 
+export const revalidate = 3600
+
 export const generateStaticParams = async () => {
   try {
     const products = await getProducts({ limit: 50 })

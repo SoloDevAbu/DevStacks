@@ -15,6 +15,7 @@ import {
   deactivateAdWeeks,
 } from "@/db/queries/ads"
 import type { Tier } from "@/constants/plans"
+import { revalidateCatalog } from "@/lib/cache/revalidate"
 
 interface DodoWebhookData {
   payment_id?: string
@@ -188,6 +189,8 @@ export const POST = Webhooks({
           }
         }
       }
+
+      revalidateCatalog()
     }
   },
 

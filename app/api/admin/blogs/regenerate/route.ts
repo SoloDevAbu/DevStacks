@@ -2,6 +2,7 @@ import { type NextRequest, NextResponse } from "next/server"
 import { getAdminSession } from "@/lib/auth/admin"
 import { generateAndSaveLaunchBlog } from "@/lib/ai/launch-blog-service"
 import { z } from "zod"
+import { revalidateCatalog } from "@/lib/cache/revalidate"
 
 const regenerateSchema = z.object({
   itemType: z.enum(["tool", "product"]),
@@ -42,6 +43,8 @@ export const POST = async (req: NextRequest) => {
         { status: 502 }
       )
     }
+
+    revalidateCatalog()
 
     return NextResponse.json(
       { success: true, blog: result.blog },
