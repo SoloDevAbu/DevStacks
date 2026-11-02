@@ -10,7 +10,7 @@ import { SITE_CONFIG } from "@/constants/site"
 import { HOMEPAGE_LIMITS } from "@/constants/rankings"
 import { getCachedWeeklyLaunches } from "@/lib/launches/weekly-launches"
 import { getCachedPopularBuildingBlocks } from "@/lib/rankings/popular"
-import { getCurrentWeek } from "@/lib/launches/week-utils"
+import { getCurrentWeek } from "@/utils/iso-weeks"
 import type { FeedItem } from "@/components/shared/feed-card"
 
 export const revalidate = 3600

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import { SITE_CONFIG } from "@/constants/site"
 import { getWeeklyLaunches } from "@/lib/launches/weekly-launches"
-import { getCurrentWeek } from "@/lib/launches/week-utils"
+import { getCurrentWeek } from "@/utils/iso-weeks"
 import type { FeedItem } from "@/components/shared/feed-card"
 
 export const revalidate = 3600

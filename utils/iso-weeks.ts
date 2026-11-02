@@ -35,6 +35,13 @@ export const getISOWeekRange = (
   return { startDate: monday, endDate: sunday }
 }
 
+export const getCurrentWeek = (
+  now: Date = new Date()
+): { year: number; week: number } => {
+  const { isoYear, isoWeek } = getISOWeek(now)
+  return { year: isoYear, week: isoWeek }
+}
+
 export const getRemainingWeeksOfYear = (
   fromDate?: Date,
   minWeeks = 8
@@ -164,4 +171,30 @@ export const formatLaunchWeekDisplay = (
     weekLabel: `Week ${isoWeek}`,
     dateRange,
   }
+}
+
+export type WeekOption = {
+  value: string
+  label: string
+  year: number
+  week: number
+}
+
+export const generateWeekOptions = (year: number): WeekOption[] => {
+  const { year: currentYear, week: currentWeek } = getCurrentWeek()
+  const maxWeek =
+    year < currentYear
+      ? getISOWeek(new Date(Date.UTC(year, 11, 28))).isoWeek
+      : currentWeek
+
+  return Array.from({ length: maxWeek }, (_, index) => {
+    const week = maxWeek - index
+    const { weekLabel, dateRange } = formatLaunchWeekDisplay(year, week)
+    return {
+      value: `${year}-W${String(week).padStart(2, "0")}`,
+      label: `${weekLabel}  ·  ${dateRange}`,
+      year,
+      week,
+    }
+  })
 }

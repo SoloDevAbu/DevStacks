@@ -12,7 +12,7 @@ import {
 import { FeedCard, type FeedItem } from "@/components/shared/feed-card"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useWeeklyLaunches } from "@/hooks/home/use-weekly-launches"
-import { generateWeekOptions, getCurrentWeek } from "@/lib/launches/week-utils"
+import { generateWeekOptions, getCurrentWeek } from "@/utils/iso-weeks"
 
 const { year: CURRENT_YEAR, week: CURRENT_WEEK } = getCurrentWeek()
 const WEEK_OPTIONS = generateWeekOptions(CURRENT_YEAR)

@@ -1,53 +1,36 @@
-import { db } from "@/db"
-import { tools, products, categories, productTools } from "@/db/schema"
-import { desc, eq, gte, lte, and, or, isNull, inArray } from "drizzle-orm"
-import { getWeekRange } from "@/lib/launches/week-utils"
-import { TIER } from "@/constants/plans"
+import { tools, products } from "@/db/schema"
+import { eq, gte, lte, and, or, isNull, inArray } from "drizzle-orm"
 import { unstable_cache } from "next/cache"
+import { TIER } from "@/constants/plans"
 import { CACHE_TAGS, CACHE_REVALIDATE_SECONDS } from "@/constants/cache"
-import type { RankedItem, RankedProduct } from "@/lib/rankings/types"
-import type { ProductBuiltWith } from "@/types/entities"
+import { getISOWeekRange } from "@/utils/iso-weeks"
+import {
+  selectRankedLaunches,
+  selectRankedLaunchPage,
+} from "@/lib/launches/launch-queries"
+import type { RankedItem } from "@/lib/rankings/types"
 
-const attachBuiltWithTools = async (items: RankedItem[]): Promise<void> => {
-  const productIds = items
-    .filter((item): item is RankedProduct => item.itemKind === "product")
-    .map((p) => p.id)
+const PREMIUM_TIERS = [TIER.PREMIUM, TIER.PREMIUM_PLUS]
 
-  if (productIds.length === 0) return
-
-  const ptRows = await db
-    .select({
-      productId: productTools.productId,
-      name: productTools.name,
-      toolId: productTools.toolId,
-      toolSlug: tools.slug,
-    })
-    .from(productTools)
-    .leftJoin(
-      tools,
-      and(eq(productTools.toolId, tools.id), eq(tools.isDeleted, false))
+// Items booked into a launch week carry launchYear/launchWeek; older listings without a booking
+// count towards the week they were created in.
+const launchedInWeek = (
+  table: typeof tools | typeof products,
+  year: number,
+  week: number
+) => {
+  const { startDate, endDate } = getISOWeekRange(year, week)
+  return or(
+    and(eq(table.launchYear, year), eq(table.launchWeek, week)),
+    and(
+      isNull(table.launchYear),
+      gte(table.createdAt, startDate),
+      lte(table.createdAt, endDate)
     )
-    .where(inArray(productTools.productId, productIds))
-
-  const toolsMap = new Map<string, ProductBuiltWith[]>()
-  for (const pt of ptRows) {
-    const list = toolsMap.get(pt.productId) ?? []
-    list.push({
-      name: pt.name,
-      toolSlug: pt.toolSlug ?? null,
-      toolId: pt.toolId ?? null,
-    })
-    toolsMap.set(pt.productId, list)
-  }
-
-  for (const item of items) {
-    if (item.itemKind === "product") {
-      item.builtWithTools = toolsMap.get(item.id) ?? []
-    }
-  }
+  )
 }
 
-export const getWeeklyLaunches = async ({
+export const getWeeklyLaunches = ({
   year,
   week,
   limit = 10,
@@ -55,214 +38,39 @@ export const getWeeklyLaunches = async ({
   year: number
   week: number
   limit?: number
-}): Promise<RankedItem[]> => {
-  const { start, end } = getWeekRange(year, week)
+}): Promise<RankedItem[]> =>
+  selectRankedLaunchPage(
+    {
+      toolFilter: launchedInWeek(tools, year, week),
+      productFilter: launchedInWeek(products, year, week),
+    },
+    limit
+  )
 
-  const [weekTools, weekProducts] = await Promise.all([
-    db
-      .select({
-        id: tools.id,
-        slug: tools.slug,
-        name: tools.name,
-        tagline: tools.tagline,
-        tags: tools.tags,
-        platforms: tools.platforms,
-        upvotesCount: tools.upvotesCount,
-        buildsCount: tools.buildsCount,
-        commentsCount: tools.commentsCount,
-        viewsCount: tools.viewsCount,
-        pricing: tools.pricing,
-        tier: tools.tier,
-        logoUrl: tools.logoUrl,
-        websiteUrl: tools.websiteUrl,
-        categoryId: tools.categoryId,
-        category: categories.name,
-        categorySlug: categories.slug,
-        createdAt: tools.createdAt,
-        updatedAt: tools.updatedAt,
-      })
-      .from(tools)
-      .leftJoin(categories, eq(tools.categoryId, categories.id))
-      .where(
-        and(
-          eq(tools.status, "approved"),
-          eq(tools.isDeleted, false),
-          or(
-            and(eq(tools.launchYear, year), eq(tools.launchWeek, week)),
-            and(
-              isNull(tools.launchYear),
-              gte(tools.createdAt, start),
-              lte(tools.createdAt, end)
-            )
-          )
-        )
-      )
-      .orderBy(desc(tools.upvotesCount)),
-    db
-      .select({
-        id: products.id,
-        slug: products.slug,
-        name: products.name,
-        tagline: products.tagline,
-        tags: products.tags,
-        platforms: products.platforms,
-        likesCount: products.likesCount,
-        commentsCount: products.commentsCount,
-        viewsCount: products.viewsCount,
-        pricing: products.pricing,
-        tier: products.tier,
-        logoUrl: products.logoUrl,
-        websiteUrl: products.websiteUrl,
-        categoryId: products.categoryId,
-        category: categories.name,
-        categorySlug: categories.slug,
-        createdAt: products.createdAt,
-        updatedAt: products.updatedAt,
-      })
-      .from(products)
-      .leftJoin(categories, eq(products.categoryId, categories.id))
-      .where(
-        and(
-          eq(products.status, "approved"),
-          eq(products.isDeleted, false),
-          or(
-            and(eq(products.launchYear, year), eq(products.launchWeek, week)),
-            and(
-              isNull(products.launchYear),
-              gte(products.createdAt, start),
-              lte(products.createdAt, end)
-            )
-          )
-        )
-      )
-      .orderBy(desc(products.likesCount)),
-  ])
-
-  const combined: RankedItem[] = [
-    ...weekTools.map((t) => ({ ...t, itemKind: "tool" as const })),
-    ...weekProducts.map((p) => ({ ...p, itemKind: "product" as const })),
-  ].sort((a, b) => {
-    const aScore = a.itemKind === "tool" ? a.upvotesCount : a.likesCount
-    const bScore = b.itemKind === "tool" ? b.upvotesCount : b.likesCount
-    const scoreDiff = bScore - aScore
-    if (scoreDiff !== 0) return scoreDiff
-    return b.commentsCount - a.commentsCount
-  })
-
-  const pageItems = combined.slice(0, limit)
-  await attachBuiltWithTools(pageItems)
-
-  return pageItems
-}
-
-export const getWeeklyPremiumLaunches = async ({
+export const getWeeklyPremiumLaunches = ({
   year,
   week,
 }: {
   year: number
   week: number
-}): Promise<RankedItem[]> => {
-  const { start, end } = getWeekRange(year, week)
-
-  const [weekTools, weekProducts] = await Promise.all([
-    db
-      .select({
-        id: tools.id,
-        slug: tools.slug,
-        name: tools.name,
-        tagline: tools.tagline,
-        tags: tools.tags,
-        platforms: tools.platforms,
-        upvotesCount: tools.upvotesCount,
-        buildsCount: tools.buildsCount,
-        commentsCount: tools.commentsCount,
-        viewsCount: tools.viewsCount,
-        pricing: tools.pricing,
-        tier: tools.tier,
-        logoUrl: tools.logoUrl,
-        websiteUrl: tools.websiteUrl,
-        categoryId: tools.categoryId,
-        category: categories.name,
-        categorySlug: categories.slug,
-        createdAt: tools.createdAt,
-        updatedAt: tools.updatedAt,
-      })
-      .from(tools)
-      .leftJoin(categories, eq(tools.categoryId, categories.id))
-      .where(
-        and(
-          eq(tools.status, "approved"),
-          eq(tools.isDeleted, false),
-          inArray(tools.tier, [TIER.PREMIUM, TIER.PREMIUM_PLUS]),
-          or(
-            and(eq(tools.launchYear, year), eq(tools.launchWeek, week)),
-            and(
-              isNull(tools.launchYear),
-              gte(tools.createdAt, start),
-              lte(tools.createdAt, end)
-            )
-          )
-        )
-      )
-      .orderBy(desc(tools.upvotesCount)),
-    db
-      .select({
-        id: products.id,
-        slug: products.slug,
-        name: products.name,
-        tagline: products.tagline,
-        tags: products.tags,
-        platforms: products.platforms,
-        likesCount: products.likesCount,
-        commentsCount: products.commentsCount,
-        viewsCount: products.viewsCount,
-        pricing: products.pricing,
-        tier: products.tier,
-        logoUrl: products.logoUrl,
-        websiteUrl: products.websiteUrl,
-        categoryId: products.categoryId,
-        category: categories.name,
-        categorySlug: categories.slug,
-        createdAt: products.createdAt,
-        updatedAt: products.updatedAt,
-      })
-      .from(products)
-      .leftJoin(categories, eq(products.categoryId, categories.id))
-      .where(
-        and(
-          eq(products.status, "approved"),
-          eq(products.isDeleted, false),
-          inArray(products.tier, [TIER.PREMIUM, TIER.PREMIUM_PLUS]),
-          or(
-            and(eq(products.launchYear, year), eq(products.launchWeek, week)),
-            and(
-              isNull(products.launchYear),
-              gte(products.createdAt, start),
-              lte(products.createdAt, end)
-            )
-          )
-        )
-      )
-      .orderBy(desc(products.likesCount)),
-  ])
-
-  const combined: RankedItem[] = [
-    ...weekTools.map((t) => ({ ...t, itemKind: "tool" as const })),
-    ...weekProducts.map((p) => ({ ...p, itemKind: "product" as const })),
-  ].sort((a, b) => {
-    const aScore = a.itemKind === "tool" ? a.upvotesCount : a.likesCount
-    const bScore = b.itemKind === "tool" ? b.upvotesCount : b.likesCount
-    const scoreDiff = bScore - aScore
-    if (scoreDiff !== 0) return scoreDiff
-    return b.commentsCount - a.commentsCount
+}): Promise<RankedItem[]> =>
+  selectRankedLaunches({
+    toolFilter: and(
+      inArray(tools.tier, PREMIUM_TIERS),
+      launchedInWeek(tools, year, week)
+    ),
+    productFilter: and(
+      inArray(products.tier, PREMIUM_TIERS),
+      launchedInWeek(products, year, week)
+    ),
   })
-
-  return combined
-}
 
 export const getCachedWeeklyLaunches = unstable_cache(
   async (year: number, week: number, limit: number = 10) =>
     getWeeklyLaunches({ year, week, limit }),
   [CACHE_TAGS.WEEKLY_LAUNCHES],
-  { revalidate: CACHE_REVALIDATE_SECONDS.LISTS, tags: [CACHE_TAGS.WEEKLY_LAUNCHES] }
+  {
+    revalidate: CACHE_REVALIDATE_SECONDS.LISTS,
+    tags: [CACHE_TAGS.WEEKLY_LAUNCHES],
+  }
 )

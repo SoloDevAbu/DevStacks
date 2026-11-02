@@ -4,7 +4,7 @@ import { CACHE_TAGS } from "@/constants/cache"
 import { ROUTES } from "@/constants/routes"
 import { HOMEPAGE_LIMITS } from "@/constants/rankings"
 import { getWeeklyLaunches } from "@/lib/launches/weekly-launches"
-import { getCurrentWeek } from "@/lib/launches/week-utils"
+import { getCurrentWeek } from "@/utils/iso-weeks"
 import { warmPaths } from "@/lib/cache/warm"
 import { submitToIndexNow } from "@/lib/seo/indexnow"
 

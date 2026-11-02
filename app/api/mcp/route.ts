@@ -8,7 +8,7 @@ import { getMakerProfile } from "@/db/queries/users/get-profile"
 import { getTrending } from "@/lib/rankings/trending"
 import { getTodaysLaunches } from "@/lib/launches/todays-launches"
 import { getWeeklyLaunches } from "@/lib/launches/weekly-launches"
-import { getCurrentWeek } from "@/lib/launches/week-utils"
+import { getCurrentWeek } from "@/utils/iso-weeks"
 
 export const revalidate = 0
 
