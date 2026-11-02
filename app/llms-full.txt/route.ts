@@ -10,18 +10,25 @@ import {
 } from "@/db/queries/categories/list"
 import { getAllComparisons } from "@/constants/comparisons"
 import { ROUTES } from "@/constants/routes"
+import {
+  AI_SURFACE_CACHE_CONTROL,
+  AI_SURFACE_FRESHNESS_NOTE,
+} from "@/constants/cache"
+import { getCurrentLaunchWeekSnapshot } from "@/lib/launches/launch-week"
+import { formatLaunchWeekSection } from "@/lib/seo/markdown-twins"
 
-export const revalidate = 21600
+export const revalidate = 3600
 
 // Failures are intentionally not caught: a thrown error keeps the last good version cached
 // instead of publishing an empty catalog to AI crawlers.
 export const GET = async () => {
-  const [trendingItems, buildingBlocks, toolCats, productCats] =
+  const [trendingItems, buildingBlocks, toolCats, productCats, launchWeek] =
     await Promise.all([
       getTrending(15),
       getTools({ sortBy: "builds", limit: 10 }),
       getToolCategories(),
       getProductCategories(),
+      getCurrentLaunchWeekSnapshot(),
     ])
 
   const content = `# ${SITE_CONFIG.name} — Comprehensive Directory & Ecosystem Specification
@@ -29,8 +36,14 @@ export const GET = async () => {
 > Platform: ${SITE_CONFIG.name} (${SITE_CONFIG.domain})
 > Canonical URL: ${SITE_CONFIG.url}
 > Mission: High-visibility discovery directory for developer tools, APIs, infrastructure, and developer-built products.
-> Last Updated: ${new Date().toISOString().split("T")[0]}
-> Catalog Freshness: Refreshed every 6 hours and whenever a listing changes
+> Last Updated: ${new Date().toISOString()}
+> Catalog Freshness: ${AI_SURFACE_FRESHNESS_NOTE}
+
+---
+
+${formatLaunchWeekSection(launchWeek, "This Week's Launches")}
+
+Previous weeks: ${SITE_CONFIG.url}${ROUTES.DISCOVER_WEEKLY_LAUNCHES}
 
 ---
 
@@ -192,7 +205,7 @@ ${c.quickComparisonDimensions
     status: 200,
     headers: {
       "Content-Type": "text/markdown; charset=utf-8",
-      "Cache-Control": "public, max-age=86400, s-maxage=86400",
+      "Cache-Control": AI_SURFACE_CACHE_CONTROL,
     },
   })
 }

@@ -39,3 +39,5 @@ export const formatCommentTime = (
     year: "numeric",
   })
 }
+
+export const toIsoDate = (date: Date): string => date.toISOString().split("T")[0]

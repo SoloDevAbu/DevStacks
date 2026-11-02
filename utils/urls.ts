@@ -1,8 +1,15 @@
 import { TIER, type Tier } from "@/constants/plans"
 import { SITE_CONFIG } from "@/constants/site"
+import { ROUTES } from "@/constants/routes"
 
 export const toAbsoluteUrl = (path: string): string =>
   path.startsWith("http") ? path : `${SITE_CONFIG.url}${path}`
+
+export const getListingPath = (item: {
+  itemKind: "tool" | "product"
+  slug: string
+}): string =>
+  item.itemKind === "tool" ? ROUTES.TOOL(item.slug) : ROUTES.PRODUCT(item.slug)
 
 export const getOutboundUrl = (
   rawUrl?: string | null,

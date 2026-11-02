@@ -8,25 +8,36 @@ import {
 } from "@/db/queries/categories/list"
 import { getAllComparisons } from "@/constants/comparisons"
 import { ROUTES } from "@/constants/routes"
+import {
+  AI_SURFACE_CACHE_CONTROL,
+  AI_SURFACE_FRESHNESS_NOTE,
+} from "@/constants/cache"
+import { getCurrentLaunchWeekSnapshot } from "@/lib/launches/launch-week"
+import { formatLaunchWeekSection } from "@/lib/seo/markdown-twins"
 
-export const revalidate = 21600
+export const revalidate = 3600
 
 // Failures are intentionally not caught: a thrown error keeps the last good version cached
 // instead of publishing an empty catalog to AI crawlers.
 export const GET = async () => {
-  const [buildingBlocks, featuredTools, toolCats, productCats] =
+  const [buildingBlocks, featuredTools, toolCats, productCats, launchWeek] =
     await Promise.all([
       getTools({ sortBy: "builds", limit: 8 }),
       getTrending(8),
       getToolCategories(),
       getProductCategories(),
+      getCurrentLaunchWeekSnapshot(),
     ])
 
   const content = `# ${SITE_CONFIG.name}
 
 > ${SITE_CONFIG.tagline}. Discover developer tools, APIs, and modern tech stacks for software engineers and makers.
-> Last Updated: ${new Date().toISOString().split("T")[0]}
-> Catalog Freshness: Refreshed every 6 hours and whenever a listing changes
+> Last Updated: ${new Date().toISOString()}
+> Catalog Freshness: ${AI_SURFACE_FRESHNESS_NOTE}
+
+${formatLaunchWeekSection(launchWeek, "This Week's Launches")}
+
+Previous weeks: ${SITE_CONFIG.url}${ROUTES.DISCOVER_WEEKLY_LAUNCHES}
 
 ## About
 
@@ -64,7 +75,7 @@ ${getAllComparisons()
 
 ## Markdown-addressable routes
 
-- [/](${SITE_CONFIG.url}/): Homepage overview
+- [/](${SITE_CONFIG.url}/): Homepage — this week's launches ranked by community votes (markdown twin at /index.md)
 - [/blog](${SITE_CONFIG.url}/blog): Launch stories directory and editorial radar
 - [/blog/{slug}](${SITE_CONFIG.url}/blog/<param>): Detailed editorial launch story and architecture breakdown (markdown twin at /blog/{slug}.md)
 - [/tools](${SITE_CONFIG.url}/tools): Developer tools directory
@@ -97,7 +108,7 @@ ${getAllComparisons()
 - [ai.txt](${SITE_CONFIG.url}/ai.txt): Behavioural guidance for AI answer engines — permissions, restrictions, and attribution rules.
 - [AI discovery snapshot](${SITE_CONFIG.url}/api/ai): Bounded JSON snapshot — trending tools + products + platform stats.
 - [MCP docs](${SITE_CONFIG.url}/mcp): How to connect Cursor, Claude Code, Windsurf, or custom agents to ${SITE_CONFIG.name}.
-- [Markdown catalog](${SITE_CONFIG.url}/api/md/_catalog): Index of every markdown-addressable route on the site.
+- [Markdown catalog](${SITE_CONFIG.url}/api/md/catalog): Index of every markdown-addressable route on the site.
 - [OpenAPI](${SITE_CONFIG.url}/openapi.json): OpenAPI 3.1 contract for GET /v1 (YAML at ${SITE_CONFIG.url}/api/openapi.yaml).
 - [API catalog](${SITE_CONFIG.url}/.well-known/api-catalog): RFC 9727 linkset of public JSON endpoints.
 - [Agent skills index](${SITE_CONFIG.url}/.well-known/agent-skills/index.json): Discoverable agent skill manifests.
@@ -159,7 +170,7 @@ Every markdown response carries:
   return new NextResponse(content, {
     headers: {
       "Content-Type": "text/markdown; charset=utf-8",
-      "Cache-Control": "public, max-age=86400, s-maxage=86400",
+      "Cache-Control": AI_SURFACE_CACHE_CONTROL,
       "X-Robots-Tag": "noindex, follow",
     },
   })

@@ -25,7 +25,7 @@ tools: 5
 - Site map: [llms.txt](${SITE_CONFIG.url}/llms.txt) — do not guess URLs.
 - Bounded catalog snapshot: [GET /api/ai](${SITE_CONFIG.url}/api/ai) — trending tools + products.
 - Tool calls: POST JSON-RPC to [MCP endpoint](${SITE_CONFIG.url}/api/mcp).
-- Any public page also has a markdown twin — append \`.md\` or send \`Accept: text/markdown\`. Catalog: [/api/md/_catalog](${SITE_CONFIG.url}/api/md/_catalog).
+- Any public page also has a markdown twin — append \`.md\` or send \`Accept: text/markdown\`. Catalog: [/api/md/catalog](${SITE_CONFIG.url}/api/md/catalog).
 
 ## Available Tools
 

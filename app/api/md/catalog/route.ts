@@ -25,7 +25,7 @@ curl ${SITE_CONFIG.url}/tools/<slug>.md
 curl ${SITE_CONFIG.url}/products/<slug>.md
 curl ${SITE_CONFIG.url}/api/md/tools/<slug>
 curl ${SITE_CONFIG.url}/api/md/products/<slug>
-curl ${SITE_CONFIG.url}/api/md/_catalog
+curl ${SITE_CONFIG.url}/api/md/catalog
 \`\`\`
 
 ## Markdown Response Headers
@@ -72,5 +72,5 @@ Every markdown twin returns:
 - ${SITE_CONFIG.url}/.well-known/mcp.json — Model Context Protocol discovery manifest
 `
 
-  return createMarkdownResponse(content, `${SITE_CONFIG.url}/api/md/_catalog`)
+  return createMarkdownResponse(content, `${SITE_CONFIG.url}/api/md/catalog`)
 }

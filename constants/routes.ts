@@ -66,4 +66,7 @@ export const ROUTES = {
   LLMS_TXT: "/llms.txt",
   LLMS_FULL_TXT: "/llms-full.txt",
   AI_SNAPSHOT: "/api/ai",
+  MARKDOWN_CATALOG: "/api/md/catalog",
+  MARKDOWN_HOME: "/api/md/home",
+  HOME_MARKDOWN_ALIAS: "/index.md",
 } as const

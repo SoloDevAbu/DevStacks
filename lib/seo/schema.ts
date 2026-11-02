@@ -344,6 +344,7 @@ export const itemListSchema = (
   "@context": "https://schema.org",
   "@type": "ItemList",
   ...(id ? { "@id": id } : {}),
+  numberOfItems: items.length,
   itemListElement: items.map((item, i) => ({
     "@type": "ListItem",
     position: i + 1,
@@ -359,10 +360,12 @@ export const collectionPageSchema = ({
   description,
   url,
   items,
+  dateModified,
 }: {
   name: string
   description: string
   url: string
+  dateModified?: Date
   items: ReadonlyArray<{
     readonly name: string
     readonly url: string
@@ -375,6 +378,7 @@ export const collectionPageSchema = ({
   name,
   description,
   url,
+  ...(dateModified ? { dateModified: dateModified.toISOString() } : {}),
   mainEntity: itemListSchema(items, `${url}#itemlist`),
 })
 

@@ -10,8 +10,6 @@ import { submitToIndexNow } from "@/lib/seo/indexnow"
 
 export const dynamic = "force-dynamic"
 
-const ROLLOVER_TAGS = [CACHE_TAGS.WEEKLY_LAUNCHES, CACHE_TAGS.AI_SURFACES]
-
 const ROLLOVER_HUB_PATHS = [ROUTES.HOME, ROUTES.DISCOVER_WEEKLY_LAUNCHES]
 
 const ROLLOVER_MACHINE_PATHS = [
@@ -34,7 +32,7 @@ export const POST = async (req: NextRequest) => {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
 
-  ROLLOVER_TAGS.forEach((tag) => revalidateTag(tag, { expire: 0 }))
+  revalidateTag(CACHE_TAGS.WEEKLY_LAUNCHES, { expire: 0 })
 
   const { year, week } = getCurrentWeek()
   const launches = await getWeeklyLaunches({

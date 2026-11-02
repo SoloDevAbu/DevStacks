@@ -19,6 +19,11 @@ const nextConfig: NextConfig = {
   },
   redirects: async () => [
     {
+      source: "/api/md/_catalog",
+      destination: "/api/md/catalog",
+      permanent: true,
+    },
+    {
       source: "/tools/-c6c56e",
       destination: "/tools",
       permanent: true,

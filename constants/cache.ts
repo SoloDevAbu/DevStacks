@@ -7,8 +7,14 @@ export const CACHE_TAGS = {
   TOOL_CATEGORIES: "tool-categories",
   WEEKLY_LAUNCHES: "weekly-launches",
   POPULAR_BUILDING_BLOCKS: "popular-building-blocks",
-  AI_SURFACES: "ai-surfaces",
 } as const
+
+// Machine-readable surfaces (llms.txt, /api/ai, feeds) are what AI answer engines quote, so
+// downstream caches may only hold them briefly.
+export const AI_SURFACE_CACHE_CONTROL = "public, max-age=600, s-maxage=3600"
+
+export const AI_SURFACE_FRESHNESS_NOTE =
+  "Refreshed hourly, whenever a listing changes, and at every weekly launch rollover (Monday 00:00 UTC)"
 
 // The incremental cache lives in Workers KV, whose free plan allows 1,000 writes a day. Every
 // regeneration of a page or an unstable_cache entry is one write, so data caches refresh hourly

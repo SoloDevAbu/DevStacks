@@ -8,9 +8,9 @@ import {
 } from "@/lib/seo/schema"
 import { SITE_CONFIG } from "@/constants/site"
 import { HOMEPAGE_LIMITS } from "@/constants/rankings"
-import { getCachedWeeklyLaunches } from "@/lib/launches/weekly-launches"
+import { getCurrentLaunchWeekSnapshot } from "@/lib/launches/launch-week"
 import { getCachedPopularBuildingBlocks } from "@/lib/rankings/popular"
-import { getCurrentWeek } from "@/utils/iso-weeks"
+import { getListingPath, toAbsoluteUrl } from "@/utils/urls"
 import type { FeedItem } from "@/components/shared/feed-card"
 
 export const revalidate = 3600
@@ -64,23 +64,18 @@ export const metadata: Metadata = {
 }
 
 const Page = async () => {
-  const { year, week } = getCurrentWeek()
-
-  const [weeklyLaunches, popularBuildingBlocks] = await Promise.all([
-    getCachedWeeklyLaunches(year, week, HOMEPAGE_LIMITS.WEEKLY_LAUNCHES_MAX).catch(
-      () => []
-    ),
+  const [launchWeek, popularBuildingBlocks] = await Promise.all([
+    getCurrentLaunchWeekSnapshot(),
     getCachedPopularBuildingBlocks(
       HOMEPAGE_LIMITS.POPULAR_BUILDING_BLOCKS
     ).catch(() => []),
   ])
-  const featuredItems = (weeklyLaunches as FeedItem[])
-    .slice(0, 10)
-    .map((item) => ({
-      name: item.name,
-      url: `${SITE_CONFIG.url}${item.itemKind === "tool" ? `/tools/${item.slug}` : `/products/${item.slug}`}`,
-      description: item.tagline,
-    }))
+  const weeklyLaunches = launchWeek.items as FeedItem[]
+  const launchListItems = weeklyLaunches.map((item) => ({
+    name: item.name,
+    url: toAbsoluteUrl(getListingPath(item)),
+    description: item.tagline,
+  }))
 
   const breadcrumbs = breadcrumbSchema([{ name: "Home", url: SITE_CONFIG.url }])
 
@@ -88,7 +83,8 @@ const Page = async () => {
     name: `${SITE_CONFIG.name} — This Week's Launches for AI & Search Engines`,
     description: `Discover developer tools, APIs, and software products launched this week on ${SITE_CONFIG.name}, ranked by community votes and optimized for AI and search engine discovery.`,
     url: SITE_CONFIG.url,
-    items: featuredItems,
+    items: launchListItems,
+    dateModified: launchWeek.lastUpdated,
   })
 
   const unifiedJsonLd = buildEntityGraph([breadcrumbs, collectionJsonLd])
@@ -100,7 +96,7 @@ const Page = async () => {
         dangerouslySetInnerHTML={{ __html: safeJsonLd(unifiedJsonLd) }}
       />
       <MainContent
-        weeklyLaunches={weeklyLaunches as FeedItem[]}
+        weeklyLaunches={weeklyLaunches}
         popularBuildingBlocks={popularBuildingBlocks as FeedItem[]}
       />
     </>

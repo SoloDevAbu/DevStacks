@@ -73,7 +73,7 @@ const MACHINE_AGENT_LINKS = [
   { label: "MCP docs", href: "/mcp" },
   { label: "MCP server card", href: "/.well-known/mcp/server-card.json" },
   { label: "MCP discovery", href: "/.well-known/mcp.json" },
-  { label: "Markdown catalog", href: "/api/md/_catalog" },
+  { label: "Markdown catalog", href: "/api/md/catalog" },
   { label: "API catalog", href: "/.well-known/api-catalog" },
   { label: "OpenAPI", href: "/openapi.json" },
   { label: "Public REST", href: "/v1" },
