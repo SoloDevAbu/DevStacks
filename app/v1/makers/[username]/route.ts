@@ -2,7 +2,7 @@ import { NextResponse } from "next/server"
 import { getMakerProfile } from "@/db/queries/users/get-profile"
 import { SITE_CONFIG } from "@/constants/site"
 
-export const revalidate = 60
+export const revalidate = 3600
 
 export const GET = async (
   _request: Request,

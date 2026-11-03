@@ -1,8 +1,12 @@
 import { NextResponse } from "next/server"
 import { SITE_CONFIG } from "@/constants/site"
-import { getWeeklyLaunches } from "@/lib/launches/weekly-launches"
-import { getCurrentWeek } from "@/lib/launches/week-utils"
-import type { FeedItem } from "@/components/shared/feed-card"
+import { ROUTES } from "@/constants/routes"
+import { AI_SURFACE_CACHE_CONTROL } from "@/constants/cache"
+import {
+  getCurrentLaunchWeekSnapshot,
+  getLaunchDate,
+} from "@/lib/launches/launch-week"
+import { getListingPath, toAbsoluteUrl } from "@/utils/urls"
 
 export const revalidate = 3600
 
@@ -15,24 +19,16 @@ const escapeXml = (str: string): string =>
     .replace(/'/g, "&apos;")
 
 export const GET = async () => {
-  const { year, week } = getCurrentWeek()
   // Not caught on purpose: a failed refresh keeps serving the last good feed.
-  const items = (await getWeeklyLaunches({
-    year,
-    week,
-    limit: 50,
-  })) as FeedItem[]
+  const launchWeek = await getCurrentLaunchWeekSnapshot()
 
   const nowRssDate = new Date().toUTCString()
   const siteUrl = SITE_CONFIG.url
 
-  const itemsXml = items
+  const itemsXml = launchWeek.items
     .map((item) => {
-      const isTool = item.itemKind === "tool"
-      const url = `${siteUrl}${isTool ? `/tools/${item.slug}` : `/products/${item.slug}`}`
-      const pubDate = item.createdAt
-        ? new Date(item.createdAt).toUTCString()
-        : nowRssDate
+      const url = toAbsoluteUrl(getListingPath(item))
+      const pubDate = getLaunchDate(item, launchWeek.startDate).toUTCString()
       const category = item.category
         ? `<category>${escapeXml(item.category)}</category>`
         : ""
@@ -56,7 +52,7 @@ export const GET = async () => {
     <description>${escapeXml(SITE_CONFIG.description)}</description>
     <language>en-us</language>
     <lastBuildDate>${nowRssDate}</lastBuildDate>
-    <atom:link href="${siteUrl}/feed.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="${toAbsoluteUrl(ROUTES.FEED)}" rel="self" type="application/rss+xml" />
 ${itemsXml}
   </channel>
 </rss>`
@@ -64,7 +60,7 @@ ${itemsXml}
   return new NextResponse(rss, {
     headers: {
       "Content-Type": "application/xml; charset=utf-8",
-      "Cache-Control": "public, max-age=3600, s-maxage=3600",
+      "Cache-Control": AI_SURFACE_CACHE_CONTROL,
     },
   })
 }

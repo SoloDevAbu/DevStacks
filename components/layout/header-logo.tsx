@@ -30,7 +30,6 @@ export const HeaderLogo = ({
           width={32}
           height={32}
           className="size-full object-contain"
-          priority
         />
       </div>
       {showText && (

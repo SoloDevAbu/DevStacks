@@ -6,7 +6,13 @@ import { HeaderActions } from "@/components/layout/header-actions"
 import { HeaderAdvertise } from "@/components/layout/header-advertise"
 import { MobileNav } from "@/components/layout/mobile-nav"
 import { AppLayoutShell } from "@/components/layout/app-layout-shell"
+import { LeftSidebar } from "@/components/layout/left-sidebar"
+import { RightSidebar } from "@/components/layout/right-sidebar"
+import { AgentFooter } from "@/components/layout/agent-footer"
+import { getCachedToolCategories } from "@/db/queries/categories/list"
+import { QUICK_STACK_COUNT } from "@/constants/navigation"
 import { LaunchPromoBanner } from "@/components/layout/launch-promo-banner"
+import { PromoBannerDismissScript } from "@/components/layout/promo-banner-dismiss-script"
 import { Providers } from "@/app/providers"
 import { SITE_CONFIG } from "@/constants/site"
 
@@ -42,7 +48,6 @@ export const metadata: Metadata = {
     template: `%s | ${SITE_CONFIG.name}`,
   },
   description: SITE_CONFIG.description,
-  keywords: [...SITE_CONFIG.keywords],
   authors: [{ name: SITE_CONFIG.name, url: SITE_CONFIG.url }],
   creator: SITE_CONFIG.creator,
   publisher: SITE_CONFIG.publisher,
@@ -92,7 +97,6 @@ export const metadata: Metadata = {
     images: [SITE_CONFIG.ogImageUrl],
   },
   alternates: {
-    canonical: SITE_CONFIG.url,
     types: {
       "application/rss+xml": `${SITE_CONFIG.url}/feed.xml`,
     },
@@ -105,18 +109,29 @@ export const metadata: Metadata = {
   },
 }
 
+// The UI is set in Geist Mono; Geist Sans is only used by a few dialogs, so it is not preloaded.
 const fontSans = Geist({
   subsets: ["latin"],
   variable: "--font-sans",
+  preload: false,
 })
 
 const geistMono = Geist_Mono({ subsets: ["latin"], variable: "--font-mono" })
 
-const RootLayout = ({
+const getQuickStacks = async () => {
+  const categories = await getCachedToolCategories().catch(() => [])
+  return [...categories]
+    .sort((a, b) => b.count - a.count)
+    .slice(0, QUICK_STACK_COUNT)
+    .map(({ name, slug }) => ({ name, slug }))
+}
+
+const RootLayout = async ({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) => {
+  const quickStacks = await getQuickStacks()
   const orgSchema = organizationSchema()
   const webSchema = websiteSchema()
   const siteGraph = buildEntityGraph([orgSchema, webSchema])
@@ -133,6 +148,7 @@ const RootLayout = ({
       )}
     >
       <head>
+        <PromoBannerDismissScript />
         <link rel="me" href={SITE_CONFIG.socials.x} />
         <link rel="me" href={SITE_CONFIG.socials.linkedin} />
         <link
@@ -160,7 +176,7 @@ const RootLayout = ({
               {/* Top Center */}
               <div className="flex w-full items-center justify-between gap-4 px-4 lg:px-6">
                 <div className="flex items-center gap-2 lg:hidden">
-                  <MobileNav />
+                  <MobileNav quickStacks={quickStacks} />
                   <HeaderLogo hideTextOnMobile />
                 </div>
                 <div className="hidden w-full items-center justify-between gap-4 md:flex">
@@ -179,7 +195,13 @@ const RootLayout = ({
             </header>
 
             {/* --- BOTTOM ROW (Content) --- */}
-            <AppLayoutShell>{children}</AppLayoutShell>
+            <AppLayoutShell
+              left={<LeftSidebar quickStacks={quickStacks} />}
+              right={<RightSidebar />}
+              footer={<AgentFooter />}
+            >
+              {children}
+            </AppLayoutShell>
           </div>
         </Providers>
         <CloudflareAnalytics />

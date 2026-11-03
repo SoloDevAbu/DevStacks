@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import { getWeeklyPremiumLaunches } from "@/lib/launches/weekly-launches"
-import { getCurrentWeek } from "@/lib/launches/week-utils"
+import { getCurrentWeek } from "@/utils/iso-weeks"
 
 export const GET = async (request: Request) => {
   const { searchParams } = new URL(request.url)

@@ -1,4 +1,15 @@
 import { TIER, type Tier } from "@/constants/plans"
+import { SITE_CONFIG } from "@/constants/site"
+import { ROUTES } from "@/constants/routes"
+
+export const toAbsoluteUrl = (path: string): string =>
+  path.startsWith("http") ? path : `${SITE_CONFIG.url}${path}`
+
+export const getListingPath = (item: {
+  itemKind: "tool" | "product"
+  slug: string
+}): string =>
+  item.itemKind === "tool" ? ROUTES.TOOL(item.slug) : ROUTES.PRODUCT(item.slug)
 
 export const getOutboundUrl = (
   rawUrl?: string | null,
@@ -102,3 +113,19 @@ export const normalizeSitemapUrl = (rawUrlOrPath: string): string => {
 
   return `${SITEMAP_PRODUCTION_ORIGIN}${str}`
 }
+
+export const getCategoryPath = (
+  itemKind: "tool" | "product",
+  categorySlug?: string | null
+): string => {
+  if (itemKind === "tool") {
+    return categorySlug ? ROUTES.TOOL_CATEGORY(categorySlug) : ROUTES.TOOL_CATEGORIES
+  }
+  return categorySlug
+    ? ROUTES.PRODUCT_CATEGORY(categorySlug)
+    : ROUTES.PRODUCT_CATEGORIES
+}
+
+// User-submitted profile links and third-party assistant links pass no ranking signal.
+export const UGC_LINK_REL = "noopener noreferrer nofollow ugc"
+export const NOFOLLOW_LINK_REL = "noopener noreferrer nofollow"

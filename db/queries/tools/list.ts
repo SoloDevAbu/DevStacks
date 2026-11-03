@@ -2,9 +2,10 @@ import { db } from "@/db"
 import { tools, categories, users } from "@/db/schema"
 import { and, desc, eq, ilike, or, sql } from "drizzle-orm"
 import { unstable_cache } from "next/cache"
-import { CACHE_TAGS } from "@/constants/cache"
+import { CACHE_TAGS, CACHE_REVALIDATE_SECONDS } from "@/constants/cache"
 import type { DbTool } from "@/types/entities"
 import type { Pricing, Tier } from "@/constants/plans"
+import { launchedByNow } from "@/lib/catalog/visibility"
 
 export type ToolListFilters = {
   q?: string
@@ -35,7 +36,11 @@ export const getTools = async ({
   const safeLimit = Math.min(5000, Math.max(1, limit))
   const offset = (safePage - 1) * safeLimit
 
-  const conditions = [eq(tools.status, "approved"), eq(tools.isDeleted, false)]
+  const conditions = [
+    eq(tools.status, "approved"),
+    launchedByNow(tools),
+    eq(tools.isDeleted, false),
+  ]
 
   if (q && q.trim()) {
     const pattern = `%${q.trim()}%`
@@ -142,7 +147,13 @@ export const getToolsStats = async () => {
       totalBuilds: sql<number>`coalesce(sum(${tools.buildsCount}), 0)::int`,
     })
     .from(tools)
-    .where(and(eq(tools.status, "approved"), eq(tools.isDeleted, false)))
+    .where(
+      and(
+        eq(tools.status, "approved"),
+        launchedByNow(tools),
+        eq(tools.isDeleted, false)
+      )
+    )
 
   return {
     totalCount: Number(row?.totalCount ?? 0),
@@ -153,11 +164,11 @@ export const getToolsStats = async () => {
 export const getCachedTools = unstable_cache(
   async (filters: ToolListFilters) => getTools(filters),
   [CACHE_TAGS.TOOLS_LIST],
-  { revalidate: 300, tags: [CACHE_TAGS.TOOLS_LIST] }
+  { revalidate: CACHE_REVALIDATE_SECONDS.LISTS, tags: [CACHE_TAGS.TOOLS_LIST] }
 )
 
 export const getCachedToolsStats = unstable_cache(
   async () => getToolsStats(),
   [CACHE_TAGS.TOOLS_STATS],
-  { revalidate: 300, tags: [CACHE_TAGS.TOOLS_STATS] }
+  { revalidate: CACHE_REVALIDATE_SECONDS.LISTS, tags: [CACHE_TAGS.TOOLS_STATS] }
 )

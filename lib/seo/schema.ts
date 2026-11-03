@@ -1,7 +1,8 @@
 import { SITE_CONFIG } from "@/constants/site"
 import { countryCodeToName } from "@/utils/country"
 import { LAUNCH_PROMO } from "@/constants/promo"
-import { TIER } from "@/constants/plans"
+import { PRICING, TIER } from "@/constants/plans"
+import { PLATFORMS } from "@/constants/platforms"
 
 export type ProductSchemaInput = {
   name: string
@@ -40,7 +41,7 @@ export type ProductSchemaInput = {
   spatialCoverage?: string | null
   screenshots?: string[]
   videoUrl?: string | null
-  isRelatedTo?: ReadonlyArray<{ readonly name: string; readonly url: string }>
+  builtWith?: ReadonlyArray<{ readonly name: string; readonly url: string }>
 }
 
 export type PersonSchemaInput = {
@@ -122,6 +123,31 @@ export const buildEntityGraph = (
   "@graph": nodes.filter(Boolean),
 })
 
+const FREE_TIER_PRICINGS: readonly string[] = [
+  PRICING.FREE,
+  PRICING.OPEN_SOURCE,
+  PRICING.FREEMIUM,
+]
+
+// An Offer without a price is invalid, so only listings with a free entry point get one.
+const buildFreeOffer = (pricing?: string | null) =>
+  pricing && FREE_TIER_PRICINGS.includes(pricing)
+    ? {
+        "@type": "Offer",
+        price: "0",
+        priceCurrency: "USD",
+        availability: "https://schema.org/InStock",
+        category: pricing,
+      }
+    : undefined
+
+const formatOperatingSystems = (platforms?: string[] | null) =>
+  platforms && platforms.length > 0
+    ? platforms
+        .map((id) => PLATFORMS.find((platform) => platform.id === id)?.label ?? id)
+        .join(", ")
+    : "Web"
+
 export const productSchema = (product: ProductSchemaInput) => {
   const count = product.likesCount ?? product.upvotesCount ?? 0
 
@@ -165,10 +191,7 @@ export const productSchema = (product: ProductSchemaInput) => {
       product.category?.trim() ||
       "DeveloperApplication",
     applicationSubCategory: product.category?.trim() || undefined,
-    operatingSystem:
-      product.platforms && product.platforms.length > 0
-        ? product.platforms.join(", ")
-        : "Web, Cloud, Cross-Platform",
+    operatingSystem: formatOperatingSystems(product.platforms),
     keywords: cleanKeywords || undefined,
     featureList: featureList.length > 0 ? featureList : undefined,
     sameAs: sameAs.length > 0 ? sameAs : undefined,
@@ -200,16 +223,7 @@ export const productSchema = (product: ProductSchemaInput) => {
             },
           ]
         : undefined,
-    offers: {
-      "@type": "Offer",
-      price:
-        product.pricing === "Free" || product.pricing === "Open Source"
-          ? "0"
-          : undefined,
-      priceCurrency: "USD",
-      availability: "https://schema.org/InStock",
-      category: product.pricing ?? "Free",
-    },
+    offers: buildFreeOffer(product.pricing),
     datePublished: product.createdAt
       ? new Date(product.createdAt).toISOString()
       : undefined,
@@ -253,7 +267,8 @@ export const productSchema = (product: ProductSchemaInput) => {
       product.screenshots && product.screenshots.length > 0
         ? product.screenshots
         : undefined,
-    video: product.videoUrl
+    video:
+      product.videoUrl && product.createdAt
       ? {
           "@type": "VideoObject",
           name: `${product.name} Demo Video`,
@@ -269,13 +284,12 @@ export const productSchema = (product: ProductSchemaInput) => {
                 ? product.videoUrl.replace("share/", "embed/")
                 : undefined,
           thumbnailUrl: product.logoUrl ?? `${SITE_CONFIG.url}/favicon.png`,
-          uploadDate:
-            product.createdAt?.toISOString() ?? new Date().toISOString(),
+          uploadDate: new Date(product.createdAt).toISOString(),
         }
       : undefined,
-    isRelatedTo:
-      product.isRelatedTo && product.isRelatedTo.length > 0
-        ? product.isRelatedTo.map((item) => ({
+    mentions:
+      product.builtWith && product.builtWith.length > 0
+        ? product.builtWith.map((item) => ({
             "@type": "SoftwareApplication",
             name: item.name,
             url: item.url,
@@ -344,6 +358,7 @@ export const itemListSchema = (
   "@context": "https://schema.org",
   "@type": "ItemList",
   ...(id ? { "@id": id } : {}),
+  numberOfItems: items.length,
   itemListElement: items.map((item, i) => ({
     "@type": "ListItem",
     position: i + 1,
@@ -359,10 +374,12 @@ export const collectionPageSchema = ({
   description,
   url,
   items,
+  dateModified,
 }: {
   name: string
   description: string
   url: string
+  dateModified?: Date
   items: ReadonlyArray<{
     readonly name: string
     readonly url: string
@@ -375,6 +392,7 @@ export const collectionPageSchema = ({
   name,
   description,
   url,
+  ...(dateModified ? { dateModified: dateModified.toISOString() } : {}),
   mainEntity: itemListSchema(items, `${url}#itemlist`),
 })
 
@@ -436,10 +454,7 @@ export const toolSchema = (tool: ToolSchemaInput) => {
     applicationCategory:
       tool.asoCategory?.trim() || tool.category?.trim() || "DeveloperApplication",
     applicationSubCategory: tool.category?.trim() || undefined,
-    operatingSystem:
-      tool.platforms && tool.platforms.length > 0
-        ? tool.platforms.join(", ")
-        : "Web, Cloud, Cross-Platform",
+    operatingSystem: formatOperatingSystems(tool.platforms),
     keywords: cleanKeywords || undefined,
     featureList: featureList.length > 0 ? featureList : undefined,
     sameAs: sameAs.length > 0 ? sameAs : undefined,
@@ -459,16 +474,7 @@ export const toolSchema = (tool: ToolSchemaInput) => {
             },
           ]
         : undefined,
-    offers: {
-      "@type": "Offer",
-      price:
-        tool.pricing === "Free" || tool.pricing === "Open Source"
-          ? "0"
-          : undefined,
-      priceCurrency: "USD",
-      availability: "https://schema.org/InStock",
-      category: tool.pricing ?? "Free",
-    },
+    offers: buildFreeOffer(tool.pricing),
     datePublished: tool.createdAt
       ? new Date(tool.createdAt).toISOString()
       : undefined,
@@ -537,12 +543,8 @@ export const techArticleSchema = (input: TechArticleSchemaInput) => ({
     "@type": "WebPage",
     "@id": input.url,
   },
-  datePublished: input.publishedAt
-    ? input.publishedAt.toISOString()
-    : new Date().toISOString(),
-  dateModified: input.updatedAt
-    ? input.updatedAt.toISOString()
-    : new Date().toISOString(),
+  datePublished: input.publishedAt?.toISOString(),
+  dateModified: (input.updatedAt ?? input.publishedAt)?.toISOString(),
   inLanguage: "en-US",
   author: {
     "@type": "Person",

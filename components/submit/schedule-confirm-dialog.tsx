@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
-import { getCurrentWeek, getWeekRange } from "@/lib/launches/week-utils"
+import { getCurrentWeek, formatLaunchWeekDisplay } from "@/utils/iso-weeks"
 import { LAUNCH_PROMO } from "@/constants/promo"
 import { PLANS, TIER, type Tier } from "@/constants/plans"
 import {
@@ -19,21 +19,6 @@ import {
   scheduleEntitySummaryBox,
   schedulePromoBox,
 } from "@/utils/styles"
-
-const SHORT_MONTHS = [
-  "Jan",
-  "Feb",
-  "Mar",
-  "Apr",
-  "May",
-  "Jun",
-  "Jul",
-  "Aug",
-  "Sep",
-  "Oct",
-  "Nov",
-  "Dec",
-]
 
 interface ScheduleConfirmDialogProps {
   isOpen: boolean
@@ -63,11 +48,8 @@ export const ScheduleConfirmDialog = ({
   const current = getCurrentWeek()
   const year = launchYear ?? current.year
   const week = launchWeek ?? current.week
-  const { start, end } = getWeekRange(year, week)
-
-  const startFormatted = `${SHORT_MONTHS[start.getUTCMonth()]} ${start.getUTCDate()}`
-  const endFormatted = `${SHORT_MONTHS[end.getUTCMonth()]} ${end.getUTCDate()}`
-  const weekString = `Week ${week} — ${startFormatted} – ${endFormatted}, ${year}`
+  const { weekLabel, dateRange } = formatLaunchWeekDisplay(year, week)
+  const weekString = `${weekLabel} — ${dateRange}, ${year}`
 
   const isProduct = type === "product"
   const itemTypeLabel = isProduct ? "product" : "tool"

@@ -107,10 +107,10 @@ export const GET = () => {
         ],
       },
       {
-        anchor: `${SITE_CONFIG.url}/api/md/_catalog`,
+        anchor: `${SITE_CONFIG.url}/api/md/catalog`,
         "service-doc": [
           {
-            href: `${SITE_CONFIG.url}/api/md/_catalog`,
+            href: `${SITE_CONFIG.url}/api/md/catalog`,
             type: "text/markdown",
             title: "Markdown content catalog",
           },

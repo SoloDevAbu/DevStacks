@@ -90,9 +90,11 @@ export const PATCH = async (req: NextRequest) => {
       ...(username ? { username } : {}),
     })
 
-    revalidateCatalog()
-
     const fullProfile = await getCurrentUserProfile(session.user.id)
+
+    revalidateCatalog({
+      makerUsername: fullProfile?.username ?? updatedUser?.username ?? undefined,
+    })
 
     return NextResponse.json({
       data: fullProfile ?? updatedUser,

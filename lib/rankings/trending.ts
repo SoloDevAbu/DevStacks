@@ -7,6 +7,7 @@ import type {
   RankedProduct,
 } from "@/lib/rankings/types"
 import type { ProductBuiltWith } from "@/types/entities"
+import { launchedByNow } from "@/lib/catalog/visibility"
 
 export const getTrending = async (
   limit = 10,
@@ -17,10 +18,12 @@ export const getTrending = async (
 
   const toolConditions = [
     eq(tools.status, "approved"),
+    launchedByNow(tools),
     eq(tools.isDeleted, false),
   ]
   const productConditions = [
     eq(products.status, "approved"),
+    launchedByNow(products),
     eq(products.isDeleted, false),
   ]
 

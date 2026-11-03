@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import { notFound, redirect } from "next/navigation"
+import { notFound, permanentRedirect } from "next/navigation"
 import Link from "next/link"
 import {
   ArrowLeft,
@@ -20,7 +20,7 @@ import { resolveTool, getProductsBuiltWithTool } from "@/lib/tools/resolve-tool"
 import { getRelatedTools } from "@/db/queries/tools/get"
 import { ProductCard } from "@/components/shared/product-card"
 import { ProductLogo } from "@/components/shared/product-logo"
-import { getFaviconUrl } from "@/utils/urls"
+import { getCategoryPath, getFaviconUrl, toAbsoluteUrl } from "@/utils/urls"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { ToolCard } from "@/components/shared/tool-card"
@@ -33,7 +33,7 @@ import {
 import { SITE_CONFIG } from "@/constants/site"
 import { ROUTES } from "@/constants/routes"
 
-export const revalidate = 3600
+export const revalidate = 86400
 
 export const generateStaticParams = async () => []
 
@@ -129,7 +129,7 @@ const BuiltWithPage = async (props: BuiltWithPageProps) => {
 
   // Anti-thin circuit breaker: If 0 builds, redirect to the tool's main profile
   if (builtWithProducts.length === 0) {
-    redirect(ROUTES.TOOL(tool.slug))
+    permanentRedirect(ROUTES.TOOL(tool.slug))
   }
 
   const pageUrl = `${SITE_CONFIG.url}/built-with/${tool.slug}`
@@ -142,7 +142,7 @@ const BuiltWithPage = async (props: BuiltWithPageProps) => {
       ? [
           {
             name: tool.category,
-            url: `${SITE_CONFIG.url}/tools/category/${tool.categorySlug ?? encodeURIComponent(tool.category)}`,
+            url: toAbsoluteUrl(getCategoryPath("tool", tool.categorySlug)),
           },
         ]
       : []),
@@ -204,7 +204,7 @@ const BuiltWithPage = async (props: BuiltWithPageProps) => {
                 </li>
                 <li className="flex items-center">
                   <Link
-                    href={`/tools/category/${tool.categorySlug ?? encodeURIComponent(tool.category)}`}
+                    href={getCategoryPath("tool", tool.categorySlug)}
                     className="hover:text-slate-900"
                   >
                     {tool.category}
@@ -337,7 +337,7 @@ const BuiltWithPage = async (props: BuiltWithPageProps) => {
         </div>
 
         {/* Products List */}
-        <main className="flex-1">
+        <div className="flex-1">
           <div className="flex flex-col">
             {builtWithProducts.map((product, idx) => (
               <ProductCard
@@ -423,7 +423,7 @@ const BuiltWithPage = async (props: BuiltWithPageProps) => {
 
                   {tool.category && (
                     <Link
-                      href={`/tools/category/${tool.categorySlug ?? encodeURIComponent(tool.category)}`}
+                      href={getCategoryPath("tool", tool.categorySlug)}
                       className="inline-flex items-center gap-1.5 rounded-none border border-slate-300 bg-white px-3.5 py-2 text-xs font-semibold text-slate-800 hover:bg-slate-50"
                     >
                       <Layers className="size-3.5 text-blue-600" />
@@ -461,7 +461,7 @@ const BuiltWithPage = async (props: BuiltWithPageProps) => {
               )}
             </div>
           </section>
-        </main>
+        </div>
       </div>
     </>
   )

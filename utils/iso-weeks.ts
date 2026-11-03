@@ -9,7 +9,7 @@ export const getISOWeek = (
   date: Date
 ): { isoYear: number; isoWeek: number } => {
   const d = new Date(
-    Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())
+    Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate())
   )
   d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7))
   const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1))
@@ -33,6 +33,13 @@ export const getISOWeekRange = (
   sunday.setUTCHours(23, 59, 59, 999)
 
   return { startDate: monday, endDate: sunday }
+}
+
+export const getCurrentWeek = (
+  now: Date = new Date()
+): { year: number; week: number } => {
+  const { isoYear, isoWeek } = getISOWeek(now)
+  return { year: isoYear, week: isoWeek }
 }
 
 export const getRemainingWeeksOfYear = (
@@ -164,4 +171,74 @@ export const formatLaunchWeekDisplay = (
     weekLabel: `Week ${isoWeek}`,
     dateRange,
   }
+}
+
+export type WeekOption = {
+  value: string
+  label: string
+  year: number
+  week: number
+}
+
+export const generateWeekOptions = (year: number): WeekOption[] => {
+  const { year: currentYear, week: currentWeek } = getCurrentWeek()
+  const maxWeek =
+    year < currentYear
+      ? getISOWeek(new Date(Date.UTC(year, 11, 28))).isoWeek
+      : currentWeek
+
+  return Array.from({ length: maxWeek }, (_, index) => {
+    const week = maxWeek - index
+    const { weekLabel, dateRange } = formatLaunchWeekDisplay(year, week)
+    return {
+      value: `${year}-W${String(week).padStart(2, "0")}`,
+      label: `${weekLabel}  ·  ${dateRange}`,
+      year,
+      week,
+    }
+  })
+}
+
+const WEEK_SLUG_PATTERN = /^week-(\d{1,2})$/
+
+export const parseWeekSlug = (slug: string): number | null => {
+  const match = slug.match(WEEK_SLUG_PATTERN)
+  const week = match ? Number(match[1]) : NaN
+  return week >= 1 && week <= 53 ? week : null
+}
+
+export const shiftWeek = (
+  year: number,
+  week: number,
+  delta: number
+): { year: number; week: number } => {
+  const { startDate } = getISOWeekRange(year, week)
+  const shifted = new Date(startDate.getTime() + delta * 7 * 24 * 60 * 60 * 1000)
+  const { isoYear, isoWeek } = getISOWeek(shifted)
+  return { year: isoYear, week: isoWeek }
+}
+
+export const isFutureWeek = (year: number, week: number): boolean => {
+  const current = getCurrentWeek()
+  return year > current.year || (year === current.year && week > current.week)
+}
+
+// "Week 45, 2026 (Nov 2 – 8)"
+export const formatWeekTitle = (year: number, week: number): string => {
+  const { weekLabel, dateRange } = formatLaunchWeekDisplay(year, week)
+  return `${weekLabel}, ${year} (${dateRange})`
+}
+
+// A booked listing launches in its booked week; older listings in the week they were created.
+export const getListingLaunchWeek = ({
+  launchYear,
+  launchWeek,
+  createdAt,
+}: {
+  launchYear?: number | null
+  launchWeek?: number | null
+  createdAt?: Date | string | null
+}): { year: number; week: number } | null => {
+  if (launchYear && launchWeek) return { year: launchYear, week: launchWeek }
+  return createdAt ? getCurrentWeek(new Date(createdAt)) : null
 }

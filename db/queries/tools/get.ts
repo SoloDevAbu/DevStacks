@@ -2,6 +2,7 @@ import { db } from "@/db"
 import { tools, categories, users } from "@/db/schema"
 import { and, desc, eq, ilike, ne, or, sql } from "drizzle-orm"
 import type { DbTool } from "@/types/entities"
+import { launchedByNow } from "@/lib/catalog/visibility"
 
 export const getToolBySlugOrName = async (slugOrName: string) => {
   const [row] = await db
@@ -58,6 +59,8 @@ export const getToolBySlug = async (slug: string) => {
       tier: tools.tier,
       badgeVerified: tools.badgeVerified,
       status: tools.status,
+      launchYear: tools.launchYear,
+      launchWeek: tools.launchWeek,
       upvotesCount: tools.upvotesCount,
       buildsCount: tools.buildsCount,
       commentsCount: tools.commentsCount,
@@ -120,6 +123,7 @@ export const getRelatedTools = async (
       .where(
         and(
           eq(tools.status, "approved"),
+          launchedByNow(tools),
           eq(tools.isDeleted, false),
           eq(tools.categoryId, categoryId),
           ne(tools.id, currentToolId)

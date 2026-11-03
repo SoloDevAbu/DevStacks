@@ -1,5 +1,6 @@
 import { cache } from "react"
 import { getProductBySlug } from "@/db/queries/products/get"
+import { isPubliclyVisible } from "@/lib/catalog/visibility"
 import type { DbProduct } from "@/types/entities"
 
 export interface FullProduct extends DbProduct {
@@ -23,6 +24,8 @@ export interface FullProduct extends DbProduct {
   geoTarget?: string | null
   asoCategory?: string | null
   platforms: string[]
+  launchYear?: number | null
+  launchWeek?: number | null
   submitterState?: string | null
   createdAt?: Date
   updatedAt?: Date
@@ -32,7 +35,7 @@ export const resolveProduct = cache(
   async (slug: string): Promise<FullProduct | null> => {
     try {
       const dbProduct = await getProductBySlug(slug)
-      if (dbProduct && !dbProduct.isDeleted) {
+      if (dbProduct && isPubliclyVisible(dbProduct)) {
         return {
           ...dbProduct,
           pricing: dbProduct.pricing as FullProduct["pricing"],

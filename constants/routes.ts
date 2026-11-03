@@ -2,6 +2,9 @@ export const ROUTES = {
   HOME: "/",
   DISCOVER_POPULAR_BUILDING_BLOCKS: "/discover/popular-building-blocks",
   DISCOVER_WEEKLY_LAUNCHES: "/discover/weekly-launches",
+  LAUNCH_WEEK: (year: number, week: number) => `/launches/${year}/week-${week}`,
+  LAUNCH_WEEK_MARKDOWN: (year: number, week: number) =>
+    `/api/md/launches/${year}/week-${week}`,
   TRENDING: "/trending",
   PRICING: "/pricing",
   SUBMIT: "/submit",
@@ -36,6 +39,8 @@ export const ROUTES = {
   GUIDE_LAUNCH_DEVTOOLS: "/guides/where-to-launch-developer-tools-2026",
   BLOG: "/blog",
   BLOG_POST: (slug: string) => `/blog/${encodeURIComponent(slug)}`,
+  BLOG_PREVIEW: (slug: string) =>
+    `/api/blog-preview?slug=${encodeURIComponent(slug)}`,
   ADMIN: "/admin",
   COMPARE: (slug: string) => `/compare/${encodeURIComponent(slug)}`,
   BUILT_WITH: (slug: string) => `/built-with/${encodeURIComponent(slug)}`,
@@ -60,4 +65,13 @@ export const ROUTES = {
   MAKER: (username: string) => `/makers/${username}`,
   CHECKOUT_SUCCESS: "/",
   CHECKOUT_CANCEL: "/pricing",
+  CRON_ROLLOVER: "/api/cron/rollover",
+  INDEXNOW_KEY: "/indexnow-key.txt",
+  FEED: "/feed.xml",
+  LLMS_TXT: "/llms.txt",
+  LLMS_FULL_TXT: "/llms-full.txt",
+  AI_SNAPSHOT: "/api/ai",
+  MARKDOWN_CATALOG: "/api/md/catalog",
+  MARKDOWN_HOME: "/api/md/home",
+  HOME_MARKDOWN_ALIAS: "/index.md",
 } as const

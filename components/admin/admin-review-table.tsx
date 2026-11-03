@@ -52,6 +52,7 @@ import {
   adminPreviewBtn,
 } from "@/utils/admin/styles"
 import { cn } from "@/lib/utils"
+import { ROUTES } from "@/constants/routes"
 
 export const AdminReviewTable = () => {
   const [statusFilter, setStatusFilter] = useState<
@@ -361,7 +362,7 @@ export const AdminReviewTable = () => {
                         {/* Preview Blog button if blog exists */}
                         {sub.blog?.slug && (
                           <Link
-                            href={`/blog/${sub.blog.slug}`}
+                            href={ROUTES.BLOG_PREVIEW(sub.blog.slug)}
                             target="_blank"
                             title="Preview Generated Launch Blog"
                             className={cn(

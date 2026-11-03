@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
-import { getProductBySlug, getRelatedProducts } from "@/db/queries/products/get"
+import { getRelatedProducts } from "@/db/queries/products/get"
+import { resolveProduct } from "@/lib/products/resolve-product"
 import { getProductFaqs } from "@/db/queries/faqs/get-faqs"
 import {
   generateProductMarkdown,
@@ -7,14 +8,14 @@ import {
 } from "@/lib/seo/markdown-twins"
 import { SITE_CONFIG } from "@/constants/site"
 
-export const revalidate = 3600
+export const revalidate = 86400
 
 export const GET = async (
   _request: Request,
   props: { params: Promise<{ slug: string }> }
 ) => {
   const { slug } = await props.params
-  const product = await getProductBySlug(slug)
+  const product = await resolveProduct(slug)
 
   if (!product) {
     return new NextResponse(

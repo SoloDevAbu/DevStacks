@@ -6,6 +6,7 @@ import { HoverOutline } from "@/components/shared/hover-outline"
 import { AI_PROVIDERS } from "@/constants/ai-providers"
 import { AI_PROMPTS } from "@/lib/prompts"
 import { ROUTES } from "@/constants/routes"
+import { FOOTER_COLUMNS } from "@/constants/navigation"
 import { SITE_CONFIG } from "@/constants/site"
 import { FEATURED_BADGES } from "@/constants/featured-badges"
 import {
@@ -34,51 +35,12 @@ import {
   agentFooterDot,
 } from "@/utils/styles"
 
-const DIRECTORY_LINKS = [
-  { label: "Tools Directory", href: ROUTES.TOOLS },
-  { label: "Products Directory", href: ROUTES.PRODUCTS },
-  { label: "Trending Stacks", href: ROUTES.TRENDING },
-  { label: "Weekly Launches", href: ROUTES.DISCOVER_WEEKLY_LAUNCHES },
-  { label: "Building Blocks", href: ROUTES.DISCOVER_POPULAR_BUILDING_BLOCKS },
-  { label: "FAQs", href: ROUTES.FAQ },
-] as const
-
-const BUILDER_LINKS = [
-  { label: "New Launch", href: ROUTES.SUBMIT },
-  { label: "Launch a Product", href: ROUTES.SUBMIT_PRODUCT },
-  { label: "Launch a Dev Tool", href: ROUTES.SUBMIT_TOOL },
-  { label: "Sponsor & Pricing", href: ROUTES.PRICING },
-  { label: "Developer Guidelines", href: "/llms.txt" },
-] as const
-
-const ALTERNATIVE_LINKS = [
-  { label: "Product Hunt Alternative", href: ROUTES.PRODUCTHUNT_ALTERNATIVE },
-  { label: "Uneed Alternative", href: ROUTES.UNEED_ALTERNATIVE },
-  { label: "MicroLaunch Alternative", href: ROUTES.MICROLAUNCH_ALTERNATIVE },
-  { label: "BetaList Alternative", href: ROUTES.BETALIST_ALTERNATIVE },
-] as const
-
-const PROTOCOL_LINKS = [
-  { label: "LLMs.txt Index", href: "/llms.txt" },
-  { label: "AI Agent Snapshot", href: "/api/ai" },
-  { label: "MCP Protocol Server", href: "/.well-known/mcp.json" },
-  { label: "OpenAPI 3.1 Spec", href: "/openapi.json" },
-] as const
-
 const MACHINE_AGENT_LINKS = [
   { label: "llms.txt", href: "/llms.txt" },
   { label: "llms-full.txt", href: "/llms-full.txt" },
   { label: "ai.txt", href: "/ai.txt" },
-  { label: "AI snapshot", href: "/api/ai" },
   { label: "MCP docs", href: "/mcp" },
-  { label: "MCP server card", href: "/.well-known/mcp/server-card.json" },
-  { label: "MCP discovery", href: "/.well-known/mcp.json" },
-  { label: "Markdown catalog", href: "/api/md/_catalog" },
-  { label: "API catalog", href: "/.well-known/api-catalog" },
   { label: "OpenAPI", href: "/openapi.json" },
-  { label: "Public REST", href: "/v1" },
-  { label: "CLI", href: "/cli" },
-  { label: "auth.md", href: "/auth.md" },
 ] as const
 
 export const AgentFooter = () => (
@@ -250,67 +212,22 @@ export const AgentFooter = () => (
       </div>
 
       {/* Navigation Columns Grid */}
-      <div className={siteFooterNavGrid}>
-        {/* Column 1: Directory */}
-        <div className="flex flex-col gap-3">
-          <h4 className={siteFooterColHeading}>Directory</h4>
-          <ul className="flex flex-col gap-2">
-            {DIRECTORY_LINKS.map((link) => (
-              <li key={link.label}>
-                <Link href={link.href} className={siteFooterLink}>
-                  {link.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        {/* Column 2: Builders */}
-        <div className="flex flex-col gap-3">
-          <h4 className={siteFooterColHeading}>Builders</h4>
-          <ul className="flex flex-col gap-2">
-            {BUILDER_LINKS.map((link) => (
-              <li key={link.label}>
-                <Link href={link.href} className={siteFooterLink}>
-                  {link.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        {/* Column 3: Alternatives */}
-        <div className="flex flex-col gap-3">
-          <h4 className={siteFooterColHeading}>Alternatives</h4>
-          <ul className="flex flex-col gap-2">
-            {ALTERNATIVE_LINKS.map((link) => (
-              <li key={link.label}>
-                <Link href={link.href} className={siteFooterLink}>
-                  {link.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        {/* Column 4: Protocols */}
-        <div className="flex flex-col gap-3">
-          <h4 className={siteFooterColHeading}>Protocols</h4>
-          <ul className="flex flex-col gap-2">
-            {PROTOCOL_LINKS.map((link) => (
-              <li key={link.label}>
-                <Link
-                  href={link.href}
-                  className={siteFooterLink}
-                  prefetch={false}
-                >
-                  {link.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
+      <nav aria-label="Site" className={siteFooterNavGrid}>
+        {FOOTER_COLUMNS.map((column) => (
+          <div key={column.heading} className="flex flex-col gap-3">
+            <h2 className={siteFooterColHeading}>{column.heading}</h2>
+            <ul className="flex flex-col gap-2">
+              {column.links.map((link) => (
+                <li key={link.href}>
+                  <Link href={link.href} className={siteFooterLink}>
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </nav>
     </div>
 
     {/* --- TIER 3: Copyright & Status Strip --- */}

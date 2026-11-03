@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { getTools } from "@/db/queries/tools/list"
 import { SITE_CONFIG } from "@/constants/site"
 
-export const revalidate = 60
+export const revalidate = 3600
 
 export const GET = async (request: NextRequest) => {
   const { searchParams } = new URL(request.url)

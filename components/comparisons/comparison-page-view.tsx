@@ -121,6 +121,9 @@ export const ComparisonPageView = ({ comparison }: ComparisonPageViewProps) => {
   const unifiedJsonLd = buildEntityGraph([
     breadcrumbsJsonLd,
     webPageJsonLd,
+    ...(comparison.faqs.length > 0
+      ? [faqSchema(comparison.faqs, `${comparison.canonicalUrl}#faq`)]
+      : []),
   ])
 
   return (

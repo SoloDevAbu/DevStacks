@@ -16,7 +16,7 @@ import {
 import { SITE_CONFIG } from "@/constants/site"
 import { ROUTES } from "@/constants/routes"
 
-export const revalidate = 3600
+export const revalidate = 21600
 
 export const generateMetadata = async (): Promise<Metadata> => {
   const title = `Software Product Categories — SaaS, AI Apps & Platforms`
@@ -176,7 +176,7 @@ const ProductCategoriesPage = async () => {
         </header>
 
         {/* Two-Column Full-Width Dashed Categories */}
-        <main className="w-full flex-1">
+        <div className="w-full flex-1">
           <CategoryTable type="products" categories={categories} />
           <CategoryFaqSection
             title="Product Categories Guidelines & FAQs"
@@ -184,7 +184,7 @@ const ProductCategoriesPage = async () => {
             faqs={PRODUCT_CATEGORY_FAQS}
             theme="violet"
           />
-        </main>
+        </div>
       </div>
     </>
   )

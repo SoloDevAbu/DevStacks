@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import { notFound, redirect } from "next/navigation"
+import { notFound, permanentRedirect } from "next/navigation"
 import Link from "next/link"
 import Image from "next/image"
 import {
@@ -45,7 +45,15 @@ import {
 } from "@/lib/seo/schema"
 import { formatTitle, formatMetaDescription } from "@/utils/seo"
 import { ProductLogo } from "@/components/shared/product-logo"
-import { getFaviconUrl } from "@/utils/urls"
+import {
+  getCategoryPath,
+  getFaviconUrl,
+  getLinkRel,
+  getOutboundUrl,
+  NOFOLLOW_LINK_REL,
+  toAbsoluteUrl,
+} from "@/utils/urls"
+import { LaunchWeekSpecRow } from "@/components/shared/launch-week-spec-row"
 import { VerifiedBadge } from "@/components/shared/verified-badge"
 import { LaunchBadge } from "@/components/shared/launch-badge"
 import { Badge } from "@/components/ui/badge"
@@ -86,7 +94,7 @@ interface ProductPageProps {
   params: Promise<{ slug: string }>
 }
 
-export const revalidate = 3600
+export const revalidate = 86400
 
 export const generateStaticParams = async () => {
   try {
@@ -183,7 +191,7 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
   if (!product) {
     const tool = await resolveTool(slug)
     if (tool) {
-      redirect(ROUTES.TOOL(slug))
+      permanentRedirect(ROUTES.TOOL(slug))
     }
     notFound()
   }
@@ -191,11 +199,14 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
   const siteUrl = SITE_CONFIG.url
   const productUrl = `${siteUrl}/products/${product.slug}`
 
-  const relatedProducts = product.categoryId
-    ? await getRelatedProducts(product.categoryId, product.id, 4)
-    : []
-
-  const customFaqs = await getProductFaqs(product.id)
+  const [relatedProducts, customFaqs] = await Promise.all([
+    product.categoryId
+      ? getRelatedProducts(product.categoryId, product.id, 4)
+      : [],
+    getProductFaqs(product.id),
+  ])
+  const categoryPath = getCategoryPath("product", product.categorySlug)
+  const outboundRel = getLinkRel(product.tier, product.badgeVerified)
 
   const prodJsonLd = productSchema({
     name: product.name,
@@ -237,7 +248,7 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
       : undefined,
     screenshots: product.images,
     videoUrl: product.demoVideoUrl,
-    isRelatedTo: (product.builtWithTools ?? []).map((t) => ({
+    builtWith: (product.builtWithTools ?? []).map((t) => ({
       name: t.name,
       url: `${siteUrl}${ROUTES.TOOL(t.toolSlug ?? t.name.toLowerCase().replace(/[^a-z0-9]+/g, "-"))}`,
     })),
@@ -250,7 +261,7 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
       ? [
           {
             name: product.category,
-            url: `${siteUrl}/products?category=${encodeURIComponent(product.category)}`,
+            url: toAbsoluteUrl(categoryPath),
           },
         ]
       : []),
@@ -271,7 +282,11 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
     `${productUrl}.md`
   )
 
-  const entitySchemas = [prodJsonLd, breadcrumbJsonLd].filter(
+  const entitySchemas = [
+    prodJsonLd,
+    breadcrumbJsonLd,
+    productFaqs.length > 0 ? faqSchema(productFaqs, `${productUrl}#faq`) : null,
+  ].filter(
     Boolean
   ) as Record<string, unknown>[]
   const unifiedJsonLd = buildEntityGraph(entitySchemas)
@@ -337,7 +352,7 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
                 </li>
                 <li className="flex items-center">
                   <Link
-                    href={`/products?category=${encodeURIComponent(product.category)}`}
+                    href={categoryPath}
                     className="hover:text-slate-900"
                   >
                     {product.category}
@@ -486,7 +501,7 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
                   <a
                     href={`${ai.url}${encodeURIComponent(aiPrompt)}`}
                     target="_blank"
-                    rel="noopener noreferrer"
+                    rel={NOFOLLOW_LINK_REL}
                     className={footerAiButton}
                     title={`Ask ${ai.name} about ${product.name}`}
                   >
@@ -757,6 +772,12 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
               <span className={specRowValue}>{product.pricing}</span>
             </div>
 
+            <LaunchWeekSpecRow
+              launchYear={product.launchYear}
+              launchWeek={product.launchWeek}
+              createdAt={product.createdAt}
+            />
+
             <div className={specRow}>
               <div className={specRowHeader}>
                 <span className={specBadge}>
@@ -766,7 +787,7 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
               </div>
               {product.category ? (
                 <Link
-                  href={`/products?category=${encodeURIComponent(product.category)}`}
+                  href={categoryPath}
                   className={cn(
                     specRowValue,
                     "hover:text-blue-600 hover:underline"
@@ -824,9 +845,9 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
                 <div className="flex flex-wrap items-center gap-3 text-xs sm:text-sm">
                   {product.websiteUrl && (
                     <a
-                      href={product.websiteUrl}
+                      href={getOutboundUrl(product.websiteUrl)}
                       target="_blank"
-                      rel="noopener noreferrer"
+                      rel={outboundRel}
                       className="font-medium text-blue-600 hover:underline"
                     >
                       Official Website ↗
@@ -836,7 +857,7 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
                     <a
                       href={product.githubUrl}
                       target="_blank"
-                      rel="noopener noreferrer"
+                      rel={outboundRel}
                       className="font-medium text-slate-700 hover:text-slate-900 hover:underline"
                     >
                       GitHub Repository ↗

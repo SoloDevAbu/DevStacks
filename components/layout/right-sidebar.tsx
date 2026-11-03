@@ -1,10 +1,16 @@
 import { SidebarFeedbackButton } from "@/components/layout/sidebar-feedback-button"
 import { SidebarAdCard } from "@/components/ads/sidebar-ad-card"
 import { SidebarFeaturedLaunches } from "@/components/layout/sidebar-featured-launches"
+import { RotatingHeadline } from "@/components/home/rotating-headline"
+import { sidebarTaglineCard } from "@/utils/styles"
 
 export const RightSidebar = () => {
   return (
     <div className="flex h-full flex-col gap-5 p-6 xl:p-7">
+      <p className={sidebarTaglineCard}>
+        <RotatingHeadline />
+      </p>
+
       {/* Feedback Trigger Button */}
       <SidebarFeedbackButton />
 

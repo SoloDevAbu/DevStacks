@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import { getWeeklyLaunches } from "@/lib/launches/weekly-launches"
-import { getCurrentWeek } from "@/lib/launches/week-utils"
+import { getCurrentWeek } from "@/utils/iso-weeks"
 import { HOMEPAGE_LIMITS } from "@/constants/rankings"
 
 export const GET = async (request: Request) => {

@@ -18,10 +18,10 @@ import { getLaunchPromoStatus } from "@/db/queries/launches/availability"
 import { PricingTiersSection } from "@/components/pricing/pricing-tiers-section"
 import { PricingSponsorshipSection } from "@/components/pricing/pricing-sponsorship-section"
 
-export const revalidate = 60
+export const revalidate = 3600
 
 export const metadata: Metadata = {
-  title: "Pricing & Promotion Tiers | Launch Listings & Sponsorship",
+  title: "Pricing: Launch Listings & Sponsorship",
   description: `Explore transparent pricing for developer tool directory listings, verified badges, AI search citations, and dedicated sidebar sponsorships on ${SITE_CONFIG.name}.`,
   keywords: [
     "developer advertising",
@@ -106,7 +106,7 @@ const PricingPage = async () => {
           </nav>
 
           <PageHeader
-            heading="Pricing for Advertising & Tiers"
+            heading="Pricing: Free Launches, Premium Listings & Sponsorship"
             description="Directory submissions are completely free. Grow your developer mindshare with verified builder tiers and high-visibility sidebar sponsorships seen across all pages."
             aiPrompt={AI_PROMPTS.pricing}
             variant="pricing"

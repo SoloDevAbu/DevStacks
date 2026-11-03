@@ -1,80 +1,21 @@
-import type { Metadata } from "next"
-import { notFound } from "next/navigation"
-import { ComparisonPageView } from "@/components/comparisons/comparison-page-view"
+import { notFound, permanentRedirect } from "next/navigation"
 import { getComparisonBySlug, getAllComparisons } from "@/constants/comparisons"
-import { SITE_CONFIG } from "@/constants/site"
 
 interface ComparePageProps {
   params: Promise<{ slug: string }>
 }
 
-export const generateStaticParams = async () => {
-  const comparisons = getAllComparisons()
-  return comparisons.map((comp) => ({ slug: comp.slug }))
-}
+export const generateStaticParams = async () =>
+  getAllComparisons().map((comparison) => ({ slug: comparison.slug }))
 
-export const generateMetadata = async (
-  props: ComparePageProps
-): Promise<Metadata> => {
-  const { slug } = await props.params
+// Every comparison already lives at its canonical /<platform>-alternative page; the /compare
+// aliases only produced duplicate URLs, so they permanently redirect there.
+const CompareAliasPage = async ({ params }: ComparePageProps) => {
+  const { slug } = await params
   const comparison = getComparisonBySlug(slug)
+  if (!comparison) notFound()
 
-  if (!comparison) {
-    return {
-      title: "Comparison Not Found",
-      description: "The requested platform comparison could not be found.",
-    }
-  }
-
-  const canonicalUrl = comparison.canonicalUrl
-
-  return {
-    title: comparison.metaTitle,
-    description: comparison.metaDescription,
-    keywords: comparison.keywords,
-    alternates: {
-      canonical: canonicalUrl,
-      types: {
-        "text/markdown": `${canonicalUrl}.md`,
-      },
-    },
-    openGraph: {
-      title: comparison.metaTitle,
-      description: comparison.metaDescription,
-      url: canonicalUrl,
-      type: "article",
-      siteName: SITE_CONFIG.name,
-      images: [
-        {
-          url: SITE_CONFIG.ogImageUrl,
-          width: 1200,
-          height: 630,
-          alt: `${comparison.name} | ${SITE_CONFIG.name}`,
-        },
-      ],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: comparison.metaTitle,
-      description: comparison.metaDescription,
-      images: [SITE_CONFIG.ogImageUrl],
-    },
-    robots: {
-      index: true,
-      follow: true,
-    },
-  }
+  permanentRedirect(comparison.routePath || comparison.canonicalUrl)
 }
 
-const CompareDetailPage = async (props: ComparePageProps) => {
-  const { slug } = await props.params
-  const comparison = getComparisonBySlug(slug)
-
-  if (!comparison) {
-    notFound()
-  }
-
-  return <ComparisonPageView comparison={comparison} />
-}
-
-export default CompareDetailPage
+export default CompareAliasPage

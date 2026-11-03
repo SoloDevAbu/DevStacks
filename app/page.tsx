@@ -7,41 +7,34 @@ import {
   safeJsonLd,
 } from "@/lib/seo/schema"
 import { SITE_CONFIG } from "@/constants/site"
+import { ROUTES } from "@/constants/routes"
 import { HOMEPAGE_LIMITS } from "@/constants/rankings"
-import { getCachedWeeklyLaunches } from "@/lib/launches/weekly-launches"
+import { getCurrentLaunchWeekSnapshot } from "@/lib/launches/launch-week"
 import { getCachedPopularBuildingBlocks } from "@/lib/rankings/popular"
-import { getCurrentWeek } from "@/lib/launches/week-utils"
+import { getListingPath, toAbsoluteUrl } from "@/utils/urls"
 import type { FeedItem } from "@/components/shared/feed-card"
 
-export const revalidate = 60
+export const revalidate = 3600
+
+const HOME_TITLE = `${SITE_CONFIG.name} — New Product & Dev Tool Launches This Week`
+const HOME_DESCRIPTION = `See this week's new products and developer tools on ${SITE_CONFIG.name}, ranked by community votes. Launch yours free and get found on Google and AI search.`
 
 export const metadata: Metadata = {
-  title: {
-    absolute: `${SITE_CONFIG.name} — This Week's Launches for AI & Search Engines`,
-  },
-  description: `Discover this week's developer tools, APIs, and products launching on ${SITE_CONFIG.name}. Ranked by community votes and optimized for AI search engines, ChatGPT, Claude, and Google.`,
+  title: { absolute: HOME_TITLE },
+  description: HOME_DESCRIPTION,
   keywords: [
-    ...SITE_CONFIG.keywords,
-    "weekly developer launches",
-    "search by AI",
-    "AI search engines",
-    "AI product discovery",
-    "ChatGPT tool discovery",
-    "Claude software search",
-    "GEO optimization",
-    "AEO discovery",
-    "this week's developer tools",
-    "product launches this week",
-    "new software launches",
-    "community voted tools",
-    "developer tools directory",
+    "product launch platform",
+    "new product launches this week",
+    "new developer tools",
+    "launch your SaaS",
   ],
   alternates: {
     canonical: SITE_CONFIG.url,
+    types: { "text/markdown": toAbsoluteUrl(ROUTES.HOME_MARKDOWN_ALIAS) },
   },
   openGraph: {
-    title: `${SITE_CONFIG.name} — This Week's Launches for AI & Search Engines`,
-    description: `Discover this week's developer tools, APIs, and products launching on ${SITE_CONFIG.name}. Ranked by community votes and optimized for AI search engines, ChatGPT, Claude, and Google.`,
+    title: HOME_TITLE,
+    description: HOME_DESCRIPTION,
     type: "website",
     url: SITE_CONFIG.url,
     siteName: SITE_CONFIG.name,
@@ -50,45 +43,41 @@ export const metadata: Metadata = {
         url: SITE_CONFIG.ogImageUrl,
         width: 1200,
         height: 630,
-        alt: `${SITE_CONFIG.name} — This Week's Launches for AI & Search Engines`,
+        alt: HOME_TITLE,
         type: "image/png",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: `${SITE_CONFIG.name} — This Week's Launches for AI & Search Engines`,
-    description: `Discover this week's developer tools, APIs, and products launching on ${SITE_CONFIG.name}. Ranked by community votes and optimized for AI search engines, ChatGPT, Claude, and Google.`,
+    title: HOME_TITLE,
+    description: HOME_DESCRIPTION,
     images: [SITE_CONFIG.ogImageUrl],
   },
 }
 
 const Page = async () => {
-  const { year, week } = getCurrentWeek()
-
-  const [weeklyLaunches, popularBuildingBlocks] = await Promise.all([
-    getCachedWeeklyLaunches(year, week, HOMEPAGE_LIMITS.WEEKLY_LAUNCHES_MAX).catch(
-      () => []
-    ),
+  const [launchWeek, popularBuildingBlocks] = await Promise.all([
+    getCurrentLaunchWeekSnapshot(),
     getCachedPopularBuildingBlocks(
       HOMEPAGE_LIMITS.POPULAR_BUILDING_BLOCKS
     ).catch(() => []),
   ])
-  const featuredItems = (weeklyLaunches as FeedItem[])
-    .slice(0, 10)
-    .map((item) => ({
-      name: item.name,
-      url: `${SITE_CONFIG.url}${item.itemKind === "tool" ? `/tools/${item.slug}` : `/products/${item.slug}`}`,
-      description: item.tagline,
-    }))
+  const weeklyLaunches = launchWeek.items as FeedItem[]
+  const launchListItems = weeklyLaunches.map((item) => ({
+    name: item.name,
+    url: toAbsoluteUrl(getListingPath(item)),
+    description: item.tagline,
+  }))
 
   const breadcrumbs = breadcrumbSchema([{ name: "Home", url: SITE_CONFIG.url }])
 
   const collectionJsonLd = collectionPageSchema({
-    name: `${SITE_CONFIG.name} — This Week's Launches for AI & Search Engines`,
-    description: `Discover developer tools, APIs, and software products launched this week on ${SITE_CONFIG.name}, ranked by community votes and optimized for AI and search engine discovery.`,
+    name: HOME_TITLE,
+    description: HOME_DESCRIPTION,
     url: SITE_CONFIG.url,
-    items: featuredItems,
+    items: launchListItems,
+    dateModified: launchWeek.lastUpdated,
   })
 
   const unifiedJsonLd = buildEntityGraph([breadcrumbs, collectionJsonLd])
@@ -100,7 +89,7 @@ const Page = async () => {
         dangerouslySetInnerHTML={{ __html: safeJsonLd(unifiedJsonLd) }}
       />
       <MainContent
-        weeklyLaunches={weeklyLaunches as FeedItem[]}
+        launchWeek={launchWeek}
         popularBuildingBlocks={popularBuildingBlocks as FeedItem[]}
       />
     </>

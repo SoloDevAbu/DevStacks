@@ -5,10 +5,16 @@ import { getProducts } from "@/db/queries/products/list"
 import { db } from "@/db"
 import { tools, products, users } from "@/db/schema"
 import { sql, count, eq } from "drizzle-orm"
+import { ROUTES } from "@/constants/routes"
+import { AI_SURFACE_CACHE_CONTROL } from "@/constants/cache"
+import { getCurrentLaunchWeekSnapshot } from "@/lib/launches/launch-week"
+import { formatLaunchWeekHeading } from "@/lib/seo/markdown-twins"
+import { getListingPath, toAbsoluteUrl } from "@/utils/urls"
 
 export const revalidate = 3600
 
 export const GET = async () => {
+  const launchWeekPromise = getCurrentLaunchWeekSnapshot().catch(() => null)
   let toolsList: Awaited<ReturnType<typeof getTools>> = []
   let productsList: Awaited<ReturnType<typeof getProducts>> = []
   let makersList: Array<{
@@ -69,6 +75,8 @@ export const GET = async () => {
     makersList = []
   }
 
+  const launchWeek = await launchWeekPromise
+
   const snapshot = {
     generatedAt: new Date().toISOString(),
     platform: SITE_CONFIG.name,
@@ -79,6 +87,26 @@ export const GET = async () => {
       totalProducts: totalProductsCount,
       totalMakers: totalMakersCount,
       activeEcosystem: true,
+    },
+    thisWeeksLaunches: launchWeek && {
+      isoYear: launchWeek.year,
+      isoWeek: launchWeek.week,
+      label: formatLaunchWeekHeading(launchWeek),
+      startDate: launchWeek.startDate.toISOString(),
+      endDate: launchWeek.endDate.toISOString(),
+      lastUpdated: launchWeek.lastUpdated.toISOString(),
+      count: launchWeek.items.length,
+      archiveUrl: toAbsoluteUrl(ROUTES.DISCOVER_WEEKLY_LAUNCHES),
+      items: launchWeek.items.map((item, index) => ({
+        rank: index + 1,
+        kind: item.itemKind,
+        name: item.name,
+        url: toAbsoluteUrl(getListingPath(item)),
+        tagline: item.tagline,
+        category: item.category,
+        pricing: item.pricing,
+        votes: item.itemKind === "tool" ? item.upvotesCount : item.likesCount,
+      })),
     },
     topMakers: makersList
       .filter((m) => m.username)
@@ -141,7 +169,7 @@ export const GET = async () => {
       mcpEndpoint: `${SITE_CONFIG.url}/api/mcp`,
       mcpServerCard: `${SITE_CONFIG.url}/.well-known/mcp/server-card.json`,
       mcpJson: `${SITE_CONFIG.url}/.well-known/mcp.json`,
-      markdownCatalog: `${SITE_CONFIG.url}/api/md/_catalog`,
+      markdownCatalog: `${SITE_CONFIG.url}/api/md/catalog`,
       openapi: `${SITE_CONFIG.url}/openapi.json`,
       publicApi: `${SITE_CONFIG.url}/v1`,
       cli: `${SITE_CONFIG.url}/cli`,
@@ -152,7 +180,7 @@ export const GET = async () => {
   return NextResponse.json(snapshot, {
     headers: {
       "Content-Type": "application/json; charset=utf-8",
-      "Cache-Control": "public, max-age=3600, s-maxage=86400",
+      "Cache-Control": AI_SURFACE_CACHE_CONTROL,
       "X-Robots-Tag": "noindex, follow",
     },
   })

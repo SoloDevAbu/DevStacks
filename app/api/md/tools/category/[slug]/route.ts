@@ -6,8 +6,9 @@ import {
 import { getTools } from "@/db/queries/tools/list"
 import { createMarkdownResponse } from "@/lib/seo/markdown-twins"
 import { SITE_CONFIG } from "@/constants/site"
+import { toIsoDate } from "@/utils/date"
 
-export const revalidate = 3600
+export const revalidate = 86400
 
 export const GET = async (
   _request: Request,
@@ -72,7 +73,7 @@ total_tools: ${stats.toolCount}
 total_builds: ${stats.totalBuilds}
 open_source_count: ${stats.openSourceCount}
 free_tier_count: ${stats.freeCount}
-updated: "2026-10-01"
+updated: "${toIsoDate(new Date())}"
 \`\`\`
 
 ## Ecosystem Summary

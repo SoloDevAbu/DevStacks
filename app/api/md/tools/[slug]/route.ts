@@ -1,21 +1,21 @@
 import { NextResponse } from "next/server"
-import { getToolBySlug, getRelatedTools } from "@/db/queries/tools/get"
+import { getRelatedTools } from "@/db/queries/tools/get"
 import { getToolFaqs } from "@/db/queries/faqs/get-faqs"
-import { getProductsBuiltWithTool } from "@/lib/tools/resolve-tool"
+import { getProductsBuiltWithTool, resolveTool } from "@/lib/tools/resolve-tool"
 import {
   generateToolMarkdown,
   createMarkdownResponse,
 } from "@/lib/seo/markdown-twins"
 import { SITE_CONFIG } from "@/constants/site"
 
-export const revalidate = 3600
+export const revalidate = 86400
 
 export const GET = async (
   _request: Request,
   props: { params: Promise<{ slug: string }> }
 ) => {
   const { slug } = await props.params
-  const tool = await getToolBySlug(slug)
+  const tool = await resolveTool(slug)
 
   if (!tool) {
     return new NextResponse(

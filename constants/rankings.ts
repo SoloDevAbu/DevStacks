@@ -39,8 +39,10 @@ export const HOMEPAGE_LIMITS = {
   TODAYS_LAUNCHES: 30,
   TODAYS_LAUNCHES_MAX: 120,
   WEEKLY_LAUNCHES: 30,
-  WEEKLY_LAUNCHES_PAGE_SIZE: 30,
   WEEKLY_LAUNCHES_MAX: 120,
 } as const
 
 export const DISCOVER_PAGE_LIMIT = 20
+
+// An alternatives page needs at least this many same-category tools to be worth indexing.
+export const ALTERNATIVES_MIN_SIBLINGS = 3

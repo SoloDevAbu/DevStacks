@@ -1,7 +1,6 @@
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import Link from "next/link"
-import { headers } from "next/headers"
 import {
   ArrowLeft,
   ChevronRight,
@@ -14,10 +13,9 @@ import {
   Compass,
   PlusCircle,
 } from "lucide-react"
-import { getBlogBySlug, getSimilarBlogs } from "@/db/queries/blogs"
+import { getSimilarBlogs } from "@/db/queries/blogs"
+import { loadBlogPost } from "@/lib/blog/load-blog"
 import { BlogRowItem } from "@/components/blog/blog-row-item"
-import { getAdminSession } from "@/lib/auth/admin"
-import { auth } from "@/lib/auth"
 import { SITE_CONFIG } from "@/constants/site"
 import { ROUTES } from "@/constants/routes"
 import { PLANS, type Tier } from "@/constants/plans"
@@ -50,6 +48,13 @@ import {
   productSchema,
   toolSchema,
 } from "@/lib/seo/schema"
+import { getLinkRel, getOutboundUrl } from "@/utils/urls"
+import { cleanTitle, formatMetaDescription } from "@/utils/seo"
+
+export const revalidate = 86400
+
+// Posts render on first visit and are then cached; scheduled posts are previewed via draft mode.
+export const generateStaticParams = async () => []
 
 interface BlogPostPageProps {
   params: Promise<{ slug: string }>
@@ -59,26 +64,11 @@ export const generateMetadata = async ({
   params,
 }: BlogPostPageProps): Promise<Metadata> => {
   const { slug } = await params
-  const reqHeaders = await headers()
-
-  // Authenticate viewer for scheduled preview check
-  const [adminAuth, session] = await Promise.all([
-    getAdminSession(reqHeaders),
-    auth.api.getSession({ headers: reqHeaders }).catch(() => null),
-  ])
-
-  const isAdmin = adminAuth.isAdmin
-  const viewerId = session?.user?.id || null
-
-  const data = await getBlogBySlug(slug, {
-    allowScheduledPreview: true,
-    isAdmin,
-    viewerId,
-  })
+  const data = await loadBlogPost(slug)
 
   if (!data) {
     return {
-      title: `Launch Story Not Found | ${SITE_CONFIG.name}`,
+      title: "Launch Story Not Found",
       robots: {
         index: false,
         follow: false,
@@ -96,8 +86,8 @@ export const generateMetadata = async ({
   )
 
   return {
-    title: `${blog.metaTitle} | ${SITE_CONFIG.name}`,
-    description: blog.metaDescription,
+    title: cleanTitle(blog.metaTitle),
+    description: formatMetaDescription(blog.metaDescription),
     robots: isScheduledPreview
       ? { index: false, follow: false }
       : { index: true, follow: true },
@@ -133,22 +123,7 @@ export const generateMetadata = async ({
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const { slug } = await params
-  const reqHeaders = await headers()
-
-  // Authenticate viewer for scheduled preview check
-  const [adminAuth, session] = await Promise.all([
-    getAdminSession(reqHeaders),
-    auth.api.getSession({ headers: reqHeaders }).catch(() => null),
-  ])
-
-  const isAdmin = adminAuth.isAdmin
-  const viewerId = session?.user?.id || null
-
-  const data = await getBlogBySlug(slug, {
-    allowScheduledPreview: true,
-    isAdmin,
-    viewerId,
-  })
+  const data = await loadBlogPost(slug)
 
   if (!data) {
     notFound()
@@ -325,9 +300,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               nativeButton={false}
               render={
                 <a
-                  href={item.websiteUrl}
+                  href={getOutboundUrl(item.websiteUrl)}
                   target="_blank"
-                  rel="noopener"
+                  rel={getLinkRel(item.tier, item.badgeVerified)}
                   title={`Visit ${item.name}`}
                 />
               }
@@ -395,7 +370,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           <BlogTableOfContents items={allTocItems} />
 
           {/* Center Main Article Column: bounded by the two vertical dashed lines */}
-          <main className="flex-1 min-w-0 lg:border-l xl:border-r border-dashed border-border flex flex-col divide-y divide-dashed divide-border bg-white">
+          <div className="flex-1 min-w-0 lg:border-l xl:border-r border-dashed border-border flex flex-col divide-y divide-dashed divide-border bg-white">
             {/* Mobile collapsible TOC (< lg) */}
             <div className="p-4 sm:p-6 block lg:hidden">
               <BlogMobileToc items={allTocItems} />
@@ -410,7 +385,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
             {/* Quick Verdict Box with full-width Key Strengths & Tradeoffs comparison table */}
             <BlogVerdictBox
-              rating={blog.verdictRating || 4.7}
+              rating={blog.verdictRating}
               summary={blog.verdictSummary || blog.excerpt}
               pros={blog.pros || []}
               cons={blog.cons || []}
@@ -499,7 +474,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                 </div>
               </section>
             </div>
-          </main>
+          </div>
 
           {/* Right Column: Sticky Product Card on XL screens */}
           <aside className="sticky top-16 hidden h-[calc(100vh-4rem)] w-80 shrink-0 flex-col overflow-y-auto bg-white p-5 sm:p-6 xl:flex scrollbar-thin">

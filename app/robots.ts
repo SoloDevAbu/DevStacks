@@ -8,6 +8,7 @@ const DISALLOWED_PATHS = [
   "/api/track/",
   "/api/migrate/",
   "/api/seed/",
+  "/api/cron/",
   "/api/users",
   "/admin",
   "/admin/",

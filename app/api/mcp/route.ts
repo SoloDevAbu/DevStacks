@@ -1,14 +1,14 @@
 import { NextRequest, NextResponse } from "next/server"
 import { SITE_CONFIG } from "@/constants/site"
 import { getTools } from "@/db/queries/tools/list"
-import { getToolBySlug } from "@/db/queries/tools/get"
+import { resolveTool } from "@/lib/tools/resolve-tool"
 import { getProducts } from "@/db/queries/products/list"
-import { getProductBySlug } from "@/db/queries/products/get"
+import { resolveProduct } from "@/lib/products/resolve-product"
 import { getMakerProfile } from "@/db/queries/users/get-profile"
 import { getTrending } from "@/lib/rankings/trending"
 import { getTodaysLaunches } from "@/lib/launches/todays-launches"
 import { getWeeklyLaunches } from "@/lib/launches/weekly-launches"
-import { getCurrentWeek } from "@/lib/launches/week-utils"
+import { getCurrentWeek } from "@/utils/iso-weeks"
 
 export const revalidate = 0
 
@@ -244,7 +244,7 @@ export const POST = async (request: NextRequest) => {
 
       if (toolName === "get_tool") {
         const slug = String(toolArgs.slug ?? "")
-        const tool = await getToolBySlug(slug)
+        const tool = await resolveTool(slug)
         return sendJsonRpc({
           jsonrpc: "2.0",
           id,
@@ -261,7 +261,7 @@ export const POST = async (request: NextRequest) => {
 
       if (toolName === "get_product") {
         const slug = String(toolArgs.slug ?? "")
-        const product = await getProductBySlug(slug)
+        const product = await resolveProduct(slug)
         return sendJsonRpc({
           jsonrpc: "2.0",
           id,

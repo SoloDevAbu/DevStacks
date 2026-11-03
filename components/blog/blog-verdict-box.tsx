@@ -11,7 +11,7 @@ import {
 } from "@/utils/blog/styles"
 
 export interface BlogVerdictBoxProps {
-  rating: string | number
+  rating?: string | number | null
   summary: string
   pros: string[]
   cons: string[]
@@ -43,10 +43,12 @@ export const BlogVerdictBox = ({
             </h2>
           </div>
 
-          <div className={verdictScoreBadge}>
-            <Star className="size-4 fill-amber-500 text-amber-500" />
-            <span>{Number(rating).toFixed(1)} / 5.0</span>
-          </div>
+          {rating ? (
+            <div className={verdictScoreBadge}>
+              <Star className="size-4 fill-amber-500 text-amber-500" />
+              <span>{Number(rating).toFixed(1)} / 5.0</span>
+            </div>
+          ) : null}
         </div>
 
         {/* 40-60 word extractable verdict summary */}

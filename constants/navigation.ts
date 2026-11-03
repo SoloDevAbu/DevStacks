@@ -5,6 +5,8 @@ import {
   TrendingUp,
   Users,
   BookOpen,
+  CalendarDays,
+  LayoutGrid,
   type LucideIcon,
 } from "lucide-react"
 import { ROUTES } from "@/constants/routes"
@@ -31,11 +33,21 @@ export const SIDEBAR_NAV: NavSection[] = [
     label: "Explore",
     items: [
       { name: "Home", icon: Home, href: ROUTES.HOME },
+      {
+        name: "Weekly Launches",
+        icon: CalendarDays,
+        href: ROUTES.DISCOVER_WEEKLY_LAUNCHES,
+      },
       { name: "Products", icon: Package, href: ROUTES.PRODUCTS },
       {
         name: "Tools Directory",
         icon: Wrench,
         href: ROUTES.TOOLS,
+      },
+      {
+        name: "Categories",
+        icon: LayoutGrid,
+        href: ROUTES.TOOL_CATEGORIES,
       },
       {
         name: "Trending",
@@ -63,13 +75,9 @@ export const SIDEBAR_NAV: NavSection[] = [
   },
 ]
 
-export const QUICK_STACKS = [
-  { name: "AI & LLMs", href: "/tools?category=AI" },
-  { name: "Database", href: "/tools?category=Database" },
-  { name: "Auth", href: "/tools?category=Auth" },
-  { name: "DevOps", href: "/tools?category=DevOps" },
-  { name: "Frontend", href: "/tools?category=Frontend" },
-] as const
+export const QUICK_STACK_COUNT = 6
+
+export type QuickStack = { name: string; slug: string }
 
 export const FEATURED_SPOTLIGHT = {
   name: "Supernova",
@@ -121,3 +129,65 @@ export const TRENDING_DEVTOOLS = [
     color: "border-amber-200 bg-amber-100 text-amber-800",
   },
 ] as const
+
+export type FooterColumn = {
+  heading: string
+  links: ReadonlyArray<{ label: string; href: string }>
+}
+
+export const FOOTER_COLUMNS: readonly FooterColumn[] = [
+  {
+    heading: "Discover",
+    links: [
+      { label: "This Week's Launches", href: ROUTES.HOME },
+      { label: "Weekly Launch Archive", href: ROUTES.DISCOVER_WEEKLY_LAUNCHES },
+      { label: "Trending", href: ROUTES.TRENDING },
+      { label: "Tools Directory", href: ROUTES.TOOLS },
+      { label: "Tool Categories", href: ROUTES.TOOL_CATEGORIES },
+      { label: "Products Directory", href: ROUTES.PRODUCTS },
+      { label: "Product Categories", href: ROUTES.PRODUCT_CATEGORIES },
+      { label: "Building Blocks", href: ROUTES.DISCOVER_POPULAR_BUILDING_BLOCKS },
+      { label: "Makers", href: ROUTES.MAKERS },
+    ],
+  },
+  {
+    heading: "Launch",
+    links: [
+      { label: "Launch Your Product", href: ROUTES.SUBMIT_PRODUCT },
+      { label: "Launch a Dev Tool", href: ROUTES.SUBMIT_TOOL },
+      { label: "Product Launch Platform", href: ROUTES.PRODUCT_LAUNCH_PLATFORM },
+      { label: "SaaS Directory", href: ROUTES.SAAS_DIRECTORY },
+      { label: "Pricing & Sponsorship", href: ROUTES.PRICING },
+    ],
+  },
+  {
+    heading: "Resources",
+    links: [
+      { label: "Launch Stories", href: ROUTES.BLOG },
+      { label: "Where to Launch Dev Tools", href: ROUTES.GUIDE_LAUNCH_DEVTOOLS },
+      { label: "Free SaaS Directories", href: ROUTES.GUIDE_SAAS_DIRECTORIES },
+      { label: "Product Hunt Alternatives", href: ROUTES.PRODUCTHUNT_ALTERNATIVES },
+      { label: "FAQ", href: ROUTES.FAQ },
+    ],
+  },
+  {
+    heading: "Compare",
+    links: [
+      { label: "LaunchNests vs Product Hunt", href: ROUTES.PRODUCTHUNT_ALTERNATIVE },
+      { label: "Uneed Alternative", href: ROUTES.UNEED_ALTERNATIVE },
+      { label: "MicroLaunch Alternative", href: ROUTES.MICROLAUNCH_ALTERNATIVE },
+      { label: "BetaList Alternative", href: ROUTES.BETALIST_ALTERNATIVE },
+      { label: "DevHunt Alternative", href: ROUTES.DEVHUNT_ALTERNATIVE },
+      { label: "CodeHype Alternative", href: ROUTES.CODEHYPE_ALTERNATIVE },
+    ],
+  },
+  {
+    heading: "For Agents",
+    links: [
+      { label: "llms.txt", href: ROUTES.LLMS_TXT },
+      { label: "MCP Server", href: "/mcp" },
+      { label: "Public REST API", href: "/cli" },
+      { label: "Markdown Catalog", href: ROUTES.MARKDOWN_CATALOG },
+    ],
+  },
+]

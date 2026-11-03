@@ -14,8 +14,10 @@ import {
   collectionPageSchema,
   buildEntityGraph,
 } from "@/lib/seo/schema"
+import { CrawlablePagination } from "@/components/shared/crawlable-pagination"
+import { ROUTES } from "@/constants/routes"
 
-export const revalidate = 60
+export const revalidate = 3600
 
 export const generateMetadata = async (props: {
   searchParams: Promise<{
@@ -30,8 +32,8 @@ export const generateMetadata = async (props: {
 
   const title =
     currentPage > 1
-      ? `Launch Stories & Tech Architecture Spotlights (Page ${currentPage}) | ${SITE_CONFIG.name}`
-      : `Launch Stories & Tech Architecture Spotlights | ${SITE_CONFIG.name}`
+      ? `Launch Stories & Dev Tool Deep Dives (Page ${currentPage})`
+      : "Launch Stories & Dev Tool Deep Dives"
 
   const canonicalUrl =
     currentPage > 1
@@ -109,7 +111,7 @@ const BlogIndexPage = async (props: {
       <div className={blogDirectoryContainer}>
         {/* Full-Width Header */}
         <div className={blogDirectoryHero}>
-          <h1 className={blogDirectoryTitle}>Blogs</h1>
+          <h1 className={blogDirectoryTitle}>Launch Stories & Dev Tool Deep Dives</h1>
 
           <p className={blogDirectorySubtitle}>
             In-depth architectural breakdowns, technical spotlights, and launch stories of developer tools and modern products.
@@ -122,6 +124,11 @@ const BlogIndexPage = async (props: {
           totalPages={totalPages}
           initialBlogs={items}
           totalCount={totalCount}
+        />
+        <CrawlablePagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          basePath={ROUTES.BLOG}
         />
       </div>
     </>

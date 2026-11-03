@@ -58,6 +58,10 @@ export const ScreenshotsCarousel = ({
                 <img
                   src={imgUrl}
                   alt={`${title} screenshot ${idx + 1}`}
+                  loading={idx === 0 ? "eager" : "lazy"}
+                  decoding="async"
+                  width={1280}
+                  height={720}
                   className="size-full object-contain"
                 />
               </div>

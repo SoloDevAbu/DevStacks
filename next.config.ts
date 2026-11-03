@@ -2,6 +2,9 @@ import type { NextConfig } from "next"
 
 const nextConfig: NextConfig = {
   images: {
+    // Workers has no image optimizer binding here, so /_next/image only proxied the original
+    // file through an extra worker request. Images are served directly instead.
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: "https",
@@ -18,6 +21,11 @@ const nextConfig: NextConfig = {
     ],
   },
   redirects: async () => [
+    {
+      source: "/api/md/_catalog",
+      destination: "/api/md/catalog",
+      permanent: true,
+    },
     {
       source: "/tools/-c6c56e",
       destination: "/tools",

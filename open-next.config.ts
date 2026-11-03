@@ -6,6 +6,11 @@ import doShardedTagCache from "@opennextjs/cloudflare/overrides/tag-cache/do-sha
 export default defineCloudflareConfig({
   incrementalCache: kvIncrementalCache,
   queue: doQueue,
-  tagCache: doShardedTagCache({ baseShardSize: 12, regionalCache: true }),
+  tagCache: doShardedTagCache({
+    baseShardSize: 12,
+    regionalCache: true,
+    regionalCacheTtlSec: 30,
+    regionalCacheDangerouslyPersistMissingTags: true,
+  }),
   enableCacheInterception: true,
 })

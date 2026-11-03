@@ -1,6 +1,15 @@
 import { NextResponse } from "next/server"
 import { SITE_CONFIG } from "@/constants/site"
+import { ROUTES } from "@/constants/routes"
 import type { MakerProfile } from "@/types/entities"
+import {
+  getLaunchDate,
+  type LaunchWeekSnapshot,
+} from "@/lib/launches/launch-week"
+import type { LaunchWeekSummary } from "@/lib/launches/launch-archive"
+import { getListingPath, toAbsoluteUrl } from "@/utils/urls"
+import { toIsoDate } from "@/utils/date"
+import { formatWeekTitle } from "@/utils/iso-weeks"
 import type { PlatformComparison } from "@/types/comparison"
 import {
   countryCodeToFlag,
@@ -512,6 +521,81 @@ ${
 - **Verified Directory Profile**: ${data.item?.canonicalUrl ?? `${SITE_CONFIG.url}/blog`}
 `
 }
+
+export const formatLaunchWeekHeading = (snapshot: LaunchWeekSnapshot): string =>
+  formatWeekTitle(snapshot.year, snapshot.week)
+
+export const formatLaunchWeekList = (snapshot: LaunchWeekSnapshot): string =>
+  snapshot.items.length === 0
+    ? "_No launches yet this week._"
+    : snapshot.items
+        .map((item, index) => {
+          const kind = item.itemKind === "tool" ? "Developer tool" : "Product"
+          const details = [kind, item.category, item.pricing]
+            .filter(Boolean)
+            .join(" · ")
+          const launchedOn = toIsoDate(getLaunchDate(item, snapshot.startDate))
+          return `${index + 1}. [${item.name}](${toAbsoluteUrl(getListingPath(item))}) — ${item.tagline} (${details}; launched ${launchedOn})`
+        })
+        .join("\n")
+
+export const formatLaunchWeekSection = (
+  snapshot: LaunchWeekSnapshot,
+  title: string
+): string => `## ${title} — ${formatLaunchWeekHeading(snapshot)}
+
+${snapshot.items.length} products and developer tools launched on ${SITE_CONFIG.name} in ${snapshot.weekLabel} of ${snapshot.year}, ranked by community votes. Last updated: ${snapshot.lastUpdated.toISOString()}.
+
+${formatLaunchWeekList(snapshot)}`
+
+export const formatPreviousWeeksSection = (
+  summaries: LaunchWeekSummary[],
+  current: LaunchWeekSnapshot,
+  limit: number
+): string => {
+  const previousWeeks = summaries
+    .filter(({ year, week }) => year !== current.year || week !== current.week)
+    .slice(0, limit)
+    .map(
+      ({ year, week, count }) =>
+        `- [${formatWeekTitle(year, week)}](${toAbsoluteUrl(ROUTES.LAUNCH_WEEK(year, week))}): ${count} launches`
+    )
+
+  return `### Previous Weeks
+
+${[...previousWeeks, `- [Full weekly archive](${toAbsoluteUrl(ROUTES.DISCOVER_WEEKLY_LAUNCHES)})`].join("\n")}`
+}
+
+export const generateHomeMarkdown = (
+  snapshot: LaunchWeekSnapshot
+): string => `# ${SITE_CONFIG.name} — New product & developer tool launches this week
+
+> ${SITE_CONFIG.description}
+
+${formatLaunchWeekSection(snapshot, "This Week's Launches")}
+
+## Explore
+
+- [All weekly launches](${toAbsoluteUrl(ROUTES.DISCOVER_WEEKLY_LAUNCHES)}): Launches grouped by ISO week, ranked by community votes.
+- [Trending](${toAbsoluteUrl(ROUTES.TRENDING)}): Community-ranked trending tools and products.
+- [Developer tools](${toAbsoluteUrl(ROUTES.TOOLS)}) and [products](${toAbsoluteUrl(ROUTES.PRODUCTS)}) directories.
+- [Launch your product](${toAbsoluteUrl(ROUTES.SUBMIT)}): Free launch with AI autofill.
+- [llms.txt](${toAbsoluteUrl(ROUTES.LLMS_TXT)}) and the [markdown catalog](${toAbsoluteUrl(ROUTES.MARKDOWN_CATALOG)}) for agents.
+`
+
+export const generateLaunchWeekMarkdown = (
+  snapshot: LaunchWeekSnapshot
+): string => `# Product & developer tool launches — ${formatLaunchWeekHeading(snapshot)}
+
+> Canonical: ${toAbsoluteUrl(ROUTES.LAUNCH_WEEK(snapshot.year, snapshot.week))}
+
+${formatLaunchWeekSection(snapshot, "Launches")}
+
+## More
+
+- [All weekly launches](${toAbsoluteUrl(ROUTES.DISCOVER_WEEKLY_LAUNCHES)})
+- [This week's launches](${toAbsoluteUrl(ROUTES.HOME)})
+`
 
 export const createMarkdownResponse = (
   content: string,

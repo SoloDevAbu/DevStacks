@@ -30,7 +30,7 @@ import { ROUTES } from "@/constants/routes"
 import { Badge } from "@/components/ui/badge"
 import { LEGACY_CATEGORY_REDIRECTS } from "@/constants/categories"
 
-export const revalidate = 3600
+export const revalidate = 21600
 
 export const generateStaticParams = async () => []
 
@@ -281,7 +281,7 @@ const CategoryProductsPage = async (props: ProductCategoryPageProps) => {
         </div>
 
         {/* Main Category Feed */}
-        <main className="flex-1">
+        <div className="flex-1">
           {productsList.length > 0 ? (
             <div className="flex flex-col">
               {productsList.map((product, idx) => (
@@ -314,7 +314,7 @@ const CategoryProductsPage = async (props: ProductCategoryPageProps) => {
               </div>
             </div>
           )}
-        </main>
+        </div>
       </div>
     </>
   )

@@ -2,12 +2,13 @@
 
 import * as React from "react"
 import { usePathname } from "next/navigation"
-import { LeftSidebar } from "@/components/layout/left-sidebar"
-import { RightSidebar } from "@/components/layout/right-sidebar"
-import { AgentFooter } from "@/components/layout/agent-footer"
-
+// The sidebars and footer are rendered on the server by the root layout and passed in as slots,
+// so only the route check below ships as client code.
 interface AppLayoutShellProps {
   children: React.ReactNode
+  left: React.ReactNode
+  right: React.ReactNode
+  footer: React.ReactNode
 }
 
 /**
@@ -26,7 +27,12 @@ export const isStandaloneComparisonRoute = (pathname: string): boolean => {
   )
 }
 
-export const AppLayoutShell = ({ children }: AppLayoutShellProps) => {
+export const AppLayoutShell = ({
+  children,
+  left,
+  right,
+  footer,
+}: AppLayoutShellProps) => {
   const pathname = usePathname()
   const isFullWidth = isStandaloneComparisonRoute(pathname)
 
@@ -34,7 +40,7 @@ export const AppLayoutShell = ({ children }: AppLayoutShellProps) => {
     return (
       <div className="flex min-h-[calc(100vh-64px)] w-full flex-1 flex-col justify-between bg-white">
         <main className="w-full flex-1">{children}</main>
-        <AgentFooter />
+        {footer}
       </div>
     )
   }
@@ -43,18 +49,18 @@ export const AppLayoutShell = ({ children }: AppLayoutShellProps) => {
     <div className="grid flex-1 grid-cols-1 lg:grid-cols-[320px_1fr] xl:grid-cols-[320px_1fr_380px]">
       {/* Bottom Left (Sidebar) */}
       <aside className="sticky top-16 hidden h-[calc(100dvh-4rem)] flex-col overflow-hidden border-r border-dashed border-border bg-white lg:flex">
-        <LeftSidebar />
+        {left}
       </aside>
 
       {/* Bottom Center (Main) */}
       <main className="relative flex min-h-[calc(100vh-64px)] min-w-0 flex-col justify-between bg-white">
         <div className="flex-1">{children}</div>
-        <AgentFooter />
+        {footer}
       </main>
 
       {/* Bottom Right (Sidebar) */}
       <aside className="sticky top-16 hidden h-[calc(100vh-64px)] scrollbar-thin flex-col overflow-y-auto border-l border-dashed border-border bg-white xl:flex">
-        <RightSidebar />
+        {right}
       </aside>
     </div>
   )

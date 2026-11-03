@@ -294,7 +294,7 @@ export const toolHeroStatPill =
 export const heroStatPill = toolHeroStatPill
 
 export const homeHeroRotatingText =
-  "inline-block font-bold text-blue-600 dark:text-blue-400 transition-all duration-200 ease-out"
+  "inline-block min-w-[14ch] font-bold text-blue-600 dark:text-blue-400 transition-all duration-200 ease-out"
 
 export const homeHeroBadge =
   "h-6.5 gap-1.5 rounded-full border-slate-200/90 bg-white/90 px-3 py-1 text-xs font-medium text-slate-700 shadow-2xs backdrop-blur-xs transition-colors hover:border-blue-300 hover:bg-blue-50/50 hover:text-blue-900"
@@ -391,7 +391,7 @@ export const siteFooterBrandSection =
   "flex flex-col gap-4 border-b border-dashed border-border bg-linear-to-r from-amber-50/80 via-orange-50/20 to-transparent px-6 py-8 sm:flex-row sm:items-center sm:justify-between md:px-8 md:py-9"
 
 export const siteFooterNavGrid =
-  "grid grid-cols-2 gap-8 px-6 py-10 sm:grid-cols-2 md:grid-cols-4 md:gap-10 md:px-8 md:py-12"
+  "grid grid-cols-2 gap-8 px-6 py-10 sm:grid-cols-3 md:gap-10 md:px-8 md:py-12"
 
 export const siteFooterGrid = siteFooterNavGrid
 
@@ -991,3 +991,18 @@ export const submitTierCard = (isSelected: boolean) =>
       ? "border-blue-600 bg-blue-50/40 ring-1 ring-blue-600/30 shadow-xs"
       : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/50"
   )
+
+export const emptyStateBox =
+  "border-b border-dashed border-border bg-white py-12 text-center"
+
+export const launchWeekNavLink =
+  "inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 transition-colors hover:text-slate-900"
+
+export const launchArchiveWeekLink =
+  "flex items-center justify-between gap-3 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-medium text-slate-700 transition-colors hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900"
+
+export const sectionFooterLink =
+  "border-b border-dashed border-border bg-white px-6 py-4 text-center text-xs font-semibold text-slate-600 transition-colors hover:text-slate-900"
+
+export const sidebarTaglineCard =
+  "rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-800"

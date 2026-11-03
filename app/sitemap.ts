@@ -10,6 +10,8 @@ import { listPublishedBlogs } from "@/db/queries/blogs"
 import { ROUTES } from "@/constants/routes"
 import { normalizeSitemapUrl } from "@/utils/urls"
 import { getAllComparisons } from "@/constants/comparisons"
+import { ALTERNATIVES_MIN_SIBLINGS } from "@/constants/rankings"
+import { getCachedLaunchWeekSummaries } from "@/lib/launches/launch-archive"
 
 export const revalidate = 3600
 
@@ -174,6 +176,7 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
     toolCategories,
     productCategories,
     publishedBlogs,
+    launchWeeks,
   ] = await Promise.all([
     getProducts({ limit: 5000 }),
     getTools({ limit: 5000 }),
@@ -181,9 +184,17 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
     getToolCategories().catch(() => []),
     getProductCategories().catch(() => []),
     listPublishedBlogs({ limit: 5000 }).catch(() => ({ items: [] })),
+    getCachedLaunchWeekSummaries().catch(() => []),
   ])
 
-  const dynamicRoutes: MetadataRoute.Sitemap = []
+  const dynamicRoutes: MetadataRoute.Sitemap = launchWeeks.map(
+    ({ year, week, lastUpdated }) => ({
+      url: normalizeSitemapUrl(ROUTES.LAUNCH_WEEK(year, week)),
+      lastModified: new Date(lastUpdated),
+      changeFrequency: "weekly" as const,
+      priority: 0.8,
+    })
+  )
 
   // Tool Category Hubs with >= 1 approved tools
   if (toolCategories && toolCategories.length > 0) {
@@ -276,7 +287,7 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
         .filter((tool) => {
           if (!tool.categoryId) return false
           const count = categoryCountMap.get(tool.categoryId) ?? 0
-          return count >= 2 // self + at least 1 sibling
+          return count > ALTERNATIVES_MIN_SIBLINGS
         })
         .map((tool) => ({
           url: normalizeSitemapUrl(`/alternatives/${tool.slug}`),
@@ -311,12 +322,35 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
     )
   }
 
+  // Hubs change when a listing does, so they carry the newest listing update instead of the
+  // time the sitemap happened to be generated; policy pages carry no date at all.
+  const catalogLastModified = [...(dbProducts ?? []), ...(dbTools ?? [])].reduce(
+    (latest, item) =>
+      item.updatedAt && new Date(item.updatedAt) > latest
+        ? new Date(item.updatedAt)
+        : latest,
+    new Date(0)
+  )
+  const hubLastModified =
+    catalogLastModified.getTime() > 0 ? catalogLastModified : now
+  const undatedUrls = new Set(
+    [ROUTES.PRIVACY, ROUTES.TERMS, ROUTES.REFUND].map(normalizeSitemapUrl)
+  )
+
   const seen = new Set<string>()
   return [...staticRoutes, ...dynamicRoutes]
-    .map((entry) => ({
-      ...entry,
-      url: normalizeSitemapUrl(entry.url),
-    }))
+    .map((entry) => {
+      const url = normalizeSitemapUrl(entry.url)
+      return {
+        ...entry,
+        url,
+        lastModified: undatedUrls.has(url)
+          ? undefined
+          : entry.lastModified === now
+            ? hubLastModified
+            : entry.lastModified,
+      }
+    })
     .filter((entry) => {
       if (!entry.url || seen.has(entry.url)) return false
       seen.add(entry.url)

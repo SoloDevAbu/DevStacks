@@ -2,9 +2,10 @@ import { db } from "@/db"
 import { products, categories, productTools, tools, users } from "@/db/schema"
 import { and, desc, eq, ilike, inArray, or, sql } from "drizzle-orm"
 import { unstable_cache } from "next/cache"
-import { CACHE_TAGS } from "@/constants/cache"
+import { CACHE_TAGS, CACHE_REVALIDATE_SECONDS } from "@/constants/cache"
 import type { DbProduct, ProductBuiltWith } from "@/types/entities"
 import type { Pricing, Tier } from "@/constants/plans"
+import { launchedByNow } from "@/lib/catalog/visibility"
 
 export type ProductListFilters = {
   q?: string
@@ -37,6 +38,7 @@ export const getProducts = async ({
 
   const conditions = [
     eq(products.status, "approved"),
+    launchedByNow(products),
     eq(products.isDeleted, false),
   ]
 
@@ -193,7 +195,13 @@ export const getProductsStats = async () => {
       totalLikes: sql<number>`coalesce(sum(${products.likesCount}), 0)::int`,
     })
     .from(products)
-    .where(and(eq(products.status, "approved"), eq(products.isDeleted, false)))
+    .where(
+      and(
+        eq(products.status, "approved"),
+        launchedByNow(products),
+        eq(products.isDeleted, false)
+      )
+    )
 
   return {
     totalCount: Number(row?.totalCount ?? 0),
@@ -204,11 +212,11 @@ export const getProductsStats = async () => {
 export const getCachedProducts = unstable_cache(
   async (filters: ProductListFilters) => getProducts(filters),
   [CACHE_TAGS.PRODUCTS_LIST],
-  { revalidate: 300, tags: [CACHE_TAGS.PRODUCTS_LIST] }
+  { revalidate: CACHE_REVALIDATE_SECONDS.LISTS, tags: [CACHE_TAGS.PRODUCTS_LIST] }
 )
 
 export const getCachedProductsStats = unstable_cache(
   async () => getProductsStats(),
   [CACHE_TAGS.PRODUCTS_STATS],
-  { revalidate: 300, tags: [CACHE_TAGS.PRODUCTS_STATS] }
+  { revalidate: CACHE_REVALIDATE_SECONDS.LISTS, tags: [CACHE_TAGS.PRODUCTS_STATS] }
 )
