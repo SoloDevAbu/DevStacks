@@ -182,6 +182,7 @@ export const config = {
     "/api/:path*",
     "/.well-known/mcp",
     "/index.md",
+    "/launches/:path*",
     "/tools/:path*",
     "/products/:path*",
     "/blog/:path*",

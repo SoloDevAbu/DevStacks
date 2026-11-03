@@ -2,6 +2,9 @@ export const ROUTES = {
   HOME: "/",
   DISCOVER_POPULAR_BUILDING_BLOCKS: "/discover/popular-building-blocks",
   DISCOVER_WEEKLY_LAUNCHES: "/discover/weekly-launches",
+  LAUNCH_WEEK: (year: number, week: number) => `/launches/${year}/week-${week}`,
+  LAUNCH_WEEK_MARKDOWN: (year: number, week: number) =>
+    `/api/md/launches/${year}/week-${week}`,
   TRENDING: "/trending",
   PRICING: "/pricing",
   SUBMIT: "/submit",

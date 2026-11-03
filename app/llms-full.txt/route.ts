@@ -12,23 +12,29 @@ import { getAllComparisons } from "@/constants/comparisons"
 import { ROUTES } from "@/constants/routes"
 import {
   AI_SURFACE_CACHE_CONTROL,
+  AI_SURFACE_ARCHIVE_WEEKS,
   AI_SURFACE_FRESHNESS_NOTE,
 } from "@/constants/cache"
 import { getCurrentLaunchWeekSnapshot } from "@/lib/launches/launch-week"
-import { formatLaunchWeekSection } from "@/lib/seo/markdown-twins"
+import { getCachedLaunchWeekSummaries } from "@/lib/launches/launch-archive"
+import {
+  formatLaunchWeekSection,
+  formatPreviousWeeksSection,
+} from "@/lib/seo/markdown-twins"
 
 export const revalidate = 3600
 
 // Failures are intentionally not caught: a thrown error keeps the last good version cached
 // instead of publishing an empty catalog to AI crawlers.
 export const GET = async () => {
-  const [trendingItems, buildingBlocks, toolCats, productCats, launchWeek] =
+  const [trendingItems, buildingBlocks, toolCats, productCats, launchWeek, launchWeeks] =
     await Promise.all([
       getTrending(15),
       getTools({ sortBy: "builds", limit: 10 }),
       getToolCategories(),
       getProductCategories(),
       getCurrentLaunchWeekSnapshot(),
+      getCachedLaunchWeekSummaries(),
     ])
 
   const content = `# ${SITE_CONFIG.name} — Comprehensive Directory & Ecosystem Specification
@@ -43,7 +49,7 @@ export const GET = async () => {
 
 ${formatLaunchWeekSection(launchWeek, "This Week's Launches")}
 
-Previous weeks: ${SITE_CONFIG.url}${ROUTES.DISCOVER_WEEKLY_LAUNCHES}
+${formatPreviousWeeksSection(launchWeeks, launchWeek, AI_SURFACE_ARCHIVE_WEEKS)}
 
 ---
 

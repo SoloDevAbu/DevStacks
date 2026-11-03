@@ -10,6 +10,7 @@ import { listPublishedBlogs } from "@/db/queries/blogs"
 import { ROUTES } from "@/constants/routes"
 import { normalizeSitemapUrl } from "@/utils/urls"
 import { getAllComparisons } from "@/constants/comparisons"
+import { getCachedLaunchWeekSummaries } from "@/lib/launches/launch-archive"
 
 export const revalidate = 3600
 
@@ -174,6 +175,7 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
     toolCategories,
     productCategories,
     publishedBlogs,
+    launchWeeks,
   ] = await Promise.all([
     getProducts({ limit: 5000 }),
     getTools({ limit: 5000 }),
@@ -181,9 +183,17 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
     getToolCategories().catch(() => []),
     getProductCategories().catch(() => []),
     listPublishedBlogs({ limit: 5000 }).catch(() => ({ items: [] })),
+    getCachedLaunchWeekSummaries().catch(() => []),
   ])
 
-  const dynamicRoutes: MetadataRoute.Sitemap = []
+  const dynamicRoutes: MetadataRoute.Sitemap = launchWeeks.map(
+    ({ year, week, lastUpdated }) => ({
+      url: normalizeSitemapUrl(ROUTES.LAUNCH_WEEK(year, week)),
+      lastModified: new Date(lastUpdated),
+      changeFrequency: "weekly" as const,
+      priority: 0.8,
+    })
+  )
 
   // Tool Category Hubs with >= 1 approved tools
   if (toolCategories && toolCategories.length > 0) {

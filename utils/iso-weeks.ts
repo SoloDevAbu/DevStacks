@@ -198,3 +198,33 @@ export const generateWeekOptions = (year: number): WeekOption[] => {
     }
   })
 }
+
+const WEEK_SLUG_PATTERN = /^week-(\d{1,2})$/
+
+export const parseWeekSlug = (slug: string): number | null => {
+  const match = slug.match(WEEK_SLUG_PATTERN)
+  const week = match ? Number(match[1]) : NaN
+  return week >= 1 && week <= 53 ? week : null
+}
+
+export const shiftWeek = (
+  year: number,
+  week: number,
+  delta: number
+): { year: number; week: number } => {
+  const { startDate } = getISOWeekRange(year, week)
+  const shifted = new Date(startDate.getTime() + delta * 7 * 24 * 60 * 60 * 1000)
+  const { isoYear, isoWeek } = getISOWeek(shifted)
+  return { year: isoYear, week: isoWeek }
+}
+
+export const isFutureWeek = (year: number, week: number): boolean => {
+  const current = getCurrentWeek()
+  return year > current.year || (year === current.year && week > current.week)
+}
+
+// "Week 45, 2026 (Nov 2 – 8)"
+export const formatWeekTitle = (year: number, week: number): string => {
+  const { weekLabel, dateRange } = formatLaunchWeekDisplay(year, week)
+  return `${weekLabel}, ${year} (${dateRange})`
+}

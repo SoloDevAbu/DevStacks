@@ -13,6 +13,8 @@ export const CACHE_TAGS = {
 // downstream caches may only hold them briefly.
 export const AI_SURFACE_CACHE_CONTROL = "public, max-age=600, s-maxage=3600"
 
+export const AI_SURFACE_ARCHIVE_WEEKS = 8
+
 export const AI_SURFACE_FRESHNESS_NOTE =
   "Refreshed hourly, whenever a listing changes, and at every weekly launch rollover (Monday 00:00 UTC)"
 

@@ -991,3 +991,12 @@ export const submitTierCard = (isSelected: boolean) =>
       ? "border-blue-600 bg-blue-50/40 ring-1 ring-blue-600/30 shadow-xs"
       : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/50"
   )
+
+export const emptyStateBox =
+  "border-b border-dashed border-border bg-white py-12 text-center"
+
+export const launchWeekNavLink =
+  "inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 transition-colors hover:text-slate-900"
+
+export const launchArchiveWeekLink =
+  "flex items-center justify-between gap-3 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-medium text-slate-700 transition-colors hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900"

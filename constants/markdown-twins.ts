@@ -30,6 +30,13 @@ export const MARKDOWN_TWIN_ROUTES: readonly MarkdownTwinRoute[] = [
     alias: ([, section, slug]) => `/${section}/${slug}.md`,
   },
   {
+    pattern: /^\/launches\/(\d{4})\/week-(\d{1,2})$/,
+    twin: ([, year, week]) =>
+      ROUTES.LAUNCH_WEEK_MARKDOWN(Number(year), Number(week)),
+    alias: ([, year, week]) =>
+      `${ROUTES.LAUNCH_WEEK(Number(year), Number(week))}.md`,
+  },
+  {
     pattern: /^\/(pricing|faq|terms|privacy|refund)$/,
     twin: ([, page]) => `/${page}.md`,
   },
@@ -44,6 +51,11 @@ export const MARKDOWN_SUFFIX_ROUTES: readonly MarkdownTwinRoute[] = [
   {
     pattern: /^\/(tools|products|blog|makers)\/([^/]+)\.md$/,
     twin: ([, section, slug]) => `/api/md/${section}/${slug}`,
+  },
+  {
+    pattern: /^\/launches\/(\d{4})\/week-(\d{1,2})\.md$/,
+    twin: ([, year, week]) =>
+      ROUTES.LAUNCH_WEEK_MARKDOWN(Number(year), Number(week)),
   },
 ]
 

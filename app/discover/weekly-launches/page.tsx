@@ -1,6 +1,11 @@
 import type { Metadata } from "next"
+import Link from "next/link"
 import { CalendarDays } from "lucide-react"
 import { PageHeader } from "@/components/shared/page-header"
+import { SectionHeader } from "@/components/shared/section-header"
+import { LaunchWeekList } from "@/components/shared/launch-week-list"
+import { LaunchWeekArchive } from "@/components/launches/launch-week-archive"
+import type { FeedItem } from "@/components/shared/feed-card"
 import {
   breadcrumbSchema,
   collectionPageSchema,
@@ -8,107 +13,104 @@ import {
   safeJsonLd,
 } from "@/lib/seo/schema"
 import { SITE_CONFIG } from "@/constants/site"
-import { HOMEPAGE_LIMITS } from "@/constants/rankings"
-import { heroStatPill } from "@/utils/styles"
-import { getWeeklyLaunches } from "@/lib/launches/weekly-launches"
-import { getCurrentWeek } from "@/utils/iso-weeks"
+import { ROUTES } from "@/constants/routes"
+import { heroStatPill, sectionHeaderCtaButton } from "@/utils/styles"
+import { getCurrentLaunchWeekSnapshot } from "@/lib/launches/launch-week"
+import { getCachedLaunchWeekSummaries } from "@/lib/launches/launch-archive"
+import { formatLaunchWeekHeading } from "@/lib/seo/markdown-twins"
 import { AI_PROMPTS } from "@/lib/prompts"
-import type { FeedItem } from "@/components/shared/feed-card"
-import { WeeklyLaunchesContent } from "./weekly-launches-content"
+import { toAbsoluteUrl } from "@/utils/urls"
+import { formatWeekTitle } from "@/utils/iso-weeks"
 
 export const revalidate = 3600
 
+const PAGE_TITLE = "Weekly Product & Dev Tool Launches"
+const PAGE_DESCRIPTION = `Every product and developer tool launched on ${SITE_CONFIG.name}, grouped by week and ranked by community votes. See this week's launches and browse every past week.`
+const PAGE_URL = toAbsoluteUrl(ROUTES.DISCOVER_WEEKLY_LAUNCHES)
+
 export const metadata: Metadata = {
-  title: "Weekly Launches — Developer Tools & Products",
-  description: `Browse developer tools and products by week. See what the community launched and voted for each week on ${SITE_CONFIG.name}.`,
-  keywords: [
-    "weekly developer launches",
-    "weekly software launches",
-    "developer tools by week",
-    "weekly product launches",
-    "developer ecosystem weekly",
-  ],
-  alternates: {
-    canonical: `${SITE_CONFIG.url}/discover/weekly-launches`,
-  },
+  title: PAGE_TITLE,
+  description: PAGE_DESCRIPTION,
+  alternates: { canonical: PAGE_URL },
   openGraph: {
-    title: `Weekly Launches | ${SITE_CONFIG.name}`,
-    description:
-      "Browse developer tools and products launched each week, ranked by community votes.",
+    title: `${PAGE_TITLE} | ${SITE_CONFIG.name}`,
+    description: PAGE_DESCRIPTION,
     type: "website",
-    url: `${SITE_CONFIG.url}/discover/weekly-launches`,
+    url: PAGE_URL,
     siteName: SITE_CONFIG.name,
-    images: [
-      {
-        url: SITE_CONFIG.ogImageUrl,
-        width: 1200,
-        height: 630,
-        alt: `Weekly Launches | ${SITE_CONFIG.name}`,
-      },
-    ],
+    images: [{ url: SITE_CONFIG.ogImageUrl, width: 1200, height: 630 }],
   },
   twitter: {
     card: "summary_large_image",
-    title: `Weekly Launches | ${SITE_CONFIG.name}`,
-    description:
-      "Browse developer tools and products launched each week, ranked by community votes.",
+    title: `${PAGE_TITLE} | ${SITE_CONFIG.name}`,
+    description: PAGE_DESCRIPTION,
     images: [SITE_CONFIG.ogImageUrl],
   },
 }
 
 const WeeklyLaunchesPage = async () => {
-  const breadcrumbs = breadcrumbSchema([
-    { name: "Home", url: SITE_CONFIG.url },
-    {
-      name: "Weekly Launches",
-      url: `${SITE_CONFIG.url}/discover/weekly-launches`,
-    },
+  const [launchWeek, summaries] = await Promise.all([
+    getCurrentLaunchWeekSnapshot(),
+    getCachedLaunchWeekSummaries(),
   ])
+  const items = launchWeek.items as FeedItem[]
+  const currentWeekUrl = ROUTES.LAUNCH_WEEK(launchWeek.year, launchWeek.week)
 
-  const { year, week } = getCurrentWeek()
-
-  const initialItems = await getWeeklyLaunches({
-    year,
-    week,
-    limit: HOMEPAGE_LIMITS.WEEKLY_LAUNCHES,
-  }).catch(() => [])
-
-  const collectionJsonLd = collectionPageSchema({
-    name: "Weekly Developer Launches",
-    description:
-      "Developer tools and products launched this week, ranked by community votes.",
-    url: `${SITE_CONFIG.url}/discover/weekly-launches`,
-    items: (initialItems as FeedItem[]).map((item) => ({
-      name: item.name,
-      url: `${SITE_CONFIG.url}${item.itemKind === "tool" ? `/tools/${item.slug}` : `/products/${item.slug}`}`,
-      description: item.tagline,
-    })),
-  })
-
-  const unifiedJsonLd = buildEntityGraph([breadcrumbs, collectionJsonLd])
+  const jsonLd = buildEntityGraph([
+    breadcrumbSchema([
+      { name: "Home", url: SITE_CONFIG.url },
+      { name: "Weekly Launches", url: PAGE_URL },
+    ]),
+    collectionPageSchema({
+      name: PAGE_TITLE,
+      description: PAGE_DESCRIPTION,
+      url: PAGE_URL,
+      dateModified: launchWeek.lastUpdated,
+      items: summaries.map(({ year, week, count }) => ({
+        name: formatWeekTitle(year, week),
+        url: toAbsoluteUrl(ROUTES.LAUNCH_WEEK(year, week)),
+        description: `${count} launches`,
+      })),
+    }),
+  ])
 
   return (
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: safeJsonLd(unifiedJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLd) }}
       />
       <div className="relative flex min-h-full flex-col bg-slate-50/50">
         <PageHeader
-          heading="Weekly Launches"
-          description="Browse developer tools and products launched each week. Select any week to see what the community built and voted for."
+          heading={PAGE_TITLE}
+          description={PAGE_DESCRIPTION}
           aiPrompt={AI_PROMPTS.weeklyLaunches}
           variant="discover-weekly-launches"
           metrics={
             <div className={heroStatPill}>
               <CalendarDays className="size-3.5 text-indigo-500" />
-              <span className="font-bold text-slate-900">By Week</span>
-              <span className="text-slate-500">Community Votes</span>
+              <span className="font-bold text-slate-900">
+                {summaries.length} weeks
+              </span>
+              <span className="text-slate-500">of launches</span>
             </div>
           }
         />
 
-        <WeeklyLaunchesContent initialItems={initialItems as FeedItem[]} />
+        <section aria-label="This week's launches" className="flex flex-col">
+          <SectionHeader
+            title={`This Week's Launches — ${formatLaunchWeekHeading(launchWeek)}`}
+            subtitle={`${items.length} launches so far, ranked by community votes`}
+            action={
+              <Link href={currentWeekUrl} className={sectionHeaderCtaButton}>
+                Week page
+              </Link>
+            }
+          />
+          <LaunchWeekList items={items} />
+        </section>
+
+        <LaunchWeekArchive summaries={summaries} />
       </div>
     </>
   )

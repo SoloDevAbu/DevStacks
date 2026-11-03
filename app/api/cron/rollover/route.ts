@@ -44,10 +44,11 @@ export const POST = async (req: NextRequest) => {
   })
   const launchPaths = launches.map(getListingPath)
   launchPaths.forEach((path) => revalidatePath(path))
+  const weekPath = ROUTES.LAUNCH_WEEK(year, week)
 
   after(async () => {
-    await warmPaths([...ROLLOVER_HUB_PATHS, ...ROLLOVER_MACHINE_PATHS])
-    await submitToIndexNow([...ROLLOVER_HUB_PATHS, ...launchPaths])
+    await warmPaths([...ROLLOVER_HUB_PATHS, weekPath, ...ROLLOVER_MACHINE_PATHS])
+    await submitToIndexNow([...ROLLOVER_HUB_PATHS, weekPath, ...launchPaths])
   })
 
   return NextResponse.json({ year, week, launches: launchPaths.length })
