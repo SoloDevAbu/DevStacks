@@ -29,7 +29,7 @@ import { ROUTES } from "@/constants/routes"
 export const revalidate = 3600
 
 export const metadata: Metadata = {
-  title: `Best Product Hunt Alternatives for Software & Dev Tools (${new Date().getFullYear()})`,
+  title: `Best Product Hunt Alternatives (${new Date().getFullYear()})`,
   description:
     "Compare the top 6 Product Hunt alternatives in 2026: LaunchNests, DevHunt, Uneed, MicroLaunch, BetaList, and Hacker News. Compare launch mechanics, submission pricing, SEO backlinks, and audience fit.",
   keywords: [
@@ -430,7 +430,7 @@ const ProductHuntAlternativesPage = () => {
         </section>
 
         {/* Detailed Platform Breakdowns */}
-        <main className="flex-1 px-6 py-10 md:px-8">
+        <div className="flex-1 px-6 py-10 md:px-8">
           <div className="flex flex-col gap-10">
             <div>
               <div className="flex items-center gap-2 text-xs font-bold tracking-wider text-slate-500 uppercase">
@@ -643,7 +643,7 @@ const ProductHuntAlternativesPage = () => {
               </div>
             </section>
           </div>
-        </main>
+        </div>
       </div>
     </>
   )

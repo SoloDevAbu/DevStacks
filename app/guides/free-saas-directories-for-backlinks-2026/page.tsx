@@ -30,7 +30,7 @@ import { ROUTES } from "@/constants/routes"
 export const revalidate = 86400
 
 export const metadata: Metadata = {
-  title: `25+ Best Free SaaS Directories for Backlinks & Traffic (${new Date().getFullYear()} Guide)`,
+  title: `25+ Free SaaS Directories for Backlinks (${new Date().getFullYear()})`,
   description:
     "The definitive 2026 guide to free SaaS directories for high-authority backlinks, referral traffic, and SEO domain growth. Evaluated by domain authority, submission cost, link type, and review turnaround.",
   keywords: [
@@ -486,7 +486,7 @@ const SaasDirectoriesGuidePage = () => {
         </section>
 
         {/* Detailed Strategic Guide Content */}
-        <main className="flex-1 px-6 py-12 md:px-8">
+        <div className="flex-1 px-6 py-12 md:px-8">
           <div className="flex flex-col gap-12">
             {/* Tier Breakdown */}
             <div>
@@ -734,7 +734,7 @@ const SaasDirectoriesGuidePage = () => {
               </div>
             </section>
           </div>
-        </main>
+        </div>
       </div>
     </>
   )

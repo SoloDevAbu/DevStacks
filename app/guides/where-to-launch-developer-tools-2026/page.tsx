@@ -31,7 +31,7 @@ import { ROUTES } from "@/constants/routes"
 export const revalidate = 86400
 
 export const metadata: Metadata = {
-  title: `Where to Launch Developer Tools: Complete Distribution Guide (${new Date().getFullYear()})`,
+  title: `Where to Launch Developer Tools (${new Date().getFullYear()} Guide)`,
   description:
     "The definitive 2026 playbook for launching developer tools, APIs, open-source libraries, and infrastructure. Covers DevHunt, LaunchNests, Show HN, GitHub Awesome lists, and AI coding agents.",
   keywords: [
@@ -326,7 +326,7 @@ const WhereToLaunchDevtoolsGuidePage = () => {
         </section>
 
         {/* Deep Dive Sections */}
-        <main className="flex-1 px-6 py-12 md:px-8">
+        <div className="flex-1 px-6 py-12 md:px-8">
           <div className="flex flex-col gap-12">
             {/* The 4 Developer Launch Pillars */}
             <div>
@@ -513,7 +513,7 @@ const WhereToLaunchDevtoolsGuidePage = () => {
               </div>
             </section>
           </div>
-        </main>
+        </div>
       </div>
     </>
   )

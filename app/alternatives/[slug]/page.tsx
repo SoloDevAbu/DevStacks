@@ -588,7 +588,7 @@ const AlternativesPage = async (props: AlternativesPageProps) => {
         </section>
 
         {/* Detailed Alternative Cards */}
-        <main className="flex-1">
+        <div className="flex-1">
           <div className="border-b border-dashed border-border px-6 py-4 md:px-8">
             <h2 className="text-sm font-bold text-slate-900 sm:text-base">
               Detailed Alternative Profiles ({alternatives.length})
@@ -627,7 +627,7 @@ const AlternativesPage = async (props: AlternativesPageProps) => {
               </div>
             </div>
           )}
-        </main>
+        </div>
       </div>
     </>
   )

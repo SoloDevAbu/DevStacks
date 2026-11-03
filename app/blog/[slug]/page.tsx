@@ -367,7 +367,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           <BlogTableOfContents items={allTocItems} />
 
           {/* Center Main Article Column: bounded by the two vertical dashed lines */}
-          <main className="flex-1 min-w-0 lg:border-l xl:border-r border-dashed border-border flex flex-col divide-y divide-dashed divide-border bg-white">
+          <div className="flex-1 min-w-0 lg:border-l xl:border-r border-dashed border-border flex flex-col divide-y divide-dashed divide-border bg-white">
             {/* Mobile collapsible TOC (< lg) */}
             <div className="p-4 sm:p-6 block lg:hidden">
               <BlogMobileToc items={allTocItems} />
@@ -471,7 +471,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                 </div>
               </section>
             </div>
-          </main>
+          </div>
 
           {/* Right Column: Sticky Product Card on XL screens */}
           <aside className="sticky top-16 hidden h-[calc(100vh-4rem)] w-80 shrink-0 flex-col overflow-y-auto bg-white p-5 sm:p-6 xl:flex scrollbar-thin">

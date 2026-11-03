@@ -17,8 +17,8 @@ export const MARKDOWN_TWIN_ROUTES: readonly MarkdownTwinRoute[] = [
     alias: () => ROUTES.HOME_MARKDOWN_ALIAS,
   },
   {
-    pattern: /^\/tools\/category\/([^/]+)$/,
-    twin: ([, slug]) => `/api/md/tools/category/${slug}`,
+    pattern: /^\/(tools|products)\/category\/([^/]+)$/,
+    twin: ([, section, slug]) => `/api/md/${section}/category/${slug}`,
   },
   {
     pattern: /^\/(alternatives|built-with)\/([^/]+)$/,

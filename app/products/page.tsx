@@ -18,6 +18,9 @@ import { getCachedProductCategories } from "@/db/queries/categories/list"
 import type { DbProduct } from "@/types/entities"
 import { ProductsDirectoryContent } from "./products-content"
 import type { ProductSortOption } from "@/components/products/products-filter-bar"
+import { resolveCategoryHubPath } from "@/lib/catalog/category-url"
+import { toAbsoluteUrl } from "@/utils/urls"
+import { CrawlablePagination } from "@/components/shared/crawlable-pagination"
 
 export const revalidate = 3600
 
@@ -68,10 +71,9 @@ export const generateMetadata = async (props: {
 
   let canonicalUrl = `${SITE_CONFIG.url}/products`
   if (cleanCategory) {
-    canonicalUrl = `${SITE_CONFIG.url}/products?category=${encodeURIComponent(cleanCategory)}`
-    if (currentPage > 1) {
-      canonicalUrl += `&page=${currentPage}`
-    }
+    canonicalUrl = toAbsoluteUrl(
+      await resolveCategoryHubPath("product", cleanCategory)
+    )
   } else if (currentPage > 1) {
     canonicalUrl = `${SITE_CONFIG.url}/products?page=${currentPage}`
   }
@@ -149,7 +151,7 @@ const ProductsPage = async (props: {
   if (category) {
     breadcrumbItems.push({
       name: `${category} Products`,
-      url: `${SITE_CONFIG.url}/products?category=${encodeURIComponent(category)}`,
+      url: toAbsoluteUrl(await resolveCategoryHubPath("product", category)),
     })
   }
   const breadcrumbs = breadcrumbSchema(breadcrumbItems)
@@ -231,6 +233,12 @@ const ProductsPage = async (props: {
           totalPages={totalPages}
           initialProducts={initialProducts as DbProduct[]}
           totalCount={effectiveTotalCount}
+        />
+        <CrawlablePagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          basePath={ROUTES.PRODUCTS}
+          params={{ category, pricing, sortBy: sortBy === "upvotes" ? undefined : sortBy }}
         />
       </div>
     </>

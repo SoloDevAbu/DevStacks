@@ -391,7 +391,7 @@ export const siteFooterBrandSection =
   "flex flex-col gap-4 border-b border-dashed border-border bg-linear-to-r from-amber-50/80 via-orange-50/20 to-transparent px-6 py-8 sm:flex-row sm:items-center sm:justify-between md:px-8 md:py-9"
 
 export const siteFooterNavGrid =
-  "grid grid-cols-2 gap-8 px-6 py-10 sm:grid-cols-2 md:grid-cols-4 md:gap-10 md:px-8 md:py-12"
+  "grid grid-cols-2 gap-8 px-6 py-10 sm:grid-cols-3 md:gap-10 md:px-8 md:py-12"
 
 export const siteFooterGrid = siteFooterNavGrid
 

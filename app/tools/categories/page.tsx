@@ -177,7 +177,7 @@ const ToolCategoriesPage = async () => {
         </header>
 
         {/* Two-Column Full-Width Dashed Categories */}
-        <main className="w-full flex-1">
+        <div className="w-full flex-1">
           <CategoryTable type="tools" categories={categories} />
           <CategoryFaqSection
             title="Tool Categories Guidelines & FAQs"
@@ -185,7 +185,7 @@ const ToolCategoriesPage = async () => {
             faqs={TOOL_CATEGORY_FAQS}
             theme="indigo"
           />
-        </main>
+        </div>
       </div>
     </>
   )

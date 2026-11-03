@@ -179,7 +179,7 @@ const MakersPage = async ({ searchParams }: MakersPageProps) => {
         </div>
 
         {/* Full-Width Two-Column Dashed Makers Grid */}
-        <main className="w-full flex-1">
+        <div className="w-full flex-1">
           {makers.length === 0 ? (
             <div className="flex w-full items-center justify-center border-b border-dashed border-border bg-white px-6 py-16 text-center text-xs text-slate-500">
               No makers listed yet.
@@ -259,7 +259,7 @@ const MakersPage = async ({ searchParams }: MakersPageProps) => {
               )}
             </nav>
           )}
-        </main>
+        </div>
 
         <CrawlablePagination
           currentPage={currentPage}

@@ -39,7 +39,7 @@ import { ROUTES } from "@/constants/routes"
 export const revalidate = 3600
 
 export const metadata: Metadata = {
-  title: `Product Launch Platform — Perpetual Discovery for Software & Tools (${new Date().getFullYear()})`,
+  title: "Product Launch Platform for SaaS & Dev Tools",
   description:
     "Launch your SaaS, developer tool, or AI application on LaunchNests. Experience weekly launch momentum, permanent catalog indexing, Do-Follow SEO backlinks, and AI agent citations.",
   keywords: [
@@ -326,7 +326,7 @@ const ProductLaunchPlatformPage = async () => {
         </section>
 
         {/* The 2026 Product Launch Blueprint */}
-        <main className="flex-1 px-6 py-12 md:px-8">
+        <div className="flex-1 px-6 py-12 md:px-8">
           <div className="flex flex-col gap-12">
             <div>
               <div className="flex items-center gap-2 text-xs font-bold tracking-wider text-slate-500 uppercase">
@@ -602,7 +602,7 @@ const ProductLaunchPlatformPage = async () => {
               </div>
             </section>
           </div>
-        </main>
+        </div>
       </div>
     </>
   )

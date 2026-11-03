@@ -8,7 +8,7 @@ export const PRODUCT_HUNT_COMPARISON: PlatformComparison = {
   targetKeyword: "Product Hunt alternative",
   name: "Product Hunt Alternative",
   comparedPlatformName: "Product Hunt",
-  metaTitle: `Product Hunt Alternative: LaunchNests vs Product Hunt (${new Date().getFullYear()})`,
+  metaTitle: "LaunchNests vs Product Hunt: Honest Comparison",
   metaDescription:
     "An objective, research-backed comparison between Product Hunt and LaunchNests. Compare launch mechanics, discovery lifespans, tech-stack graphs, AI agent readiness, and submission policies.",
   keywords: [

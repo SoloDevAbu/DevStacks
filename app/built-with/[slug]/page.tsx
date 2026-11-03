@@ -337,7 +337,7 @@ const BuiltWithPage = async (props: BuiltWithPageProps) => {
         </div>
 
         {/* Products List */}
-        <main className="flex-1">
+        <div className="flex-1">
           <div className="flex flex-col">
             {builtWithProducts.map((product, idx) => (
               <ProductCard
@@ -461,7 +461,7 @@ const BuiltWithPage = async (props: BuiltWithPageProps) => {
               )}
             </div>
           </section>
-        </main>
+        </div>
       </div>
     </>
   )

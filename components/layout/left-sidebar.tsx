@@ -6,8 +6,8 @@ import { ArrowUpRight, Sparkles } from "lucide-react"
 import { cn } from "@/lib/utils"
 import {
   SIDEBAR_NAV,
-  QUICK_STACKS,
   type NavItemBadge,
+  type QuickStack,
 } from "@/constants/navigation"
 import { ROUTES } from "@/constants/routes"
 import { CREATOR_SOCIALS } from "@/constants/site"
@@ -48,7 +48,11 @@ const renderBadge = (badge?: NavItemBadge) => {
   return <span className={badgeClass}>{badge.text}</span>
 }
 
-export const LeftSidebar = () => {
+interface LeftSidebarProps {
+  quickStacks: QuickStack[]
+}
+
+export const LeftSidebar = ({ quickStacks }: LeftSidebarProps) => {
   const pathname = usePathname()
 
   return (
@@ -95,14 +99,13 @@ export const LeftSidebar = () => {
         <div className="flex flex-col gap-1.5 xl:gap-2">
           <h3 className={sidebarHeading}>Popular Stacks</h3>
           <div className="flex flex-wrap gap-1 xl:gap-1.5">
-            {QUICK_STACKS.map((stack) => {
-              const isStackActive = pathname.includes(
-                encodeURIComponent(stack.name)
-              )
+            {quickStacks.map((stack) => {
+              const stackHref = ROUTES.TOOL_CATEGORY(stack.slug)
+              const isStackActive = pathname === stackHref
               return (
                 <Link
-                  key={stack.name}
-                  href={stack.href}
+                  key={stack.slug}
+                  href={stackHref}
                   className={cn(
                     quickStackChip,
                     isStackActive && quickStackChipActive

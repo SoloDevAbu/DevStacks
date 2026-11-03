@@ -286,7 +286,7 @@ const CategoryToolsPage = async (props: CategoryPageProps) => {
         </div>
 
         {/* Main Category Feed */}
-        <main className="flex-1">
+        <div className="flex-1">
           {toolsList.length > 0 ? (
             <div className="flex flex-col">
               {toolsList.map((tool, idx) => (
@@ -319,7 +319,7 @@ const CategoryToolsPage = async (props: CategoryPageProps) => {
               </div>
             </div>
           )}
-        </main>
+        </div>
       </div>
     </>
   )

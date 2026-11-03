@@ -618,7 +618,7 @@ export const SubmitContent = ({
   return (
     <div className="relative flex min-h-full flex-col bg-slate-50/50 pb-20">
       <PageHeader
-        heading="New Launch"
+        heading="Launch Your Product or Dev Tool for Free"
         description={`List your ${activeType === "product" ? "product, SaaS, or web app" : "developer tool, library, API, or infrastructure product"} for the developer ecosystem and AI models to discover.`}
         aiPrompt={AI_PROMPTS.submit}
       />

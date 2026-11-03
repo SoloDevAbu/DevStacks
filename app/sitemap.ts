@@ -322,12 +322,35 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
     )
   }
 
+  // Hubs change when a listing does, so they carry the newest listing update instead of the
+  // time the sitemap happened to be generated; policy pages carry no date at all.
+  const catalogLastModified = [...(dbProducts ?? []), ...(dbTools ?? [])].reduce(
+    (latest, item) =>
+      item.updatedAt && new Date(item.updatedAt) > latest
+        ? new Date(item.updatedAt)
+        : latest,
+    new Date(0)
+  )
+  const hubLastModified =
+    catalogLastModified.getTime() > 0 ? catalogLastModified : now
+  const undatedUrls = new Set(
+    [ROUTES.PRIVACY, ROUTES.TERMS, ROUTES.REFUND].map(normalizeSitemapUrl)
+  )
+
   const seen = new Set<string>()
   return [...staticRoutes, ...dynamicRoutes]
-    .map((entry) => ({
-      ...entry,
-      url: normalizeSitemapUrl(entry.url),
-    }))
+    .map((entry) => {
+      const url = normalizeSitemapUrl(entry.url)
+      return {
+        ...entry,
+        url,
+        lastModified: undatedUrls.has(url)
+          ? undefined
+          : entry.lastModified === now
+            ? hubLastModified
+            : entry.lastModified,
+      }
+    })
     .filter((entry) => {
       if (!entry.url || seen.has(entry.url)) return false
       seen.add(entry.url)

@@ -18,6 +18,9 @@ import { getCachedToolCategories } from "@/db/queries/categories/list"
 import type { DbTool } from "@/types/entities"
 import { ToolsDirectoryContent } from "./tools-content"
 import type { SortOption } from "@/components/tools/tools-filter-bar"
+import { resolveCategoryHubPath } from "@/lib/catalog/category-url"
+import { toAbsoluteUrl } from "@/utils/urls"
+import { CrawlablePagination } from "@/components/shared/crawlable-pagination"
 
 export const revalidate = 3600
 
@@ -68,10 +71,9 @@ export const generateMetadata = async (props: {
 
   let canonicalUrl = `${SITE_CONFIG.url}/tools`
   if (cleanCategory) {
-    canonicalUrl = `${SITE_CONFIG.url}/tools?category=${encodeURIComponent(cleanCategory)}`
-    if (currentPage > 1) {
-      canonicalUrl += `&page=${currentPage}`
-    }
+    canonicalUrl = toAbsoluteUrl(
+      await resolveCategoryHubPath("tool", cleanCategory)
+    )
   } else if (currentPage > 1) {
     canonicalUrl = `${SITE_CONFIG.url}/tools?page=${currentPage}`
   }
@@ -149,7 +151,7 @@ const ToolsPage = async (props: {
   if (category) {
     breadcrumbItems.push({
       name: `${category} Tools`,
-      url: `${SITE_CONFIG.url}/tools?category=${encodeURIComponent(category)}`,
+      url: toAbsoluteUrl(await resolveCategoryHubPath("tool", category)),
     })
   }
   const breadcrumbs = breadcrumbSchema(breadcrumbItems)
@@ -233,6 +235,12 @@ const ToolsPage = async (props: {
           initialTools={toolsList}
           totalCount={effectiveTotalCount}
           totalBuilds={stats.totalBuilds}
+        />
+        <CrawlablePagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          basePath={ROUTES.TOOLS}
+          params={{ category, pricing, sortBy: sortBy === "upvotes" ? undefined : sortBy }}
         />
       </div>
     </>

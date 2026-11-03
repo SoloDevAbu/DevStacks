@@ -37,7 +37,7 @@ import { ROUTES } from "@/constants/routes"
 export const revalidate = 3600
 
 export const metadata: Metadata = {
-  title: `SaaS Directory — Discover & Submit Verified Software Products (${new Date().getFullYear()})`,
+  title: "SaaS Directory: Discover & Submit SaaS Products",
   description:
     "Explore the curated directory of verified SaaS products, indie software tools, and tech-stack architectures. Submit your SaaS for permanent discovery, Do-Follow backlinks, and AI agent citations.",
   keywords: [
@@ -279,7 +279,7 @@ const SaasDirectoryPage = async () => {
         </section>
 
         {/* Educational Content & Comparison Matrix */}
-        <main className="flex-1 px-6 py-12 md:px-8">
+        <div className="flex-1 px-6 py-12 md:px-8">
           <div className="flex flex-col gap-12">
             {/* Why List on LaunchNests */}
             <div>
@@ -548,7 +548,7 @@ const SaasDirectoryPage = async () => {
               </div>
             </section>
           </div>
-        </main>
+        </div>
       </div>
     </>
   )

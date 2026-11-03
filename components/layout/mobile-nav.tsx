@@ -17,8 +17,13 @@ import { LeftSidebar } from "@/components/layout/left-sidebar"
 import { useSearchCommand } from "@/hooks/shared/use-search-command"
 import { useAuthModal } from "@/hooks/auth/use-auth-modal"
 import { ROUTES } from "@/constants/routes"
+import type { QuickStack } from "@/constants/navigation"
 
-export const MobileNav = () => {
+interface MobileNavProps {
+  quickStacks: QuickStack[]
+}
+
+export const MobileNav = ({ quickStacks }: MobileNavProps) => {
   const [open, setOpen] = useState(false)
   const [isMac, setIsMac] = useState(false)
   const router = useRouter()
@@ -100,7 +105,7 @@ export const MobileNav = () => {
         </div>
 
         <div className="flex-1 p-2" onClick={() => setOpen(false)}>
-          <LeftSidebar />
+          <LeftSidebar quickStacks={quickStacks} />
         </div>
       </SheetContent>
     </Sheet>
