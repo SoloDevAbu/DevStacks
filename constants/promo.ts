@@ -11,6 +11,7 @@ export const LAUNCH_PROMO = {
   BANNER_TEXT:
     "Launch Celebration: First 50 tools & products get a FREE Lifetime Premium Listing ($15 value) with permanent Do-Follow SEO backlink!",
   BANNER_CTA: "Submit Launch",
+  BANNER_HIDDEN_ROUTES: ["/"] as readonly string[],
   SEO_AWARD: "First 50 Launches — Verified Premium Builder",
   SEO_OFFER_DESCRIPTION:
     "LaunchNests Launch Special: Free Premium Verified Listing ($15 value) with permanent Do-Follow SEO backlink",

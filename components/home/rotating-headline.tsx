@@ -49,7 +49,7 @@ export const RotatingHeadline = ({
     <span className={cn("inline-flex flex-wrap items-baseline gap-x-1.5", className)}>
       <span>{prefix}</span>
       <span
-        aria-live="polite"
+        aria-live="off"
         className={cn(
           homeHeroRotatingText,
           currentOption?.colorClass,

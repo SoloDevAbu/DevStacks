@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { usePathname } from "next/navigation"
 import Link from "next/link"
 import { Sparkles, ArrowRight, X } from "lucide-react"
 import { LAUNCH_PROMO } from "@/constants/promo"
@@ -10,6 +11,7 @@ import { launchPromoBannerWrapper } from "@/utils/styles"
 const DISMISS_KEY = "launchnests_promo_banner_dismissed_v1"
 
 export const LaunchPromoBanner = () => {
+  const pathname = usePathname()
   const [isVisible, setIsVisible] = useState(false)
 
   useEffect(() => {
@@ -24,7 +26,11 @@ export const LaunchPromoBanner = () => {
     localStorage.setItem(DISMISS_KEY, "true")
   }
 
-  if (!isVisible || !LAUNCH_PROMO.IS_ACTIVE) {
+  if (
+    !isVisible ||
+    !LAUNCH_PROMO.IS_ACTIVE ||
+    LAUNCH_PROMO.BANNER_HIDDEN_ROUTES.includes(pathname)
+  ) {
     return null
   }
 

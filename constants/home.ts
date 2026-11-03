@@ -14,6 +14,8 @@ export const HOME_HERO_ROTATING_OPTIONS: readonly RotatingHeadlineOption[] = [
   { text: "AI Assistants", colorClass: "text-blue-600 dark:text-blue-400" },
 ] as const
 
+export const HOME_HERO_HEADING = "New Product & Developer Tool Launches This Week"
+
 export const HOME_HERO_PREFIX = "Get your product discovered by"
 
 export const HOME_ROTATION_INTERVAL_MS = 3000

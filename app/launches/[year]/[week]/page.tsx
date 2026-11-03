@@ -4,6 +4,7 @@ import { cache } from "react"
 import { PageHeader } from "@/components/shared/page-header"
 import { LaunchWeekList } from "@/components/shared/launch-week-list"
 import { LaunchWeekNav } from "@/components/launches/launch-week-nav"
+import { UpdatedTime } from "@/components/shared/updated-time"
 import type { FeedItem } from "@/components/shared/feed-card"
 import { SITE_CONFIG } from "@/constants/site"
 import { ROUTES } from "@/constants/routes"
@@ -114,10 +115,7 @@ const LaunchWeekPage = async ({ params }: LaunchWeekPageProps) => {
           variant="discover-weekly-launches"
           metrics={
             <p className="text-xs text-slate-500">
-              Updated{" "}
-              <time dateTime={snapshot.lastUpdated.toISOString()}>
-                {snapshot.lastUpdated.toUTCString()}
-              </time>
+              <UpdatedTime date={snapshot.lastUpdated} />
             </p>
           }
         />
