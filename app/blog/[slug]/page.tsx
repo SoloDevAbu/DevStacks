@@ -53,6 +53,9 @@ import { cleanTitle, formatMetaDescription } from "@/utils/seo"
 
 export const revalidate = 86400
 
+// Posts render on first visit and are then cached; scheduled posts are previewed via draft mode.
+export const generateStaticParams = async () => []
+
 interface BlogPostPageProps {
   params: Promise<{ slug: string }>
 }

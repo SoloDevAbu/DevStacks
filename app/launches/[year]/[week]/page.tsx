@@ -7,6 +7,7 @@ import { LaunchWeekNav } from "@/components/launches/launch-week-nav"
 import { UpdatedTime } from "@/components/shared/updated-time"
 import type { FeedItem } from "@/components/shared/feed-card"
 import { SITE_CONFIG } from "@/constants/site"
+import { LAUNCH_WEEKS_PRERENDERED } from "@/constants/launches"
 import { ROUTES } from "@/constants/routes"
 import { getLaunchWeekSnapshot } from "@/lib/launches/launch-week"
 import { getCachedLaunchWeekSummaries } from "@/lib/launches/launch-archive"
@@ -22,6 +23,14 @@ import { AI_PROMPTS } from "@/lib/prompts"
 import { getListingPath, toAbsoluteUrl } from "@/utils/urls"
 
 export const revalidate = 86400
+
+// Recent weeks are pre-rendered; older ones render on first visit and are then cached.
+export const generateStaticParams = async () => {
+  const summaries = await getCachedLaunchWeekSummaries().catch(() => [])
+  return summaries
+    .slice(0, LAUNCH_WEEKS_PRERENDERED)
+    .map(({ year, week }) => ({ year: String(year), week: `week-${week}` }))
+}
 
 interface LaunchWeekPageProps {
   params: Promise<{ year: string; week: string }>
