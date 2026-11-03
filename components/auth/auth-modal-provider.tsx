@@ -9,10 +9,16 @@ import {
   Suspense,
   useEffect,
 } from "react"
-import { AuthDialog } from "@/components/auth/auth-dialog"
+import dynamic from "next/dynamic"
 import { useSession } from "@/lib/auth/client"
 import { useRouter, useSearchParams, usePathname } from "next/navigation"
 import { trackLogin, trackSignUp } from "@/lib/analytics/events"
+
+// Only loaded once someone opens it, keeping the auth UI out of every page's initial bundle.
+const AuthDialog = dynamic(
+  () => import("@/components/auth/auth-dialog").then((mod) => mod.AuthDialog),
+  { ssr: false }
+)
 
 interface OpenAuthModalOptions {
   defaultTab?: "signin" | "signup"
@@ -143,15 +149,17 @@ export const AuthModalProvider = ({ children }: { children: ReactNode }) => {
       <Suspense fallback={null}>
         <AuthQueryListener />
       </Suspense>
-      <AuthDialog
-        open={isOpen}
-        onOpenChange={setIsOpen}
-        defaultTab={options.defaultTab ?? "signin"}
-        redirectTo={options.redirectTo}
-        onSuccess={handleSuccess}
-        title={options.title}
-        description={options.description}
-      />
+      {isOpen && (
+        <AuthDialog
+          open={isOpen}
+          onOpenChange={setIsOpen}
+          defaultTab={options.defaultTab ?? "signin"}
+          redirectTo={options.redirectTo}
+          onSuccess={handleSuccess}
+          title={options.title}
+          description={options.description}
+        />
+      )}
     </AuthModalContext.Provider>
   )
 }

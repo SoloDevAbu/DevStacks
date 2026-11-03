@@ -1,12 +1,13 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useRef, useState } from "react"
 import { ArrowUpRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { CornerBrackets } from "@/components/shared/corner-brackets"
 import { ProductLogo } from "@/components/shared/product-logo"
 import { VerifiedBadge } from "@/components/shared/verified-badge"
 import { useActiveAds } from "@/hooks/ads/use-active-ads"
+import { useIntersectionObserver } from "@/hooks/shared/use-intersection-observer"
 import { recordAdImpression, type ActiveAdDto } from "@/lib/api/ads"
 import {
   sponsorCard,
@@ -132,13 +133,20 @@ export const SidebarAdCard = () => {
 
   const isAdLimitReached = ads.length >= 3
 
-  useEffect(() => {
-    ads.forEach((ad) => {
-      if (ad?.id) {
-        recordAdImpression(ad.id)
-      }
-    })
-  }, [ads])
+  // Impressions count only once the ads are actually on screen; the sidebar is hidden below xl.
+  const recordedAdIds = useRef(new Set<string>())
+  const impressionRef = useIntersectionObserver({
+    enabled: ads.length > 0,
+    rootMargin: "0px",
+    onIntersect: () => {
+      ads.forEach((ad) => {
+        if (ad?.id && !recordedAdIds.current.has(ad.id)) {
+          recordedAdIds.current.add(ad.id)
+          recordAdImpression(ad.id)
+        }
+      })
+    },
+  })
 
   if (isLoading) {
     return (
@@ -150,7 +158,7 @@ export const SidebarAdCard = () => {
 
   return (
     <>
-      <div className="flex flex-col gap-3">
+      <div ref={impressionRef} className="flex flex-col gap-3">
         {!isAdLimitReached && (
           <div className={sponsorCard}>
             <CornerBrackets />

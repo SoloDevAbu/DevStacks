@@ -5,7 +5,16 @@ import { useState } from "react"
 import { AuthModalProvider } from "@/components/auth/auth-modal-provider"
 import { SearchCommandProvider } from "@/components/shared/global-search-command"
 import { Toaster } from "@/components/ui/toast"
-import { CheckoutStatusDialog } from "@/components/shared/checkout-status-dialog"
+import dynamic from "next/dynamic"
+
+// Only relevant after a payment redirect, so it is not part of the initial bundle.
+const CheckoutStatusDialog = dynamic(
+  () =>
+    import("@/components/shared/checkout-status-dialog").then(
+      (mod) => mod.CheckoutStatusDialog
+    ),
+  { ssr: false }
+)
 
 export const Providers = ({ children }: { children: React.ReactNode }) => {
   const [queryClient] = useState(

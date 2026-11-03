@@ -22,3 +22,8 @@ export const LAUNCH_PROMO = {
     "Priority inclusion in upcoming Weekly AI newsletter and LLM indexing",
   ],
 } as const
+
+export const PROMO_BANNER_DISMISS = {
+  STORAGE_KEY: "launchnests_promo_banner_dismissed_v1",
+  HTML_ATTRIBUTE: "data-promo-dismissed",
+} as const

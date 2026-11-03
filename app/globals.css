@@ -149,3 +149,13 @@
     background: #94a3b8;
   }
 }
+/* Hides a dismissed launch promo before first paint (see PromoBannerDismissScript). */
+[data-promo-dismissed] [data-promo-banner] {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-shimmer {
+    animation: none;
+  }
+}

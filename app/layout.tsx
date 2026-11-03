@@ -12,6 +12,7 @@ import { AgentFooter } from "@/components/layout/agent-footer"
 import { getCachedToolCategories } from "@/db/queries/categories/list"
 import { QUICK_STACK_COUNT } from "@/constants/navigation"
 import { LaunchPromoBanner } from "@/components/layout/launch-promo-banner"
+import { PromoBannerDismissScript } from "@/components/layout/promo-banner-dismiss-script"
 import { Providers } from "@/app/providers"
 import { SITE_CONFIG } from "@/constants/site"
 
@@ -108,9 +109,11 @@ export const metadata: Metadata = {
   },
 }
 
+// The UI is set in Geist Mono; Geist Sans is only used by a few dialogs, so it is not preloaded.
 const fontSans = Geist({
   subsets: ["latin"],
   variable: "--font-sans",
+  preload: false,
 })
 
 const geistMono = Geist_Mono({ subsets: ["latin"], variable: "--font-mono" })
@@ -145,6 +148,7 @@ const RootLayout = async ({
       )}
     >
       <head>
+        <PromoBannerDismissScript />
         <link rel="me" href={SITE_CONFIG.socials.x} />
         <link rel="me" href={SITE_CONFIG.socials.linkedin} />
         <link

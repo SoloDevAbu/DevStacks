@@ -16,6 +16,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { useHasMounted } from "@/hooks/shared/use-has-mounted"
 import {
   LayoutDashboard,
   LogOut,
@@ -26,7 +27,9 @@ import {
 } from "lucide-react"
 
 export const HeaderActions = () => {
-  const { data: session, isPending } = useSession()
+  const { data: session, isPending: isSessionPending } = useSession()
+  const hasMounted = useHasMounted()
+  const isPending = !hasMounted || isSessionPending
   const { openAuthModal, requireAuth } = useAuthModal()
   const router = useRouter()
 

@@ -1,42 +1,40 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { usePathname } from "next/navigation"
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 import { Sparkles, ArrowRight, X } from "lucide-react"
-import { LAUNCH_PROMO } from "@/constants/promo"
+import { LAUNCH_PROMO, PROMO_BANNER_DISMISS } from "@/constants/promo"
 import { ROUTES } from "@/constants/routes"
 import { launchPromoBannerWrapper } from "@/utils/styles"
 
-const DISMISS_KEY = "launchnests_promo_banner_dismissed_v1"
-
+// Rendered on the server so it never pushes the page down after hydration. A dismissed banner is
+// hidden before first paint by PromoBannerDismissScript, which sets an attribute on <html>.
 export const LaunchPromoBanner = () => {
   const pathname = usePathname()
-  const [isVisible, setIsVisible] = useState(false)
-
-  useEffect(() => {
-    const isDismissed = localStorage.getItem(DISMISS_KEY)
-    if (!isDismissed) {
-      setIsVisible(true)
-    }
-  }, [])
-
-  const handleDismiss = () => {
-    setIsVisible(false)
-    localStorage.setItem(DISMISS_KEY, "true")
-  }
 
   if (
-    !isVisible ||
     !LAUNCH_PROMO.IS_ACTIVE ||
     LAUNCH_PROMO.BANNER_HIDDEN_ROUTES.includes(pathname)
   ) {
     return null
   }
 
+  const handleDismiss = () => {
+    document.documentElement.setAttribute(
+      PROMO_BANNER_DISMISS.HTML_ATTRIBUTE,
+      ""
+    )
+    try {
+      localStorage.setItem(PROMO_BANNER_DISMISS.STORAGE_KEY, "true")
+    } catch {
+      // Storage can be unavailable (private mode); the banner stays hidden for this visit.
+    }
+  }
+
   return (
     <aside
       aria-label="Launch Promotion Announcement"
+      data-promo-banner=""
       className={launchPromoBannerWrapper}
     >
       <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-3 px-2 sm:px-4">
