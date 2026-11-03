@@ -39,6 +39,8 @@ export const ROUTES = {
   GUIDE_LAUNCH_DEVTOOLS: "/guides/where-to-launch-developer-tools-2026",
   BLOG: "/blog",
   BLOG_POST: (slug: string) => `/blog/${encodeURIComponent(slug)}`,
+  BLOG_PREVIEW: (slug: string) =>
+    `/api/blog-preview?slug=${encodeURIComponent(slug)}`,
   ADMIN: "/admin",
   COMPARE: (slug: string) => `/compare/${encodeURIComponent(slug)}`,
   BUILT_WITH: (slug: string) => `/built-with/${encodeURIComponent(slug)}`,

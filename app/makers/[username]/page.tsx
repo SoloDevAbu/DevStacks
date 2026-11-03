@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import { notFound } from "next/navigation"
+import { notFound, permanentRedirect } from "next/navigation"
 import Image from "next/image"
 import Link from "next/link"
 import {
@@ -25,6 +25,7 @@ import {
 } from "@/utils/country"
 import { SITE_CONFIG } from "@/constants/site"
 import { ROUTES } from "@/constants/routes"
+import { NOFOLLOW_LINK_REL, UGC_LINK_REL } from "@/utils/urls"
 import { AI_PROVIDERS } from "@/constants/ai-providers"
 import { AI_PROMPTS } from "@/lib/prompts"
 import { footerAiButton } from "@/utils/styles"
@@ -35,6 +36,7 @@ import {
   buildEntityGraph,
   safeJsonLd,
 } from "@/lib/seo/schema"
+import { formatMetaDescription } from "@/utils/seo"
 
 export const revalidate = 86400
 
@@ -66,14 +68,13 @@ export const generateMetadata = async ({
     Boolean(maker.bio && maker.bio.trim().length > 50)
 
   const displayName = maker.name || `@${maker.username}`
-  const flag = countryCodeToFlag(maker.country)
-  const locationText = formatLocation(maker.country, maker.state)
-  const baseTitle = `${displayName} ${flag} — Developer Profile`
+  const baseTitle = `${displayName} — Maker Profile & Launches`
   const title = baseTitle
-  const description =
+  const description = formatMetaDescription(
     maker.bio ||
-    maker.description?.slice(0, 160) ||
-    `Explore developer tools and applications built by ${displayName} on ${SITE_CONFIG.name}.`
+      maker.description ||
+      `Explore developer tools and applications built by ${displayName} on ${SITE_CONFIG.name}.`
+  )
 
   const profileUrl = `${SITE_CONFIG.url}/makers/${maker.username}`
   const geoTags = formatGeoMetaTags(maker.country, maker.state)
@@ -88,7 +89,6 @@ export const generateMetadata = async ({
       "indie maker",
       "developer profile",
       "tech stack",
-      ...SITE_CONFIG.keywords,
     ],
     alternates: {
       canonical: profileUrl,
@@ -133,6 +133,10 @@ export default async function MakerPage({ params }: MakerPageProps) {
 
   if (!maker) {
     notFound()
+  }
+
+  if (maker.username && decodeURIComponent(username) !== maker.username) {
+    permanentRedirect(ROUTES.MAKER(maker.username))
   }
 
   const displayName = maker.name || `@${maker.username}`
@@ -323,7 +327,7 @@ export default async function MakerPage({ params }: MakerPageProps) {
                 <a
                   href={maker.websiteUrl}
                   target="_blank"
-                  rel="noopener noreferrer"
+                  rel={UGC_LINK_REL}
                   className="flex size-8 items-center justify-center rounded-lg border border-slate-200/80 bg-white shadow-2xs transition-colors hover:border-slate-300 hover:bg-slate-50"
                   title="Personal Website / Portfolio"
                   aria-label="Website"
@@ -341,7 +345,7 @@ export default async function MakerPage({ params }: MakerPageProps) {
                 <a
                   href={maker.githubUrl}
                   target="_blank"
-                  rel="noopener noreferrer"
+                  rel={UGC_LINK_REL}
                   className="flex size-8 items-center justify-center rounded-lg border border-slate-200/80 bg-white shadow-2xs transition-colors hover:border-slate-300 hover:bg-slate-50"
                   title="GitHub Profile"
                   aria-label="GitHub"
@@ -359,7 +363,7 @@ export default async function MakerPage({ params }: MakerPageProps) {
                 <a
                   href={maker.twitterUrl}
                   target="_blank"
-                  rel="noopener noreferrer"
+                  rel={UGC_LINK_REL}
                   className="flex size-8 items-center justify-center rounded-lg border border-slate-200/80 bg-white shadow-2xs transition-colors hover:border-slate-300 hover:bg-slate-50"
                   title="Twitter / X Profile"
                   aria-label="Twitter / X"
@@ -377,7 +381,7 @@ export default async function MakerPage({ params }: MakerPageProps) {
                 <a
                   href={maker.linkedinUrl}
                   target="_blank"
-                  rel="noopener noreferrer"
+                  rel={UGC_LINK_REL}
                   className="flex size-8 items-center justify-center rounded-lg border border-slate-200/80 bg-white shadow-2xs transition-colors hover:border-slate-300 hover:bg-slate-50"
                   title="LinkedIn Profile"
                   aria-label="LinkedIn"
@@ -415,7 +419,7 @@ export default async function MakerPage({ params }: MakerPageProps) {
                     <a
                       href={`${ai.url}${encodeURIComponent(aiPrompt)}`}
                       target="_blank"
-                      rel="noopener noreferrer"
+                      rel={NOFOLLOW_LINK_REL}
                       className={footerAiButton}
                       title={`Ask ${ai.name} about ${displayName}`}
                     >

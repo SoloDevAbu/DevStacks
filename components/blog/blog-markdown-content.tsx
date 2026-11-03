@@ -8,7 +8,8 @@ export const BlogMarkdownContent = ({ markdown }: { markdown: string }) => {
 
   renderer.heading = function (token) {
     const text = token.text
-    const depth = token.depth
+    // The page title is the only <h1>, so markdown headings start at <h2>.
+    const depth = Math.min(token.depth + 1, 6)
     const inlineContent = this.parser.parseInline(token.tokens)
 
     const cleanText = text.replace(/<[^>]+>/g, "").trim()

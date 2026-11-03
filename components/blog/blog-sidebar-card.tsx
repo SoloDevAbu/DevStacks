@@ -13,6 +13,7 @@ import {
   sidebarLogoWrapper,
 } from "@/utils/blog/styles"
 import type { Tool, Product, User } from "@/db/schema"
+import { getLinkRel, getOutboundUrl } from "@/utils/urls"
 
 export interface BlogSidebarCardProps {
   itemType: "tool" | "product"
@@ -38,7 +39,7 @@ export const BlogSidebarCard = ({
 
   return (
     <div
-      id="product-overview"
+      id={isSidebar ? "product-overview" : undefined}
       className={cn(
         isSidebar
           ? "relative flex flex-col justify-between scroll-mt-24 gap-5 w-full"
@@ -109,9 +110,9 @@ export const BlogSidebarCard = ({
       <div className="flex flex-col gap-2">
         {/* Contextual Do-Follow Outbound Link */}
         <a
-          href={item.websiteUrl}
+          href={getOutboundUrl(item.websiteUrl)}
           target="_blank"
-          rel="noopener"
+          rel={getLinkRel(item.tier, item.badgeVerified)}
           title={`Visit ${item.name} Official Website`}
           className={cn(
             buttonVariants({ size: "default" }),
@@ -139,7 +140,7 @@ export const BlogSidebarCard = ({
           <a
             href={item.githubUrl}
             target="_blank"
-            rel="noopener noreferrer"
+            rel={getLinkRel(item.tier, item.badgeVerified)}
             className={cn(
               buttonVariants({ variant: "ghost", size: "sm" }),
               "w-full text-xs text-slate-500 hover:text-slate-900 gap-1.5"

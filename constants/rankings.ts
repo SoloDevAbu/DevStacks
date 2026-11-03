@@ -43,3 +43,6 @@ export const HOMEPAGE_LIMITS = {
 } as const
 
 export const DISCOVER_PAGE_LIMIT = 20
+
+// An alternatives page needs at least this many same-category tools to be worth indexing.
+export const ALTERNATIVES_MIN_SIBLINGS = 3

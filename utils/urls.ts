@@ -113,3 +113,19 @@ export const normalizeSitemapUrl = (rawUrlOrPath: string): string => {
 
   return `${SITEMAP_PRODUCTION_ORIGIN}${str}`
 }
+
+export const getCategoryPath = (
+  itemKind: "tool" | "product",
+  categorySlug?: string | null
+): string => {
+  if (itemKind === "tool") {
+    return categorySlug ? ROUTES.TOOL_CATEGORY(categorySlug) : ROUTES.TOOL_CATEGORIES
+  }
+  return categorySlug
+    ? ROUTES.PRODUCT_CATEGORY(categorySlug)
+    : ROUTES.PRODUCT_CATEGORIES
+}
+
+// User-submitted profile links and third-party assistant links pass no ranking signal.
+export const UGC_LINK_REL = "noopener noreferrer nofollow ugc"
+export const NOFOLLOW_LINK_REL = "noopener noreferrer nofollow"

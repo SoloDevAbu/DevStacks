@@ -27,6 +27,8 @@ export interface FullTool extends DbTool {
   geoTarget?: string | null
   asoCategory?: string | null
   platforms: string[]
+  launchYear?: number | null
+  launchWeek?: number | null
   submitterState?: string | null
   createdAt?: Date
   updatedAt?: Date

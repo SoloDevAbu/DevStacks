@@ -10,6 +10,7 @@ import { listPublishedBlogs } from "@/db/queries/blogs"
 import { ROUTES } from "@/constants/routes"
 import { normalizeSitemapUrl } from "@/utils/urls"
 import { getAllComparisons } from "@/constants/comparisons"
+import { ALTERNATIVES_MIN_SIBLINGS } from "@/constants/rankings"
 import { getCachedLaunchWeekSummaries } from "@/lib/launches/launch-archive"
 
 export const revalidate = 3600
@@ -286,7 +287,7 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
         .filter((tool) => {
           if (!tool.categoryId) return false
           const count = categoryCountMap.get(tool.categoryId) ?? 0
-          return count >= 2 // self + at least 1 sibling
+          return count > ALTERNATIVES_MIN_SIBLINGS
         })
         .map((tool) => ({
           url: normalizeSitemapUrl(`/alternatives/${tool.slug}`),

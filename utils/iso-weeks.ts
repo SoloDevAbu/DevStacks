@@ -228,3 +228,17 @@ export const formatWeekTitle = (year: number, week: number): string => {
   const { weekLabel, dateRange } = formatLaunchWeekDisplay(year, week)
   return `${weekLabel}, ${year} (${dateRange})`
 }
+
+// A booked listing launches in its booked week; older listings in the week they were created.
+export const getListingLaunchWeek = ({
+  launchYear,
+  launchWeek,
+  createdAt,
+}: {
+  launchYear?: number | null
+  launchWeek?: number | null
+  createdAt?: Date | string | null
+}): { year: number; week: number } | null => {
+  if (launchYear && launchWeek) return { year: launchYear, week: launchWeek }
+  return createdAt ? getCurrentWeek(new Date(createdAt)) : null
+}

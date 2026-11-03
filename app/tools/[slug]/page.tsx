@@ -31,6 +31,7 @@ import { RelatedToolsSection } from "@/components/tools/related-tools-section"
 import { SITE_CONFIG } from "@/constants/site"
 import { LAUNCH_PROMO } from "@/constants/promo"
 import { ROUTES } from "@/constants/routes"
+import { ALTERNATIVES_MIN_SIBLINGS } from "@/constants/rankings"
 import { getSocialCardImage } from "@/lib/seo/social-image"
 import { formatGeoMetaTags } from "@/utils/country"
 import { AI_PROVIDERS } from "@/constants/ai-providers"
@@ -48,7 +49,15 @@ import {
 } from "@/lib/seo/schema"
 import { formatTitle, formatMetaDescription } from "@/utils/seo"
 import { ProductLogo } from "@/components/shared/product-logo"
-import { getFaviconUrl } from "@/utils/urls"
+import {
+  getCategoryPath,
+  getFaviconUrl,
+  getLinkRel,
+  getOutboundUrl,
+  NOFOLLOW_LINK_REL,
+  toAbsoluteUrl,
+} from "@/utils/urls"
+import { LaunchWeekSpecRow } from "@/components/shared/launch-week-spec-row"
 import { VerifiedBadge } from "@/components/shared/verified-badge"
 import { LaunchBadge } from "@/components/shared/launch-badge"
 import { ProductCard } from "@/components/shared/product-card"
@@ -186,20 +195,17 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
     notFound()
   }
 
-  const builtWithProducts = await getProductsBuiltWithTool(
-    tool.slug,
-    tool.name,
-    10
-  )
-
-  const relatedTools = tool.categoryId
-    ? await getRelatedTools(tool.categoryId, tool.id, 4)
-    : []
+  const [builtWithProducts, relatedTools, customFaqs] = await Promise.all([
+    getProductsBuiltWithTool(tool.slug, tool.name, 10),
+    tool.categoryId ? getRelatedTools(tool.categoryId, tool.id, 4) : [],
+    getToolFaqs(tool.id),
+  ])
+  const categoryPath = getCategoryPath("tool", tool.categorySlug)
+  const outboundRel = getLinkRel(tool.tier, tool.badgeVerified)
 
   const siteUrl = SITE_CONFIG.url
   const toolUrl = `${siteUrl}/tools/${tool.slug}`
 
-  const customFaqs = await getToolFaqs(tool.id)
 
   const prodJsonLd = toolSchema({
     name: tool.name,
@@ -246,9 +252,7 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
       ? [
           {
             name: tool.category,
-            url: tool.categorySlug
-              ? `${siteUrl}/tools/category/${tool.categorySlug}`
-              : `${siteUrl}/tools?category=${encodeURIComponent(tool.category)}`,
+            url: toAbsoluteUrl(categoryPath),
           },
         ]
       : []),
@@ -284,6 +288,7 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
     prodJsonLd,
     breadcrumbJsonLd,
     builtWithJsonLd,
+    toolFaqs.length > 0 ? faqSchema(toolFaqs, `${toolUrl}#faq`) : null,
   ].filter(Boolean) as Record<string, unknown>[]
   const unifiedJsonLd = buildEntityGraph(entitySchemas)
 
@@ -348,11 +353,7 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
                 </li>
                 <li className="flex items-center">
                   <Link
-                    href={
-                      tool.categorySlug
-                        ? `/tools/category/${tool.categorySlug}`
-                        : `/tools?category=${encodeURIComponent(tool.category)}`
-                    }
+                    href={categoryPath}
                     className="hover:text-slate-900"
                   >
                     {tool.category}
@@ -421,21 +422,27 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
                       {tag}
                     </Badge>
                   ))}
-                  <Link
-                    href={ROUTES.BUILT_WITH(tool.slug)}
-                    className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 hover:underline"
-                  >
-                    <Hammer className="size-3" />
-                    {tool.buildsCount} {tool.buildsCount === 1 ? "build" : "builds"}
-                  </Link>
-                  <span className="text-slate-300">•</span>
-                  <Link
-                    href={ROUTES.ALTERNATIVES(tool.slug)}
-                    className="inline-flex items-center gap-1 text-xs font-medium text-slate-600 hover:text-slate-900 hover:underline"
-                  >
-                    <Scale className="size-3" />
-                    Alternatives
-                  </Link>
+                  {tool.buildsCount > 0 && (
+                    <>
+                      <Link
+                        href={ROUTES.BUILT_WITH(tool.slug)}
+                        className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 hover:underline"
+                      >
+                        <Hammer className="size-3" />
+                        {tool.buildsCount} {tool.buildsCount === 1 ? "build" : "builds"}
+                      </Link>
+                      <span className="text-slate-300">•</span>
+                    </>
+                  )}
+                  {relatedTools.length >= ALTERNATIVES_MIN_SIBLINGS && (
+                    <Link
+                      href={ROUTES.ALTERNATIVES(tool.slug)}
+                      className="inline-flex items-center gap-1 text-xs font-medium text-slate-600 hover:text-slate-900 hover:underline"
+                    >
+                      <Scale className="size-3" />
+                      Alternatives
+                    </Link>
+                  )}
                   {tool.createdAt && (
                     <span className="text-xs text-slate-500">
                       Added{" "}
@@ -506,7 +513,7 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
                   <a
                     href={`${ai.url}${encodeURIComponent(aiPrompt)}`}
                     target="_blank"
-                    rel="noopener noreferrer"
+                    rel={NOFOLLOW_LINK_REL}
                     className={footerAiButton}
                     title={`Ask ${ai.name} about ${tool.name}`}
                   >
@@ -756,6 +763,12 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
               </span>
             </div>
 
+            <LaunchWeekSpecRow
+              launchYear={tool.launchYear}
+              launchWeek={tool.launchWeek}
+              createdAt={tool.createdAt}
+            />
+
             <div className={specRow}>
               <div className={specRowHeader}>
                 <span className={specBadge}>
@@ -765,11 +778,7 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
               </div>
               {tool.category ? (
                 <Link
-                  href={
-                    tool.categorySlug
-                      ? `/tools/category/${tool.categorySlug}`
-                      : `/tools?category=${encodeURIComponent(tool.category)}`
-                  }
+                  href={categoryPath}
                   className={cn(
                     specRowValue,
                     "hover:text-blue-600 hover:underline"
@@ -827,9 +836,9 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
                 <div className="flex flex-wrap items-center gap-3 text-xs sm:text-sm">
                   {tool.websiteUrl && (
                     <a
-                      href={tool.websiteUrl}
+                      href={getOutboundUrl(tool.websiteUrl)}
                       target="_blank"
-                      rel="noopener noreferrer"
+                      rel={outboundRel}
                       className="font-medium text-blue-600 hover:underline"
                     >
                       Official Website ↗
@@ -839,7 +848,7 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
                     <a
                       href={tool.githubUrl}
                       target="_blank"
-                      rel="noopener noreferrer"
+                      rel={outboundRel}
                       className="font-medium text-slate-700 hover:text-slate-900 hover:underline"
                     >
                       GitHub Repository ↗
@@ -904,8 +913,7 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
                     href={ROUTES.BUILT_WITH(tool.slug)}
                     className="text-xs font-semibold text-blue-600 hover:underline"
                   >
-                    View dedicated {tool.name} production showcase (
-                    {builtWithProducts.length} builds) ↗
+                    View all {tool.buildsCount} products built with {tool.name} ↗
                   </Link>
                 </div>
               )}
@@ -940,14 +948,13 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
           categoryName={tool.category}
         />
 
-        {relatedTools.length >= 3 && (
+        {relatedTools.length >= ALTERNATIVES_MIN_SIBLINGS && (
           <div className="border-b border-dashed border-border bg-slate-50/50 px-6 py-3 text-center md:px-8">
             <Link
               href={ROUTES.ALTERNATIVES(tool.slug)}
               className="text-xs font-semibold text-indigo-600 hover:underline"
             >
-              Compare all {relatedTools.length} verified {tool.name}{" "}
-              alternatives & competitors ↗
+              Compare {tool.name} alternatives & competitors ↗
             </Link>
           </div>
         )}

@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
+import { ALTERNATIVES_MIN_SIBLINGS } from "@/constants/rankings"
 import Link from "next/link"
 import {
   ArrowLeft,
@@ -19,7 +20,7 @@ import { resolveTool } from "@/lib/tools/resolve-tool"
 import { getRelatedTools } from "@/db/queries/tools/get"
 import { ToolCard } from "@/components/shared/tool-card"
 import { ProductLogo } from "@/components/shared/product-logo"
-import { getFaviconUrl } from "@/utils/urls"
+import { getCategoryPath, getFaviconUrl, toAbsoluteUrl } from "@/utils/urls"
 import { Badge } from "@/components/ui/badge"
 import { GaAlternativeViewTracker } from "@/components/shared/ga-alternative-view-tracker"
 import {
@@ -69,7 +70,7 @@ export const generateMetadata = async (
     ? await getRelatedTools(tool.categoryId, tool.id, 20)
     : []
 
-  const isIndexable = alternatives.length >= 1
+  const isIndexable = alternatives.length >= ALTERNATIVES_MIN_SIBLINGS
 
   const baseTitle = `Top ${tool.name} Alternatives & Competitors (${currentYear})`
   const title = baseTitle
@@ -143,7 +144,7 @@ const AlternativesPage = async (props: AlternativesPageProps) => {
       ? [
           {
             name: tool.category,
-            url: `${SITE_CONFIG.url}/tools/category/${tool.categorySlug ?? encodeURIComponent(tool.category)}`,
+            url: toAbsoluteUrl(getCategoryPath("tool", tool.categorySlug)),
           },
         ]
       : []),
@@ -211,11 +212,7 @@ const AlternativesPage = async (props: AlternativesPageProps) => {
                 </li>
                 <li className="flex items-center">
                   <Link
-                    href={
-                      tool.categorySlug
-                        ? ROUTES.TOOL_CATEGORY(tool.categorySlug)
-                        : `/tools/category/${encodeURIComponent(tool.category)}`
-                    }
+                    href={getCategoryPath("tool", tool.categorySlug)}
                     className="hover:text-slate-900"
                   >
                     {tool.category}
