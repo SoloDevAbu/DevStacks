@@ -10,8 +10,8 @@ interface CatalogChange {
 }
 
 // Only the listing caches and the changed entity's own pages are marked stale. Expiring the whole
-// route tree on every mutation forced a re-render (one Workers KV write) of every page on its next
-// visit, which exhausted the daily KV write quota and left pages serving stale HTML.
+// route tree on every mutation would force a re-render (one database hit and one R2 write) of every
+// page on its next visit.
 export const revalidateCatalog = ({
   productSlug,
   toolSlug,
