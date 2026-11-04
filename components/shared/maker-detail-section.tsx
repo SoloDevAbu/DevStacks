@@ -2,11 +2,6 @@ import Link from "next/link"
 import { User } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { DetailSectionHeader } from "@/components/shared/detail-section-header"
-import {
-  countryCodeToFlag,
-  countryCodeToName,
-  formatLocation,
-} from "@/utils/country"
 import { ROUTES } from "@/constants/routes"
 import { sectionContentBox } from "@/utils/styles"
 
@@ -35,16 +30,11 @@ export const MakerDetailSection = ({
   name,
   username,
   avatarUrl,
-  country,
-  state,
 }: MakerDetailSectionProps) => {
   const avatarSrc = avatarUrl
   if (!name && !username && !avatarSrc) return null
 
   const displayName = name || username || "Developer"
-  const flag = countryCodeToFlag(country)
-  const countryName = countryCodeToName(country)
-  const locationText = formatLocation(country, state) || countryName || country
   const profileUrl = username ? ROUTES.MAKER(username) : null
 
   return (
@@ -79,12 +69,7 @@ export const MakerDetailSection = ({
               </span>
             )}
 
-            {locationText && (
-              <div className="flex items-center gap-1.5 text-xs text-slate-500">
-                {flag && <span className="text-xs select-none">{flag}</span>}
-                <span className="truncate">{locationText}</span>
-              </div>
-            )}
+            <span className="text-xs text-slate-500">Maker</span>
           </div>
         </div>
       </div>

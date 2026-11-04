@@ -5,9 +5,7 @@ import Image from "next/image"
 import {
   ChevronRight,
   ArrowLeft,
-  Layers,
   Sparkles,
-  PlusCircle,
   Wrench,
   Info,
   Image as ImageIcon,
@@ -274,7 +272,7 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
     answer: f.answer,
   }))
 
-    const aiPrompt = AI_PROMPTS.product(
+  const aiPrompt = AI_PROMPTS.product(
     product.name,
     product.tagline,
     product.aiContext || product.description,
@@ -286,9 +284,7 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
     prodJsonLd,
     breadcrumbJsonLd,
     productFaqs.length > 0 ? faqSchema(productFaqs, `${productUrl}#faq`) : null,
-  ].filter(
-    Boolean
-  ) as Record<string, unknown>[]
+  ].filter(Boolean) as Record<string, unknown>[]
   const unifiedJsonLd = buildEntityGraph(entitySchemas)
 
   const hasSocialLinks = Boolean(
@@ -351,10 +347,7 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
                   <ChevronRight className="size-3" />
                 </li>
                 <li className="flex items-center">
-                  <Link
-                    href={categoryPath}
-                    className="hover:text-slate-900"
-                  >
+                  <Link href={categoryPath} className="hover:text-slate-900">
                     {product.category}
                   </Link>
                 </li>
@@ -700,7 +693,10 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
               )}
             </div>
             <div className="border-t border-dashed border-border bg-slate-50/50 px-6 py-3 text-xs text-slate-600 md:px-8">
-              <span>Looking for live tech-stack architectures? Explore developer tools in the </span>
+              <span>
+                Looking for live tech-stack architectures? Explore developer
+                tools in the{" "}
+              </span>
               <Link
                 href={ROUTES.DISCOVER_POPULAR_BUILDING_BLOCKS}
                 className="font-semibold text-indigo-600 hover:underline"
@@ -875,8 +871,6 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
           name={product.submitterName}
           username={product.submitterUsername}
           avatarUrl={product.submitterAvatarUrl}
-          country={product.submitterCountry}
-          state={product.submitterState}
         />
 
         {/* Section: Comments & Community Discussion */}

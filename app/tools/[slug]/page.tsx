@@ -6,7 +6,6 @@ import {
   ChevronRight,
   ArrowLeft,
   Layers,
-  Cpu,
   Package,
   PlusCircle,
   Sparkles,
@@ -206,7 +205,6 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
   const siteUrl = SITE_CONFIG.url
   const toolUrl = `${siteUrl}/tools/${tool.slug}`
 
-
   const prodJsonLd = toolSchema({
     name: tool.name,
     description: tool.description,
@@ -265,7 +263,7 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
     answer: f.answer,
   }))
 
-    const aiPrompt = AI_PROMPTS.tool(
+  const aiPrompt = AI_PROMPTS.tool(
     tool.name,
     tool.tagline,
     tool.aiContext || tool.description,
@@ -352,10 +350,7 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
                   <ChevronRight className="size-3" />
                 </li>
                 <li className="flex items-center">
-                  <Link
-                    href={categoryPath}
-                    className="hover:text-slate-900"
-                  >
+                  <Link href={categoryPath} className="hover:text-slate-900">
                     {tool.category}
                   </Link>
                 </li>
@@ -429,7 +424,8 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
                         className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 hover:underline"
                       >
                         <Hammer className="size-3" />
-                        {tool.buildsCount} {tool.buildsCount === 1 ? "build" : "builds"}
+                        {tool.buildsCount}{" "}
+                        {tool.buildsCount === 1 ? "build" : "builds"}
                       </Link>
                       <span className="text-slate-300">•</span>
                     </>
@@ -866,8 +862,6 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
           name={tool.submitterName}
           username={tool.submitterUsername}
           avatarUrl={tool.submitterAvatarUrl}
-          country={tool.submitterCountry}
-          state={tool.submitterState}
         />
 
         {/* Section: Comments & Community Discussion */}
@@ -913,7 +907,8 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
                     href={ROUTES.BUILT_WITH(tool.slug)}
                     className="text-xs font-semibold text-blue-600 hover:underline"
                   >
-                    View all {tool.buildsCount} products built with {tool.name} ↗
+                    View all {tool.buildsCount} products built with {tool.name}{" "}
+                    ↗
                   </Link>
                 </div>
               )}

@@ -19,7 +19,6 @@ import {
   type MakerDirectoryItem,
 } from "@/db/queries/users/get-profile"
 import { CrawlablePagination } from "@/components/shared/crawlable-pagination"
-import { countryCodeToFlag, formatLocation } from "@/utils/country"
 import { cn } from "@/lib/utils"
 
 export const revalidate = 3600
@@ -191,8 +190,6 @@ const MakersPage = async ({ searchParams }: MakersPageProps) => {
             >
               {makers.map((maker, idx) => {
                 const displayName = maker.name || `@${maker.username}`
-                const flag = countryCodeToFlag(maker.country)
-                const location = formatLocation(maker.country, maker.state)
                 const profileUrl = ROUTES.MAKER(maker.username || "")
                 const avatarSrc = maker.avatarUrl || maker.image
                 const isOdd = idx % 2 === 1
@@ -222,19 +219,9 @@ const MakersPage = async ({ searchParams }: MakersPageProps) => {
                       </Avatar>
 
                       <div className="flex min-w-0 flex-col gap-0.5">
-                        <div className="flex items-center gap-1.5 truncate">
-                          <span className="truncate text-sm font-semibold text-slate-900 transition-colors group-hover:text-indigo-600">
-                            {displayName}
-                          </span>
-                          {flag && (
-                            <span
-                              className="shrink-0 text-xs select-none"
-                              title={location}
-                            >
-                              {flag}
-                            </span>
-                          )}
-                        </div>
+                        <span className="truncate text-sm font-semibold text-slate-900 transition-colors group-hover:text-indigo-600">
+                          {displayName}
+                        </span>
                         <div className="text-xs font-normal text-slate-500">
                           {maker.toolsCount} {maker.toolsCount === 1 ? "tool" : "tools"}, {maker.productsCount} {maker.productsCount === 1 ? "product" : "products"}
                         </div>
