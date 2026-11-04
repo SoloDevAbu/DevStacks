@@ -1,6 +1,5 @@
 "use client"
 
-import { useState } from "react"
 import { useRouter } from "next/navigation"
 import {
   ArrowBigUp,
@@ -74,22 +73,19 @@ export const ToolCard = ({
   const router = useRouter()
   const { data: session } = useSession()
   const { requireAuth } = useAuthModal()
-  const upvoteMutation = useUpvoteTool()
+  const { toggle: toggleUpvote } = useUpvoteTool(tool.slug)
   const bookmarkMutation = useBookmarkTool()
-  const { isToolUpvoted, isToolBookmarked } = useUserInteractions()
-
-  const [localUpvotes, setLocalUpvotes] = useState<number | null>(null)
+  const { isToolUpvoted, isToolBookmarked, getToolUpvotes } =
+    useUserInteractions()
 
   const tier: Tier = (tool.tier ?? "free") as Tier
   const pricing: Pricing = (tool.pricing ?? "Free") as Pricing
   const isTrending = index < 2
-  const upvoteCount = localUpvotes ?? tool.upvotesCount ?? 0
+  const upvoteCount = getToolUpvotes(tool.slug, tool.upvotesCount ?? 0)
 
-  const isUpvoted = isToolUpvoted(tool.id, tool.slug)
+  const isUpvoted = isToolUpvoted(tool.slug)
   const isBookmarked = isToolBookmarked(tool.id, tool.slug)
 
-  const isUpvoting =
-    upvoteMutation.isPending && upvoteMutation.variables?.slug === tool.slug
   const isBookmarking =
     bookmarkMutation.isPending && bookmarkMutation.variables?.slug === tool.slug
 
@@ -127,14 +123,7 @@ export const ToolCard = ({
     requireAuth(
       () => {
         if (!session?.user?.id) return
-        upvoteMutation.mutate(
-          { slug: tool.slug, userId: session.user.id },
-          {
-            onSuccess: (data) => {
-              setLocalUpvotes(data.upvotesCount)
-            },
-          }
-        )
+        toggleUpvote(session.user.id, upvoteCount)
       },
       {
         title: "Sign in to upvote",
@@ -358,7 +347,6 @@ export const ToolCard = ({
               <Button
                 variant="outline"
                 onClick={handleUpvote}
-                disabled={isUpvoting}
                 className={cn(
                   isUpvoted ? upvoteButtonActive : upvoteButtonInactive
                 )}
@@ -372,7 +360,7 @@ export const ToolCard = ({
                   )}
                   fill={isUpvoted ? "currentColor" : "none"}
                 />
-                <span>{upvoteCount?.toLocaleString() ?? "0"}</span>
+                <span>{upvoteCount.toLocaleString()}</span>
               </Button>
               <HoverOutline />
             </div>

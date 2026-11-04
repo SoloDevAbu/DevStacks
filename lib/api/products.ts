@@ -1,4 +1,5 @@
 import { apiClient } from "@/lib/api/axios-instance"
+import type { VoteResult } from "@/lib/api/users"
 
 export type ProductListParams = {
   q?: string
@@ -22,9 +23,12 @@ export const submitProduct = async (payload: Record<string, unknown>) => {
   return data.data
 }
 
-export const toggleProductLike = async (slug: string, userId: string) => {
-  const { data } = await apiClient.post(`/products/${slug}/like`, { userId })
-  return data.data as { action: "added" | "removed"; likesCount: number }
+export const setProductLike = async (
+  slug: string,
+  liked: boolean
+): Promise<VoteResult> => {
+  const { data } = await apiClient.post(`/products/${slug}/like`, { liked })
+  return { voted: data.data.liked, count: data.data.likesCount }
 }
 
 export const toggleProductBookmark = async (slug: string, userId: string) => {

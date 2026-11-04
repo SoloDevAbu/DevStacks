@@ -1,6 +1,5 @@
 "use client"
 
-import { useState } from "react"
 import { useRouter } from "next/navigation"
 import {
   Heart,
@@ -70,23 +69,20 @@ export const ProductCard = ({
   const router = useRouter()
   const { data: session } = useSession()
   const { requireAuth } = useAuthModal()
-  const likeMutation = useLikeProduct()
+  const { toggle: toggleLike } = useLikeProduct(product.slug)
   const bookmarkMutation = useBookmarkProduct()
-  const { isProductLiked, isProductBookmarked } = useUserInteractions()
-
-  const [localLikes, setLocalLikes] = useState<number | null>(null)
+  const { isProductLiked, isProductBookmarked, getProductLikes } =
+    useUserInteractions()
 
   const tier: Tier = (product.tier ?? "free") as Tier
   const pricing: Pricing = (product.pricing ?? "Free") as Pricing
   const isTrending = index < 2
-  const likeCount = localLikes ?? product.likesCount ?? 0
+  const likeCount = getProductLikes(product.slug, product.likesCount ?? 0)
   const builtWithTools = product.builtWithTools ?? []
 
-  const isLiked = isProductLiked(product.id, product.slug)
+  const isLiked = isProductLiked(product.slug)
   const isBookmarked = isProductBookmarked(product.id, product.slug)
 
-  const isLiking =
-    likeMutation.isPending && likeMutation.variables?.slug === product.slug
   const isBookmarking =
     bookmarkMutation.isPending &&
     bookmarkMutation.variables?.slug === product.slug
@@ -125,14 +121,7 @@ export const ProductCard = ({
     requireAuth(
       () => {
         if (!session?.user?.id) return
-        likeMutation.mutate(
-          { slug: product.slug, userId: session.user.id },
-          {
-            onSuccess: (data) => {
-              setLocalLikes(data.likesCount)
-            },
-          }
-        )
+        toggleLike(session.user.id, likeCount)
       },
       {
         title: "Sign in to like",
@@ -371,7 +360,6 @@ export const ProductCard = ({
               <Button
                 variant="outline"
                 onClick={handleLike}
-                disabled={isLiking}
                 className={cn(
                   "h-7.5 gap-1 rounded-none border-slate-200 px-2 text-xs font-semibold transition-all sm:h-8 sm:gap-1.5 sm:px-3 sm:text-sm",
                   isLiked
@@ -386,7 +374,7 @@ export const ProductCard = ({
                   )}
                   fill={isLiked ? "currentColor" : "none"}
                 />
-                <span>{likeCount?.toLocaleString() ?? "0"}</span>
+                <span>{likeCount.toLocaleString()}</span>
               </Button>
               <HoverOutline />
             </div>

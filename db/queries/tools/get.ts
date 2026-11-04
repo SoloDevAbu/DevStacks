@@ -23,6 +23,16 @@ export const getToolBySlugOrName = async (slugOrName: string) => {
   return row ?? null
 }
 
+export const getToolIdBySlug = async (slug: string): Promise<string | null> => {
+  const [tool] = await db
+    .select({ id: tools.id })
+    .from(tools)
+    .where(and(eq(tools.slug, slug), eq(tools.isDeleted, false)))
+    .limit(1)
+
+  return tool?.id ?? null
+}
+
 export const getToolBySlug = async (slug: string) => {
   const [row] = await db
     .select({

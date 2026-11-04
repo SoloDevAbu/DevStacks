@@ -31,3 +31,26 @@ export const revalidateCatalog = ({
 
   entityPaths.forEach((path) => revalidatePath(path))
 }
+
+interface VoteChange {
+  productSlug?: string
+  toolSlug?: string
+}
+
+// "max" keeps serving the cached page while it regenerates, so no visitor or crawler waits on a
+// render during a burst of votes. A cache failure is logged rather than thrown because the vote
+// is already committed by the time this runs.
+export const revalidateVote = ({ productSlug, toolSlug }: VoteChange) => {
+  try {
+    revalidateTag(CACHE_TAGS.WEEKLY_LAUNCHES, "max")
+
+    if (productSlug) revalidatePath(ROUTES.PRODUCT(productSlug))
+
+    if (toolSlug) {
+      revalidateTag(CACHE_TAGS.POPULAR_BUILDING_BLOCKS, "max")
+      revalidatePath(ROUTES.TOOL(toolSlug))
+    }
+  } catch (error) {
+    console.error("[Cache] Vote revalidation failed:", error)
+  }
+}

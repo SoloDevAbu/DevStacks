@@ -1,3 +1,10 @@
+export const RANKING_MODE = {
+  COMMUNITY: "community",
+  POPULAR: "popular",
+} as const
+
+export type RankingMode = (typeof RANKING_MODE)[keyof typeof RANKING_MODE]
+
 export const DISCOVERY_WINDOW_DAYS = 7
 
 export const NEW_AND_RISING_WEIGHTS = {

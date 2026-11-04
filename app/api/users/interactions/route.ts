@@ -1,6 +1,9 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
-import { getUserInteractions } from "@/db/queries/users/interactions"
+import {
+  EMPTY_USER_INTERACTIONS,
+  getUserInteractions,
+} from "@/db/queries/users/interactions"
 
 export const GET = async (req: NextRequest) => {
   try {
@@ -11,18 +14,7 @@ export const GET = async (req: NextRequest) => {
 
     if (!sessionUserId) {
       return NextResponse.json(
-        {
-          data: {
-            upvotedToolIds: [],
-            upvotedToolSlugs: [],
-            bookmarkedToolIds: [],
-            bookmarkedToolSlugs: [],
-            likedProductIds: [],
-            likedProductSlugs: [],
-            bookmarkedProductIds: [],
-            bookmarkedProductSlugs: [],
-          },
-        },
+        { data: EMPTY_USER_INTERACTIONS },
         { status: 200 }
       )
     }

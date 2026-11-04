@@ -2,14 +2,19 @@ import { apiClient } from "@/lib/api/axios-instance"
 import type { Tier } from "@/constants/plans"
 
 export type UserInteractionsData = {
-  upvotedToolIds: string[]
   upvotedToolSlugs: string[]
+  toolUpvoteCounts: Record<string, number>
   bookmarkedToolIds: string[]
   bookmarkedToolSlugs: string[]
-  likedProductIds: string[]
   likedProductSlugs: string[]
+  productLikeCounts: Record<string, number>
   bookmarkedProductIds: string[]
   bookmarkedProductSlugs: string[]
+}
+
+export type VoteResult = {
+  voted: boolean
+  count: number
 }
 
 export const fetchUserInteractions = async (

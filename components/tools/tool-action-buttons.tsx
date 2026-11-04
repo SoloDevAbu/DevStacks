@@ -1,6 +1,5 @@
 "use client"
 
-import { useState } from "react"
 import { ArrowBigUp, Bookmark, ExternalLink } from "lucide-react"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { useUpvoteTool } from "@/hooks/tools/use-upvote-tool"
@@ -36,17 +35,15 @@ export const ToolActionButtons = ({
 }: ToolActionButtonsProps) => {
   const { data: session } = useSession()
   const { requireAuth } = useAuthModal()
-  const upvoteMutation = useUpvoteTool()
+  const { toggle: toggleUpvote } = useUpvoteTool(slug)
   const bookmarkMutation = useBookmarkTool()
-  const { isToolUpvoted, isToolBookmarked } = useUserInteractions()
+  const { isToolUpvoted, isToolBookmarked, getToolUpvotes } =
+    useUserInteractions()
 
-  const [upvotes, setUpvotes] = useState(initialUpvotes)
-
-  const isUpvoted = isToolUpvoted(toolId, slug)
+  const upvotes = getToolUpvotes(slug, initialUpvotes)
+  const isUpvoted = isToolUpvoted(slug)
   const isBookmarked = isToolBookmarked(toolId, slug)
 
-  const isUpvoting =
-    upvoteMutation.isPending && upvoteMutation.variables?.slug === slug
   const isBookmarking =
     bookmarkMutation.isPending && bookmarkMutation.variables?.slug === slug
 
@@ -54,14 +51,7 @@ export const ToolActionButtons = ({
     requireAuth(
       () => {
         if (!session?.user?.id) return
-        upvoteMutation.mutate(
-          { slug, userId: session.user.id },
-          {
-            onSuccess: (data) => {
-              setUpvotes(data.upvotesCount)
-            },
-          }
-        )
+        toggleUpvote(session.user.id, upvotes)
       },
       {
         title: "Sign in to upvote",
@@ -92,7 +82,6 @@ export const ToolActionButtons = ({
     <div className="flex flex-wrap items-center gap-3">
       <Button
         onClick={handleUpvote}
-        disabled={isUpvoting}
         className={cn(
           "gap-2 rounded-lg px-3 transition-colors",
           isUpvoted
