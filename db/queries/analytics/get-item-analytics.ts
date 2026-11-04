@@ -2,8 +2,6 @@ import { db } from "@/db"
 import {
   tools,
   products,
-  toolUpvotes,
-  productLikes,
   toolComments,
   productComments,
   externalLinkVisits,
@@ -89,21 +87,7 @@ export const getProductAnalytics = async (
 
   if (!product) return null
 
-  const [likesRows, commentsRows, visitsRows] = await Promise.all([
-    db
-      .select({
-        id: users.id,
-        name: users.name,
-        username: users.username,
-        image: users.image,
-        avatarUrl: users.avatarUrl,
-        interactedAt: productLikes.createdAt,
-      })
-      .from(productLikes)
-      .innerJoin(users, eq(productLikes.userId, users.id))
-      .where(eq(productLikes.productId, product.id))
-      .orderBy(desc(productLikes.createdAt)),
-
+  const [commentsRows, visitsRows] = await Promise.all([
     db
       .select({
         id: productComments.id,
@@ -161,13 +145,7 @@ export const getProductAnalytics = async (
       signedInVisitsCount: signedInVisits.length,
       anonymousVisitsCount,
     },
-    whoLiked: likesRows.map((r) => ({
-      id: r.id,
-      name: r.name,
-      username: r.username,
-      image: r.avatarUrl || r.image,
-      interactedAt: r.interactedAt,
-    })),
+    whoLiked: [],
     comments: commentsRows.map((c) => ({
       id: c.id,
       body: c.body,
@@ -213,21 +191,7 @@ export const getToolAnalytics = async (
 
   if (!tool) return null
 
-  const [upvotesRows, commentsRows, visitsRows] = await Promise.all([
-    db
-      .select({
-        id: users.id,
-        name: users.name,
-        username: users.username,
-        image: users.image,
-        avatarUrl: users.avatarUrl,
-        interactedAt: toolUpvotes.createdAt,
-      })
-      .from(toolUpvotes)
-      .innerJoin(users, eq(toolUpvotes.userId, users.id))
-      .where(eq(toolUpvotes.toolId, tool.id))
-      .orderBy(desc(toolUpvotes.createdAt)),
-
+  const [commentsRows, visitsRows] = await Promise.all([
     db
       .select({
         id: toolComments.id,
@@ -285,13 +249,7 @@ export const getToolAnalytics = async (
       signedInVisitsCount: signedInVisits.length,
       anonymousVisitsCount,
     },
-    whoLiked: upvotesRows.map((r) => ({
-      id: r.id,
-      name: r.name,
-      username: r.username,
-      image: r.avatarUrl || r.image,
-      interactedAt: r.interactedAt,
-    })),
+    whoLiked: [],
     comments: commentsRows.map((c) => ({
       id: c.id,
       body: c.body,

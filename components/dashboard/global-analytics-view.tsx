@@ -38,6 +38,7 @@ export const GlobalAnalyticsView = ({ data }: GlobalAnalyticsViewProps) => {
   )
 
   const { stats, items, recentInteractions } = data
+  const recentComments = recentInteractions.filter((act) => act.type !== "like")
 
   const filteredItems = items.filter((item) => {
     if (filterType === "products") return item.itemType === "product"
@@ -311,7 +312,7 @@ export const GlobalAnalyticsView = ({ data }: GlobalAnalyticsViewProps) => {
       </div>
 
       {/* 3. Recent Activity Stream */}
-      {recentInteractions.length > 0 && (
+      {recentComments.length > 0 && (
         <>
           <div className={dashboardSectionHeader}>
             <div className="flex items-center gap-2">
@@ -323,7 +324,7 @@ export const GlobalAnalyticsView = ({ data }: GlobalAnalyticsViewProps) => {
           </div>
 
           <div className="flex flex-col divide-y border-b border-dashed border-border bg-white">
-            {recentInteractions.map((act) => (
+            {recentComments.map((act) => (
               <div
                 key={act.id}
                 className="flex items-center justify-between gap-3 px-6 py-3.5 transition-colors hover:bg-slate-50/50 md:px-8"
@@ -345,9 +346,7 @@ export const GlobalAnalyticsView = ({ data }: GlobalAnalyticsViewProps) => {
                       {act.user?.name || "Community Member"}
                     </span>
                     <span className="text-slate-500">
-                      {act.type === "like"
-                        ? `liked your ${act.itemType}`
-                        : `commented on your ${act.itemType}`}
+                      commented on your {act.itemType}
                     </span>
                     <Link
                       href={
