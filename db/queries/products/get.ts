@@ -4,6 +4,18 @@ import { and, desc, eq, ne, sql } from "drizzle-orm"
 import type { DbProduct, ProductBuiltWith } from "@/types/entities"
 import { launchedByNow } from "@/lib/catalog/visibility"
 
+export const getProductIdBySlug = async (
+  slug: string
+): Promise<string | null> => {
+  const [product] = await db
+    .select({ id: products.id })
+    .from(products)
+    .where(and(eq(products.slug, slug), eq(products.isDeleted, false)))
+    .limit(1)
+
+  return product?.id ?? null
+}
+
 export const getProductBySlug = async (slug: string) => {
   const [product] = await db
     .select({

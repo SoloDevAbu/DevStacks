@@ -1,34 +1,18 @@
 "use client"
 
-import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { toggleToolUpvote } from "@/lib/api/tools"
-import type { UserInteractionsData } from "@/lib/api/users"
+import { ITEM_KIND } from "@/constants/items"
+import { useVoteToggle } from "@/hooks/shared/use-vote-toggle"
+import { setToolUpvote } from "@/lib/api/tools"
 
-export const useUpvoteTool = () => {
-  const queryClient = useQueryClient()
+const TOOLS_LIST_QUERY_KEY = ["tools"]
 
-  return useMutation({
-    mutationFn: ({ slug, userId }: { slug: string; userId: string }) =>
-      toggleToolUpvote(slug, userId),
-    onSuccess: (data, { slug, userId }) => {
-      queryClient.setQueryData(
-        ["user-interactions", userId],
-        (old: UserInteractionsData | undefined) => {
-          if (!old) return old
-          const upvotedToolSlugs =
-            data.action === "added"
-              ? [...new Set([...old.upvotedToolSlugs, slug])]
-              : old.upvotedToolSlugs.filter((s) => s !== slug)
-
-          return { ...old, upvotedToolSlugs }
-        }
-      )
-    },
-    onSettled: (_data, _err, vars) => {
-      queryClient.invalidateQueries({ queryKey: ["tools"] })
-      queryClient.invalidateQueries({
-        queryKey: ["user-interactions", vars?.userId],
-      })
-    },
+export const useUpvoteTool = (slug: string) =>
+  useVoteToggle({
+    kind: ITEM_KIND.TOOL,
+    slug,
+    votedSlugsField: "upvotedToolSlugs",
+    countsField: "toolUpvoteCounts",
+    sendVote: setToolUpvote,
+    listQueryKey: TOOLS_LIST_QUERY_KEY,
+    errorTitle: "Your upvote wasn't saved",
   })
-}

@@ -1,23 +1,14 @@
 import { db } from "@/db"
 import { tools, categories } from "@/db/schema"
 import { and, eq } from "drizzle-orm"
-import { POPULAR_BUILDING_BLOCKS_WEIGHTS } from "@/constants/rankings"
+import {
+  calculatePopularScore,
+  compareByPopularScore,
+} from "@/lib/rankings/compare"
 import { unstable_cache } from "next/cache"
 import { CACHE_TAGS, CACHE_REVALIDATE_SECONDS } from "@/constants/cache"
 import type { RankedTool, RankingOptions } from "./types"
 import { launchedByNow } from "@/lib/catalog/visibility"
-
-export const calculatePopularScore = (
-  buildsCount: number,
-  upvotesCount: number,
-  viewsCount: number
-) => {
-  const rawScore =
-    buildsCount * POPULAR_BUILDING_BLOCKS_WEIGHTS.buildsWeight +
-    upvotesCount * POPULAR_BUILDING_BLOCKS_WEIGHTS.upvotesWeight +
-    viewsCount * POPULAR_BUILDING_BLOCKS_WEIGHTS.viewsWeight
-  return Math.round(rawScore * 10) / 10
-}
 
 export const getPopularBuildingBlocks = async ({
   limit = 10,
@@ -88,13 +79,7 @@ export const getPopularBuildingBlocks = async ({
     score: calculatePopularScore(t.buildsCount, t.upvotesCount, t.viewsCount),
   }))
 
-  scored.sort((a, b) => {
-    const scoreDiff = (b.score ?? 0) - (a.score ?? 0)
-    if (scoreDiff !== 0) return scoreDiff
-    const bTime = b.createdAt ? new Date(b.createdAt).getTime() : 0
-    const aTime = a.createdAt ? new Date(a.createdAt).getTime() : 0
-    return bTime - aTime
-  })
+  scored.sort(compareByPopularScore)
 
   return scored.slice(offset, offset + safeLimit)
 }

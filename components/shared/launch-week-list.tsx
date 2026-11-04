@@ -1,5 +1,7 @@
 import Link from "next/link"
-import { FeedCard, type FeedItem } from "@/components/shared/feed-card"
+import type { FeedItem } from "@/components/shared/feed-card"
+import { RankedFeedList } from "@/components/shared/ranked-feed-list"
+import { RANKING_MODE } from "@/constants/rankings"
 import { ROUTES } from "@/constants/routes"
 import { emptyStateBox } from "@/utils/styles"
 
@@ -26,16 +28,5 @@ export const LaunchWeekList = ({
       </p>
     </div>
   ) : (
-    <ol className="flex flex-col">
-      {items.map((item, index) => (
-        <li key={item.id}>
-          <FeedCard
-            item={item}
-            index={index}
-            showMedals={true}
-            showFreshnessBadge={false}
-          />
-        </li>
-      ))}
-    </ol>
+    <RankedFeedList items={items} mode={RANKING_MODE.COMMUNITY} showMedals />
   )

@@ -1,34 +1,18 @@
 "use client"
 
-import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { toggleProductLike } from "@/lib/api/products"
-import type { UserInteractionsData } from "@/lib/api/users"
+import { ITEM_KIND } from "@/constants/items"
+import { useVoteToggle } from "@/hooks/shared/use-vote-toggle"
+import { setProductLike } from "@/lib/api/products"
 
-export const useLikeProduct = () => {
-  const queryClient = useQueryClient()
+const PRODUCTS_LIST_QUERY_KEY = ["products"]
 
-  return useMutation({
-    mutationFn: ({ slug, userId }: { slug: string; userId: string }) =>
-      toggleProductLike(slug, userId),
-    onSuccess: (data, { slug, userId }) => {
-      queryClient.setQueryData(
-        ["user-interactions", userId],
-        (old: UserInteractionsData | undefined) => {
-          if (!old) return old
-          const likedProductSlugs =
-            data.action === "added"
-              ? [...new Set([...old.likedProductSlugs, slug])]
-              : old.likedProductSlugs.filter((s) => s !== slug)
-
-          return { ...old, likedProductSlugs }
-        }
-      )
-    },
-    onSettled: (_data, _err, vars) => {
-      queryClient.invalidateQueries({ queryKey: ["products"] })
-      queryClient.invalidateQueries({
-        queryKey: ["user-interactions", vars?.userId],
-      })
-    },
+export const useLikeProduct = (slug: string) =>
+  useVoteToggle({
+    kind: ITEM_KIND.PRODUCT,
+    slug,
+    votedSlugsField: "likedProductSlugs",
+    countsField: "productLikeCounts",
+    sendVote: setProductLike,
+    listQueryKey: PRODUCTS_LIST_QUERY_KEY,
+    errorTitle: "Your like wasn't saved",
   })
-}

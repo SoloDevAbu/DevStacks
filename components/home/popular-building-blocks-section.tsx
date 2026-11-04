@@ -1,5 +1,7 @@
 import { SectionHeader } from "@/components/shared/section-header"
-import { FeedCard, type FeedItem } from "@/components/shared/feed-card"
+import type { FeedItem } from "@/components/shared/feed-card"
+import { RankedFeedList } from "@/components/shared/ranked-feed-list"
+import { RANKING_MODE } from "@/constants/rankings"
 import { ROUTES } from "@/constants/routes"
 
 interface PopularBuildingBlocksSectionProps {
@@ -23,9 +25,7 @@ export const PopularBuildingBlocksSection = ({
             No building blocks available yet.
           </div>
         ) : (
-          items.map((item, index) => (
-            <FeedCard key={`${item.id}-${index}`} item={item} index={index} />
-          ))
+          <RankedFeedList items={items} mode={RANKING_MODE.POPULAR} />
         )}
       </div>
     </section>

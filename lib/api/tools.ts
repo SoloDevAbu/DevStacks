@@ -1,4 +1,5 @@
 import { apiClient } from "@/lib/api/axios-instance"
+import type { VoteResult } from "@/lib/api/users"
 import type { DbTool } from "@/types/entities"
 
 export type ToolListParams = {
@@ -25,9 +26,12 @@ export const fetchTool = async (slug: string) => {
   return data.data
 }
 
-export const toggleToolUpvote = async (slug: string, userId: string) => {
-  const { data } = await apiClient.post(`/tools/${slug}/upvote`, { userId })
-  return data.data as { action: "added" | "removed"; upvotesCount: number }
+export const setToolUpvote = async (
+  slug: string,
+  upvoted: boolean
+): Promise<VoteResult> => {
+  const { data } = await apiClient.post(`/tools/${slug}/upvote`, { upvoted })
+  return { voted: data.data.upvoted, count: data.data.upvotesCount }
 }
 
 export const toggleToolBookmark = async (slug: string, userId: string) => {

@@ -11,15 +11,26 @@ import { and, eq } from "drizzle-orm"
 
 export type UserInteractions = {
   // Tools
-  upvotedToolIds: string[]
   upvotedToolSlugs: string[]
+  toolUpvoteCounts: Record<string, number>
   bookmarkedToolIds: string[]
   bookmarkedToolSlugs: string[]
   // Products
-  likedProductIds: string[]
   likedProductSlugs: string[]
+  productLikeCounts: Record<string, number>
   bookmarkedProductIds: string[]
   bookmarkedProductSlugs: string[]
+}
+
+export const EMPTY_USER_INTERACTIONS: UserInteractions = {
+  upvotedToolSlugs: [],
+  toolUpvoteCounts: {},
+  bookmarkedToolIds: [],
+  bookmarkedToolSlugs: [],
+  likedProductSlugs: [],
+  productLikeCounts: {},
+  bookmarkedProductIds: [],
+  bookmarkedProductSlugs: [],
 }
 
 export const getUserInteractions = async (
@@ -32,7 +43,7 @@ export const getUserInteractions = async (
     userProductBookmarks,
   ] = await Promise.all([
     db
-      .select({ toolId: toolUpvotes.toolId, slug: tools.slug })
+      .select({ slug: tools.slug, count: tools.upvotesCount })
       .from(toolUpvotes)
       .innerJoin(tools, eq(toolUpvotes.toolId, tools.id))
       .where(and(eq(toolUpvotes.userId, userId), eq(tools.isDeleted, false))),
@@ -42,7 +53,7 @@ export const getUserInteractions = async (
       .innerJoin(tools, eq(toolBookmarks.toolId, tools.id))
       .where(and(eq(toolBookmarks.userId, userId), eq(tools.isDeleted, false))),
     db
-      .select({ productId: productLikes.productId, slug: products.slug })
+      .select({ slug: products.slug, count: products.likesCount })
       .from(productLikes)
       .innerJoin(products, eq(productLikes.productId, products.id))
       .where(
@@ -58,12 +69,16 @@ export const getUserInteractions = async (
   ])
 
   return {
-    upvotedToolIds: userToolUpvotes.map((u) => u.toolId),
     upvotedToolSlugs: userToolUpvotes.map((u) => u.slug),
+    toolUpvoteCounts: Object.fromEntries(
+      userToolUpvotes.map((u) => [u.slug, u.count])
+    ),
     bookmarkedToolIds: userToolBookmarks.map((b) => b.toolId),
     bookmarkedToolSlugs: userToolBookmarks.map((b) => b.slug),
-    likedProductIds: userProductLikes.map((l) => l.productId),
     likedProductSlugs: userProductLikes.map((l) => l.slug),
+    productLikeCounts: Object.fromEntries(
+      userProductLikes.map((l) => [l.slug, l.count])
+    ),
     bookmarkedProductIds: userProductBookmarks.map((b) => b.productId),
     bookmarkedProductSlugs: userProductBookmarks.map((b) => b.slug),
   }

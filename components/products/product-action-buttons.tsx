@@ -1,6 +1,5 @@
 "use client"
 
-import { useState } from "react"
 import { Heart, Bookmark, ExternalLink } from "lucide-react"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { useLikeProduct } from "@/hooks/products/use-like-product"
@@ -32,17 +31,15 @@ export const ProductActionButtons = ({
 }: ProductActionButtonsProps) => {
   const { data: session } = useSession()
   const { requireAuth } = useAuthModal()
-  const likeMutation = useLikeProduct()
+  const { toggle: toggleLike } = useLikeProduct(slug)
   const bookmarkMutation = useBookmarkProduct()
-  const { isProductLiked, isProductBookmarked } = useUserInteractions()
+  const { isProductLiked, isProductBookmarked, getProductLikes } =
+    useUserInteractions()
 
-  const [likes, setLikes] = useState(initialLikes)
-
-  const isLiked = isProductLiked(productId, slug)
+  const likes = getProductLikes(slug, initialLikes)
+  const isLiked = isProductLiked(slug)
   const isBookmarked = isProductBookmarked(productId, slug)
 
-  const isLiking =
-    likeMutation.isPending && likeMutation.variables?.slug === slug
   const isBookmarking =
     bookmarkMutation.isPending && bookmarkMutation.variables?.slug === slug
 
@@ -50,14 +47,7 @@ export const ProductActionButtons = ({
     requireAuth(
       () => {
         if (!session?.user?.id) return
-        likeMutation.mutate(
-          { slug, userId: session.user.id },
-          {
-            onSuccess: (data) => {
-              setLikes(data.likesCount)
-            },
-          }
-        )
+        toggleLike(session.user.id, likes)
       },
       {
         title: "Sign in to like",
@@ -104,7 +94,6 @@ export const ProductActionButtons = ({
     <div className="flex flex-wrap items-center gap-3">
       <Button
         onClick={handleLike}
-        disabled={isLiking}
         className={cn(
           "gap-2 rounded-lg px-3 transition-colors",
           isLiked

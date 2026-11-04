@@ -13,6 +13,7 @@ import dynamic from "next/dynamic"
 import { useSession } from "@/lib/auth/client"
 import { useRouter, useSearchParams, usePathname } from "next/navigation"
 import { trackLogin, trackSignUp } from "@/lib/analytics/events"
+import { clearCachedInteractions } from "@/utils/cached-interactions"
 
 // Only loaded once someone opens it, keeping the auth UI out of every page's initial bundle.
 const AuthDialog = dynamic(
@@ -78,8 +79,12 @@ const AuthQueryListener = () => {
 export const AuthModalProvider = ({ children }: { children: ReactNode }) => {
   const [isOpen, setIsOpen] = useState(false)
   const [options, setOptions] = useState<OpenAuthModalOptions>({})
-  const { data: session } = useSession()
+  const { data: session, isPending } = useSession()
   const router = useRouter()
+
+  useEffect(() => {
+    if (!isPending && !session?.user) clearCachedInteractions()
+  }, [isPending, session?.user])
 
   useEffect(() => {
     if (session?.user?.id && typeof window !== "undefined") {

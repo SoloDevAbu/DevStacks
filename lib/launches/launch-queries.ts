@@ -1,6 +1,7 @@
 import { db } from "@/db"
 import { tools, products, categories, productTools } from "@/db/schema"
 import { and, eq, inArray, type SQL } from "drizzle-orm"
+import { compareByCommunityVotes } from "@/lib/rankings/compare"
 import type { RankedItem, RankedProduct } from "@/lib/rankings/types"
 import type { ProductBuiltWith } from "@/types/entities"
 import { launchedByNow } from "@/lib/catalog/visibility"
@@ -48,9 +49,6 @@ const rankedProductColumns = {
   updatedAt: products.updatedAt,
 }
 
-const getCommunityScore = (item: RankedItem) =>
-  item.itemKind === "tool" ? item.upvotesCount : item.likesCount
-
 // Tools and products are ranked together by their community votes (upvotes and likes), with
 // comment count as the tie-breaker.
 export const selectRankedLaunches = async ({
@@ -95,11 +93,7 @@ export const selectRankedLaunches = async ({
     })),
   ]
 
-  return combined.sort(
-    (a, b) =>
-      getCommunityScore(b) - getCommunityScore(a) ||
-      b.commentsCount - a.commentsCount
-  )
+  return combined.sort(compareByCommunityVotes)
 }
 
 export const attachBuiltWithTools = async (
