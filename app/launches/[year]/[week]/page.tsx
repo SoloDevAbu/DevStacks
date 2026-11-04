@@ -4,7 +4,6 @@ import { cache } from "react"
 import { PageHeader } from "@/components/shared/page-header"
 import { LaunchWeekList } from "@/components/shared/launch-week-list"
 import { LaunchWeekNav } from "@/components/launches/launch-week-nav"
-import { UpdatedTime } from "@/components/shared/updated-time"
 import type { FeedItem } from "@/components/shared/feed-card"
 import { SITE_CONFIG } from "@/constants/site"
 import { LAUNCH_WEEKS_PRERENDERED } from "@/constants/launches"
@@ -40,7 +39,7 @@ const loadLaunchWeek = cache(async (rawYear: string, rawWeek: string) => {
   const params = parseLaunchWeekParams(rawYear, rawWeek)
   if (!params) return null
   const snapshot = await getLaunchWeekSnapshot(params.year, params.week)
-  return snapshot.items.length > 0 ? snapshot : null
+  return snapshot
 })
 
 export const generateMetadata = async ({
@@ -50,13 +49,19 @@ export const generateMetadata = async ({
   const snapshot = await loadLaunchWeek(year, week)
   if (!snapshot) return { robots: { index: false, follow: true } }
 
-  const canonical = toAbsoluteUrl(ROUTES.LAUNCH_WEEK(snapshot.year, snapshot.week))
+  const canonical = toAbsoluteUrl(
+    ROUTES.LAUNCH_WEEK(snapshot.year, snapshot.week)
+  )
   const title = `${snapshot.weekLabel}, ${snapshot.year} Launches: New Products & Dev Tools`
   const description = `${snapshot.items.length} products and developer tools launched on ${SITE_CONFIG.name} in ${snapshot.weekLabel} of ${snapshot.year} (${snapshot.dateRange}), ranked by community votes.`
 
   return {
     title,
     description,
+    robots:
+      snapshot.items.length === 0
+        ? { index: false, follow: true }
+        : undefined,
     alternates: {
       canonical,
       types: {
@@ -78,23 +83,27 @@ const LaunchWeekPage = async ({ params }: LaunchWeekPageProps) => {
   ])
   if (!snapshot) notFound()
 
-  const position = summaries.findIndex(
-    (summary) => summary.year === snapshot.year && summary.week === snapshot.week
-  )
-  const next = position > 0 ? summaries[position - 1] : undefined
-  const previous = position >= 0 ? summaries[position + 1] : undefined
+  const earliest =
+    summaries.length > 0
+      ? summaries[summaries.length - 1]
+      : { year: snapshot.year, week: snapshot.week }
 
-  const pageUrl = toAbsoluteUrl(ROUTES.LAUNCH_WEEK(snapshot.year, snapshot.week))
+  if (
+    snapshot.year < earliest.year ||
+    (snapshot.year === earliest.year && snapshot.week < earliest.week)
+  ) {
+    notFound()
+  }
+
+  const pageUrl = toAbsoluteUrl(
+    ROUTES.LAUNCH_WEEK(snapshot.year, snapshot.week)
+  )
   const heading = formatLaunchWeekHeading(snapshot)
   const items = snapshot.items as FeedItem[]
 
   const jsonLd = buildEntityGraph([
     breadcrumbSchema([
       { name: "Home", url: SITE_CONFIG.url },
-      {
-        name: "Weekly Launches",
-        url: toAbsoluteUrl(ROUTES.DISCOVER_WEEKLY_LAUNCHES),
-      },
       { name: heading, url: pageUrl },
     ]),
     collectionPageSchema({
@@ -122,13 +131,13 @@ const LaunchWeekPage = async ({ params }: LaunchWeekPageProps) => {
           description={`${items.length} products and developer tools launched on ${SITE_CONFIG.name} between ${snapshot.dateRange}, ${snapshot.year}, ranked by community votes.`}
           aiPrompt={AI_PROMPTS.weeklyLaunches}
           variant="discover-weekly-launches"
-          metrics={
-            <p className="text-xs text-slate-500">
-              <UpdatedTime date={snapshot.lastUpdated} />
-            </p>
-          }
         />
-        <LaunchWeekNav previous={previous} next={next} />
+        <LaunchWeekNav
+          currentYear={snapshot.year}
+          currentWeek={snapshot.week}
+          earliestYear={earliest.year}
+          earliestWeek={earliest.week}
+        />
         <LaunchWeekList items={items} />
       </div>
     </>

@@ -33,11 +33,6 @@ export const SIDEBAR_NAV: NavSection[] = [
     label: "Explore",
     items: [
       { name: "Home", icon: Home, href: ROUTES.HOME },
-      {
-        name: "Weekly Launches",
-        icon: CalendarDays,
-        href: ROUTES.DISCOVER_WEEKLY_LAUNCHES,
-      },
       { name: "Products", icon: Package, href: ROUTES.PRODUCTS },
       {
         name: "Tools Directory",
@@ -140,13 +135,15 @@ export const FOOTER_COLUMNS: readonly FooterColumn[] = [
     heading: "Discover",
     links: [
       { label: "This Week's Launches", href: ROUTES.HOME },
-      { label: "Weekly Launch Archive", href: ROUTES.DISCOVER_WEEKLY_LAUNCHES },
       { label: "Trending", href: ROUTES.TRENDING },
       { label: "Tools Directory", href: ROUTES.TOOLS },
       { label: "Tool Categories", href: ROUTES.TOOL_CATEGORIES },
       { label: "Products Directory", href: ROUTES.PRODUCTS },
       { label: "Product Categories", href: ROUTES.PRODUCT_CATEGORIES },
-      { label: "Building Blocks", href: ROUTES.DISCOVER_POPULAR_BUILDING_BLOCKS },
+      {
+        label: "Building Blocks",
+        href: ROUTES.DISCOVER_POPULAR_BUILDING_BLOCKS,
+      },
       { label: "Makers", href: ROUTES.MAKERS },
     ],
   },
@@ -155,7 +152,10 @@ export const FOOTER_COLUMNS: readonly FooterColumn[] = [
     links: [
       { label: "Launch Your Product", href: ROUTES.SUBMIT_PRODUCT },
       { label: "Launch a Dev Tool", href: ROUTES.SUBMIT_TOOL },
-      { label: "Product Launch Platform", href: ROUTES.PRODUCT_LAUNCH_PLATFORM },
+      {
+        label: "Product Launch Platform",
+        href: ROUTES.PRODUCT_LAUNCH_PLATFORM,
+      },
       { label: "SaaS Directory", href: ROUTES.SAAS_DIRECTORY },
       { label: "Pricing & Sponsorship", href: ROUTES.PRICING },
     ],
@@ -164,18 +164,30 @@ export const FOOTER_COLUMNS: readonly FooterColumn[] = [
     heading: "Resources",
     links: [
       { label: "Launch Stories", href: ROUTES.BLOG },
-      { label: "Where to Launch Dev Tools", href: ROUTES.GUIDE_LAUNCH_DEVTOOLS },
+      {
+        label: "Where to Launch Dev Tools",
+        href: ROUTES.GUIDE_LAUNCH_DEVTOOLS,
+      },
       { label: "Free SaaS Directories", href: ROUTES.GUIDE_SAAS_DIRECTORIES },
-      { label: "Product Hunt Alternatives", href: ROUTES.PRODUCTHUNT_ALTERNATIVES },
+      {
+        label: "Product Hunt Alternatives",
+        href: ROUTES.PRODUCTHUNT_ALTERNATIVES,
+      },
       { label: "FAQ", href: ROUTES.FAQ },
     ],
   },
   {
     heading: "Compare",
     links: [
-      { label: "LaunchNests vs Product Hunt", href: ROUTES.PRODUCTHUNT_ALTERNATIVE },
+      {
+        label: "LaunchNests vs Product Hunt",
+        href: ROUTES.PRODUCTHUNT_ALTERNATIVE,
+      },
       { label: "Uneed Alternative", href: ROUTES.UNEED_ALTERNATIVE },
-      { label: "MicroLaunch Alternative", href: ROUTES.MICROLAUNCH_ALTERNATIVE },
+      {
+        label: "MicroLaunch Alternative",
+        href: ROUTES.MICROLAUNCH_ALTERNATIVE,
+      },
       { label: "BetaList Alternative", href: ROUTES.BETALIST_ALTERNATIVE },
       { label: "DevHunt Alternative", href: ROUTES.DEVHUNT_ALTERNATIVE },
       { label: "CodeHype Alternative", href: ROUTES.CODEHYPE_ALTERNATIVE },

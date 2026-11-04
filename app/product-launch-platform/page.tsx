@@ -219,7 +219,7 @@ const ProductLaunchPlatformPage = async () => {
                   Launch Your Product Now
                   <ArrowRight className="ml-1.5 size-4" />
                 </Link>
-              <Link href={ROUTES.DISCOVER_WEEKLY_LAUNCHES} className={cn(buttonVariants({ variant: "outline" }), "rounded-none")}>
+              <Link href={ROUTES.HOME} className={cn(buttonVariants({ variant: "outline" }), "rounded-none")}>
                   View Weekly Launches
                 </Link>
             </div>
@@ -256,7 +256,7 @@ const ProductLaunchPlatformPage = async () => {
                 just 24 hours.
               </p>
               <Link
-                href={ROUTES.DISCOVER_WEEKLY_LAUNCHES}
+                href={ROUTES.HOME}
                 className="mt-4 text-xs font-semibold text-blue-600 hover:underline"
               >
                 Browse Weekly Launches →

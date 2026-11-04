@@ -15,7 +15,6 @@ export const PopularBuildingBlocksSection = ({
     <section className="flex w-full flex-col">
       <SectionHeader
         title="Popular Building Blocks"
-        subtitle="The tools developers are building with"
         viewAllText="View all tools"
         viewAllHref={ROUTES.DISCOVER_POPULAR_BUILDING_BLOCKS}
       />

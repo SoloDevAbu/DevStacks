@@ -242,3 +242,97 @@ export const getListingLaunchWeek = ({
   if (launchYear && launchWeek) return { year: launchYear, week: launchWeek }
   return createdAt ? getCurrentWeek(new Date(createdAt)) : null
 }
+
+export interface LaunchNavWeekItem {
+  year: number
+  week: number
+  label: string
+  isActive: boolean
+  isAvailable: boolean
+}
+
+export const getLaunchNavWeeks = ({
+  activeYear,
+  activeWeek,
+  earliestYear,
+  earliestWeek,
+  futureWeeksCount = 5,
+}: {
+  activeYear: number
+  activeWeek: number
+  earliestYear?: number
+  earliestWeek?: number
+  futureWeeksCount?: number
+}): {
+  items: LaunchNavWeekItem[]
+  previous?: { year: number; week: number }
+  next?: { year: number; week: number }
+} => {
+  const current = getCurrentWeek()
+  const resolvedEarliest = {
+    year: earliestYear ?? activeYear,
+    week: earliestWeek ?? activeWeek,
+  }
+
+  const isEarliestAfterActive =
+    resolvedEarliest.year > activeYear ||
+    (resolvedEarliest.year === activeYear && resolvedEarliest.week > activeWeek)
+  const candidateStart = isEarliestAfterActive
+    ? { year: activeYear, week: activeWeek }
+    : resolvedEarliest
+
+  const start = isFutureWeek(candidateStart.year, candidateStart.week)
+    ? { year: activeYear, week: activeWeek }
+    : candidateStart
+
+  const endLimit = isFutureWeek(activeYear, activeWeek)
+    ? { year: activeYear, week: activeWeek }
+    : current
+
+  const items: LaunchNavWeekItem[] = []
+  let cursor = { ...start }
+
+  while (
+    cursor.year < endLimit.year ||
+    (cursor.year === endLimit.year && cursor.week <= endLimit.week)
+  ) {
+    items.push({
+      year: cursor.year,
+      week: cursor.week,
+      label: `Week ${cursor.week}`,
+      isActive: cursor.year === activeYear && cursor.week === activeWeek,
+      isAvailable: true,
+    })
+    cursor = shiftWeek(cursor.year, cursor.week, 1)
+    if (items.length > 52) break
+  }
+
+  let futureCursor = endLimit
+  for (let i = 0; i < futureWeeksCount; i++) {
+    futureCursor = shiftWeek(futureCursor.year, futureCursor.week, 1)
+    items.push({
+      year: futureCursor.year,
+      week: futureCursor.week,
+      label: `Week ${futureCursor.week}`,
+      isActive:
+        futureCursor.year === activeYear && futureCursor.week === activeWeek,
+      isAvailable: false,
+    })
+  }
+
+  const candidatePrev = shiftWeek(activeYear, activeWeek, -1)
+  const previous =
+    candidatePrev.year > start.year ||
+    (candidatePrev.year === start.year && candidatePrev.week >= start.week)
+      ? candidatePrev
+      : undefined
+
+  const candidateNext = shiftWeek(activeYear, activeWeek, 1)
+  const next =
+    candidateNext.year < endLimit.year ||
+    (candidateNext.year === endLimit.year && candidateNext.week <= endLimit.week)
+      ? candidateNext
+      : undefined
+
+  return { items, previous, next }
+}
