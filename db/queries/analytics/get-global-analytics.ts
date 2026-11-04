@@ -2,8 +2,6 @@ import { db } from "@/db"
 import {
   tools,
   products,
-  toolUpvotes,
-  productLikes,
   toolComments,
   productComments,
   externalLinkVisits,
@@ -99,8 +97,6 @@ export const getGlobalAnalytics = async (
   const [
     productVisits,
     toolVisits,
-    recentLikes,
-    recentUpvotes,
     recentProdComments,
     recentToolComments,
   ] = await Promise.all([
@@ -138,46 +134,6 @@ export const getGlobalAnalytics = async (
           .where(inArray(externalLinkVisits.toolId, toolIds))
           .orderBy(desc(externalLinkVisits.createdAt))
           .limit(100)
-      : Promise.resolve([]),
-
-    productIds.length > 0
-      ? db
-          .select({
-            id: productLikes.id,
-            productId: productLikes.productId,
-            productName: products.name,
-            productSlug: products.slug,
-            createdAt: productLikes.createdAt,
-            userName: users.name,
-            userUsername: users.username,
-            userImage: users.image,
-          })
-          .from(productLikes)
-          .innerJoin(products, eq(productLikes.productId, products.id))
-          .innerJoin(users, eq(productLikes.userId, users.id))
-          .where(inArray(productLikes.productId, productIds))
-          .orderBy(desc(productLikes.createdAt))
-          .limit(15)
-      : Promise.resolve([]),
-
-    toolIds.length > 0
-      ? db
-          .select({
-            id: toolUpvotes.id,
-            toolId: toolUpvotes.toolId,
-            toolName: tools.name,
-            toolSlug: tools.slug,
-            createdAt: toolUpvotes.createdAt,
-            userName: users.name,
-            userUsername: users.username,
-            userImage: users.image,
-          })
-          .from(toolUpvotes)
-          .innerJoin(tools, eq(toolUpvotes.toolId, tools.id))
-          .innerJoin(users, eq(toolUpvotes.userId, users.id))
-          .where(inArray(toolUpvotes.toolId, toolIds))
-          .orderBy(desc(toolUpvotes.createdAt))
-          .limit(15)
       : Promise.resolve([]),
 
     productIds.length > 0
@@ -292,32 +248,6 @@ export const getGlobalAnalytics = async (
       : 0
 
   const recentInteractions: RecentInteraction[] = [
-    ...recentLikes.map((l) => ({
-      id: `like-${l.id}`,
-      type: "like" as const,
-      itemType: "product" as const,
-      itemName: l.productName,
-      itemSlug: l.productSlug,
-      user: {
-        name: l.userName,
-        username: l.userUsername,
-        image: l.userImage,
-      },
-      createdAt: l.createdAt,
-    })),
-    ...recentUpvotes.map((u) => ({
-      id: `upvote-${u.id}`,
-      type: "like" as const,
-      itemType: "tool" as const,
-      itemName: u.toolName,
-      itemSlug: u.toolSlug,
-      user: {
-        name: u.userName,
-        username: u.userUsername,
-        image: u.userImage,
-      },
-      createdAt: u.createdAt,
-    })),
     ...recentProdComments.map((c) => ({
       id: `comment-${c.id}`,
       type: "comment" as const,

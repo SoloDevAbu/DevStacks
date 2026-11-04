@@ -68,12 +68,6 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
       priority: 0.85,
     },
     {
-      url: normalizeSitemapUrl(ROUTES.DISCOVER_WEEKLY_LAUNCHES),
-      lastModified: now,
-      changeFrequency: "daily",
-      priority: 0.85,
-    },
-    {
       url: normalizeSitemapUrl("/mcp"),
       lastModified: now,
       changeFrequency: "weekly",

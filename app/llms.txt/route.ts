@@ -25,15 +25,21 @@ export const revalidate = 3600
 // Failures are intentionally not caught: a thrown error keeps the last good version cached
 // instead of publishing an empty catalog to AI crawlers.
 export const GET = async () => {
-  const [buildingBlocks, featuredTools, toolCats, productCats, launchWeek, launchWeeks] =
-    await Promise.all([
-      getTools({ sortBy: "builds", limit: 8 }),
-      getTrending(8),
-      getToolCategories(),
-      getProductCategories(),
-      getCurrentLaunchWeekSnapshot(),
-      getCachedLaunchWeekSummaries(),
-    ])
+  const [
+    buildingBlocks,
+    featuredTools,
+    toolCats,
+    productCats,
+    launchWeek,
+    launchWeeks,
+  ] = await Promise.all([
+    getTools({ sortBy: "builds", limit: 8 }),
+    getTrending(8),
+    getToolCategories(),
+    getProductCategories(),
+    getCurrentLaunchWeekSnapshot(),
+    getCachedLaunchWeekSummaries(),
+  ])
 
   const content = `# ${SITE_CONFIG.name}
 
@@ -61,7 +67,6 @@ ${formatPreviousWeeksSection(launchWeeks, launchWeek, AI_SURFACE_ARCHIVE_WEEKS)}
 - [Products](${SITE_CONFIG.url}/products): Live developer software directory with declared tech stacks.
 - [Product Categories Directory](${SITE_CONFIG.url}${ROUTES.PRODUCT_CATEGORIES}): Complete directory of software product categories, SaaS platforms, and indie apps.
 - [Trending](${SITE_CONFIG.url}/trending): Community-upvoted leaderboard with algorithmic freshness and momentum ranking.
-- [Weekly Launches](${SITE_CONFIG.url}/discover/weekly-launches): Developer tools and products sorted by week, community-voted.
 - [Popular Building Blocks](${SITE_CONFIG.url}/discover/popular-building-blocks): Most-used APIs and infrastructure ranked by verified adoption count.
 - [Makers](${SITE_CONFIG.url}/makers): Directory of software creators, developers, and builders.
 - [Submit / New Launch](${SITE_CONFIG.url}/submit): Interactive portal to submit and launch a new software product, SaaS, or developer tool with instant AI website autofill, structured SEO metadata, and AEO optimization.
@@ -91,7 +96,6 @@ ${getAllComparisons()
 - [/makers](${SITE_CONFIG.url}/makers): Makers and developers directory
 - [/makers/{username}](${SITE_CONFIG.url}/makers/<param>): Maker & developer profile (bio, country, maker FAQs, submitted tools & products)
 - [/trending](${SITE_CONFIG.url}/trending): Trending rankings leaderboard
-- [/discover/weekly-launches](${SITE_CONFIG.url}/discover/weekly-launches): Developer tools and products by week, community voted
 - [/discover/popular-building-blocks](${SITE_CONFIG.url}/discover/popular-building-blocks): Most-used developer APIs and infrastructure tools
 - [/producthunt-alternative](${SITE_CONFIG.url}/producthunt-alternative): Product Hunt vs LaunchNests editorial comparison
 - [/uneed-alternative](${SITE_CONFIG.url}/uneed-alternative): Uneed vs LaunchNests editorial comparison

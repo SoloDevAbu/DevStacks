@@ -42,11 +42,11 @@ interface SingleItemAnalyticsProps {
 }
 
 export const SingleItemAnalytics = ({ data }: SingleItemAnalyticsProps) => {
-  const [activeSubTab, setActiveSubTab] = useState<
-    "likes" | "comments" | "visits"
-  >("likes")
+  const [activeSubTab, setActiveSubTab] = useState<"comments" | "visits">(
+    "comments"
+  )
 
-  const { item, stats, whoLiked, comments, visitors } = data
+  const { item, stats, comments, visitors } = data
   const isProduct = item.itemType === "product"
   const likeLabel = isProduct ? "Likes" : "Upvotes"
   const LikeIcon = isProduct ? Heart : ArrowBigUp
@@ -208,16 +208,6 @@ export const SingleItemAnalytics = ({ data }: SingleItemAnalyticsProps) => {
       {/* 2. Interactive Detail Tabs */}
       <div className="flex flex-wrap items-center gap-2 border-b border-dashed border-border bg-white px-6 py-3.5 md:px-8">
         <button
-          onClick={() => setActiveSubTab("likes")}
-          className={analyticsTabTrigger(activeSubTab === "likes")}
-        >
-          <LikeIcon className="size-3.5" />
-          <span>
-            Who {isProduct ? "Liked" : "Upvoted"} ({whoLiked.length})
-          </span>
-        </button>
-
-        <button
           onClick={() => setActiveSubTab("comments")}
           className={analyticsTabTrigger(activeSubTab === "comments")}
         >
@@ -235,77 +225,6 @@ export const SingleItemAnalytics = ({ data }: SingleItemAnalyticsProps) => {
       </div>
 
       {/* 3. Tab Contents */}
-      {activeSubTab === "likes" && (
-        <div className="flex flex-col">
-          {whoLiked.length === 0 ? (
-            <Empty className="border-b border-dashed border-border bg-white px-6 py-16 md:px-8">
-              <EmptyMedia variant="icon">
-                <LikeIcon className="size-5" />
-              </EmptyMedia>
-              <EmptyHeader>
-                <EmptyTitle>No {likeLabel.toLowerCase()} yet</EmptyTitle>
-                <EmptyDescription>
-                  When signed-in developers and makers{" "}
-                  {isProduct ? "like" : "upvote"} your listing, their profiles
-                  will appear here.
-                </EmptyDescription>
-              </EmptyHeader>
-            </Empty>
-          ) : (
-            <div className="flex flex-col divide-y border-b border-dashed border-border bg-white">
-              {whoLiked.map((user) => (
-                <div
-                  key={user.id + user.interactedAt.toString()}
-                  className="flex items-center justify-between gap-3 px-6 py-4 transition-colors hover:bg-slate-50/50 md:px-8"
-                >
-                  <div className="flex items-center gap-3">
-                    <Avatar className="size-9 border border-border">
-                      {user.image && (
-                        <AvatarImage src={user.image} alt={user.name} />
-                      )}
-                      <AvatarFallback className="bg-slate-900 text-xs text-white">
-                        {user.name.slice(0, 2).toUpperCase()}
-                      </AvatarFallback>
-                    </Avatar>
-
-                    <div className="flex flex-col">
-                      <div className="flex items-center gap-2">
-                        {user.username ? (
-                          <Link
-                            href={ROUTES.MAKER(user.username)}
-                            target="_blank"
-                            className="text-xs font-bold text-slate-900 transition-colors hover:text-indigo-600"
-                          >
-                            {user.name}
-                          </Link>
-                        ) : (
-                          <span className="text-xs font-bold text-slate-900">
-                            {user.name}
-                          </span>
-                        )}
-                        {user.username && (
-                          <span className="font-mono text-[11px] text-slate-400">
-                            @{user.username}
-                          </span>
-                        )}
-                      </div>
-                      <span className="text-[11px] text-slate-500">
-                        Community Member
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-1.5 text-xs text-slate-400">
-                    <Calendar className="size-3" />
-                    <span>{formatDate(user.interactedAt)}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
-
       {activeSubTab === "comments" && (
         <div className="flex flex-col">
           {comments.length === 0 ? (

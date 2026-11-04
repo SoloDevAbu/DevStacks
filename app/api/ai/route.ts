@@ -96,7 +96,7 @@ export const GET = async () => {
       endDate: launchWeek.endDate.toISOString(),
       lastUpdated: launchWeek.lastUpdated.toISOString(),
       count: launchWeek.items.length,
-      archiveUrl: toAbsoluteUrl(ROUTES.DISCOVER_WEEKLY_LAUNCHES),
+      weekUrl: toAbsoluteUrl(ROUTES.LAUNCH_WEEK(launchWeek.year, launchWeek.week)),
       items: launchWeek.items.map((item, index) => ({
         rank: index + 1,
         kind: item.itemKind,

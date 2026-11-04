@@ -2,27 +2,14 @@ import type { Metadata } from "next"
 import { notFound, permanentRedirect } from "next/navigation"
 import Image from "next/image"
 import Link from "next/link"
-import {
-  Globe,
-  Calendar,
-  Layers,
-  Sparkles,
-  Wrench,
-  Package,
-} from "lucide-react"
+import { Calendar, Wrench, Package } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
 import { ToolCard } from "@/components/shared/tool-card"
 import { ProductCard } from "@/components/shared/product-card"
-import { XIcon, LinkedInIcon, GithubIcon } from "@/components/shared/icons"
 import { HoverOutline } from "@/components/shared/hover-outline"
 import { getMakerProfile } from "@/db/queries/users/get-profile"
-import {
-  countryCodeToFlag,
-  formatLocation,
-  formatGeoMetaTags,
-} from "@/utils/country"
+import { formatLocation, formatGeoMetaTags } from "@/utils/country"
 import { SITE_CONFIG } from "@/constants/site"
 import { ROUTES } from "@/constants/routes"
 import { NOFOLLOW_LINK_REL, UGC_LINK_REL } from "@/utils/urls"
@@ -140,7 +127,6 @@ export default async function MakerPage({ params }: MakerPageProps) {
   }
 
   const displayName = maker.name || `@${maker.username}`
-  const flag = countryCodeToFlag(maker.country)
   const locationText = formatLocation(maker.country, maker.state)
   const siteUrl = SITE_CONFIG.url
   const profileUrl = `${siteUrl}/makers/${maker.username}`
@@ -264,11 +250,6 @@ export default async function MakerPage({ params }: MakerPageProps) {
                   <h1 className="text-2xl font-black tracking-tight text-slate-900 md:text-3xl">
                     {displayName}
                   </h1>
-                  {flag && (
-                    <span className="text-2xl select-none" title={locationText}>
-                      {flag}
-                    </span>
-                  )}
                 </div>
 
                 <div className="flex flex-wrap items-center gap-2.5 text-xs text-slate-500">

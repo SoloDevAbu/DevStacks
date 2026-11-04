@@ -1006,3 +1006,30 @@ export const sectionFooterLink =
 
 export const sidebarTaglineCard =
   "rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-800"
+
+export const launchWeekNavWrapper =
+  "relative flex h-9 w-full items-stretch border-b border-dashed border-border bg-white sm:h-10"
+
+export const launchWeekNavScroll =
+  "flex flex-1 items-stretch divide-x divide-border overflow-x-auto scrollbar-none"
+
+export const launchWeekActivePill =
+  "flex h-full flex-1 min-w-[85px] shrink-0 items-center justify-center rounded-none bg-primary px-3 text-center text-xs font-semibold text-primary-foreground select-none transition-colors hover:bg-primary/90 sm:min-w-[100px] sm:text-sm whitespace-nowrap"
+
+export const launchWeekAvailableLink =
+  "flex h-full flex-1 min-w-[85px] shrink-0 items-center justify-center rounded-none bg-white px-3 text-center text-xs font-medium text-slate-700 transition-colors hover:bg-slate-50 hover:text-slate-950 sm:min-w-[100px] sm:text-sm whitespace-nowrap"
+
+export const launchWeekDisabledItem =
+  "flex h-full flex-1 min-w-[85px] shrink-0 cursor-not-allowed items-center justify-center rounded-none bg-slate-50/70 px-3 text-center text-xs font-medium text-slate-400 select-none sm:min-w-[100px] sm:text-sm whitespace-nowrap"
+
+export const launchWeekArrowBtnLeft =
+  "flex h-full w-9 shrink-0 items-center justify-center rounded-none border-r border-border bg-white p-0 text-slate-700 transition-colors hover:bg-slate-100 hover:text-slate-950 sm:w-10"
+
+export const launchWeekArrowBtnRight =
+  "flex h-full w-9 shrink-0 items-center justify-center rounded-none border-l border-border bg-white p-0 text-slate-700 transition-colors hover:bg-slate-100 hover:text-slate-950 sm:w-10"
+
+export const launchWeekArrowDisabledLeft =
+  "flex h-full w-9 shrink-0 cursor-not-allowed items-center justify-center rounded-none border-r border-border bg-slate-50/50 p-0 text-slate-300 select-none pointer-events-none sm:w-10"
+
+export const launchWeekArrowDisabledRight =
+  "flex h-full w-9 shrink-0 cursor-not-allowed items-center justify-center rounded-none border-l border-border bg-slate-50/50 p-0 text-slate-300 select-none pointer-events-none sm:w-10"

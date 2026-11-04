@@ -19,3 +19,4 @@ export const LAUNCH_STATUS = {
 export type LaunchStatus = (typeof LAUNCH_STATUS)[keyof typeof LAUNCH_STATUS]
 export const LAUNCH_ARCHIVE_FIRST_YEAR = 2024
 export const LAUNCH_WEEKS_PRERENDERED = 8
+export const LAUNCH_NAV_FUTURE_WEEKS = 5

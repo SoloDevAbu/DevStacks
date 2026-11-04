@@ -58,7 +58,12 @@ const nextConfig: NextConfig = {
     },
     {
       source: "/discover",
-      destination: "/discover/weekly-launches",
+      destination: "/",
+      permanent: true,
+    },
+    {
+      source: "/discover/weekly-launches",
+      destination: "/",
       permanent: true,
     },
     {

@@ -11,7 +11,7 @@ import { getListingPath } from "@/utils/urls"
 
 export const dynamic = "force-dynamic"
 
-const ROLLOVER_HUB_PATHS = [ROUTES.HOME, ROUTES.DISCOVER_WEEKLY_LAUNCHES]
+const ROLLOVER_HUB_PATHS = [ROUTES.HOME]
 
 const ROLLOVER_MACHINE_PATHS = [
   ROUTES.LLMS_TXT,

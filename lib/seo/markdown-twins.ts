@@ -563,7 +563,7 @@ export const formatPreviousWeeksSection = (
 
   return `### Previous Weeks
 
-${[...previousWeeks, `- [Full weekly archive](${toAbsoluteUrl(ROUTES.DISCOVER_WEEKLY_LAUNCHES)})`].join("\n")}`
+${previousWeeks.join("\n")}`
 }
 
 export const generateHomeMarkdown = (
@@ -576,7 +576,6 @@ ${formatLaunchWeekSection(snapshot, "This Week's Launches")}
 
 ## Explore
 
-- [All weekly launches](${toAbsoluteUrl(ROUTES.DISCOVER_WEEKLY_LAUNCHES)}): Launches grouped by ISO week, ranked by community votes.
 - [Trending](${toAbsoluteUrl(ROUTES.TRENDING)}): Community-ranked trending tools and products.
 - [Developer tools](${toAbsoluteUrl(ROUTES.TOOLS)}) and [products](${toAbsoluteUrl(ROUTES.PRODUCTS)}) directories.
 - [Launch your product](${toAbsoluteUrl(ROUTES.SUBMIT)}): Free launch with AI autofill.
@@ -593,7 +592,6 @@ ${formatLaunchWeekSection(snapshot, "Launches")}
 
 ## More
 
-- [All weekly launches](${toAbsoluteUrl(ROUTES.DISCOVER_WEEKLY_LAUNCHES)})
 - [This week's launches](${toAbsoluteUrl(ROUTES.HOME)})
 `
 
