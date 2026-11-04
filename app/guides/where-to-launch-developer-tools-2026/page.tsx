@@ -1,25 +1,17 @@
 import type { Metadata } from "next"
 import Link from "next/link"
+import { ArrowLeft, ChevronRight, ChevronRight as ArrowSub } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { CornerBrackets } from "@/components/shared/corner-brackets"
+import { ReadyToShowcaseCta } from "@/components/shared/ready-to-showcase-cta"
 import {
-  ArrowLeft,
-  ChevronRight,
-  BookOpen,
-  Code2,
-  Hammer,
-  Terminal,
-  ShieldCheck,
-  Sparkles,
-  Layers,
-  ArrowRight,
-  Clock,
-  Globe,
-  CheckCircle2,
-  Cpu,
-  Flame,
-} from "lucide-react"
-import { Badge } from "@/components/ui/badge"
-import { buttonVariants } from "@/components/ui/button"
-import { cn } from "@/lib/utils"
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+} from "@/components/ui/table"
 import {
   breadcrumbSchema,
   buildEntityGraph,
@@ -27,6 +19,17 @@ import {
 } from "@/lib/seo/schema"
 import { SITE_CONFIG } from "@/constants/site"
 import { ROUTES } from "@/constants/routes"
+import {
+  comparisonPageContainer,
+  comparisonHeroWrapper,
+  comparisonCategoryPill,
+  comparisonH1,
+  comparisonLeadParagraph,
+  comparisonTrustBar,
+  comparisonSectionTitle,
+  comparisonSectionSubtitle,
+  comparisonTableCard,
+} from "@/utils/styles"
 
 export const revalidate = 86400
 
@@ -113,8 +116,8 @@ const DEV_CHANNELS: DevChannel[] = [
     audienceSize: "1M+ Engineers & CTOs",
     conversionType: "Viral Traffic & Code Reviews",
     bestFor: "Novel engineering, technical breakthroughs, OSS",
-    effort: "High (strict formatting & active comment replies)",
-    recommendation: "Highest impact if executed with genuine authenticity",
+    effort: "High (strict formatting & active comments)",
+    recommendation: "Highest impact if executed authentically",
   },
   {
     name: "GitHub Trending & Awesome Lists",
@@ -142,6 +145,72 @@ const DEV_CHANNELS: DevChannel[] = [
     bestFor: "APIs, Documentation, SDKs",
     effort: "Low (Standardized endpoints)",
     recommendation: "Crucial for modern developer discovery",
+  },
+]
+
+const LAUNCH_PILLARS = [
+  {
+    pillarNumber: "01",
+    subtitle: "Permanent Indexing",
+    title: "LaunchNests 'Built With' Graph",
+    description:
+      "Engineers evaluate tooling based on real-world proof. Listing your dev tool on LaunchNests links your profile directly to software products using your SDK. You gain permanent Do-Follow backlinks and indexable presence across static category hubs.",
+    actionLabel: "Submit a Devtool to LaunchNests →",
+    actionHref: ROUTES.SUBMIT_TOOL,
+  },
+  {
+    pillarNumber: "02",
+    subtitle: "Technical Community",
+    title: "DevHunt Peer Review",
+    description:
+      "DevHunt brings together fellow developers, open-source maintainers, and developer advocates for 24-hour launch feedback. Perfect for gathering code-level critiques, early testers, and an official 'Tool of the Day' badge.",
+    actionLabel: "Compare LaunchNests vs DevHunt →",
+    actionHref: ROUTES.DEVHUNT_ALTERNATIVE,
+  },
+  {
+    pillarNumber: "03",
+    subtitle: "Viral Engineering Spike",
+    title: "Authentic Technical Show HN",
+    description:
+      "A front-page Show HN post can deliver 10,000–50,000 developer visits in 48 hours. The secret: no marketing language. Focus on the architectural problem you solved, post your GitHub repository, and personally answer technical questions in the comments.",
+    actionLabel: null,
+    actionHref: null,
+  },
+  {
+    pillarNumber: "04",
+    subtitle: "AI Agent Discovery",
+    title: "Model Context Protocol & /llms.txt",
+    description:
+      "In 2026, developers increasingly discover libraries through AI coding assistants like Cursor, Claude, and Copilot. Providing an MCP server and /llms.txt index ensures your API is cited when developers ask their IDE for implementation libraries.",
+    actionLabel: null,
+    actionHref: null,
+  },
+]
+
+const LAUNCH_CHECKLIST = [
+  {
+    step: "01",
+    title: "A 3-Line Quickstart Code Sample",
+    description:
+      "Put an npm/pip install command and a 5-line working code snippet above the fold on your homepage. Never make developers read paragraphs before seeing code.",
+  },
+  {
+    step: "02",
+    title: "Transparent Self-Serve Pricing",
+    description:
+      "Clearly disclose whether you are Open Source, Freemium, or Paid. Developers distrust 'Contact Sales' buttons for standard utilities and libraries.",
+  },
+  {
+    step: "03",
+    title: "Interactive Playground or Sandbox",
+    description:
+      "Provide a web-based sandbox (StackBlitz, CodeSandbox, or live API console) so developers can test your API without registering an account or entering credentials.",
+  },
+  {
+    step: "04",
+    title: "Embeddable GitHub README Badges",
+    description:
+      "Include verified directory and build badges on your GitHub repository to pass backlink equity and signal active production adoption to potential contributors.",
   },
 ]
 
@@ -189,330 +258,269 @@ const WhereToLaunchDevtoolsGuidePage = () => {
         dangerouslySetInnerHTML={{ __html: safeJsonLd(unifiedLd) }}
       />
 
-      <div className="flex min-h-screen flex-col bg-white">
+      <div className="flex w-full flex-col overflow-x-clip bg-white">
         {/* Breadcrumb Navigation */}
         <nav
           aria-label="Breadcrumb"
-          className="border-b border-dashed border-border bg-white px-6 py-3 text-xs font-medium text-slate-500 md:px-8"
+          className="border-b border-dashed border-border bg-slate-50/50 px-4 py-3 text-xs font-medium text-slate-500 sm:px-6 md:px-8"
         >
-          <ol className="flex flex-wrap items-center gap-2">
-            <li className="flex items-center gap-1">
-              <Link
-                href={ROUTES.HOME}
-                className="flex items-center gap-1 hover:text-slate-900"
-              >
-                <ArrowLeft className="size-3" />
-                Home
-              </Link>
-            </li>
-            <li className="flex items-center text-slate-400" aria-hidden="true">
-              <ChevronRight className="size-3" />
-            </li>
-            <li className="flex items-center text-slate-500">Guides</li>
-            <li className="flex items-center text-slate-400" aria-hidden="true">
-              <ChevronRight className="size-3" />
-            </li>
-            <li className="flex items-center">
-              <span
-                className="font-semibold text-slate-900"
-                aria-current="page"
-              >
-                Where to Launch Developer Tools
-              </span>
-            </li>
-          </ol>
+          <div className="mx-auto flex max-w-6xl min-w-0 items-center gap-2">
+            <Link
+              href={ROUTES.HOME}
+              className="flex shrink-0 items-center gap-1 transition-colors hover:text-slate-900"
+            >
+              <ArrowLeft className="size-3 shrink-0" />
+              Home
+            </Link>
+            <ChevronRight
+              className="size-3 shrink-0 text-slate-400"
+              aria-hidden="true"
+            />
+            <span className="text-slate-500">Guides</span>
+            <ChevronRight
+              className="size-3 shrink-0 text-slate-400"
+              aria-hidden="true"
+            />
+            <span
+              className="truncate font-semibold text-slate-900"
+              aria-current="page"
+            >
+              Where to Launch Developer Tools
+            </span>
+          </div>
         </nav>
 
-        {/* Hero Section */}
-        <header className="border-b border-dashed border-border bg-white px-6 py-10 md:px-8 md:py-16">
-          <div className="flex flex-col gap-5">
-            <div className="flex items-center gap-2 text-xs font-bold tracking-wider text-blue-700 uppercase">
-              <Terminal className="size-4 text-blue-600" />
-              <span>Developer Marketing & Growth Guide ({currentYear})</span>
+        {/* Main Content Area */}
+        <div className={comparisonPageContainer}>
+          {/* Hero Section */}
+          <header className={comparisonHeroWrapper}>
+            <div className={comparisonCategoryPill}>
+              <span>Developer Distribution · {currentYear}</span>
             </div>
 
-            <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl md:text-5xl">
+            <h1 className={comparisonH1}>
               Where to Launch Developer Tools: The Complete 2026 Playbook
             </h1>
 
-            <p className="max-w-3xl text-sm leading-relaxed font-normal text-slate-600 sm:text-base">
+            <p className={comparisonLeadParagraph}>
               Marketing to developers requires an entirely different strategy
               than marketing consumer SaaS. Developers despise corporate hype,
               marketing buzzwords, and gated sales demos. They want clean
-              documentation, immediate code samples, transparent pricing, and{" "}
-              <strong className="font-semibold text-slate-800">
-                proof of real-world production adoption
-              </strong>
-              .
+              documentation, immediate code samples, transparent pricing, and
+              proof of real-world production adoption.
             </p>
 
-            <div className="mt-2 flex flex-wrap items-center gap-3 text-xs font-medium text-slate-500">
-              <span className="flex items-center gap-1">
-                <Clock className="size-3.5 text-slate-400" />
-                14 min read
-              </span>
-              <span>•</span>
-              <span className="flex items-center gap-1">
-                <ShieldCheck className="size-3.5 text-emerald-600" />
-                Engineering-First Strategy
-              </span>
-              <span>•</span>
-              <span>Updated for {currentYear} AI workflows</span>
+            <div className="mt-2 flex w-full flex-wrap items-center justify-center gap-3">
+              <Button
+                size="default"
+                nativeButton={false}
+                render={<Link href={ROUTES.SUBMIT_TOOL} />}
+                className="w-full text-xs font-semibold sm:w-auto"
+              >
+                Submit Your Dev Tool — Free
+              </Button>
+              <Button
+                variant="outline"
+                size="default"
+                nativeButton={false}
+                render={<Link href={ROUTES.TOOLS} />}
+                className="w-full text-xs font-semibold text-slate-700 sm:w-auto"
+              >
+                Explore Developer Tools
+              </Button>
             </div>
-          </div>
-        </header>
 
-        {/* Master Channel Matrix */}
-        <section className="border-b border-dashed border-border bg-slate-50/40 px-6 py-10 md:px-8">
-          <div className="mb-6 flex flex-col gap-1">
-            <h2 className="text-lg font-bold text-slate-900 sm:text-2xl">
-              Developer Distribution Channels Ranked by Impact
-            </h2>
-            <p className="text-xs text-slate-600 sm:text-sm">
-              Comparative analysis of primary developer launchpads, technical
-              communities, and programmatic indexing engines.
-            </p>
-          </div>
+            <div className={comparisonTrustBar}>
+              <span>14 min read</span>
+              <span>·</span>
+              <span>Engineering-First Strategy</span>
+              <span>·</span>
+              <span>Updated for {currentYear} Workflows</span>
+            </div>
+          </header>
 
-          <div className="overflow-x-auto rounded-lg border border-dashed border-border bg-white shadow-2xs">
-            <table className="w-full text-left text-xs sm:text-sm">
-              <thead className="border-b border-border bg-slate-50 font-semibold text-slate-700">
-                <tr>
-                  <th className="px-4 py-3">Channel</th>
-                  <th className="px-4 py-3">Category</th>
-                  <th className="px-4 py-3">Audience Fit</th>
-                  <th className="px-4 py-3">Traffic Type</th>
-                  <th className="px-4 py-3">Best Suited For</th>
-                  <th className="px-4 py-3">Effort</th>
-                  <th className="px-4 py-3 text-right">Strategic Rating</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border text-slate-600">
-                {DEV_CHANNELS.map((ch) => (
-                  <tr
-                    key={ch.name}
-                    className={
-                      ch.name.includes("LaunchNests")
-                        ? "bg-blue-50/50 font-medium"
-                        : "hover:bg-slate-50/60"
-                    }
-                  >
-                    <td className="px-4 py-3.5 font-semibold text-slate-900">
-                      {ch.name}
-                    </td>
-                    <td className="px-4 py-3 text-xs text-slate-600">
-                      {ch.category}
-                    </td>
-                    <td className="px-4 py-3 text-xs text-slate-600">
-                      {ch.audienceSize}
-                    </td>
-                    <td className="px-4 py-3 text-xs font-medium text-slate-800">
-                      {ch.conversionType}
-                    </td>
-                    <td className="px-4 py-3 text-xs text-slate-600">
-                      {ch.bestFor}
-                    </td>
-                    <td className="px-4 py-3 text-xs text-slate-600">
-                      {ch.effort}
-                    </td>
-                    <td className="px-4 py-3 text-right text-xs font-semibold text-blue-600">
-                      {ch.recommendation.split("(")[0]}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </section>
-
-        {/* Deep Dive Sections */}
-        <div className="flex-1 px-6 py-12 md:px-8">
-          <div className="flex flex-col gap-12">
-            {/* The 4 Developer Launch Pillars */}
+          {/* Master Channel Matrix */}
+          <section id="channel-matrix" className="flex flex-col gap-4">
             <div>
-              <div className="flex items-center gap-2 text-xs font-bold tracking-wider text-slate-500 uppercase">
-                <Cpu className="size-4 text-blue-600" />
-                <span>Strategic Playbook</span>
-              </div>
-              <h2 className="mt-1 text-xl font-bold tracking-tight text-slate-900 sm:text-2xl">
+              <h2 className={comparisonSectionTitle}>
+                Developer Distribution Channels Ranked by Impact
+              </h2>
+              <p className={comparisonSectionSubtitle}>
+                Comparative analysis of primary developer launchpads, technical
+                communities, and programmatic indexing engines.
+              </p>
+            </div>
+
+            <div className={comparisonTableCard}>
+              <Table
+                containerClassName="overflow-x-auto"
+                className="w-full text-left text-xs"
+              >
+                <TableHeader className="border-b border-dashed border-border bg-slate-50/80">
+                  <TableRow className="border-b border-dashed border-border">
+                    <TableHead className="px-4 py-3.5 font-mono text-xs font-bold tracking-wider text-slate-700 uppercase">
+                      Channel
+                    </TableHead>
+                    <TableHead className="px-4 py-3.5 font-mono text-xs font-bold tracking-wider text-slate-700 uppercase">
+                      Category
+                    </TableHead>
+                    <TableHead className="px-4 py-3.5 font-mono text-xs font-bold tracking-wider text-slate-700 uppercase">
+                      Audience Fit
+                    </TableHead>
+                    <TableHead className="px-4 py-3.5 font-mono text-xs font-bold tracking-wider text-slate-700 uppercase">
+                      Traffic Type
+                    </TableHead>
+                    <TableHead className="px-4 py-3.5 font-mono text-xs font-bold tracking-wider text-slate-700 uppercase">
+                      Best Suited For
+                    </TableHead>
+                    <TableHead className="px-4 py-3.5 font-mono text-xs font-bold tracking-wider text-slate-700 uppercase">
+                      Effort
+                    </TableHead>
+                    <TableHead className="px-4 py-3.5 text-right font-mono text-xs font-bold tracking-wider text-slate-700 uppercase">
+                      Rating
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody className="divide-y divide-dashed divide-border text-slate-600">
+                  {DEV_CHANNELS.map((ch) => (
+                    <TableRow
+                      key={ch.name}
+                      className={
+                        ch.name.includes("LaunchNests")
+                          ? "border-b border-dashed border-border bg-indigo-50/20 font-medium"
+                          : "border-b border-dashed border-border hover:bg-slate-50/50"
+                      }
+                    >
+                      <TableCell className="px-4 py-3.5 font-semibold text-slate-900">
+                        {ch.name}
+                      </TableCell>
+                      <TableCell className="px-4 py-3.5 font-mono text-xs text-slate-600">
+                        {ch.category}
+                      </TableCell>
+                      <TableCell className="px-4 py-3.5 text-xs text-slate-600">
+                        {ch.audienceSize}
+                      </TableCell>
+                      <TableCell className="px-4 py-3.5 font-medium text-slate-800">
+                        {ch.conversionType}
+                      </TableCell>
+                      <TableCell className="px-4 py-3.5 text-xs text-slate-600">
+                        {ch.bestFor}
+                      </TableCell>
+                      <TableCell className="px-4 py-3.5 text-xs text-slate-600">
+                        {ch.effort}
+                      </TableCell>
+                      <TableCell className="px-4 py-3.5 text-right font-mono text-xs font-semibold text-indigo-600">
+                        {ch.recommendation.split("(")[0].trim()}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          </section>
+
+          {/* 4 Pillars of a High-Impact Launch */}
+          <section id="launch-pillars" className="flex flex-col gap-4">
+            <div>
+              <h2 className={comparisonSectionTitle}>
                 The 4 Pillars of a High-Impact Developer Tool Launch
               </h2>
-              <p className="mt-1 max-w-3xl text-xs leading-relaxed text-slate-600 sm:text-sm">
+              <p className={comparisonSectionSubtitle}>
                 Successful devtool founders execute launches across four
                 distinct timeframes: permanent canonical indexing, community
                 launch day, viral developer feedback, and AI agent integration.
               </p>
-
-              <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2">
-                <div className="rounded-xl border border-dashed border-border bg-white p-6 shadow-2xs">
-                  <div className="flex items-center gap-2 text-xs font-bold text-blue-700 uppercase">
-                    <Hammer className="size-4 text-blue-600" />
-                    <span>Pillar 1: Permanent Relational Indexing</span>
-                  </div>
-                  <h3 className="mt-2 text-base font-bold text-slate-900">
-                    LaunchNests 'Built With' Graph
-                  </h3>
-                  <p className="mt-2 text-xs leading-relaxed text-slate-600">
-                    Engineers evaluate tooling based on real-world proof.
-                    Listing your dev tool on LaunchNests links your profile
-                    directly to software products using your SDK. You gain
-                    permanent Do-Follow backlinks and indexable presence across
-                    static category hubs (e.g. Auth, DBs, AI APIs).
-                  </p>
-                  <Link
-                    href={ROUTES.SUBMIT_TOOL}
-                    className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-blue-600 hover:underline"
-                  >
-                    Submit a Devtool to LaunchNests →
-                  </Link>
-                </div>
-
-                <div className="rounded-xl border border-dashed border-border bg-white p-6 shadow-2xs">
-                  <div className="flex items-center gap-2 text-xs font-bold text-emerald-700 uppercase">
-                    <Terminal className="size-4 text-emerald-600" />
-                    <span>Pillar 2: Technical Launch Day Community</span>
-                  </div>
-                  <h3 className="mt-2 text-base font-bold text-slate-900">
-                    DevHunt Peer Review
-                  </h3>
-                  <p className="mt-2 text-xs leading-relaxed text-slate-600">
-                    DevHunt brings together fellow developers, open-source
-                    maintainers, and developer advocates for 24-hour launch
-                    feedback. Perfect for gathering code-level critiques, early
-                    testers, and an official 'Tool of the Day' badge.
-                  </p>
-                  <Link
-                    href={ROUTES.DEVHUNT_ALTERNATIVE}
-                    className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-blue-600 hover:underline"
-                  >
-                    Compare LaunchNests vs DevHunt →
-                  </Link>
-                </div>
-
-                <div className="rounded-xl border border-dashed border-border bg-white p-6 shadow-2xs">
-                  <div className="flex items-center gap-2 text-xs font-bold text-purple-700 uppercase">
-                    <Flame className="size-4 text-purple-600" />
-                    <span>Pillar 3: The Hacker News Show HN</span>
-                  </div>
-                  <h3 className="mt-2 text-base font-bold text-slate-900">
-                    Authentic Technical Show HN
-                  </h3>
-                  <p className="mt-2 text-xs leading-relaxed text-slate-600">
-                    A front-page Show HN post can deliver 10,000–50,000
-                    developer visits in 48 hours. The secret: no marketing
-                    language. Focus on the architectural problem you solved,
-                    post your GitHub repository, and personally answer technical
-                    questions in the comments.
-                  </p>
-                </div>
-
-                <div className="rounded-xl border border-dashed border-border bg-white p-6 shadow-2xs">
-                  <div className="flex items-center gap-2 text-xs font-bold text-amber-700 uppercase">
-                    <Sparkles className="size-4 text-amber-600" />
-                    <span>Pillar 4: Autonomous AI Agent Discovery</span>
-                  </div>
-                  <h3 className="mt-2 text-base font-bold text-slate-900">
-                    Model Context Protocol & /llms.txt
-                  </h3>
-                  <p className="mt-2 text-xs leading-relaxed text-slate-600">
-                    In 2026, developers increasingly discover libraries through
-                    AI coding assistants like Cursor, Claude, and Copilot.
-                    Providing an MCP server and /llms.txt index ensures your API
-                    is cited when developers ask their IDE for implementation
-                    libraries.
-                  </p>
-                </div>
-              </div>
             </div>
 
-            {/* Tactical Checklist */}
-            <section className="rounded-2xl border border-slate-200 bg-slate-50 p-6 md:p-8">
-              <div className="flex flex-col gap-4">
-                <div className="flex items-center gap-2 text-xs font-bold tracking-wider text-slate-500 uppercase">
-                  <CheckCircle2 className="size-4 text-emerald-600" />
-                  <span>Execution Checklist</span>
-                </div>
-
-                <h3 className="text-lg font-bold text-slate-900 sm:text-xl">
-                  Checklist: What to Prepare Before Launching a Developer Tool
-                </h3>
-
-                <div className="space-y-3 pt-2 text-xs text-slate-600">
-                  <div className="flex items-start gap-2">
-                    <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-emerald-600" />
-                    <span>
-                      <strong className="text-slate-800">
-                        1. A 3-line Quickstart Code Sample:
-                      </strong>{" "}
-                      Put an npm/pip install command and a 5-line working code
-                      snippet above the fold on your homepage. Never make
-                      developers read paragraphs before seeing code.
-                    </span>
-                  </div>
-
-                  <div className="flex items-start gap-2">
-                    <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-emerald-600" />
-                    <span>
-                      <strong className="text-slate-800">
-                        2. Transparent Self-Serve Pricing:
-                      </strong>{" "}
-                      Clearly disclose whether you are Open Source, Freemium, or
-                      Paid. Developers distrust "Contact Sales" buttons for
-                      standard utilities.
-                    </span>
-                  </div>
-
-                  <div className="flex items-start gap-2">
-                    <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-emerald-600" />
-                    <span>
-                      <strong className="text-slate-800">
-                        3. Interactive Playground or Sandbox:
-                      </strong>{" "}
-                      Provide a web-based sandbox (StackBlitz, CodeSandbox, or
-                      live API console) so developers can test your API without
-                      registering an account.
-                    </span>
-                  </div>
-
-                  <div className="flex items-start gap-2">
-                    <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-emerald-600" />
-                    <span>
-                      <strong className="text-slate-800">
-                        4. Embeddable GitHub README Badges:
-                      </strong>{" "}
-                      Include verified LaunchNests and build badges on your
-                      GitHub repository to pass backlink equity and signal
-                      active production adoption.
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </section>
-
-            {/* Bottom Call to Action */}
-            <section className="rounded-2xl bg-slate-900 p-8 text-center text-white md:p-12">
-              <h3 className="text-xl font-bold tracking-tight sm:text-2xl md:text-3xl">
-                Ready to Launch Your Developer Tool on {SITE_CONFIG.name}?
-              </h3>
-              <p className="mx-auto mt-2 max-w-xl text-xs text-slate-300 sm:text-sm">
-                Get indexed across our permanent category hubs, connect to
-                verified production builds, and secure permanent Do-Follow SEO
-                backlinks.
-              </p>
-              <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-                <Link
-                  href={ROUTES.SUBMIT_TOOL}
-                  className={cn(
-                    buttonVariants({ variant: "default" }),
-                    "rounded-none bg-blue-600 text-white hover:bg-blue-500"
-                  )}
+            <div className="relative grid grid-cols-1 divide-y divide-dashed divide-border border border-dashed border-border bg-white md:grid-cols-2 md:divide-y-0 rounded-xl overflow-hidden">
+              {LAUNCH_PILLARS.map((pillar, idx) => (
+                <div
+                  key={pillar.pillarNumber}
+                  className={`group relative flex flex-col justify-between p-6 transition-colors hover:bg-slate-50/30 md:p-8 ${
+                    idx % 2 === 0
+                      ? "md:border-r md:border-dashed md:border-border"
+                      : ""
+                  } ${idx < 2 ? "md:border-b md:border-dashed md:border-border" : ""}`}
                 >
-                  Submit Your Developer Tool
-                  <ArrowRight className="ml-1.5 size-4" />
-                </Link>
-              </div>
-            </section>
-          </div>
+                  <CornerBrackets />
+                  <div>
+                    <div className="flex items-center justify-between border-b border-dashed border-border pb-3">
+                      <span className="font-mono text-xs font-bold tracking-wider text-indigo-600 uppercase">
+                        Pillar {pillar.pillarNumber}
+                      </span>
+                      <span className="font-mono text-[11px] text-slate-500 uppercase">
+                        {pillar.subtitle}
+                      </span>
+                    </div>
+
+                    <h3 className="mt-3 text-base font-bold text-slate-900">
+                      {pillar.title}
+                    </h3>
+                    <p className="mt-2 text-xs leading-relaxed text-slate-600 sm:text-sm">
+                      {pillar.description}
+                    </p>
+                  </div>
+
+                  {pillar.actionLabel && pillar.actionHref && (
+                    <div className="mt-4 border-t border-dashed border-slate-100 pt-3">
+                      <Link
+                        href={pillar.actionHref}
+                        className="font-mono text-xs font-semibold text-indigo-600 hover:text-indigo-800"
+                      >
+                        {pillar.actionLabel}
+                      </Link>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* Execution Checklist */}
+          <section id="checklist" className="flex flex-col gap-4">
+            <div>
+              <h2 className={comparisonSectionTitle}>
+                What to Prepare Before Launching a Developer Tool
+              </h2>
+              <p className={comparisonSectionSubtitle}>
+                Key operational and technical checkpoints to complete before
+                submitting your project to public developer channels.
+              </p>
+            </div>
+
+            <div className="relative flex flex-col divide-y divide-dashed divide-border border border-dashed border-border bg-white rounded-xl overflow-hidden">
+              {LAUNCH_CHECKLIST.map((item) => (
+                <div
+                  key={item.step}
+                  className="group relative flex flex-col gap-2 p-5 transition-colors hover:bg-slate-50/20 sm:p-6"
+                >
+                  <CornerBrackets />
+                  <div className="flex items-center gap-2">
+                    <span className="font-mono text-xs font-bold text-indigo-600 uppercase">
+                      Check {item.step}
+                    </span>
+                    <span className="text-slate-300">·</span>
+                    <h3 className="text-sm font-bold text-slate-900 sm:text-base">
+                      {item.title}
+                    </h3>
+                  </div>
+                  <p className="text-xs leading-relaxed text-slate-600 sm:text-sm">
+                    {item.description}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* Closing Call to Action */}
+          <ReadyToShowcaseCta
+            title={`Ready to Launch Your Developer Tool on ${SITE_CONFIG.name}?`}
+            description="Get indexed across our permanent category hubs, connect to verified production builds, and secure permanent Do-Follow SEO backlinks."
+            primaryActionLabel="Submit Your Developer Tool"
+            primaryActionHref={ROUTES.SUBMIT_TOOL}
+            secondaryActionLabel="Explore Developer Tools"
+            secondaryActionHref={ROUTES.TOOLS}
+          />
         </div>
       </div>
     </>

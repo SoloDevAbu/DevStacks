@@ -1,24 +1,17 @@
 import type { Metadata } from "next"
 import Link from "next/link"
+import { ArrowLeft, ChevronRight, ExternalLink } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { CornerBrackets } from "@/components/shared/corner-brackets"
+import { ReadyToShowcaseCta } from "@/components/shared/ready-to-showcase-cta"
 import {
-  ArrowLeft,
-  ChevronRight,
-  BookOpen,
-  CheckCircle2,
-  ExternalLink,
-  ShieldCheck,
-  Sparkles,
-  TrendingUp,
-  AlertCircle,
-  HelpCircle,
-  Layers,
-  ArrowRight,
-  Clock,
-  Award,
-} from "lucide-react"
-import { Badge } from "@/components/ui/badge"
-import { buttonVariants } from "@/components/ui/button"
-import { cn } from "@/lib/utils"
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+} from "@/components/ui/table"
 import {
   breadcrumbSchema,
   buildEntityGraph,
@@ -26,6 +19,17 @@ import {
 } from "@/lib/seo/schema"
 import { SITE_CONFIG } from "@/constants/site"
 import { ROUTES } from "@/constants/routes"
+import {
+  comparisonPageContainer,
+  comparisonHeroWrapper,
+  comparisonCategoryPill,
+  comparisonH1,
+  comparisonLeadParagraph,
+  comparisonTrustBar,
+  comparisonSectionTitle,
+  comparisonSectionSubtitle,
+  comparisonTableCard,
+} from "@/utils/styles"
 
 export const revalidate = 86400
 
@@ -272,6 +276,73 @@ const DIRECTORIES: DirectoryEntry[] = [
   },
 ]
 
+const DIRECTORY_TIERS = [
+  {
+    tierNumber: "01",
+    label: "Fast Indexing Catalogs",
+    title: "LaunchNests, DevHunt & MicroLaunch",
+    description:
+      "Modern platforms built with fast review turnarounds, clean Do-Follow link architecture, and native AI engine readiness (/llms.txt). On LaunchNests, you also gain two-way 'Built With' mapping linking your product to developer building blocks.",
+    primaryValue:
+      "Fast Google indexing, permanent SEO link equity, and tech-stack discovery.",
+  },
+  {
+    tierNumber: "02",
+    label: "Viral Launchboards",
+    title: "Product Hunt & Uneed",
+    description:
+      "High-competition daily voting competitions designed for rapid viral visibility. While Product Hunt uses tracking redirects rather than direct Do-Follow links, a top finish can drive thousands of launch-day visitors and valuable secondary press coverage.",
+    primaryValue:
+      "Immediate launch-day traffic spike, investor eyes, and social proof badges.",
+  },
+  {
+    tierNumber: "03",
+    label: "Enterprise Review Portals",
+    title: "G2, Capterra & SourceForge",
+    description:
+      "Authoritative B2B review portals dominating commercial search queries. While they generally do not provide direct Do-Follow links on free tiers, having an active profile with customer reviews dramatically improves sales conversion rates for enterprise buyers.",
+    primaryValue:
+      "High-ticket buyer trust, brand validation, and third-party review widgets.",
+  },
+  {
+    tierNumber: "04",
+    label: "Maker Communities",
+    title: "BetaList & Indie Hackers",
+    description:
+      "Dedicated platforms for early beta testing, waiting lists, and founder collaboration. BetaList connects you with early adopters willing to tolerate unfinished UI in exchange for early access.",
+    primaryValue:
+      "Private beta testers, initial feedback loops, and founder community support.",
+  },
+]
+
+const SUBMISSION_RULES = [
+  {
+    title: "Never Use the Exact Same Description Across All Directories",
+    description:
+      "Search engine crawlers easily detect boilerplate copy-pasted paragraphs across 30 domains. Write 3–4 unique variations emphasizing different aspects of your tool (e.g. one focused on developer speed, one on cost savings, one on key integrations).",
+  },
+  {
+    title: "Tag Your Underlying Tech Stack Relational Graph",
+    description:
+      "Directories like LaunchNests connect software products to their underlying developer tools. Tagging your frameworks (Next.js, Tailwind, Supabase) unlocks extra internal links from high-authority ecosystem showcase pages.",
+  },
+  {
+    title: "Always Use Clean Canonical Home URLs",
+    description:
+      "Ensure your destination link uses your exact canonical protocol without trailing slashes or unnecessary redirects. Avoid passing complex redirect chains through URL shorteners.",
+  },
+  {
+    title: "Leverage Embed Badges for Reciprocal Authority",
+    description:
+      "Embedding verified directory badges in your footer or GitHub README signals mutual credibility to visitors and search crawlers. Many directories provide bonus placement or verified badges for makers who display the embed snippet.",
+  },
+  {
+    title: "Avoid Low-Quality Automated Link Farm Blasters",
+    description:
+      "Beware of services claiming to 'Submit your site to 500 directories for $29'. Most blast your domain into dead, de-indexed WordPress directories that trigger Google spam penalties. Stick to curated, human-reviewed platforms with real traffic.",
+  },
+]
+
 const SaasDirectoriesGuidePage = () => {
   const currentYear = new Date().getFullYear()
 
@@ -316,424 +387,296 @@ const SaasDirectoriesGuidePage = () => {
         dangerouslySetInnerHTML={{ __html: safeJsonLd(unifiedLd) }}
       />
 
-      <div className="flex min-h-screen flex-col bg-white">
+      <div className="flex w-full flex-col overflow-x-clip bg-white">
         {/* Breadcrumb Navigation */}
         <nav
           aria-label="Breadcrumb"
-          className="border-b border-dashed border-border bg-white px-6 py-3 text-xs font-medium text-slate-500 md:px-8"
+          className="border-b border-dashed border-border bg-slate-50/50 px-4 py-3 text-xs font-medium text-slate-500 sm:px-6 md:px-8"
         >
-          <ol className="flex flex-wrap items-center gap-2">
-            <li className="flex items-center gap-1">
-              <Link
-                href={ROUTES.HOME}
-                className="flex items-center gap-1 hover:text-slate-900"
-              >
-                <ArrowLeft className="size-3" />
-                Home
-              </Link>
-            </li>
-            <li className="flex items-center text-slate-400" aria-hidden="true">
-              <ChevronRight className="size-3" />
-            </li>
-            <li className="flex items-center text-slate-500">Guides</li>
-            <li className="flex items-center text-slate-400" aria-hidden="true">
-              <ChevronRight className="size-3" />
-            </li>
-            <li className="flex items-center">
-              <span
-                className="font-semibold text-slate-900"
-                aria-current="page"
-              >
-                Free SaaS Directories for Backlinks
-              </span>
-            </li>
-          </ol>
+          <div className="mx-auto flex max-w-6xl min-w-0 items-center gap-2">
+            <Link
+              href={ROUTES.HOME}
+              className="flex shrink-0 items-center gap-1 transition-colors hover:text-slate-900"
+            >
+              <ArrowLeft className="size-3 shrink-0" />
+              Home
+            </Link>
+            <ChevronRight
+              className="size-3 shrink-0 text-slate-400"
+              aria-hidden="true"
+            />
+            <span className="text-slate-500">Guides</span>
+            <ChevronRight
+              className="size-3 shrink-0 text-slate-400"
+              aria-hidden="true"
+            />
+            <span
+              className="truncate font-semibold text-slate-900"
+              aria-current="page"
+            >
+              Free SaaS Directories for Backlinks
+            </span>
+          </div>
         </nav>
 
-        {/* Hero Section */}
-        <header className="border-b border-dashed border-border bg-white px-6 py-10 md:px-8 md:py-16">
-          <div className="flex flex-col gap-5">
-            <div className="flex items-center gap-2 text-xs font-bold tracking-wider text-blue-700 uppercase">
-              <BookOpen className="size-4 text-blue-600" />
-              <span>Founder Distribution & SEO Blueprint ({currentYear})</span>
+        {/* Main Content Area */}
+        <div className={comparisonPageContainer}>
+          {/* Hero Section */}
+          <header className={comparisonHeroWrapper}>
+            <div className={comparisonCategoryPill}>
+              <span>Founder Distribution & SEO · {currentYear}</span>
             </div>
 
-            <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl md:text-5xl">
+            <h1 className={comparisonH1}>
               25+ Best Free SaaS Directories for Backlinks & Organic Traffic
             </h1>
 
-            <p className="max-w-3xl text-sm leading-relaxed font-normal text-slate-600 sm:text-base">
+            <p className={comparisonLeadParagraph}>
               Building a great software product is only 20% of the battle; 80%
               is distribution. For early-stage SaaS founders, submitting to
               high-quality software directories remains one of the most
               cost-effective ways to acquire initial root domain authority,
-              indexable{" "}
-              <strong className="font-semibold text-slate-800">
-                Do-Follow backlinks
-              </strong>
-              , and early qualified customer signups.
+              indexable Do-Follow backlinks, and early qualified customer
+              signups.
             </p>
 
-            <div className="mt-2 flex flex-wrap items-center gap-3 text-xs font-medium text-slate-500">
-              <span className="flex items-center gap-1">
-                <Clock className="size-3.5 text-slate-400" />
-                12 min read
-              </span>
-              <span>•</span>
-              <span className="flex items-center gap-1">
-                <ShieldCheck className="size-3.5 text-emerald-600" />
-                Verified for October {currentYear}
-              </span>
-              <span>•</span>
-              <span>20+ active directories evaluated</span>
+            <div className="mt-2 flex w-full flex-wrap items-center justify-center gap-3">
+              <Button
+                size="default"
+                nativeButton={false}
+                render={<Link href={ROUTES.SUBMIT_PRODUCT} />}
+                className="w-full text-xs font-semibold sm:w-auto"
+              >
+                Submit Your SaaS — Free
+              </Button>
+              <Button
+                variant="outline"
+                size="default"
+                nativeButton={false}
+                render={<Link href={ROUTES.SAAS_DIRECTORY} />}
+                className="w-full text-xs font-semibold text-slate-700 sm:w-auto"
+              >
+                Browse SaaS Directory
+              </Button>
             </div>
-          </div>
-        </header>
 
-        {/* Directory Master Matrix */}
-        <section className="border-b border-dashed border-border bg-slate-50/40 px-6 py-10 md:px-8">
-          <div className="mb-6 flex flex-col gap-1">
-            <h2 className="text-lg font-bold text-slate-900 sm:text-2xl">
-              Master Table: Top Vetted SaaS Directories for {currentYear}
-            </h2>
-            <p className="text-xs text-slate-600 sm:text-sm">
-              Sorted by platform category, backlink equity, and submission
-              review speed.
-            </p>
-          </div>
+            <div className={comparisonTrustBar}>
+              <span>12 min read</span>
+              <span>·</span>
+              <span>Verified Research</span>
+              <span>·</span>
+              <span>20+ Active Directories Evaluated</span>
+            </div>
+          </header>
 
-          <div className="overflow-x-auto rounded-lg border border-dashed border-border bg-white shadow-2xs">
-            <table className="w-full text-left text-xs sm:text-sm">
-              <thead className="border-b border-border bg-slate-50 font-semibold text-slate-700">
-                <tr>
-                  <th className="px-4 py-3">Directory</th>
-                  <th className="px-4 py-3">Estimated DA</th>
-                  <th className="px-4 py-3">Backlink Type</th>
-                  <th className="px-4 py-3">Submission Cost</th>
-                  <th className="px-4 py-3">Review Speed</th>
-                  <th className="px-4 py-3">Best Suited For</th>
-                  <th className="px-4 py-3 text-right">Action</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border text-slate-600">
-                {DIRECTORIES.map((dir) => (
-                  <tr
-                    key={dir.name}
-                    className={
-                      dir.highlight
-                        ? "bg-blue-50/50 font-medium"
-                        : "hover:bg-slate-50/60"
-                    }
-                  >
-                    <td className="px-4 py-3.5 font-semibold text-slate-900">
-                      <div className="flex items-center gap-1.5">
-                        <span>{dir.name}</span>
-                        {dir.highlight && (
-                          <Badge
-                            variant="secondary"
-                            className="bg-blue-100 text-[10px] text-blue-800"
-                          >
-                            Top Pick
-                          </Badge>
-                        )}
-                      </div>
-                    </td>
-                    <td className="px-4 py-3 font-mono text-xs text-slate-700">
-                      {dir.daEstimate}
-                    </td>
-                    <td className="px-4 py-3 text-xs">
-                      {dir.linkType.includes("Do-Follow") ? (
-                        <span className="font-semibold text-emerald-600">
-                          {dir.linkType}
-                        </span>
-                      ) : (
-                        <span className="text-slate-500">{dir.linkType}</span>
-                      )}
-                    </td>
-                    <td className="px-4 py-3 text-xs text-slate-700">
-                      {dir.cost}
-                    </td>
-                    <td className="px-4 py-3 text-xs text-slate-600">
-                      {dir.reviewTime}
-                    </td>
-                    <td className="px-4 py-3 text-xs text-slate-600">
-                      {dir.bestFor}
-                    </td>
-                    <td className="px-4 py-3 text-right">
-                      {dir.name === "LaunchNests" ? (
-                        <Link
-                          href={ROUTES.SUBMIT_PRODUCT}
-                          className="text-xs font-semibold text-blue-600 hover:underline"
-                        >
-                          Submit Free →
-                        </Link>
-                      ) : (
-                        <a
-                          href={dir.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-xs text-slate-500 hover:text-slate-900 hover:underline"
-                        >
-                          Visit ↗
-                        </a>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </section>
-
-        {/* Detailed Strategic Guide Content */}
-        <div className="flex-1 px-6 py-12 md:px-8">
-          <div className="flex flex-col gap-12">
-            {/* Tier Breakdown */}
+          {/* Directory Master Matrix */}
+          <section id="directory-matrix" className="flex flex-col gap-4">
             <div>
-              <div className="flex items-center gap-2 text-xs font-bold tracking-wider text-slate-500 uppercase">
-                <Layers className="size-4 text-blue-600" />
-                <span>Strategic Tier Categorization</span>
-              </div>
-              <h2 className="mt-1 text-xl font-bold tracking-tight text-slate-900 sm:text-2xl">
-                Understanding the 4 Different Types of Software Directories
+              <h2 className={comparisonSectionTitle}>
+                Master Table: Top Vetted SaaS Directories for {currentYear}
               </h2>
-              <p className="mt-1 max-w-3xl text-xs leading-relaxed text-slate-600 sm:text-sm">
+              <p className={comparisonSectionSubtitle}>
+                Sorted by platform category, backlink equity, and submission
+                review speed.
+              </p>
+            </div>
+
+            <div className={comparisonTableCard}>
+              <Table
+                containerClassName="overflow-x-auto"
+                className="w-full text-left text-xs"
+              >
+                <TableHeader className="border-b border-dashed border-border bg-slate-50/80">
+                  <TableRow className="border-b border-dashed border-border">
+                    <TableHead className="px-4 py-3.5 font-mono text-xs font-bold tracking-wider text-slate-700 uppercase">
+                      Directory
+                    </TableHead>
+                    <TableHead className="px-4 py-3.5 font-mono text-xs font-bold tracking-wider text-slate-700 uppercase">
+                      Estimated DA
+                    </TableHead>
+                    <TableHead className="px-4 py-3.5 font-mono text-xs font-bold tracking-wider text-slate-700 uppercase">
+                      Backlink Type
+                    </TableHead>
+                    <TableHead className="px-4 py-3.5 font-mono text-xs font-bold tracking-wider text-slate-700 uppercase">
+                      Submission Cost
+                    </TableHead>
+                    <TableHead className="px-4 py-3.5 font-mono text-xs font-bold tracking-wider text-slate-700 uppercase">
+                      Review Speed
+                    </TableHead>
+                    <TableHead className="px-4 py-3.5 font-mono text-xs font-bold tracking-wider text-slate-700 uppercase">
+                      Best Suited For
+                    </TableHead>
+                    <TableHead className="px-4 py-3.5 text-right font-mono text-xs font-bold tracking-wider text-slate-700 uppercase">
+                      Action
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody className="divide-y divide-dashed divide-border text-slate-600">
+                  {DIRECTORIES.map((dir) => (
+                    <TableRow
+                      key={dir.name}
+                      className={
+                        dir.highlight
+                          ? "border-b border-dashed border-border bg-indigo-50/20 font-medium"
+                          : "border-b border-dashed border-border hover:bg-slate-50/50"
+                      }
+                    >
+                      <TableCell className="px-4 py-3.5 font-semibold text-slate-900">
+                        <div className="flex items-center gap-2">
+                          <span>{dir.name}</span>
+                          {dir.highlight && (
+                            <span className="rounded bg-indigo-100/80 px-1.5 py-0.5 font-mono text-[10px] font-semibold text-indigo-700">
+                              TOP PICK
+                            </span>
+                          )}
+                        </div>
+                      </TableCell>
+                      <TableCell className="px-4 py-3.5 font-mono text-xs text-slate-700">
+                        {dir.daEstimate}
+                      </TableCell>
+                      <TableCell className="px-4 py-3.5 text-xs">
+                        {dir.linkType.includes("Do-Follow") ? (
+                          <span className="font-semibold text-indigo-600">
+                            {dir.linkType}
+                          </span>
+                        ) : (
+                          <span className="text-slate-500">{dir.linkType}</span>
+                        )}
+                      </TableCell>
+                      <TableCell className="px-4 py-3.5 text-xs text-slate-700">
+                        {dir.cost}
+                      </TableCell>
+                      <TableCell className="px-4 py-3.5 text-xs text-slate-600">
+                        {dir.reviewTime}
+                      </TableCell>
+                      <TableCell className="px-4 py-3.5 text-xs text-slate-600">
+                        {dir.bestFor}
+                      </TableCell>
+                      <TableCell className="px-4 py-3.5 text-right">
+                        {dir.name === "LaunchNests" ? (
+                          <Link
+                            href={ROUTES.SUBMIT_PRODUCT}
+                            className="font-mono text-xs font-semibold text-indigo-600 hover:text-indigo-800"
+                          >
+                            Submit Free →
+                          </Link>
+                        ) : (
+                          <a
+                            href={dir.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 font-mono text-xs text-slate-500 hover:text-slate-900"
+                          >
+                            Visit
+                            <ExternalLink className="size-3" />
+                          </a>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          </section>
+
+          {/* Directory Categorization Tiers */}
+          <section id="directory-tiers" className="flex flex-col gap-4">
+            <div>
+              <h2 className={comparisonSectionTitle}>
+                Understanding the 4 Types of Software Directories
+              </h2>
+              <p className={comparisonSectionSubtitle}>
                 Not all directories serve the same purpose. A balanced launch
                 strategy combines fast-indexing modern catalogs, enterprise
-                review sites, and community launch boards:
+                review sites, and community launch boards.
               </p>
-
-              <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2">
-                <div className="rounded-xl border border-dashed border-border bg-white p-6 shadow-2xs">
-                  <div className="flex items-center gap-2 text-xs font-bold text-blue-700 uppercase">
-                    <Sparkles className="size-4 text-blue-600" />
-                    <span>Tier 1: Modern Fast-Indexing Catalogs</span>
-                  </div>
-                  <h3 className="mt-2 text-base font-bold text-slate-900">
-                    LaunchNests, DevHunt & MicroLaunch
-                  </h3>
-                  <p className="mt-2 text-xs leading-relaxed text-slate-600">
-                    Modern platforms built with fast review turnarounds, clean
-                    Do-Follow link architecture, and native AI engine readiness
-                    (/llms.txt). On LaunchNests, you also gain two-way 'Built
-                    With' mapping linking your product to developer building
-                    blocks.
-                  </p>
-                  <p className="mt-3 text-xs font-semibold text-slate-800">
-                    Primary Value: Fast Google indexing, permanent SEO link
-                    equity, and tech-stack discovery.
-                  </p>
-                </div>
-
-                <div className="rounded-xl border border-dashed border-border bg-white p-6 shadow-2xs">
-                  <div className="flex items-center gap-2 text-xs font-bold text-emerald-700 uppercase">
-                    <TrendingUp className="size-4 text-emerald-600" />
-                    <span>Tier 2: 24-Hour Viral Launchboards</span>
-                  </div>
-                  <h3 className="mt-2 text-base font-bold text-slate-900">
-                    Product Hunt & Uneed
-                  </h3>
-                  <p className="mt-2 text-xs leading-relaxed text-slate-600">
-                    High-competition daily voting competitions designed for
-                    rapid viral visibility. While Product Hunt uses tracking
-                    redirects rather than direct Do-Follow links, a top-5 finish
-                    can drive thousands of launch-day visitors and valuable
-                    secondary press coverage.
-                  </p>
-                  <p className="mt-3 text-xs font-semibold text-slate-800">
-                    Primary Value: Immediate launch-day traffic spike, investor
-                    eyes, and social proof badges.
-                  </p>
-                </div>
-
-                <div className="rounded-xl border border-dashed border-border bg-white p-6 shadow-2xs">
-                  <div className="flex items-center gap-2 text-xs font-bold text-indigo-700 uppercase">
-                    <ShieldCheck className="size-4 text-indigo-600" />
-                    <span>Tier 3: Enterprise Review Portals</span>
-                  </div>
-                  <h3 className="mt-2 text-base font-bold text-slate-900">
-                    G2, Capterra & SourceForge
-                  </h3>
-                  <p className="mt-2 text-xs leading-relaxed text-slate-600">
-                    Authoritative B2B review portals dominating commercial
-                    search queries. While they generally do not provide direct
-                    Do-Follow links on free tiers, having an active profile with
-                    5–10 customer reviews dramatically improves sales conversion
-                    rates for enterprise buyers.
-                  </p>
-                  <p className="mt-3 text-xs font-semibold text-slate-800">
-                    Primary Value: High-ticket buyer trust, brand validation,
-                    and third-party review widgets.
-                  </p>
-                </div>
-
-                <div className="rounded-xl border border-dashed border-border bg-white p-6 shadow-2xs">
-                  <div className="flex items-center gap-2 text-xs font-bold text-amber-700 uppercase">
-                    <Award className="size-4 text-amber-600" />
-                    <span>Tier 4: Pre-Launch & Maker Communities</span>
-                  </div>
-                  <h3 className="mt-2 text-base font-bold text-slate-900">
-                    BetaList & Indie Hackers
-                  </h3>
-                  <p className="mt-2 text-xs leading-relaxed text-slate-600">
-                    Dedicated platforms for early beta testing, waiting lists,
-                    and founder collaboration. BetaList connects you with early
-                    adopters willing to tolerate unfinished UI in exchange for
-                    early access.
-                  </p>
-                  <p className="mt-3 text-xs font-semibold text-slate-800">
-                    Primary Value: Private beta testers, initial feedback loops,
-                    and founder community support.
-                  </p>
-                </div>
-              </div>
             </div>
 
-            {/* The 5 Golden Rules of Directory Submissions */}
-            <section className="rounded-2xl border border-slate-200 bg-slate-50 p-6 md:p-8">
-              <div className="flex flex-col gap-4">
-                <div className="flex items-center gap-2 text-xs font-bold tracking-wider text-slate-500 uppercase">
-                  <ShieldCheck className="size-4 text-emerald-600" />
-                  <span>Tactical SEO Advice</span>
-                </div>
-
-                <h3 className="text-lg font-bold text-slate-900 sm:text-xl">
-                  The 5 Golden Rules of Directory Link Building for Founders
-                </h3>
-
-                <p className="text-xs leading-relaxed text-slate-600 sm:text-sm">
-                  Submitting to directories can either supercharge your Google
-                  rankings or trigger algorithmic spam filters if done
-                  carelessly. Follow these 5 proven guidelines:
-                </p>
-
-                <div className="space-y-4 pt-2">
-                  <div className="flex items-start gap-3">
-                    <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-blue-100 text-xs font-bold text-blue-700">
-                      1
-                    </span>
-                    <div>
-                      <h4 className="text-xs font-bold text-slate-900 sm:text-sm">
-                        Never Use the Exact Same Description Across All
-                        Directories
-                      </h4>
-                      <p className="mt-0.5 text-xs text-slate-600">
-                        Search engine crawlers easily detect boilerplate
-                        copy-pasted paragraphs across 30 domains. Write 3–4
-                        unique variations emphasizing different aspects of your
-                        tool (e.g. one focused on developer speed, one on cost
-                        savings, one on key integrations).
-                      </p>
+            <div className="relative grid grid-cols-1 divide-y divide-dashed divide-border border border-dashed border-border bg-white md:grid-cols-2 md:divide-y-0 rounded-xl overflow-hidden">
+              {DIRECTORY_TIERS.map((tier, idx) => (
+                <div
+                  key={tier.tierNumber}
+                  className={`group relative flex flex-col justify-between p-6 transition-colors hover:bg-slate-50/30 md:p-8 ${
+                    idx % 2 === 0
+                      ? "md:border-r md:border-dashed md:border-border"
+                      : ""
+                  } ${idx < 2 ? "md:border-b md:border-dashed md:border-border" : ""}`}
+                >
+                  <CornerBrackets />
+                  <div>
+                    <div className="flex items-center justify-between border-b border-dashed border-border pb-3">
+                      <span className="font-mono text-xs font-bold tracking-wider text-indigo-600 uppercase">
+                        Tier {tier.tierNumber}
+                      </span>
+                      <span className="font-mono text-[11px] text-slate-500 uppercase">
+                        {tier.label}
+                      </span>
                     </div>
+
+                    <h3 className="mt-3 text-base font-bold text-slate-900">
+                      {tier.title}
+                    </h3>
+                    <p className="mt-2 text-xs leading-relaxed text-slate-600 sm:text-sm">
+                      {tier.description}
+                    </p>
                   </div>
 
-                  <div className="flex items-start gap-3">
-                    <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-blue-100 text-xs font-bold text-blue-700">
-                      2
-                    </span>
-                    <div>
-                      <h4 className="text-xs font-bold text-slate-900 sm:text-sm">
-                        Tag Your Underlying Tech Stack Relational Graph
-                      </h4>
-                      <p className="mt-0.5 text-xs text-slate-600">
-                        Directories like LaunchNests connect software products
-                        to their underlying developer tools. Tagging your
-                        frameworks (Next.js, Tailwind, Supabase) unlocks extra
-                        internal links from high-authority ecosystem showcase
-                        pages.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-3">
-                    <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-blue-100 text-xs font-bold text-blue-700">
-                      3
-                    </span>
-                    <div>
-                      <h4 className="text-xs font-bold text-slate-900 sm:text-sm">
-                        Always Use Clean Canonical Home URLs
-                      </h4>
-                      <p className="mt-0.5 text-xs text-slate-600">
-                        Ensure your destination link uses your exact canonical
-                        protocol (e.g. https://yourdomain.com without trailing
-                        slashes or unnecessary redirects). Avoid passing complex
-                        redirect chains through URL shorteners.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-3">
-                    <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-blue-100 text-xs font-bold text-blue-700">
-                      4
-                    </span>
-                    <div>
-                      <h4 className="text-xs font-bold text-slate-900 sm:text-sm">
-                        Leverage Embed Badges for Reciprocal Authority
-                      </h4>
-                      <p className="mt-0.5 text-xs text-slate-600">
-                        Embedding verified directory badges in your footer or
-                        GitHub README signals mutual credibility to visitors and
-                        search crawlers. Many directories provide bonus
-                        placement or verified badges for makers who display the
-                        embed snippet.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-3">
-                    <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-blue-100 text-xs font-bold text-blue-700">
-                      5
-                    </span>
-                    <div>
-                      <h4 className="text-xs font-bold text-slate-900 sm:text-sm">
-                        Avoid Low-Quality Automated Link Farm Blasters
-                      </h4>
-                      <p className="mt-0.5 text-xs text-slate-600">
-                        Beware of services claiming to "Submit your site to 500
-                        directories for $29". Most of these blast your domain
-                        into dead, de-indexed WordPress directories that trigger
-                        Google spam penalties. Stick to curated, human-reviewed
-                        platforms with real traffic.
-                      </p>
-                    </div>
+                  <div className="mt-4 border-t border-dashed border-slate-100 pt-3 text-xs text-slate-600">
+                    <strong className="font-semibold text-slate-900">
+                      Primary Value:{" "}
+                    </strong>
+                    {tier.primaryValue}
                   </div>
                 </div>
-              </div>
-            </section>
+              ))}
+            </div>
+          </section>
 
-            {/* Bottom Call to Action */}
-            <section className="rounded-2xl bg-slate-900 p-8 text-center text-white md:p-12">
-              <h3 className="text-xl font-bold tracking-tight sm:text-2xl md:text-3xl">
-                Start With The Highest ROI Directory: {SITE_CONFIG.name}
-              </h3>
-              <p className="mx-auto mt-2 max-w-xl text-xs text-slate-300 sm:text-sm">
-                Get your SaaS or developer tool indexed with permanent Do-Follow
-                backlink equity and 12–24h review turnaround. Free submissions
-                welcome.
+          {/* 5 Golden Rules of Directory Link Building */}
+          <section id="guidelines" className="flex flex-col gap-4">
+            <div>
+              <h2 className={comparisonSectionTitle}>
+                The 5 Golden Rules of Directory Link Building
+              </h2>
+              <p className={comparisonSectionSubtitle}>
+                Submitting to directories can either supercharge your Google
+                rankings or trigger algorithmic spam filters if done carelessly.
               </p>
-              <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-                <Link
-                  href={ROUTES.SUBMIT_PRODUCT}
-                  className={cn(
-                    buttonVariants({ variant: "default" }),
-                    "rounded-none bg-blue-600 text-white hover:bg-blue-500"
-                  )}
+            </div>
+
+            <div className="relative flex flex-col divide-y divide-dashed divide-border border border-dashed border-border bg-white rounded-xl overflow-hidden">
+              {SUBMISSION_RULES.map((rule, idx) => (
+                <div
+                  key={idx}
+                  className="group relative flex flex-col gap-2 p-5 transition-colors hover:bg-slate-50/20 sm:p-6"
                 >
-                  Submit Your SaaS Product
-                  <ArrowRight className="ml-1.5 size-4" />
-                </Link>
-                <Link
-                  href={ROUTES.SAAS_DIRECTORY}
-                  className={cn(
-                    buttonVariants({ variant: "outline" }),
-                    "rounded-none border-slate-700 bg-transparent text-white hover:bg-slate-800"
-                  )}
-                >
-                  Browse SaaS Directory
-                </Link>
-              </div>
-            </section>
-          </div>
+                  <CornerBrackets />
+                  <div className="flex items-center gap-2">
+                    <span className="font-mono text-xs font-bold text-indigo-600 uppercase">
+                      Rule 0{idx + 1}
+                    </span>
+                    <span className="text-slate-300">·</span>
+                    <h3 className="text-sm font-bold text-slate-900 sm:text-base">
+                      {rule.title}
+                    </h3>
+                  </div>
+                  <p className="text-xs leading-relaxed text-slate-600 sm:text-sm">
+                    {rule.description}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* Closing Call to Action */}
+          <ReadyToShowcaseCta
+            title={`Start With The Highest ROI Directory: ${SITE_CONFIG.name}`}
+            description="Get your SaaS or developer tool indexed with permanent Do-Follow backlink equity and 12–24h review turnaround. Free submissions welcome."
+            primaryActionLabel="Submit Your SaaS Product"
+            primaryActionHref={ROUTES.SUBMIT_PRODUCT}
+            secondaryActionLabel="Browse SaaS Directory"
+            secondaryActionHref={ROUTES.SAAS_DIRECTORY}
+          />
         </div>
       </div>
     </>

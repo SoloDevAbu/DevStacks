@@ -24,6 +24,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { CornerBrackets } from "@/components/shared/corner-brackets"
+import { ReadyToShowcaseCta } from "@/components/shared/ready-to-showcase-cta"
 import { getFaviconUrl } from "@/utils/urls"
 import { GaAlternativeViewTracker } from "@/components/shared/ga-alternative-view-tracker"
 import {
@@ -90,7 +91,6 @@ export const ComparisonPageView = ({ comparison }: ComparisonPageViewProps) => {
     { name: comparison.name, url: comparison.canonicalUrl },
   ])
 
-  
   const competitorProfile = (comparison.comparedPlatformProfile ??
     comparison.productHuntProfile)!
 
@@ -817,10 +817,6 @@ export const ComparisonPageView = ({ comparison }: ComparisonPageViewProps) => {
 
           {/* Closing Call to Action */}
           <section className={comparisonCtaCard}>
-            <div className="flex size-12 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-600 shadow-2xs">
-              <Sparkles className="size-6" />
-            </div>
-
             <div className="flex max-w-xl flex-col gap-2 text-center">
               <h2 className="text-xl font-bold tracking-tight text-slate-900 sm:text-2xl">
                 Ready to Showcase Your Developer Tool or Product?
