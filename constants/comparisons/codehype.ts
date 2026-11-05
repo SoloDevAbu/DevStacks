@@ -62,12 +62,12 @@ export const CODEHYPE_COMPARISON: PlatformComparison = {
     discoveryLifespan:
       "Perpetual catalog indexing. AI products and developer tools remain permanently discoverable across static category hubs, trending leaderboards, and two-way 'Built With' architecture pages.",
     pricingModel:
-      "100% free core submissions with rapid 12–24h human review; affordable one-time verification ($15 Featured Builder / $19 Ecosystem Partner) with permanent Do-Follow backlinks and zero recurring subscription fees.",
+      "100% free core submissions with rapid 12–24h human review; affordable one-time verification ($15 Premium / $19 Premium+) with permanent Do-Follow backlinks and zero recurring subscription fees.",
     keyStrengths: [
       "Transparent 'Built With' graph linking AI software to the exact models (OpenAI, Anthropic, Gemini) and databases (Supabase, Neon, Pinecone) used",
       "Affordable and fair founder pricing: free submissions with fast turnaround instead of $39+ paywalls",
       "Full AI Engine Optimization (AEO) with /llms.txt, /llms-full.txt, raw Markdown twins, and an active Model Context Protocol (MCP) server",
-      "Permanent Do-Follow backlink equity passing genuine search rank authority to founder sites",
+      "Do-Follow link to your site on paid tiers or with an active badge",
       "Balanced developer ecosystem welcoming developer building blocks, open-source libraries, and indie SaaS alike",
     ],
     keyLimitations: [
@@ -120,7 +120,7 @@ export const CODEHYPE_COMPARISON: PlatformComparison = {
       launchNestsValue: "Permanent Do-Follow link on verified tiers",
       highlight: "launchNests",
       description:
-        "Permanent, crawlable Do-Follow link passing root domain authority in Google search.",
+        "Permanent, crawlable Do-Follow link.",
     },
     {
       key: "developerDepth",
@@ -196,7 +196,7 @@ export const CODEHYPE_COMPARISON: PlatformComparison = {
       bulletPoints: [
         "You want 100% free or fair $15 one-time pricing with fast 12–24h moderation",
         "You want to showcase your tech stack and prove real-world production engineering",
-        "You want permanent Do-Follow SEO backlinks to accelerate your Google domain authority",
+        "You want a Do-Follow link to your site",
         "You want to be indexed into /llms.txt and recommended by AI assistants like Cursor and ChatGPT",
       ],
     },

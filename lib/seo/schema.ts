@@ -41,7 +41,7 @@ export type ProductSchemaInput = {
   spatialCoverage?: string | null
   screenshots?: string[]
   videoUrl?: string | null
-  builtWith?: ReadonlyArray<{ readonly name: string; readonly url: string }>
+  builtWith?: ReadonlyArray<{ readonly name: string; readonly url?: string }>
 }
 
 export type PersonSchemaInput = {
@@ -527,11 +527,14 @@ export type TechArticleSchemaInput = {
   url: string
   publishedAt?: Date | null
   updatedAt?: Date | null
-  authorName?: string
-  authorUrl?: string
   coverImageUrl?: string | null
   keywords?: string[]
 }
+
+const latestDate = (...dates: ReadonlyArray<Date | null | undefined>) =>
+  dates
+    .filter((date): date is Date => Boolean(date))
+    .sort((a, b) => b.getTime() - a.getTime())[0]
 
 export const techArticleSchema = (input: TechArticleSchemaInput) => ({
   "@context": "https://schema.org",
@@ -544,12 +547,13 @@ export const techArticleSchema = (input: TechArticleSchemaInput) => ({
     "@id": input.url,
   },
   datePublished: input.publishedAt?.toISOString(),
-  dateModified: (input.updatedAt ?? input.publishedAt)?.toISOString(),
+  dateModified: latestDate(input.publishedAt, input.updatedAt)?.toISOString(),
   inLanguage: "en-US",
   author: {
-    "@type": "Person",
-    name: input.authorName || SITE_CONFIG.creator,
-    ...(input.authorUrl ? { url: input.authorUrl } : {}),
+    "@type": "Organization",
+    "@id": `${SITE_CONFIG.url}/#organization`,
+    name: SITE_CONFIG.name,
+    url: SITE_CONFIG.url,
   },
   publisher: {
     "@type": "Organization",

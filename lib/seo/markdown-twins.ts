@@ -452,7 +452,6 @@ export interface BlogTwinInput {
   slug: string
   metaDescription?: string | null
   excerpt?: string | null
-  verdictRating?: string | null
   verdictSummary?: string | null
   pros?: string[] | null
   cons?: string[] | null
@@ -487,7 +486,6 @@ url: "${canonical}"
 published: "${publishedDate}"
 author: "${data.authorName ?? SITE_CONFIG.creator}"
 reading_time: "${data.readingTimeMinutes ?? 5} min"
-rating: "${data.verdictRating ?? "4.7"} / 5.0"
 target_item: "${data.item?.name ?? ""}"
 website: "${data.item?.websiteUrl ?? ""}"
 \`\`\`

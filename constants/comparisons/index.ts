@@ -6,6 +6,9 @@ import { BETALIST_COMPARISON } from "@/constants/comparisons/betalist"
 import { DEVHUNT_COMPARISON } from "@/constants/comparisons/devhunt"
 import { CODEHYPE_COMPARISON } from "@/constants/comparisons/codehype"
 
+export const COMPARISON_AUTHOR_LABEL = "Written by the LaunchNests team"
+export const COMPARISON_BIAS_NOTE = "We run LaunchNests, so weigh this accordingly"
+
 export const COMPARISONS_REGISTRY: Record<string, PlatformComparison> = {
   producthunt: PRODUCT_HUNT_COMPARISON,
   "product-hunt": PRODUCT_HUNT_COMPARISON,

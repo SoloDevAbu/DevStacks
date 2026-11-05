@@ -41,7 +41,7 @@ import {
   buildEntityGraph,
   safeJsonLd,
 } from "@/lib/seo/schema"
-import { formatTitle, formatMetaDescription } from "@/utils/seo"
+import { formatTitle, firstText, formatMetaDescription } from "@/utils/seo"
 import { ProductLogo } from "@/components/shared/product-logo"
 import {
   getCategoryPath,
@@ -124,10 +124,12 @@ export const generateMetadata = async ({
     ? formatTitle(product.metaTitle)
     : formatTitle(product.name, product.tagline)
   const description = formatMetaDescription(
-    product.metaDescription ??
-      product.description ??
-      product.tagline ??
-      `Explore ${product.name} on ${SITE_CONFIG.name}. Verified developer product launch featuring architecture breakdown, live demo, and maker insights.`,
+    firstText(
+      product.metaDescription,
+      product.description,
+      product.tagline,
+      `Explore ${product.name} on ${SITE_CONFIG.name}. Verified developer product launch featuring architecture breakdown, live demo, and maker insights.`
+    ),
     155
   )
   const canonicalUrl = `${SITE_CONFIG.url}/products/${product.slug}`
@@ -248,7 +250,7 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
     videoUrl: product.demoVideoUrl,
     builtWith: (product.builtWithTools ?? []).map((t) => ({
       name: t.name,
-      url: `${siteUrl}${ROUTES.TOOL(t.toolSlug ?? t.name.toLowerCase().replace(/[^a-z0-9]+/g, "-"))}`,
+      url: t.toolSlug ? `${siteUrl}${ROUTES.TOOL(t.toolSlug)}` : undefined,
     })),
   })
 

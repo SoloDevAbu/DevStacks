@@ -16,10 +16,10 @@ export const LAUNCH_PROMO = {
   SEO_OFFER_DESCRIPTION:
     "LaunchNests Launch Special: Free Premium Verified Listing ($15 value) with permanent Do-Follow SEO backlink",
   PERKS: [
-    "Permanent Do-Follow SEO Backlink (boosts domain authority & rank)",
+    "Permanent Do-Follow SEO Backlink",
     "Verified Checkmark Badge across all feeds and search listings",
     "Featured placement in search and category exploration feeds",
-    "Priority inclusion in upcoming Weekly AI newsletter and LLM indexing",
+    "Inclusion in LaunchNests LLM indexing files",
   ],
 } as const
 

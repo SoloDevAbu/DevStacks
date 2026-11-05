@@ -400,7 +400,7 @@ export const SubmitCrawlerView = ({
             </h3>
             <p className="max-w-xl text-xs leading-relaxed text-slate-600">
               Join thousands of developers, founders, and creators. List your
-              product or developer tool today to earn permanent high-authority
+              product or developer tool today to earn permanent
               backlinks and generative AI discovery.
             </p>
           </div>

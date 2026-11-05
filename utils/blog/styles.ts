@@ -37,8 +37,6 @@ export const verdictBox =
 export const verdictHeaderArea = "flex flex-col gap-4 p-6 sm:p-8 md:p-10"
 export const verdictHeader =
   "flex items-center justify-between flex-wrap gap-4 border-b border-dashed border-border pb-4"
-export const verdictScoreBadge =
-  "flex items-center gap-1.5 rounded-none border border-indigo-200 bg-indigo-50 px-3 py-1.5 text-indigo-900 font-mono font-bold text-sm shadow-2xs"
 export const verdictProsConsTable =
   "relative grid grid-cols-1 divide-y divide-dashed divide-border border-t border-dashed border-border bg-white md:grid-cols-2 md:divide-y-0 md:divide-x"
 export const verdictProsCol = "flex flex-col gap-3 p-6 sm:p-8 bg-emerald-50/20"

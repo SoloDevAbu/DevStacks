@@ -104,7 +104,7 @@ export const UpgradeTierDialog = ({
             Upgrade {item.name}
           </DialogTitle>
           <DialogDescription className="text-xs text-slate-500">
-            Unlock high-authority SEO backlinks, verified badge trust, priority
+            Unlock Do-Follow links, verified badge trust, priority
             placement, and dominant directory exposure. Upgrades are
             irreversible.
           </DialogDescription>

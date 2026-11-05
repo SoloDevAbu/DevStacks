@@ -62,12 +62,12 @@ export const DEVHUNT_COMPARISON: PlatformComparison = {
     discoveryLifespan:
       "Perpetual catalog indexing. Dev tools and software products remain discoverable permanently across static category hubs, trending leaderboards, and two-way 'Built With' ecosystem pages.",
     pricingModel:
-      "100% free core submissions for dev tools and products; optional affordable one-time verification ($15 Featured Builder / $19 Ecosystem Partner) with permanent Do-Follow link equity and zero recurring fees.",
+      "100% free core submissions for dev tools and products; optional affordable one-time verification ($15 Premium / $19 Premium+) with permanent Do-Follow link equity and zero recurring fees.",
     keyStrengths: [
       "Proprietary 'Built With' relational graph connecting dev tools directly to indie apps built on top of them",
       "Static category hubs and programmatic alternatives matrix capturing organic search traffic 365 days a year",
       "Native AI engine readiness with /llms.txt, /llms-full.txt, machine Markdown twin endpoints, and an active Model Context Protocol (MCP) server",
-      "Permanent Do-Follow backlink equity passing domain authority directly to maker websites",
+      "Do-Follow link to your site on paid tiers or with an active badge",
       "Balanced ecosystem welcoming both developer infrastructure (APIs, SDKs, DBs) and end-user software products",
     ],
     keyLimitations: [
@@ -120,7 +120,7 @@ export const DEVHUNT_COMPARISON: PlatformComparison = {
       launchNestsValue: "Permanent Do-Follow links on verified tiers",
       highlight: "launchNests",
       description:
-        "Guaranteed clean outbound link equity that boosts your root domain authority in Google search.",
+        "Followed outbound link to your site on paid tiers or with an active badge.",
     },
     {
       key: "categoryTaxonomy",
@@ -196,7 +196,7 @@ export const DEVHUNT_COMPARISON: PlatformComparison = {
       bulletPoints: [
         "You need perpetual SEO category ranking that delivers qualified traffic every single month",
         "You want to build a verified 'Built With' showcase showing real apps built on your SDK",
-        "You want permanent Do-Follow SEO backlinks to strengthen your root domain rating",
+        "You want a Do-Follow link to your site",
         "You want your documentation and features surfaced to AI assistants (Cursor, ChatGPT, Claude)",
       ],
     },
@@ -253,7 +253,7 @@ export const DEVHUNT_COMPARISON: PlatformComparison = {
     {
       question: "Does LaunchNests provide Do-Follow SEO backlinks for developer tools?",
       answer:
-        "Yes. Approved tools on the Featured Builder and Ecosystem Partner tiers receive permanent, high-authority Do-Follow backlinks directly to their landing pages, boosting organic domain authority in Google search.",
+        "Yes. Approved tools on the Premium and Premium+ tiers receive permanent Do-Follow backlinks directly to their landing pages, boosting organic domain authority in Google search.",
     },
     {
       question: "Can I submit both a developer tool and a SaaS product to LaunchNests?",

@@ -46,7 +46,7 @@ import {
   buildEntityGraph,
   safeJsonLd,
 } from "@/lib/seo/schema"
-import { formatTitle, formatMetaDescription } from "@/utils/seo"
+import { firstText, formatTitle, formatMetaDescription } from "@/utils/seo"
 import { ProductLogo } from "@/components/shared/product-logo"
 import {
   getCategoryPath,
@@ -130,10 +130,12 @@ export const generateMetadata = async ({
     ? formatTitle(tool.metaTitle)
     : formatTitle(tool.name, tool.tagline)
   const description = formatMetaDescription(
-    tool.metaDescription ??
-      tool.description ??
-      tool.tagline ??
-      `Explore ${tool.name} on ${SITE_CONFIG.name}. Verified developer tool listing with features, pricing, and developer builds.`,
+    firstText(
+      tool.metaDescription,
+      tool.description,
+      tool.tagline,
+      `Explore ${tool.name} on ${SITE_CONFIG.name}. Verified developer tool listing with features, pricing, and developer builds.`
+    ),
     155
   )
   const canonicalUrl = `${SITE_CONFIG.url}/tools/${tool.slug}`

@@ -91,12 +91,6 @@ const TrendingPage = async (props: {
     { name: "Home", url: siteUrl },
     { name: "Trending", url: `${siteUrl}/trending` },
   ]
-  if (category) {
-    breadcrumbItems.push({
-      name: `${category} Trending`,
-      url: `${siteUrl}/trending?category=${encodeURIComponent(category)}`,
-    })
-  }
   const breadcrumbs = breadcrumbSchema(breadcrumbItems)
 
   let products: Awaited<ReturnType<typeof getTrending>> = []
@@ -118,9 +112,7 @@ const TrendingPage = async (props: {
     description: category
       ? `Top trending ${category} developer tools and products`
       : "Top trending developer tools and software products",
-    url: category
-      ? `${siteUrl}/trending?category=${encodeURIComponent(category)}`
-      : `${siteUrl}/trending`,
+    url: `${siteUrl}/trending`,
     items,
   })
 

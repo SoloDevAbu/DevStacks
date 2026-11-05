@@ -63,7 +63,7 @@ export const MICROLAUNCH_COMPARISON: PlatformComparison = {
     discoveryLifespan:
       "Perpetual catalog indexing. Products and tools remain continuously discoverable across category hubs, trending momentum feeds, and 'Built With' tech-stack pages without artificial expiration or upvote quotas.",
     pricingModel:
-      "100% free core submissions for products and dev tools with fast 12–24h review; affordable one-time verification tiers ($15 Featured Builder / $19 Ecosystem Partner) with permanent Do-Follow backlinks and zero recurring fees.",
+      "100% free core submissions for products and dev tools with fast 12–24h review; affordable one-time verification tiers ($15 Premium / $19 Premium+) with permanent Do-Follow backlinks and zero recurring fees.",
     keyStrengths: [
       "Two-way relational 'Built With' graph linking software products to their underlying dev tools, APIs, and databases",
       "Fast 12–24h moderation with guaranteed permanent indexation — no queue bottlenecks or campaign expiration",
@@ -130,7 +130,7 @@ export const MICROLAUNCH_COMPARISON: PlatformComparison = {
       key: "paidupgrade",
       label: "Premium Boost Tiers",
       competitorValue: "Launch Pro ($39) / Launch Plus ($79)",
-      launchNestsValue: "Featured Builder ($15) / Ecosystem Partner ($19)",
+      launchNestsValue: "Premium ($15) / Premium+ ($19)",
       highlight: "launchNests",
       description:
         "LaunchNests provides highly accessible one-time pricing for permanent verified perks.",
@@ -224,7 +224,7 @@ export const MICROLAUNCH_COMPARISON: PlatformComparison = {
       competitorAngle:
         "MicroLaunch provides a free submission option alongside paid tiers: Launch Pro (typically $39, regularly $49) and Launch Plus ($79, regularly $99). Launch Pro adds skip-the-queue privileges, 'Product of the Day' eligibility, do-follow backlinks, and deal placements. Additionally, MicroLaunch offers an agency-style submission service where their team manually submits your product to 150+ external directories.",
       launchNestsAngle:
-        "LaunchNests focuses on lean, accessible one-time pricing tailored for solo engineers and bootstrapped founders. Base listings are 100% free with prompt 12–24h review. For founders who want enhanced authority, the Featured Builder tier costs just $15 one-time and includes a permanent verified badge, priority category sorting, GitHub repository linking, and a permanent Do-Follow backlink. There are never recurring monthly fees or mandatory upgrade walls.",
+        "LaunchNests focuses on lean, accessible one-time pricing tailored for solo engineers and bootstrapped founders. Base listings are 100% free with prompt 12–24h review. For founders who want enhanced authority, the Premium tier costs just $15 one-time and includes a permanent verified badge, priority category sorting, GitHub repository linking, and a permanent Do-Follow backlink. There are never recurring monthly fees or mandatory upgrade walls.",
       practicalTakeaway:
         "If you want comprehensive campaign promotion, deal placement, and directory syndication, MicroLaunch's paid packages provide valuable launchpad features. If you want high-authority lifetime verification and tech-stack indexing at an unbeatable price, LaunchNests' $15 tier is exceptionally cost-effective.",
     },
@@ -319,7 +319,7 @@ export const MICROLAUNCH_COMPARISON: PlatformComparison = {
         title: "Submit to LaunchNests for Immediate Technical Indexing",
         timing: "Day 1 (Immediate)",
         action:
-          "Submit your software product to LaunchNests. Tag every database, auth provider, framework, and API in your technical stack. Connect your GitHub repository and activate the Featured Builder tier ($15 one-time) for a verified checkmark and permanent Do-Follow backlink.",
+          "Submit your software product to LaunchNests. Tag every database, auth provider, framework, and API in your technical stack. Connect your GitHub repository and activate the Premium tier ($15 one-time) for a verified checkmark and permanent Do-Follow backlink.",
         outcome:
           "Within 12–24 hours, your product is permanently cataloged, connected to the 'Built With' graph, and immediately accessible to AI agents via /llms.txt and MCP.",
       },

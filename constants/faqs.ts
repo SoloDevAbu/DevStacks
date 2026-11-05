@@ -37,7 +37,7 @@ export const FAQ_CATEGORIES: FaqCategory[] = [
       },
       {
         question: `How is ${SITE_CONFIG.name} different from Product Hunt or other launch platforms?`,
-        answer: `Unlike generic launch directories where listings fade after a 24-hour voting cycle, ${SITE_CONFIG.name} is engineered specifically for software developers and perpetual discovery. Every listing receives permanent indexing, bidirectional cross-discovery through our "Built With" tech-stack graph, automated inclusion in machine-readable /llms.txt and MCP server feeds, and algorithmic ranking based on continuous utility rather than temporary upvote spikes.`,
+        answer: `Unlike generic launch directories where listings fade after a 24-hour voting cycle, ${SITE_CONFIG.name} is engineered specifically for software developers and perpetual discovery. Every listing receives permanent indexing, bidirectional cross-discovery through our "Built With" tech-stack graph, automated inclusion in machine-readable /llms.txt and MCP server feeds, and weekly launch rankings based on community votes.`,
       },
       {
         question: `What is the difference between a Tool and a Product on ${SITE_CONFIG.name}?`,
@@ -94,7 +94,7 @@ export const FAQ_CATEGORIES: FaqCategory[] = [
       },
       {
         question: `Do sponsored listings include a dofollow backlink?`,
-        answer: `Yes. All verified sponsorships and premium featured placements include direct, permanent Do-Follow backlinks. These pass search engine authority and improve organic search rankings for your domain alongside direct referral traffic from engineers.`,
+        answer: `Premium and Premium+ listings include a Do-Follow link to your site. Sidebar and feed ad placements are marked as sponsored links.`,
       },
       {
         question: `How do I reserve a sponsorship slot?`,
@@ -114,7 +114,7 @@ export const FAQ_CATEGORIES: FaqCategory[] = [
     items: [
       {
         question: `How does listing on ${SITE_CONFIG.name} improve my tool's SEO?`,
-        answer: `${SITE_CONFIG.name} provides high-domain-authority directory indexing, Server-Side Rendered (SSR) HTML for lightning-fast crawling, automated favicon and metadata extraction, and contextual Do-Follow links within technical content. Our optimized directory taxonomy creates strong internal linking signals that boost your organic search footprint on Google and Bing.`,
+        answer: `${SITE_CONFIG.name} provides directory indexing, Server-Side Rendered (SSR) HTML for lightning-fast crawling, automated favicon and metadata extraction, and contextual Do-Follow links within technical content. Our optimized directory taxonomy creates strong internal linking signals that boost your organic search footprint on Google and Bing.`,
       },
       {
         question: `Will my tool appear when someone asks ChatGPT, Claude, or Perplexity for recommendations?`,
@@ -219,6 +219,6 @@ export const PRODUCT_CATEGORY_FAQS: FaqItem[] = [
   {
     question: "How are products ranked within each category?",
     answer:
-      "Products within category hubs are ranked transparently using community upvotes, verified maker reviews, and engagement telemetry. Products that link their verified 'Built With' tech stacks also gain organic cross-discovery from the developer tools they use.",
+      "Products within category hubs are ranked transparently using community upvotes, and engagement telemetry. Products that link their verified 'Built With' tech stacks also gain organic cross-discovery from the developer tools they use.",
   },
 ]

@@ -317,7 +317,7 @@ const ProductHuntAlternativesPage = () => {
               <span>•</span>
               <span>6 platforms evaluated</span>
               <span>•</span>
-              <span>Objective, research-backed criteria</span>
+              <span>Written by the LaunchNests team</span>
             </div>
           </div>
         </header>

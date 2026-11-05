@@ -19,7 +19,6 @@ export interface GeneratedBlogData {
   metaDescription: string
   excerpt: string
   verdictSummary: string
-  verdictRating: number
   pros: string[]
   cons: string[]
   readingTimeMinutes: number
@@ -202,8 +201,8 @@ STRICT EDITORIAL RULES:
    - ## Pricing & Value Assessment (Analyze ${context.pricing} tier against industry alternatives)
    - ## Final Verdict & The ${SITE_CONFIG.name} Recommendation
 
-5. STRUCTURED DATA & RATING:
-   - Provide a realistic verdict rating between 4.2 and 4.9.
+5. STRUCTURED DATA:
+   - Never invent scores, ratings, benchmarks, customer counts, or test results.
    - Provide 3-4 concrete pros and 2-3 honest limitations/considerations.
    - Provide 3-5 technical FAQs formatted as clean question-and-answer pairs.
 
@@ -215,7 +214,6 @@ RETURN STRICTLY A VALID JSON OBJECT MATCHING THIS SCHEMA:
   "metaDescription": "string (140-160 characters summary of what it does and why it matters)",
   "excerpt": "string (1-2 sentences summarizing what the product is and its main capability)",
   "verdictSummary": "string (40-60 words concise technical verdict)",
-  "verdictRating": 4.7,
   "pros": ["string", "string", "string"],
   "cons": ["string", "string"],
   "readingTimeMinutes": 6,
@@ -316,12 +314,6 @@ ${JSON.stringify(context, null, 2)}`
     verdictSummary:
       parsed.verdictSummary?.trim() ||
       `${item.name} provides a modern solution for developer teams with high performance and streamlined workflows.`,
-    verdictRating:
-      typeof parsed.verdictRating === "number" &&
-      parsed.verdictRating >= 1 &&
-      parsed.verdictRating <= 5
-        ? parsed.verdictRating
-        : 4.7,
     pros:
       Array.isArray(parsed.pros) && parsed.pros.length > 0
         ? parsed.pros.map(String)

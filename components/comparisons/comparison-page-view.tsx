@@ -38,7 +38,11 @@ import {
 import { AskAiBar } from "@/components/shared/ask-ai-bar"
 import { ROUTES } from "@/constants/routes"
 import { SITE_CONFIG } from "@/constants/site"
-import { getAllComparisons } from "@/constants/comparisons"
+import {
+  COMPARISON_AUTHOR_LABEL,
+  COMPARISON_BIAS_NOTE,
+  getAllComparisons,
+} from "@/constants/comparisons"
 import { AI_PROMPTS } from "@/lib/prompts"
 import {
   breadcrumbSchema,
@@ -208,7 +212,7 @@ export const ComparisonPageView = ({ comparison }: ComparisonPageViewProps) => {
             <div className={comparisonTrustBar}>
               <span className="inline-flex items-center gap-1">
                 <ShieldCheck className="size-3.5 text-emerald-600" />
-                Verified Research
+                {COMPARISON_AUTHOR_LABEL}
               </span>
               <span>·</span>
               <span className="inline-flex items-center gap-1">
@@ -218,7 +222,7 @@ export const ComparisonPageView = ({ comparison }: ComparisonPageViewProps) => {
               <span>·</span>
               <span className="inline-flex items-center gap-1">
                 <Layers className="size-3.5 text-indigo-600" />
-                No Sponsored Bias
+                {COMPARISON_BIAS_NOTE}
               </span>
             </div>
 

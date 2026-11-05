@@ -69,7 +69,6 @@ export type PlanConfig = {
   badgeLabel: string
   badgeClass: string
   popular: boolean
-  isDoFollow: boolean
   ctaText: string
   ctaHref: string
   features: string[]
@@ -87,13 +86,12 @@ export const PLANS: Record<Tier, PlanConfig> = {
     badgeLabel: "Community",
     badgeClass: "bg-slate-100 text-slate-700 border-slate-200",
     popular: false,
-    isDoFollow: false,
     ctaText: "Launch for free",
     ctaHref: ROUTES.SUBMIT,
     features: [
       "Standard listing queue",
       "Permanent product listing - stays live forever",
-      "Public product page - dofollow backlink while the LaunchNests badge stays on your site",
+      "Public product page - nofollow link by default, Do-Follow while the LaunchNests badge stays active on your site",
       "Upvotes, comments & maker dashboard",
       "Launch analytics & performance tracking",
       "AI-powered submission form prefill",
@@ -110,18 +108,16 @@ export const PLANS: Record<Tier, PlanConfig> = {
     badgeLabel: "Verified",
     badgeClass: "bg-blue-100 text-blue-700 border-blue-200",
     popular: true,
-    isDoFollow: true,
     ctaText: "Launch with Premium",
     ctaHref: ROUTES.SUBMIT,
     dodoProductId: process.env.DODO_PRODUCT_PREMIUM_LISTING,
     features: [
       "Everything in Community",
       "Choose any upcoming launch week",
-      "Instant Publishing",
       "Verified Blue Check badge",
       "Permanent Do-Follow SEO backlink",
       "Priority placement across launch pages",
-      "Dedicated ~1,000-word AI-written blog",
+      "Dedicated AI-written launch profile",
       "Featured placement in the blog section",
     ],
   },
@@ -131,11 +127,10 @@ export const PLANS: Record<Tier, PlanConfig> = {
     price: "$19",
     priceInCents: 1900,
     period: "one-time",
-    tagline: "Get top priority, a featured story, and a custom CTA to blogs",
+    tagline: "Get top priority and a featured story.",
     badgeLabel: "Partner",
     badgeClass: "bg-amber-100 text-amber-700 border-amber-200",
     popular: false,
-    isDoFollow: true,
     ctaText: "Launch with Premium+",
     ctaHref: ROUTES.SUBMIT,
     dodoProductId: process.env.DODO_PRODUCT_PREMIUM_PLUS_LISTING,
@@ -143,8 +138,6 @@ export const PLANS: Record<Tier, PlanConfig> = {
       "Everything in Premium",
       "Top sticky placement across all directory pages (shown first)",
       "Exclusive Gold Shimmer badge",
-      "Dedicated ~1,800-word AI-written blog",
-      "Custom CTA on your blog post",
       "Featured at the top of the blog section",
       "Priority Support",
     ],

@@ -9,13 +9,13 @@ import {
   Sparkles,
   ShieldCheck,
   ExternalLink,
-  Layers,
   Compass,
   PlusCircle,
 } from "lucide-react"
 import { getSimilarBlogs } from "@/db/queries/blogs"
 import { loadBlogPost } from "@/lib/blog/load-blog"
 import { BlogRowItem } from "@/components/blog/blog-row-item"
+import { BLOG_ARTICLE_LABEL } from "@/constants/blog"
 import { SITE_CONFIG } from "@/constants/site"
 import { ROUTES } from "@/constants/routes"
 import { PLANS, type Tier } from "@/constants/plans"
@@ -198,7 +198,6 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       url: `${SITE_CONFIG.url}/blog/${blog.slug}`,
       publishedAt: blog.publishedAt,
       updatedAt: blog.updatedAt,
-      authorName: submitter?.name || SITE_CONFIG.creator,
       coverImageUrl: blog.coverImageUrl || item.logoUrl,
       keywords: item.tags || [],
     }),
@@ -335,7 +334,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           <div className={comparisonTrustBar}>
             <span className="inline-flex items-center gap-1">
               <ShieldCheck className="size-3.5 text-emerald-600" />
-              Verified Editorial Review
+              {BLOG_ARTICLE_LABEL}
             </span>
             <span>·</span>
             <span className="inline-flex items-center gap-1">
@@ -346,11 +345,6 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             <span className="inline-flex items-center gap-1">
               <Clock className="size-3.5 text-indigo-600" />
               {blog.readingTimeMinutes} Min Read
-            </span>
-            <span>·</span>
-            <span className="inline-flex items-center gap-1">
-              <Layers className="size-3.5 text-amber-600" />
-              Permanent Do-Follow Link
             </span>
           </div>
 
@@ -385,7 +379,6 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
             {/* Quick Verdict Box with full-width Key Strengths & Tradeoffs comparison table */}
             <BlogVerdictBox
-              rating={blog.verdictRating}
               summary={blog.verdictSummary || blog.excerpt}
               pros={blog.pros || []}
               cons={blog.cons || []}

@@ -19,8 +19,9 @@ import type { DbProduct } from "@/types/entities"
 import { ProductsDirectoryContent } from "./products-content"
 import type { ProductSortOption } from "@/components/products/products-filter-bar"
 import { resolveCategoryHubPath } from "@/lib/catalog/category-url"
-import { toAbsoluteUrl } from "@/utils/urls"
+import { getCategoryPath, toAbsoluteUrl } from "@/utils/urls"
 import { CrawlablePagination } from "@/components/shared/crawlable-pagination"
+import { notFound, permanentRedirect } from "next/navigation"
 
 export const revalidate = 3600
 
@@ -187,13 +188,18 @@ const ProductsPage = async (props: {
 
   const totalPages = Math.max(1, Math.ceil(effectiveTotalCount / pageSize))
 
+  if (category && !matchedCategory && !hasTextQuery && categories.length > 0) {
+    permanentRedirect(getCategoryPath("product"))
+  }
+  if (effectiveTotalCount > 0 && currentPage > totalPages) notFound()
+
   const collectionJsonLd = collectionPageSchema({
     name: category ? `${category} Products` : "Products Directory",
     description: category
       ? `Browse all verified developer products and tools in ${category}`
       : "Browse the complete directory of developer tools and software products",
     url: category
-      ? `${SITE_CONFIG.url}/products?category=${encodeURIComponent(category)}`
+      ? toAbsoluteUrl(await resolveCategoryHubPath("product", category))
       : `${SITE_CONFIG.url}/products`,
     items: (initialProducts as DbProduct[]).map((p) => ({
       name: p.name,

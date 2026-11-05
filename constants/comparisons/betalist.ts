@@ -63,7 +63,7 @@ export const BETALIST_COMPARISON: PlatformComparison = {
     discoveryLifespan:
       "Perpetual catalog indexing. Products and tools remain continuously discoverable across category hubs, trending momentum feeds, and 'Built With' tech-stack pages without artificial expiration or feature caps.",
     pricingModel:
-      "100% free core submissions for products and dev tools with fast 12–24h review; affordable one-time verification tiers ($15 Featured Builder / $19 Ecosystem Partner) with permanent Do-Follow backlinks and zero recurring fees.",
+      "100% free core submissions for products and dev tools with fast 12–24h review; affordable one-time verification tiers ($15 Premium / $19 Premium+) with permanent Do-Follow backlinks and zero recurring fees.",
     keyStrengths: [
       "Two-way relational 'Built With' graph linking software products to their underlying dev tools, APIs, and databases",
       "100% free submission tier with fast 12–24h moderation — no mandatory paywalls to get reviewed",
@@ -215,7 +215,7 @@ export const BETALIST_COMPARISON: PlatformComparison = {
       competitorAngle:
         "In recent years, BetaList transitioned away from offering a free submission option. Every submission now requires an upfront fee (typically $39 to $129 depending on review speed and packages). While BetaList guarantees an automatic, full refund if your startup is rejected by their editorial team, founders must still pay upfront just to have their application reviewed.",
       launchNestsAngle:
-        "LaunchNests maintains that discovery should be accessible to every builder. Core directory submissions are 100% free with prompt editorial review within 12–24 hours. For founders who desire enhanced visibility and verified trust, LaunchNests offers simple one-time upgrades ($15 Featured Builder / $19 Ecosystem Partner) that include permanent Do-Follow backlinks and GitHub integration—never an upfront paywall just to apply.",
+        "LaunchNests maintains that discovery should be accessible to every builder. Core directory submissions are 100% free with prompt editorial review within 12–24 hours. For founders who desire enhanced visibility and verified trust, LaunchNests offers simple one-time upgrades ($15 Premium / $19 Premium+) that include permanent Do-Follow backlinks and GitHub integration—never an upfront paywall just to apply.",
       practicalTakeaway:
         "BetaList's refundable fee model works well for funded startups or founders with a dedicated launch budget. LaunchNests offers a zero-risk, completely free entry point with prompt review, making it ideal for indie engineers and bootstrapped projects.",
     },
@@ -323,7 +323,7 @@ export const BETALIST_COMPARISON: PlatformComparison = {
         title: "Submit to LaunchNests for Foundation & AI Indexing",
         timing: "Pre-Launch (Day 1)",
         action:
-          "Submit your project to LaunchNests. Tag the tools, databases, and frameworks powering your build. Connect your GitHub repository and activate the Featured Builder tier ($15 one-time) for permanent Do-Follow backlink equity.",
+          "Submit your project to LaunchNests. Tag the tools, databases, and frameworks powering your build. Connect your GitHub repository and activate the Premium tier ($15 one-time) for permanent Do-Follow backlink equity.",
         outcome:
           "Within 12–24 hours, your software is indexed in the developer directory, mapped in the 'Built With' graph, and accessible to AI agents via /llms.txt and MCP.",
       },

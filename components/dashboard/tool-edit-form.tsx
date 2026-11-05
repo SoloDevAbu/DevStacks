@@ -535,7 +535,7 @@ export const ToolEditForm = ({ tool }: ToolEditFormProps) => {
           {isFree ? (
             <div className="flex flex-col items-center justify-center gap-2.5 rounded-xl border border-dashed border-amber-300 bg-amber-50/50 p-6 text-center">
               <p className="text-xs font-semibold text-amber-900">
-                Interactive FAQs are exclusive to Featured Builder (Premium) and Ecosystem Partner tiers.
+                Interactive FAQs are exclusive to Premium (Premium) and Premium+ tiers.
               </p>
               <Button
                 type="button"

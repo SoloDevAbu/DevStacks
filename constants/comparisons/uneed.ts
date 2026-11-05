@@ -63,7 +63,7 @@ export const UNEED_COMPARISON: PlatformComparison = {
     discoveryLifespan:
       "Perpetual catalog indexing. Products and tools remain continuously discoverable across category hubs, trending momentum feeds, and 'Built With' tech-stack pages without artificial expiration or upvote quotas.",
     pricingModel:
-      "100% free core submissions for products and dev tools with fast 12–24h review; affordable one-time verification tiers ($15 Featured Builder / $19 Ecosystem Partner) with permanent Do-Follow backlinks and zero recurring fees.",
+      "100% free core submissions for products and dev tools with fast 12–24h review; affordable one-time verification tiers ($15 Premium / $19 Premium+) with permanent Do-Follow backlinks and zero recurring fees.",
     keyStrengths: [
       "Two-way relational 'Built With' graph linking software products to their underlying dev tools, APIs, and databases",
       "Fast 12–24h moderation with guaranteed permanent indexation — no multi-month queues and no minimum upvote quotas to stay listed",
@@ -133,7 +133,7 @@ export const UNEED_COMPARISON: PlatformComparison = {
       label: "Expedited Review Cost",
       competitorValue: "$14.99 (Fast-track) or $29.99 (Skip Waiting Line)",
       launchNestsValue:
-        "$15 one-time (Featured Builder with verified Do-Follow)",
+        "$15 one-time (Premium with verified Do-Follow)",
       highlight: "launchNests",
       description:
         "Both offer paid fast-tracking, with LaunchNests including permanent verified SEO equity.",
@@ -236,7 +236,7 @@ export const UNEED_COMPARISON: PlatformComparison = {
       competitorAngle:
         "Uneed offers a variety of paid services centered around an ongoing membership called Uneed Pro ($12.99/month or $99/year). Pro members receive +3 voting power, private Discord access, one free relaunch per month, video upload abilities, and partner discounts. In addition, Uneed offers a manual directory submission service ($249) that submits your tool to 100+ external directories.",
       launchNestsAngle:
-        "LaunchNests rejects recurring monthly memberships for makers. Our core directory is 100% free forever, and all premium enhancements are simple one-time payments: the Featured Builder tier ($15 one-time) grants a permanent verified badge, priority category ranking, and a permanent Do-Follow backlink. The Ecosystem Partner tier ($19 one-time) adds sticky banner placement and AI agent priority indexing. You never pay a monthly subscription just to keep your product featured.",
+        "LaunchNests rejects recurring monthly memberships for makers. Our core directory is 100% free forever, and all premium enhancements are simple one-time payments: the Premium tier ($15 one-time) grants a permanent verified badge, priority category ranking, and a permanent Do-Follow backlink. The Premium+ tier ($19 one-time) adds sticky banner placement and AI agent priority indexing. You never pay a monthly subscription just to keep your product featured.",
       practicalTakeaway:
         "If you want continuous community perks, Discord networking, and monthly relaunches, Uneed Pro offers substantial value. If you prefer transparent, one-time pricing without recurring subscriptions, LaunchNests provides accessible lifetime verification.",
     },

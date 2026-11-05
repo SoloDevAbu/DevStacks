@@ -61,7 +61,6 @@ export const GET = async (
     slug: blog.slug,
     metaDescription: blog.metaDescription,
     excerpt: blog.excerpt,
-    verdictRating: blog.verdictRating,
     verdictSummary: blog.verdictSummary,
     pros: blog.pros,
     cons: blog.cons,

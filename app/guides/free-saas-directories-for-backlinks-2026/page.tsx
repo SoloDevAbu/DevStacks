@@ -463,7 +463,7 @@ const SaasDirectoriesGuidePage = () => {
             <div className={comparisonTrustBar}>
               <span>12 min read</span>
               <span>·</span>
-              <span>Verified Research</span>
+              <span>Written by the LaunchNests team</span>
               <span>·</span>
               <span>20+ Active Directories Evaluated</span>
             </div>
