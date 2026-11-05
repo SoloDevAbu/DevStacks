@@ -3,7 +3,6 @@
 import { useRouter } from "next/navigation"
 import {
   ArrowBigUp,
-  Bookmark,
   ExternalLink,
   ArrowUp,
   Sparkles,
@@ -30,8 +29,6 @@ import {
   pricingBadgeColor,
   upvoteButtonActive,
   upvoteButtonInactive,
-  bookmarkButtonActive,
-  bookmarkButtonInactive,
   directoryCard,
   directoryCardContent,
   medalBadge,
@@ -45,7 +42,6 @@ import {
 import { getOutboundUrl, getLinkRel, getFaviconUrl } from "@/utils/urls"
 import { trackOutboundClick } from "@/lib/analytics/events"
 import { useUpvoteTool } from "@/hooks/tools/use-upvote-tool"
-import { useBookmarkTool } from "@/hooks/tools/use-bookmark-tool"
 import { useUserInteractions } from "@/hooks/users/use-user-interactions"
 import { useSession } from "@/lib/auth/client"
 import { useAuthModal } from "@/hooks/auth/use-auth-modal"
@@ -74,9 +70,7 @@ export const ToolCard = ({
   const { data: session } = useSession()
   const { requireAuth } = useAuthModal()
   const { toggle: toggleUpvote } = useUpvoteTool(tool.slug)
-  const bookmarkMutation = useBookmarkTool()
-  const { isToolUpvoted, isToolBookmarked, getToolUpvotes } =
-    useUserInteractions()
+  const { isToolUpvoted, getToolUpvotes } = useUserInteractions()
 
   const tier: Tier = (tool.tier ?? "free") as Tier
   const pricing: Pricing = (tool.pricing ?? "Free") as Pricing
@@ -84,10 +78,6 @@ export const ToolCard = ({
   const upvoteCount = getToolUpvotes(tool.slug, tool.upvotesCount ?? 0)
 
   const isUpvoted = isToolUpvoted(tool.slug)
-  const isBookmarked = isToolBookmarked(tool.id, tool.slug)
-
-  const isBookmarking =
-    bookmarkMutation.isPending && bookmarkMutation.variables?.slug === tool.slug
 
   const outboundUrl = getOutboundUrl(tool.websiteUrl ?? "", "launchnests")
   const linkRel = getLinkRel(tool.tier, tool.badgeVerified)
@@ -129,21 +119,6 @@ export const ToolCard = ({
         title: "Sign in to upvote",
         description:
           "Sign in with your Google account to upvote and support developer tools.",
-      }
-    )
-  }
-
-  const handleBookmark = (e: React.MouseEvent) => {
-    e.stopPropagation()
-    requireAuth(
-      () => {
-        if (!session?.user?.id) return
-        bookmarkMutation.mutate({ slug: tool.slug, userId: session.user.id })
-      },
-      {
-        title: "Sign in to bookmark",
-        description:
-          "Sign in with your Google account to bookmark tools to your library.",
       }
     )
   }
@@ -361,27 +336,6 @@ export const ToolCard = ({
                   fill={isUpvoted ? "currentColor" : "none"}
                 />
                 <span>{upvoteCount.toLocaleString()}</span>
-              </Button>
-              <HoverOutline />
-            </div>
-
-            {/* Bookmark Button */}
-            <div
-              className="group/btn relative inline-flex"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <Button
-                variant="outline"
-                onClick={handleBookmark}
-                disabled={isBookmarking}
-                className={cn(
-                  isBookmarked ? bookmarkButtonActive : bookmarkButtonInactive
-                )}
-              >
-                <Bookmark
-                  className="size-3.5 sm:size-4"
-                  fill={isBookmarked ? "currentColor" : "none"}
-                />
               </Button>
               <HoverOutline />
             </div>

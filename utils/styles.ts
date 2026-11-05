@@ -221,10 +221,10 @@ export const upvoteButtonInactive =
   "relative z-10 h-7.5 sm:h-8 gap-1 sm:gap-1.5 rounded-lg border-slate-200 bg-white px-2 sm:px-3 text-xs sm:text-sm font-bold text-slate-600 hover:bg-slate-50 transition-colors"
 
 export const bookmarkButtonActive =
-  "relative z-10 size-7.5 sm:size-8 rounded-lg border-indigo-300 bg-indigo-50 p-0 text-indigo-600 hover:bg-indigo-100/80 transition-colors"
+  "gap-2 rounded-lg border-indigo-300 bg-indigo-50 text-indigo-600 hover:bg-indigo-100/80 transition-colors"
 
 export const bookmarkButtonInactive =
-  "relative z-10 size-7.5 sm:size-8 rounded-lg border-slate-200 bg-white p-0 text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition-colors"
+  "gap-2 rounded-lg border-slate-200 bg-white text-slate-600 hover:bg-slate-50 transition-colors"
 
 export const discoveryCard =
   "group flex flex-col rounded-none bg-white transition-colors hover:border-slate-300"
