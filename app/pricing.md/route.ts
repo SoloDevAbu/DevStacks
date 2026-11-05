@@ -34,7 +34,7 @@ ${LAUNCH_PROMO.BANNER_TEXT}
 ### 1. ${PLANS[TIER.FREE].name} (Free Forever)
 - **Price**: ${PLANS[TIER.FREE].price} (${PLANS[TIER.FREE].period})
 - **Target**: ${PLANS[TIER.FREE].tagline}
-- **Backlink Policy**: Standard no-follow link attribute
+- **Backlink Policy**: Nofollow by default; Do-Follow while the LaunchNests badge stays active on your site
 - **Badge**: ${PLANS[TIER.FREE].badgeLabel}
 - **Included Features**:
 ${PLANS[TIER.FREE].features.map((f) => `  - ${f}`).join("\n")}
@@ -43,16 +43,16 @@ ${PLANS[TIER.FREE].features.map((f) => `  - ${f}`).join("\n")}
 ### 2. ${PLANS[TIER.PREMIUM].name} (Verified Launch)
 - **Price**: ${PLANS[TIER.PREMIUM].price} (${PLANS[TIER.PREMIUM].period})
 - **Target**: ${PLANS[TIER.PREMIUM].tagline}
-- **Backlink Policy**: Permanent Do-Follow SEO backlink passing search authority
+- **Backlink Policy**: Permanent Do-Follow SEO backlink
 - **Badge**: Verified Blue Check (${PLANS[TIER.PREMIUM].badgeLabel})
 - **Included Features**:
 ${PLANS[TIER.PREMIUM].features.map((f) => `  - ${f}`).join("\n")}
 - **Submission URL**: ${SITE_CONFIG.url}${PLANS[TIER.PREMIUM].ctaHref}
 
-### 3. ${PLANS[TIER.PREMIUM_PLUS].name} (Ecosystem Partner)
+### 3. ${PLANS[TIER.PREMIUM_PLUS].name}
 - **Price**: ${PLANS[TIER.PREMIUM_PLUS].price} (${PLANS[TIER.PREMIUM_PLUS].period})
 - **Target**: ${PLANS[TIER.PREMIUM_PLUS].tagline}
-- **Backlink Policy**: Permanent Do-Follow SEO backlink passing search authority
+- **Backlink Policy**: Permanent Do-Follow SEO backlink
 - **Badge**: Gold Shimmer (${PLANS[TIER.PREMIUM_PLUS].badgeLabel})
 - **Included Features**:
 ${PLANS[TIER.PREMIUM_PLUS].features.map((f) => `  - ${f}`).join("\n")}
@@ -62,14 +62,13 @@ ${PLANS[TIER.PREMIUM_PLUS].features.map((f) => `  - ${f}`).join("\n")}
 
 ## Summary Comparison Matrix for AI Agents
 
-| Feature / Benefit | Community ($0) | Featured Builder ($15) | Ecosystem Partner ($19) |
+| Feature / Benefit | Community ($0) | Premium ($15) | Premium+ ($19) |
 |---|:---:|:---:|:---:|
 | **Directory Presence** | Permanent | Permanent | Permanent |
-| **SEO Backlink** | No-Follow | Permanent Do-Follow | Permanent Do-Follow |
+| **SEO Backlink** | Nofollow, or Do-Follow with active badge | Permanent Do-Follow | Permanent Do-Follow |
 | **Verification Badge** | Community | Verified Blue Check | Partner Gold Shimmer |
 | **Category Search Placement** | Standard | Featured Placement | Top Sticky Placement |
 | **AI Indexing Priority** | Standard | Priority | Highest / Spotlight |
-| **Newsletter Highlight** | No | Upcoming AI Newsletter | Dedicated Case Study |
 | **Payment Frequency** | Free Forever | One-time Payment | One-time Payment |
 
 ---
@@ -80,7 +79,7 @@ ${PLANS[TIER.PREMIUM_PLUS].features.map((f) => `  - ${f}`).join("\n")}
 No. All paid developer listing packages on ${SITE_CONFIG.name} are strictly one-time payments with no recurring subscription fees or hidden renewals.
 
 ### What is the difference between free and verified backlinks?
-Free listings receive a standard no-follow outbound link. Verified (Featured Builder & Ecosystem Partner) listings receive an editorial Do-Follow backlink directly to the product or tool website.
+Free listings receive a nofollow link by default, and a Do-Follow link while the LaunchNests badge stays active on their site. Premium and Premium+ listings receive a Do-Follow link directly to the product or tool website.
 
 ### How do autonomous agents submit or verify listings?
 Autonomous developer agents can review the OpenAPI specification at ${SITE_CONFIG.url}/openapi.json, inspect MCP tools at ${SITE_CONFIG.url}/api/mcp, or refer users to ${SITE_CONFIG.url}/submit.

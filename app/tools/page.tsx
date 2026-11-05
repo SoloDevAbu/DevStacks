@@ -19,8 +19,9 @@ import type { DbTool } from "@/types/entities"
 import { ToolsDirectoryContent } from "./tools-content"
 import type { SortOption } from "@/components/tools/tools-filter-bar"
 import { resolveCategoryHubPath } from "@/lib/catalog/category-url"
-import { toAbsoluteUrl } from "@/utils/urls"
+import { getCategoryPath, toAbsoluteUrl } from "@/utils/urls"
 import { CrawlablePagination } from "@/components/shared/crawlable-pagination"
+import { notFound, permanentRedirect } from "next/navigation"
 
 export const revalidate = 3600
 
@@ -187,13 +188,18 @@ const ToolsPage = async (props: {
 
   const totalPages = Math.max(1, Math.ceil(effectiveTotalCount / pageSize))
 
+  if (category && !matchedCategory && !hasTextQuery && categories.length > 0) {
+    permanentRedirect(getCategoryPath("tool"))
+  }
+  if (effectiveTotalCount > 0 && currentPage > totalPages) notFound()
+
   const collectionJsonLd = collectionPageSchema({
     name: category ? `${category} Tools` : "Developer Tools Directory",
     description: category
       ? `Browse all verified developer tools, APIs, and infrastructure in ${category}`
       : "Browse the complete directory of developer tools, APIs, and infrastructure",
     url: category
-      ? `${SITE_CONFIG.url}/tools?category=${encodeURIComponent(category)}`
+      ? toAbsoluteUrl(await resolveCategoryHubPath("tool", category))
       : `${SITE_CONFIG.url}/tools`,
     items: (initialTools as DbTool[]).map((t) => ({
       name: t.name,

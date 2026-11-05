@@ -147,7 +147,7 @@ const FAQS = [
   {
     question: "Do I get a permanent Do-Follow SEO backlink?",
     answer:
-      "Yes. All approved products on the Featured Builder and Ecosystem Partner tiers receive permanent, direct Do-Follow backlinks to their homepage, passing search engine link equity directly to your domain.",
+      "Yes. All approved products on the Premium and Premium+ tiers receive a direct Do-Follow link to their site. Free listings get a nofollow link, or a Do-Follow link while the LaunchNests badge stays active on their site.",
   },
   {
     question: "What is the 'Built With' tech-stack graph?",

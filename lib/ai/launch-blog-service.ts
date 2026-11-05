@@ -247,7 +247,7 @@ export const generateAndSaveLaunchBlog = async ({
           metaDescription: generated.metaDescription,
           excerpt: generated.excerpt,
           content: generated.contentMarkdown,
-          verdictRating: String(generated.verdictRating),
+          verdictRating: null,
           verdictSummary: generated.verdictSummary,
           pros: generated.pros,
           cons: generated.cons,

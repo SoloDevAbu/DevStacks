@@ -11,6 +11,7 @@ import { getOutboundUrl, getLinkRel } from "@/utils/urls"
 import { trackExternalVisit } from "@/lib/api/analytics"
 import { trackOutboundClick } from "@/lib/analytics/events"
 import { cn } from "@/lib/utils"
+import { bookmarkButtonActive, bookmarkButtonInactive } from "@/utils/styles"
 
 interface ProductActionButtonsProps {
   slug: string
@@ -131,12 +132,7 @@ export const ProductActionButtons = ({
         variant="outline"
         onClick={handleBookmark}
         disabled={isBookmarking}
-        className={cn(
-          "gap-2 rounded-lg transition-colors",
-          isBookmarked
-            ? "border-indigo-300 bg-indigo-50 text-indigo-600 hover:bg-indigo-100/80"
-            : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
-        )}
+        className={isBookmarked ? bookmarkButtonActive : bookmarkButtonInactive}
       >
         <Bookmark
           className="size-4"

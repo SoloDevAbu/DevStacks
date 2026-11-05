@@ -5,6 +5,7 @@ import { HomeLaunchSection } from "@/components/home/home-launch-section"
 import { AI_PROMPTS } from "@/lib/prompts"
 import { Badge } from "@/components/ui/badge"
 import {
+  HOME_HERO_HEADING,
   HOME_HERO_DESCRIPTION,
   HOME_HERO_BADGES,
 } from "@/constants/home"
@@ -28,7 +29,8 @@ export const MainContent = ({
   return (
     <div className="relative flex min-h-full flex-col bg-slate-50/50">
       <PageHeader
-        heading={<RotatingHeadline />}
+        heading={HOME_HERO_HEADING}
+        tagline={<RotatingHeadline />}
         description={HOME_HERO_DESCRIPTION}
         aiPrompt={AI_PROMPTS.home}
         variant="home"

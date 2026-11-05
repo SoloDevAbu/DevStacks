@@ -1,17 +1,15 @@
-import { Star, Check, MinusCircle, Sparkles } from "lucide-react"
+import { Check, MinusCircle, Sparkles } from "lucide-react"
 import { CornerBrackets } from "@/components/shared/corner-brackets"
 import {
   verdictBox,
   verdictHeaderArea,
   verdictHeader,
-  verdictScoreBadge,
   verdictProsConsTable,
   verdictProsCol,
   verdictConsCol,
 } from "@/utils/blog/styles"
 
 export interface BlogVerdictBoxProps {
-  rating?: string | number | null
   summary: string
   pros: string[]
   cons: string[]
@@ -19,7 +17,6 @@ export interface BlogVerdictBoxProps {
 }
 
 export const BlogVerdictBox = ({
-  rating,
   summary,
   pros,
   cons,
@@ -42,13 +39,6 @@ export const BlogVerdictBox = ({
               {brandName} at a Glance
             </h2>
           </div>
-
-          {rating ? (
-            <div className={verdictScoreBadge}>
-              <Star className="size-4 fill-amber-500 text-amber-500" />
-              <span>{Number(rating).toFixed(1)} / 5.0</span>
-            </div>
-          ) : null}
         </div>
 
         {/* 40-60 word extractable verdict summary */}

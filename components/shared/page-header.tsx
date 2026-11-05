@@ -14,6 +14,7 @@ export type PageHeaderVariant =
 
 interface PageHeaderProps {
   heading: React.ReactNode
+  tagline?: React.ReactNode
   description: string
   aiPrompt?: string
   variant?: PageHeaderVariant
@@ -80,6 +81,7 @@ const VARIANT_CONFIGS = {
 
 export const PageHeader = ({
   heading,
+  tagline,
   description,
   aiPrompt = "",
   variant = "default",
@@ -114,6 +116,11 @@ export const PageHeader = ({
           <h1 className="mb-1.5 text-lg font-bold tracking-tight text-slate-900 sm:text-xl md:text-2xl">
             {heading}
           </h1>
+          {tagline && (
+            <p className="text-sm font-semibold text-slate-700 sm:text-base">
+              {tagline}
+            </p>
+          )}
           <p className="mt-1 text-xs leading-relaxed text-slate-600 sm:text-sm">
             {description}
           </p>

@@ -108,7 +108,7 @@ export const PricingTiersSection = ({ promo }: PricingTiersSectionProps) => {
           </Button>
         </div>
 
-        {/* Tier 2: Premium (Featured Builder) */}
+        {/* Tier 2: Premium */}
         <div
           className={`${pricingColumn} bg-linear-to-b from-blue-50/40 via-white to-white ring-1 ring-blue-200/80 md:ring-0`}
         >
@@ -202,7 +202,7 @@ export const PricingTiersSection = ({ promo }: PricingTiersSectionProps) => {
           )}
         </div>
 
-        {/* Tier 3: Premium+ (Ecosystem Partner) */}
+        {/* Tier 3: Premium+ */}
         <div
           className={`${pricingColumn} bg-linear-to-b from-amber-50/20 via-white to-white`}
         >

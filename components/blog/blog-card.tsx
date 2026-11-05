@@ -1,6 +1,6 @@
 import Link from "next/link"
 import Image from "next/image"
-import { Clock, Star, ArrowRight, Sparkles } from "lucide-react"
+import { Clock, ArrowRight, Sparkles } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import {
   blogCardWrapper,
@@ -19,7 +19,6 @@ export interface BlogCardProps {
 
 export const BlogCard = ({ blog, tool, product }: BlogCardProps) => {
   const item = tool || product
-  const rating = blog.verdictRating ? Number(blog.verdictRating).toFixed(1) : null
 
   return (
     <article className={blogCardWrapper}>
@@ -35,15 +34,6 @@ export const BlogCard = ({ blog, tool, product }: BlogCardProps) => {
             <Clock className="size-3 text-slate-400" />
             {blog.readingTimeMinutes} min read
           </span>
-          {rating && (
-            <>
-              <span>•</span>
-              <span className="flex items-center gap-1 text-amber-600 font-semibold">
-                <Star className="size-3 fill-amber-500 text-amber-500" />
-                {rating}
-              </span>
-            </>
-          )}
         </div>
 
         {/* Title */}

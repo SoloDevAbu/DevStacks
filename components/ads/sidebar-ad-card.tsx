@@ -116,7 +116,7 @@ const ActiveAdItem = ({ ad }: { ad: ActiveAdDto }) => {
           <a
             href={`/api/ads/${ad.id}/click`}
             target="_blank"
-            rel="noopener noreferrer"
+            rel="sponsored noopener noreferrer"
           />
         }
       >

@@ -3,7 +3,6 @@
 import { useRouter } from "next/navigation"
 import {
   Heart,
-  Bookmark,
   ExternalLink,
   ArrowUp,
   Sparkles,
@@ -27,8 +26,6 @@ import {
   tierContentBg,
   tierShimmerGradient,
   pricingBadgeColor,
-  bookmarkButtonActive,
-  bookmarkButtonInactive,
   directoryCard,
   directoryCardContent,
   medalBadge,
@@ -41,7 +38,6 @@ import {
 import { getOutboundUrl, getLinkRel, getFaviconUrl } from "@/utils/urls"
 import { trackOutboundClick } from "@/lib/analytics/events"
 import { useLikeProduct } from "@/hooks/products/use-like-product"
-import { useBookmarkProduct } from "@/hooks/products/use-bookmark-product"
 import { useUserInteractions } from "@/hooks/users/use-user-interactions"
 import { useSession } from "@/lib/auth/client"
 import { useAuthModal } from "@/hooks/auth/use-auth-modal"
@@ -70,9 +66,7 @@ export const ProductCard = ({
   const { data: session } = useSession()
   const { requireAuth } = useAuthModal()
   const { toggle: toggleLike } = useLikeProduct(product.slug)
-  const bookmarkMutation = useBookmarkProduct()
-  const { isProductLiked, isProductBookmarked, getProductLikes } =
-    useUserInteractions()
+  const { isProductLiked, getProductLikes } = useUserInteractions()
 
   const tier: Tier = (product.tier ?? "free") as Tier
   const pricing: Pricing = (product.pricing ?? "Free") as Pricing
@@ -81,11 +75,6 @@ export const ProductCard = ({
   const builtWithTools = product.builtWithTools ?? []
 
   const isLiked = isProductLiked(product.slug)
-  const isBookmarked = isProductBookmarked(product.id, product.slug)
-
-  const isBookmarking =
-    bookmarkMutation.isPending &&
-    bookmarkMutation.variables?.slug === product.slug
 
   const outboundUrl = getOutboundUrl(product.websiteUrl ?? "", "launchnests")
   const linkRel = getLinkRel(product.tier, product.badgeVerified)
@@ -127,21 +116,6 @@ export const ProductCard = ({
         title: "Sign in to like",
         description:
           "Sign in with your Google account to like and support developer products.",
-      }
-    )
-  }
-
-  const handleBookmark = (e: React.MouseEvent) => {
-    e.stopPropagation()
-    requireAuth(
-      () => {
-        if (!session?.user?.id) return
-        bookmarkMutation.mutate({ slug: product.slug, userId: session.user.id })
-      },
-      {
-        title: "Sign in to bookmark",
-        description:
-          "Sign in with your Google account to save products to your library.",
       }
     )
   }
@@ -375,28 +349,6 @@ export const ProductCard = ({
                   fill={isLiked ? "currentColor" : "none"}
                 />
                 <span>{likeCount.toLocaleString()}</span>
-              </Button>
-              <HoverOutline />
-            </div>
-
-            {/* Bookmark Button */}
-            <div
-              className="group/btn relative inline-flex"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <Button
-                variant="outline"
-                onClick={handleBookmark}
-                disabled={isBookmarking}
-                className={cn(
-                  "size-7.5 sm:size-8",
-                  isBookmarked ? bookmarkButtonActive : bookmarkButtonInactive
-                )}
-              >
-                <Bookmark
-                  className="size-3.5 sm:size-4"
-                  fill={isBookmarked ? "currentColor" : "none"}
-                />
               </Button>
               <HoverOutline />
             </div>

@@ -155,7 +155,7 @@ const LAUNCH_PHASES = [
     title: "Compounding SEO & AI Ingestion",
     steps: [
       "Benefit from permanent category ranking without recurring monthly fees.",
-      "Accumulate natural inbound backlinks passing root domain authority.",
+      "Earn natural mentions from builders who discover your product.",
       "AI assistants (Cursor, ChatGPT) cite your product through /llms.txt.",
       "Submit major feature updates to trigger re-surfacing in trending feeds.",
     ],
@@ -204,7 +204,7 @@ const FAQS = [
   {
     question: "Is LaunchNests free to launch on?",
     answer:
-      "Yes. Core submissions for software products and developer tools are 100% free with human review within 12–24 hours. We also offer affordable one-time verification tiers ($15 Featured Builder / $19 Ecosystem Partner) for permanent Do-Follow backlinks and featured placements.",
+      "Yes. Core submissions for software products and developer tools are 100% free with human review within 12–24 hours. We also offer affordable one-time verification tiers ($15 Premium / $19 Premium+) for permanent Do-Follow backlinks and featured placements.",
   },
   {
     question: "Can I launch both SaaS products and developer tools?",

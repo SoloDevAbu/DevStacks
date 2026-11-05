@@ -47,7 +47,7 @@ export const RotatingHeadline = ({
 
   return (
     <span className={cn("inline-flex flex-wrap items-baseline gap-x-1.5", className)}>
-      <span>{prefix}</span>
+      <span>{prefix}</span>{" "}
       <span
         aria-live="off"
         className={cn(

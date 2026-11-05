@@ -183,7 +183,7 @@ export const SUBMISSION_FAQS: SubmissionFaq[] = [
   },
   {
     question: `What are the discoverability benefits of launching on ${SITE_CONFIG.name}?`,
-    answer: `Listings receive permanent directory indexing, inclusion in /llms.txt and /llms-full.txt for generative AI engines (ChatGPT, Claude, Perplexity), structured SoftwareApplication and Product JSON-LD, high-authority dofollow backlinks, and placement in This Week's Launches on the homepage ranked by verified community votes.`,
+    answer: `Listings receive permanent directory indexing, inclusion in /llms.txt and /llms-full.txt for generative AI engines (ChatGPT, Claude, Perplexity), structured SoftwareApplication JSON-LD, Do-Follow links on paid tiers or with an active badge, and placement in This Week's Launches on the homepage ranked by verified community votes.`,
   },
   {
     question: `What metadata is collected for AEO and GEO optimization?`,

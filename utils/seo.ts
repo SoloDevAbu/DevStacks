@@ -28,6 +28,10 @@ export const formatTitle = (
   return `${sanitizedName}: ${cleanTagline.slice(0, availableTaglineLength).trim()}…`
 }
 
+export const firstText = (
+  ...values: ReadonlyArray<string | null | undefined>
+): string | undefined => values.find((value) => value?.trim()) ?? undefined
+
 export const formatMetaDescription = (
   description?: string | null,
   maxChars = 155
