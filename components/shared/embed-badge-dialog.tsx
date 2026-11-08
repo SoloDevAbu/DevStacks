@@ -11,10 +11,19 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import { Spinner } from "@/components/ui/spinner"
 import { toast } from "@/components/ui/toast"
+import {
+  BADGE_SHIELD_NOTE,
+  BADGE_STYLE,
+  BADGE_STYLE_OPTIONS,
+  type BadgeStyle,
+} from "@/constants/badges"
 import { SITE_CONFIG } from "@/constants/site"
 import { ROUTES } from "@/constants/routes"
+import { useBadgeStatus, useVerifyBadge } from "@/hooks/badges/use-badge"
 import { cn } from "@/lib/utils"
 import {
   embedModalContainer,
@@ -22,6 +31,7 @@ import {
   badgePreviewContainer,
   badgeCodeContainer,
   badgePromptContainer,
+  badgeStyleOption,
 } from "@/utils/styles"
 
 interface EmbedBadgeDialogProps {
@@ -34,8 +44,6 @@ interface EmbedBadgeDialogProps {
   onBackToSubmit?: () => void
 }
 
-type BadgeStyle = "card" | "dark" | "ranked" | "shield"
-
 export const EmbedBadgeDialog = ({
   isOpen,
   onClose,
@@ -46,29 +54,37 @@ export const EmbedBadgeDialog = ({
   onBackToSubmit,
 }: EmbedBadgeDialogProps) => {
   const router = useRouter()
-  const [style, setStyle] = useState<BadgeStyle>("card")
+  const [style, setStyle] = useState<BadgeStyle>(BADGE_STYLE.CARD)
   const [copiedCode, setCopiedCode] = useState(false)
   const [copiedPrompt, setCopiedPrompt] = useState(false)
-  const [isVerifying, setIsVerifying] = useState(false)
-  const [isVerified, setIsVerified] = useState(false)
+  const [editedPageUrl, setEditedPageUrl] = useState<string | null>(null)
+  const { data: badgeStatus } = useBadgeStatus(slug, type, isOpen)
+  const verifyBadge = useVerifyBadge()
+
+  const pageUrl = editedPageUrl ?? badgeStatus?.badgeUrl ?? websiteUrl ?? ""
+  const isShield = style === BADGE_STYLE.SHIELD
+  const isVerified = Boolean(verifyBadge.data?.verified)
+  const styleOptions = BADGE_STYLE_OPTIONS.filter(
+    ({ value }) => value !== BADGE_STYLE.RANKED || badgeStatus?.placement
+  )
 
   const entityPath = type === "tool" ? `tools/${slug}` : `products/${slug}`
   const canonicalUrl = `${SITE_CONFIG.url}/${entityPath}`
   const badgeImageUrl = `${SITE_CONFIG.url}/api/badge/${slug}?style=${style}&type=${type}`
 
   const embedCodeSnippet =
-    style === "shield"
+    isShield
       ? `[![Featured on LaunchNests](${badgeImageUrl})](${canonicalUrl}?ref=badge)`
       : `<a href="${canonicalUrl}?ref=badge" target="_blank">\n  <img src="${badgeImageUrl}" alt="Featured on LaunchNests" />\n</a>`
 
   const aiPromptSnippet =
-    style === "shield"
+    isShield
       ? `Add the LaunchNests featured badge to our GitHub README.md (e.g. near the top header or badges section).
 
 Here is the Markdown embed code to insert:
 [![Featured on LaunchNests](${badgeImageUrl})](${canonicalUrl}?ref=badge)`
       : `Add the LaunchNests featured badge to our landing page (e.g. in the footer or social proof section).
-Ensure the link opens in a new tab with noopener referrer.
+Keep it as a plain link in the server-rendered HTML. Do not add rel="nofollow", "ugc" or "sponsored".
 
 Here is the HTML embed code to insert:
 <a href="${canonicalUrl}?ref=badge" target="_blank">
@@ -94,8 +110,8 @@ Style it cleanly matching our site design.`
     setTimeout(() => setCopiedPrompt(false), 2500)
   }
 
-  const handleVerifyBadge = async () => {
-    if (!websiteUrl) {
+  const handleVerifyBadge = () => {
+    if (!pageUrl.trim()) {
       toast.error(
         "Website URL Missing",
         "Please update your listing website URL to verify."
@@ -103,36 +119,24 @@ Style it cleanly matching our site design.`
       return
     }
 
-    setIsVerifying(true)
-    try {
-      const res = await fetch("/api/badge/verify", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url: websiteUrl, slug, type }),
-      })
-      const data = await res.json()
-
-      if (data.verified) {
-        setIsVerified(true)
-        toast.success(
-          "Badge Verified!",
-          "Your badge has been verified. Your listing now has a permanent do-follow SEO link!"
-        )
-      } else {
-        toast.error(
-          "Badge Not Detected",
-          data.message ||
-            "We couldn't detect the badge snippet at that URL. Ensure the page is published."
-        )
+    verifyBadge.mutate(
+      { url: pageUrl, slug, type },
+      {
+        onSuccess: ({ verified, message }) => {
+          if (verified) {
+            toast.success("Badge Verified!", message)
+            router.refresh()
+          } else {
+            toast.error("Badge Not Verified", message)
+          }
+        },
+        onError: () =>
+          toast.error(
+            "Verification Error",
+            "We could not run the check. Please try again."
+          ),
       }
-    } catch {
-      toast.error(
-        "Verification Error",
-        "Network error checking website. Please try again."
-      )
-    } finally {
-      setIsVerifying(false)
-    }
+    )
   }
 
   const handleAddLater = () => {
@@ -158,8 +162,8 @@ Style it cleanly matching our site design.`
                 Verify your badge
               </DialogTitle>
               <DialogDescription className="font-sans text-xs leading-relaxed text-slate-500">
-                Paste the badge on your site to go live. Keep it there after
-                launch — we fetch that page so the Visit link stays dofollow.
+                Paste the badge on your site and verify it. Your Visit link is
+                Do-Follow while the badge stays live.
               </DialogDescription>
             </div>
           </div>
@@ -175,54 +179,18 @@ Style it cleanly matching our site design.`
                 Badge Style
               </span>
               <div className="flex flex-wrap items-center gap-1 rounded-lg border border-slate-200 bg-slate-100/90 p-0.5">
-                <button
-                  type="button"
-                  onClick={() => setStyle("card")}
-                  className={cn(
-                    "cursor-pointer rounded-md px-2 py-1 font-sans text-xs font-semibold transition-all",
-                    style === "card"
-                      ? "bg-white text-slate-900 shadow-2xs"
-                      : "text-slate-500 hover:text-slate-800"
-                  )}
-                >
-                  Light Card
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setStyle("dark")}
-                  className={cn(
-                    "cursor-pointer rounded-md px-2 py-1 font-sans text-xs font-semibold transition-all",
-                    style === "dark"
-                      ? "bg-white text-slate-900 shadow-2xs"
-                      : "text-slate-500 hover:text-slate-800"
-                  )}
-                >
-                  Dark Card
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setStyle("ranked")}
-                  className={cn(
-                    "cursor-pointer rounded-md px-2 py-1 font-sans text-xs font-semibold transition-all",
-                    style === "ranked"
-                      ? "bg-white text-slate-900 shadow-2xs"
-                      : "text-slate-500 hover:text-slate-800"
-                  )}
-                >
-                  Ranked Gold
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setStyle("shield")}
-                  className={cn(
-                    "cursor-pointer rounded-md px-2 py-1 font-sans text-xs font-semibold transition-all",
-                    style === "shield"
-                      ? "bg-white text-slate-900 shadow-2xs"
-                      : "text-slate-500 hover:text-slate-800"
-                  )}
-                >
-                  GitHub Shield
-                </button>
+                {styleOptions.map(({ value, label }) => (
+                  <Button
+                    key={value}
+                    type="button"
+                    variant="ghost"
+                    size="xs"
+                    onClick={() => setStyle(value)}
+                    className={badgeStyleOption(style === value)}
+                  >
+                    {label}
+                  </Button>
+                ))}
               </div>
             </div>
 
@@ -265,13 +233,32 @@ Style it cleanly matching our site design.`
             </div>
             <pre className={badgeCodeContainer}>{embedCodeSnippet}</pre>
             <p className="font-sans text-xs leading-normal text-slate-500">
-              Paste this into your homepage, publish, then verify. Keep it on
-              that URL after launch — we fetch weekly to keep the Visit link
-              dofollow.
+              {isShield
+                ? BADGE_SHIELD_NOTE
+                : "Paste this into your website, publish, then verify. Keep it on that page: we re-check weekly, and your Visit link stays Do-Follow while the badge is live."}
             </p>
           </div>
 
-          {/* Section 3: AI Prompt */}
+          {/* Section 3: Page holding the badge */}
+          <div className="flex w-full min-w-0 flex-col gap-2">
+            <Label
+              htmlFor="badge-page-url"
+              className="flex items-center gap-1.5 font-sans text-xs font-bold tracking-wider text-emerald-600 uppercase"
+            >
+              <span className="size-1.5 rounded-full bg-emerald-500" />
+              Page With The Badge
+            </Label>
+            <Input
+              id="badge-page-url"
+              type="url"
+              value={pageUrl}
+              onChange={(event) => setEditedPageUrl(event.target.value)}
+              placeholder="https://your-site.com"
+              className="text-xs"
+            />
+          </div>
+
+          {/* Section 4: AI Prompt */}
           <div className="flex w-full min-w-0 flex-col gap-2">
             <div className="flex items-center justify-between">
               <span className="flex items-center gap-1.5 font-sans text-xs font-bold tracking-wider text-indigo-600 uppercase">
@@ -299,7 +286,7 @@ Style it cleanly matching our site design.`
               </Button>
             </div>
             <p className="font-sans text-xs leading-normal text-slate-500">
-              {style === "shield"
+              {isShield
                 ? "Paste into Cursor, ChatGPT, or Claude — it will add this GitHub badge to your README.md. Then verify below."
                 : "Paste into Cursor, ChatGPT, or Claude — it will add this badge to your site. Then verify below."}
             </p>
@@ -337,7 +324,7 @@ Style it cleanly matching our site design.`
               <Button
                 type="button"
                 onClick={handleVerifyBadge}
-                disabled={isVerifying || isVerified}
+                disabled={verifyBadge.isPending || isVerified}
                 className={cn(
                   "h-10 gap-2 rounded-xl px-5 font-sans text-xs font-bold text-white shadow-xs transition-colors",
                   isVerified
@@ -345,7 +332,7 @@ Style it cleanly matching our site design.`
                     : "bg-[#0084FF] hover:bg-[#0070E0]"
                 )}
               >
-                {isVerifying ? (
+                {verifyBadge.isPending ? (
                   <>
                     <Spinner className="size-4 text-white" />
                     <span>Verifying...</span>

@@ -395,7 +395,7 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
                       className="size-6 md:size-7"
                     />
                   </div>
-                  <LaunchBadge submitterId={product.submitterId} />
+                  <LaunchBadge submitterId={product.submitterId} tier={product.tier} />
                   <Badge
                     variant="outline"
                     className={pricingBadgeColor(product.pricing as Pricing)}

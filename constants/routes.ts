@@ -65,6 +65,7 @@ export const ROUTES = {
   CHECKOUT_SUCCESS: "/",
   CHECKOUT_CANCEL: "/pricing",
   CRON_ROLLOVER: "/api/cron/rollover",
+  CRON_BADGE_CHECK: "/api/cron/badge-check",
   INDEXNOW_KEY: "/indexnow-key.txt",
   FEED: "/feed.xml",
   LLMS_TXT: "/llms.txt",

@@ -398,7 +398,7 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
                       className="size-6 md:size-7"
                     />
                   </div>
-                  <LaunchBadge submitterId={tool.submitterId} />
+                  <LaunchBadge submitterId={tool.submitterId} tier={tool.tier} />
                   <Badge
                     variant="outline"
                     className={pricingBadgeColor(tool.pricing as Pricing)}

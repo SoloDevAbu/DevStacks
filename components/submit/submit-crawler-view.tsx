@@ -32,10 +32,12 @@ import {
 
 interface SubmitCrawlerViewProps {
   initialUrl?: string
+  isPromoActive?: boolean
 }
 
 export const SubmitCrawlerView = ({
   initialUrl = "",
+  isPromoActive = false,
 }: SubmitCrawlerViewProps) => {
   const productTrack = LAUNCH_TRACKS.product
   const toolTrack = LAUNCH_TRACKS.tool
@@ -56,7 +58,7 @@ export const SubmitCrawlerView = ({
       />
 
       <div className="flex flex-col gap-8 p-6 md:p-8">
-        {LAUNCH_PROMO.IS_ACTIVE && (
+        {isPromoActive && (
           <div className={launchPromoCard}>
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div className="flex items-center gap-2.5">

@@ -2,10 +2,29 @@ import { NextResponse } from "next/server"
 import { SITE_CONFIG } from "@/constants/site"
 import { PLANS, TIER } from "@/constants/plans"
 import { LAUNCH_PROMO } from "@/constants/promo"
+import { getCachedLaunchPromoStatus } from "@/lib/launches/promo-status"
 
 export const revalidate = 86400
 
-export const GET = () => {
+const PROMO_FRONTMATTER = `active_promo: "${LAUNCH_PROMO.PROMO_TITLE}"
+promo_slots_total: ${LAUNCH_PROMO.MAX_LAUNCHES}
+`
+
+const PROMO_SECTION = `## Active Launch Promotion: First 50 Free
+
+${LAUNCH_PROMO.BANNER_TEXT}
+- **Offer**: The first ${LAUNCH_PROMO.MAX_LAUNCHES} developer tools and products submitted receive complimentary Lifetime Premium status (valued at ${LAUNCH_PROMO.VALUE_GIFTED}).
+- **Inclusions**: Permanent Do-Follow SEO backlink, Verified Blue Check badge, and priority AI/LLM indexing.
+- **Redemption**: Automatically granted upon submission approval at ${SITE_CONFIG.url}/submit while slots remain available.
+
+---
+
+`
+
+export const GET = async () => {
+  const promoStatus = await getCachedLaunchPromoStatus().catch(() => null)
+  const isPromoActive = Boolean(promoStatus?.isPromoActive)
+
   const content = `# Pricing & Sponsorship Plans — ${SITE_CONFIG.name}
 
 > Structured pricing, directory submission tiers, and developer promotion options on ${SITE_CONFIG.name} (${SITE_CONFIG.domain}).
@@ -15,21 +34,10 @@ url: "${SITE_CONFIG.url}/pricing"
 title: "Pricing & Sponsorship Plans — ${SITE_CONFIG.name}"
 spec: "Dualmark AEO 1.0"
 plans_count: 3
-active_promo: "${LAUNCH_PROMO.PROMO_TITLE}"
-promo_slots_total: ${LAUNCH_PROMO.MAX_LAUNCHES}
-updated: "2026-10-01"
+${isPromoActive ? PROMO_FRONTMATTER : ""}updated: "2026-10-01"
 \`\`\`
 
-## Active Launch Promotion: First 50 Free
-
-${LAUNCH_PROMO.BANNER_TEXT}
-- **Offer**: The first ${LAUNCH_PROMO.MAX_LAUNCHES} developer tools and products submitted receive complimentary Lifetime Premium status (valued at ${LAUNCH_PROMO.VALUE_GIFTED}).
-- **Inclusions**: Permanent Do-Follow SEO backlink, Verified Blue Check badge, and priority AI/LLM indexing.
-- **Redemption**: Automatically granted upon submission approval at ${SITE_CONFIG.url}/submit while slots remain available.
-
----
-
-## Directory Submission & Listing Tiers
+${isPromoActive ? PROMO_SECTION : ""}## Directory Submission & Listing Tiers
 
 ### 1. ${PLANS[TIER.FREE].name} (Free Forever)
 - **Price**: ${PLANS[TIER.FREE].price} (${PLANS[TIER.FREE].period})

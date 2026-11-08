@@ -223,6 +223,11 @@ export const isFutureWeek = (year: number, week: number): boolean => {
   return year > current.year || (year === current.year && week > current.week)
 }
 
+export const isCompletedWeek = (year: number, week: number): boolean => {
+  const current = getCurrentWeek()
+  return year < current.year || (year === current.year && week < current.week)
+}
+
 // "Week 45, 2026 (Nov 2 – 8)"
 export const formatWeekTitle = (year: number, week: number): string => {
   const { weekLabel, dateRange } = formatLaunchWeekDisplay(year, week)

@@ -52,6 +52,8 @@ export interface SingleItemAnalyticsData {
     websiteUrl: string
     logoUrl: string | null
     tier: "free" | "premium" | "premium+"
+    badgeVerified: boolean
+    badgeCheckFailures: number
     status: string
     createdAt: Date
     itemType: "product" | "tool"
@@ -133,6 +135,8 @@ export const getProductAnalytics = async (
       websiteUrl: product.websiteUrl,
       logoUrl: product.logoUrl,
       tier: product.tier as "free" | "premium" | "premium+",
+      badgeVerified: product.badgeVerified,
+      badgeCheckFailures: product.badgeCheckFailures,
       status: product.status,
       createdAt: product.createdAt,
       itemType: "product",
@@ -237,6 +241,8 @@ export const getToolAnalytics = async (
       websiteUrl: tool.websiteUrl,
       logoUrl: tool.logoUrl,
       tier: tool.tier as "free" | "premium" | "premium+",
+      badgeVerified: tool.badgeVerified,
+      badgeCheckFailures: tool.badgeCheckFailures,
       status: tool.status,
       createdAt: tool.createdAt,
       itemType: "tool",

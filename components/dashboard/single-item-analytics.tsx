@@ -25,6 +25,7 @@ import {
   EmptyDescription,
   EmptyMedia,
 } from "@/components/ui/empty"
+import { BadgeStatusNotice } from "@/components/shared/badge-status-notice"
 import { ProductLogo } from "@/components/shared/product-logo"
 import { ROUTES } from "@/constants/routes"
 import {
@@ -128,6 +129,17 @@ export const SingleItemAnalytics = ({ data }: SingleItemAnalyticsProps) => {
             </Button>
           </div>
         </div>
+
+        <BadgeStatusNotice
+          name={item.name}
+          slug={item.slug}
+          type={item.itemType}
+          websiteUrl={item.websiteUrl}
+          tier={item.tier}
+          status={item.status}
+          badgeVerified={item.badgeVerified}
+          badgeCheckFailures={item.badgeCheckFailures}
+        />
       </div>
 
       {/* 1. KPI Metrics Ribbon */}

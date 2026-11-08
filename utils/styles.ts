@@ -809,6 +809,26 @@ export const schedulePromoBox =
 export const badgePreviewContainer =
   "flex items-center justify-center rounded-2xl border border-slate-200/80 bg-slate-50/70 py-6 px-4 w-full overflow-hidden"
 
+const BADGE_NOTICE_TONES = {
+  active: "border-emerald-200 bg-emerald-50/60 text-emerald-900",
+  warning: "border-amber-200 bg-amber-50/70 text-amber-900",
+  available: "border-blue-200 bg-blue-50/60 text-blue-900",
+} as const
+
+export const badgeNotice = (tone: keyof typeof BADGE_NOTICE_TONES) =>
+  cn(
+    "flex flex-col gap-3 rounded-xl border px-4 py-3 sm:flex-row sm:items-center sm:justify-between",
+    BADGE_NOTICE_TONES[tone]
+  )
+
+export const badgeStyleOption = (isActive: boolean) =>
+  cn(
+    "rounded-md font-sans font-semibold",
+    isActive
+      ? "bg-white text-slate-900 shadow-2xs hover:bg-white"
+      : "text-slate-500 hover:text-slate-800"
+  )
+
 export const badgeCodeContainer =
   "w-full min-w-0 max-w-full overflow-x-auto rounded-xl border border-slate-200/90 bg-slate-50/90 p-3 font-mono text-[11px] leading-relaxed text-slate-800 whitespace-pre"
 
