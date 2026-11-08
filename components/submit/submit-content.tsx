@@ -644,7 +644,7 @@ export const SubmitContent = ({
       </div>
 
       {/* Launch Promo Ribbon - Compact & Sleek */}
-      {LAUNCH_PROMO.IS_ACTIVE && (
+      {isPromoActive && (
         <div className="flex items-center justify-between border-b border-dashed border-amber-200/80 bg-linear-to-r from-amber-500/10 via-yellow-500/5 to-amber-500/10 px-4 py-2.5 text-xs text-amber-950 sm:px-6 md:px-8">
           <div className="flex items-center gap-2">
             <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-amber-500/20 text-amber-700">

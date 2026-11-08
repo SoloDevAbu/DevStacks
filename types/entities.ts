@@ -20,6 +20,7 @@ export type DbTool = {
   pricing: Pricing
   tier: Tier
   badgeVerified?: boolean
+  badgeCheckFailures?: number
   logoUrl?: string | null
   category?: string | null
   categoryId?: string | null
@@ -65,6 +66,7 @@ export type DbProduct = {
   pricing: Pricing
   tier: Tier
   badgeVerified?: boolean
+  badgeCheckFailures?: number
   logoUrl?: string | null
   category?: string | null
   categoryId?: string | null

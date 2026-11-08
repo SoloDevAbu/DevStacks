@@ -37,6 +37,7 @@ import {
 } from "@/components/ui/tooltip"
 import { ProductLogo } from "@/components/shared/product-logo"
 import { UpgradeTierDialog } from "@/components/dashboard/upgrade-tier-dialog"
+import { BadgeStatusNotice } from "@/components/shared/badge-status-notice"
 import { EmbedBadgeDialog } from "@/components/shared/embed-badge-dialog"
 import { toast } from "@/components/ui/toast"
 import {
@@ -381,6 +382,17 @@ export const ProductsList = ({ products }: ProductsListProps) => {
                     </div>
                   </TooltipProvider>
                 </div>
+
+                <BadgeStatusNotice
+                  name={product.name}
+                  slug={product.slug}
+                  type="product"
+                  websiteUrl={product.websiteUrl}
+                  tier={product.tier}
+                  status={product.status}
+                  badgeVerified={product.badgeVerified}
+                  badgeCheckFailures={product.badgeCheckFailures}
+                />
 
                 {/* Metrics Bar */}
                 <div className="grid grid-cols-2 divide-x rounded-lg border border-dashed border-border bg-slate-50/60 py-2 sm:grid-cols-4">

@@ -195,6 +195,9 @@ export const tools = pgTable(
     pricing: pricingEnum("pricing").notNull().default("Free"),
     tier: tierEnum("tier").notNull().default("free"),
     badgeVerified: boolean("badge_verified").notNull().default(false),
+    badgeUrl: text("badge_url"),
+    badgeCheckedAt: timestamp("badge_checked_at", { withTimezone: true }),
+    badgeCheckFailures: integer("badge_check_failures").notNull().default(0),
 
     // Moderation
     status: statusEnum("status").notNull().default("pending"),
@@ -293,6 +296,9 @@ export const products = pgTable(
     pricing: pricingEnum("pricing").notNull().default("Free"),
     tier: tierEnum("tier").notNull().default("free"),
     badgeVerified: boolean("badge_verified").notNull().default(false),
+    badgeUrl: text("badge_url"),
+    badgeCheckedAt: timestamp("badge_checked_at", { withTimezone: true }),
+    badgeCheckFailures: integer("badge_check_failures").notNull().default(0),
 
     // Moderation
     status: statusEnum("status").notNull().default("pending"),

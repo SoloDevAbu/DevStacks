@@ -12,6 +12,7 @@ import { AgentFooter } from "@/components/layout/agent-footer"
 import { getCachedToolCategories } from "@/db/queries/categories/list"
 import { QUICK_STACK_COUNT } from "@/constants/navigation"
 import { LaunchPromoBanner } from "@/components/layout/launch-promo-banner"
+import { getCachedLaunchPromoStatus } from "@/lib/launches/promo-status"
 import { PromoBannerDismissScript } from "@/components/layout/promo-banner-dismiss-script"
 import { Providers } from "@/app/providers"
 import { SITE_CONFIG } from "@/constants/site"
@@ -131,7 +132,10 @@ const RootLayout = async ({
 }: Readonly<{
   children: React.ReactNode
 }>) => {
-  const quickStacks = await getQuickStacks()
+  const [quickStacks, promoStatus] = await Promise.all([
+    getQuickStacks(),
+    getCachedLaunchPromoStatus().catch(() => null),
+  ])
   const orgSchema = organizationSchema()
   const webSchema = websiteSchema()
   const siteGraph = buildEntityGraph([orgSchema, webSchema])
@@ -165,7 +169,7 @@ const RootLayout = async ({
         />
         <Providers>
           <div className="flex min-h-dvh flex-col bg-slate-50/30">
-            <LaunchPromoBanner />
+            {promoStatus?.isPromoActive && <LaunchPromoBanner />}
             {/* --- TOP ROW (Navbar) --- */}
             <header className="sticky top-0 z-50 grid h-16 shrink-0 grid-cols-1 border-b border-dashed border-border bg-white lg:grid-cols-[320px_1fr] xl:grid-cols-[320px_1fr_380px]">
               {/* Top Left */}

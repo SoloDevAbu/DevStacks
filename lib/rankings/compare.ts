@@ -3,7 +3,7 @@ import type { RankedItem } from "@/lib/rankings/types"
 
 // Shared by the database queries and the client list, so a re-rank after a vote gives the same
 // order the next server render will.
-const getCommunityScore = (item: RankedItem) =>
+export const getCommunityScore = (item: RankedItem) =>
   item.itemKind === "tool" ? item.upvotesCount : item.likesCount
 
 export const compareByCommunityVotes = (a: RankedItem, b: RankedItem) =>

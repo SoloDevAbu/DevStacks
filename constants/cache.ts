@@ -7,6 +7,7 @@ export const CACHE_TAGS = {
   TOOL_CATEGORIES: "tool-categories",
   WEEKLY_LAUNCHES: "weekly-launches",
   POPULAR_BUILDING_BLOCKS: "popular-building-blocks",
+  LAUNCH_PROMO: "launch-promo",
 } as const
 
 // Machine-readable surfaces (llms.txt, /api/ai, feeds) are what AI answer engines quote, so

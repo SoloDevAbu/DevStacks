@@ -1,8 +1,25 @@
 import { NextResponse } from "next/server"
 import { getToolBySlug } from "@/db/queries/tools/get"
 import { getProductBySlug } from "@/db/queries/products/get"
+import { BADGE_STYLE } from "@/constants/badges"
+import {
+  getPlacementLabel,
+  getWeeklyPlacement,
+} from "@/lib/badges/weekly-placement"
 
 export const dynamic = "force-dynamic"
+
+const findListing = async (slug: string, type: string | null) => {
+  if (type !== "product") {
+    const tool = await getToolBySlug(slug)
+    if (tool) return { ...tool, votes: tool.upvotesCount ?? 0 }
+  }
+  if (type !== "tool") {
+    const product = await getProductBySlug(slug)
+    if (product) return { ...product, votes: product.likesCount ?? 0 }
+  }
+  return null
+}
 
 export const GET = async (
   request: Request,
@@ -10,45 +27,10 @@ export const GET = async (
 ) => {
   const { slug } = await props.params
   const url = new URL(request.url)
-  const style = url.searchParams.get("style") ?? "card" // "card" | "shield" | "dark" | "ranked"
-  const type = url.searchParams.get("type") // "tool" | "product"
+  const requestedStyle = url.searchParams.get("style") ?? BADGE_STYLE.CARD
+  const listing = await findListing(slug, url.searchParams.get("type"))
 
-  let name = slug
-  let votes = 0
-  let found = false
-
-  if (type === "product") {
-    const product = await getProductBySlug(slug)
-    if (product) {
-      name = product.name
-      votes = product.likesCount ?? 0
-      found = true
-    }
-  } else if (type === "tool") {
-    const tool = await getToolBySlug(slug)
-    if (tool) {
-      name = tool.name
-      votes = tool.upvotesCount ?? 0
-      found = true
-    }
-  } else {
-    // Try tool first, then product
-    const tool = await getToolBySlug(slug)
-    if (tool) {
-      name = tool.name
-      votes = tool.upvotesCount ?? 0
-      found = true
-    } else {
-      const product = await getProductBySlug(slug)
-      if (product) {
-        name = product.name
-        votes = product.likesCount ?? 0
-        found = true
-      }
-    }
-  }
-
-  if (!found) {
+  if (!listing) {
     return new NextResponse("Not Found", {
       status: 404,
       headers: {
@@ -56,6 +38,19 @@ export const GET = async (
       },
     })
   }
+
+  const { name, votes } = listing
+
+  // An embedded ranked badge can outlive its claim, so it falls back to the plain card rather than
+  // keep showing a rank the listing does not hold.
+  const placement =
+    requestedStyle === BADGE_STYLE.RANKED
+      ? await getWeeklyPlacement(listing)
+      : null
+  const style =
+    requestedStyle === BADGE_STYLE.RANKED && !placement
+      ? BADGE_STYLE.CARD
+      : requestedStyle
 
   let svg = ""
 
@@ -117,8 +112,7 @@ export const GET = async (
   <text x="52" y="22" fill="#94A3B8" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="8.5" font-weight="700" letter-spacing="1.2">FEATURED ON</text>
   <text x="52" y="39" fill="#F8FAFC" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="14.5" font-weight="800">LaunchNests</text>
 </svg>`
-  } else if (style === "ranked") {
-    // Ranked Award Badge
+  } else if (placement) {
     svg = `<svg width="232" height="54" viewBox="0 0 232 54" fill="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <linearGradient id="gold-grad" x1="0" y1="0" x2="232" y2="54" gradientUnits="userSpaceOnUse">
@@ -131,7 +125,7 @@ export const GET = async (
     <circle cx="14" cy="14" r="13" fill="#F59E0B" />
     <path d="M 14 6 L 16 11 L 21 11.5 L 17 15 L 18.5 20 L 14 17 L 9.5 20 L 11 15 L 7 11.5 L 12 11 Z" fill="#FFFFFF" />
   </g>
-  <text x="52" y="22" fill="#B45309" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="8.5" font-weight="800" letter-spacing="1.2">TOP RANKED ON</text>
+  <text x="52" y="22" fill="#B45309" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="8.5" font-weight="800" letter-spacing="1.2">${getPlacementLabel(placement)}</text>
   <text x="52" y="39" fill="#78350F" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="14.5" font-weight="800">LaunchNests</text>
 </svg>`
   } else {

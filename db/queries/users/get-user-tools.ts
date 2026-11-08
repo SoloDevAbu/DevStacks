@@ -29,6 +29,7 @@ export const getUserTools = async (
       pricing: tools.pricing,
       tier: tools.tier,
       badgeVerified: tools.badgeVerified,
+      badgeCheckFailures: tools.badgeCheckFailures,
       status: tools.status,
       logoUrl: tools.logoUrl,
       websiteUrl: tools.websiteUrl,

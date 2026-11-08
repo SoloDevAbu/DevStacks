@@ -5,10 +5,15 @@ import { Badge } from "@/components/ui/badge"
 
 interface LaunchBadgeProps {
   submitterId?: string | null
+  tier?: string | null
   isSeeded?: boolean
 }
 
-export const LaunchBadge = ({ submitterId, isSeeded }: LaunchBadgeProps) => {
+export const LaunchBadge = ({
+  submitterId,
+  tier,
+  isSeeded,
+}: LaunchBadgeProps) => {
   const isAddedByPlatform = isSeeded || !submitterId
 
   if (isAddedByPlatform) {
@@ -24,7 +29,7 @@ export const LaunchBadge = ({ submitterId, isSeeded }: LaunchBadgeProps) => {
     )
   }
 
-  if (!LAUNCH_PROMO.IS_ACTIVE) return null
+  if (tier !== LAUNCH_PROMO.TIER_GIFTED) return null
 
   return (
     <Badge

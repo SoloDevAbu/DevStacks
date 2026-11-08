@@ -5,6 +5,7 @@ import { ROUTES } from "@/constants/routes"
 import { HOMEPAGE_LIMITS } from "@/constants/rankings"
 import { getWeeklyLaunches } from "@/lib/launches/weekly-launches"
 import { getCurrentWeek } from "@/utils/iso-weeks"
+import { isCronAuthorized } from "@/lib/auth/cron"
 import { warmPaths } from "@/lib/cache/warm"
 import { submitToIndexNow } from "@/lib/seo/indexnow"
 import { getListingPath } from "@/utils/urls"
@@ -20,17 +21,12 @@ const ROLLOVER_MACHINE_PATHS = [
   ROUTES.FEED,
 ]
 
-const isAuthorized = (req: NextRequest) => {
-  const secret = process.env.CRON_SECRET
-  return Boolean(secret) && req.headers.get("authorization") === `Bearer ${secret}`
-}
-
 // Scheduled launches go live when the ISO week turns over (Monday 00:00 UTC), which no mutation
 // signals. Every listing query hides future-week launches, so the cron expires all listing caches
 // and the new launches' own pages (cached as 404 until now), re-renders the pages that list the
 // new week and pings IndexNow so crawlers and AI search pick them up without waiting for a recrawl.
 export const POST = async (req: NextRequest) => {
-  if (!isAuthorized(req)) {
+  if (!isCronAuthorized(req)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
 

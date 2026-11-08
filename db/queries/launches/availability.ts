@@ -53,7 +53,7 @@ export const getLaunchPromoStatus = async (): Promise<LaunchPromoStatus> => {
 
   const promoClaimed = (toolsRow[0]?.count ?? 0) + (productsRow[0]?.count ?? 0)
   const maxPromo = LAUNCH_PROMO.MAX_LAUNCHES
-  const isPromoActive = promoClaimed < maxPromo
+  const isPromoActive = LAUNCH_PROMO.IS_ACTIVE && promoClaimed < maxPromo
   const promoRemaining = Math.max(0, maxPromo - promoClaimed)
 
   return {
