@@ -157,9 +157,7 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
     },
     ...getAllComparisons().map((comparison) => ({
       url: normalizeSitemapUrl(comparison.routePath || comparison.canonicalUrl),
-      lastModified: comparison.lastVerifiedDate
-        ? new Date(comparison.lastVerifiedDate)
-        : now,
+      lastModified: new Date(comparison.factsCheckedOn),
       changeFrequency: "weekly" as const,
       priority: 0.85,
     })),
@@ -301,7 +299,10 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
   // Hubs change when a listing does, so they carry the newest listing update instead of the
   // time the sitemap happened to be generated. Editorial and policy pages carry no date, because
   // nothing here knows when their copy last changed.
-  const catalogLastModified = [...(dbProducts ?? []), ...(dbTools ?? [])].reduce(
+  const catalogLastModified = [
+    ...(dbProducts ?? []),
+    ...(dbTools ?? []),
+  ].reduce(
     (latest, item) =>
       item.updatedAt && new Date(item.updatedAt) > latest
         ? new Date(item.updatedAt)

@@ -1,10 +1,8 @@
 export interface ComparisonDimension {
   key: string
   label: string
-  competitorValue?: string
-  productHuntValue?: string
+  competitorValue: string
   launchNestsValue: string
-  highlight?: "competitor" | "productHunt" | "launchNests" | "neutral"
   description?: string
 }
 
@@ -33,10 +31,27 @@ export interface ComparisonDeepDive {
   id: string
   title: string
   subtitle: string
-  competitorAngle?: string
-  productHuntAngle?: string
+  competitorAngle: string
   launchNestsAngle: string
   practicalTakeaway: string
+}
+
+export interface ComparisonSource {
+  label: string
+  url: string
+}
+
+export interface RoundupEntry {
+  name: string
+  websiteUrl: string
+  comparisonPath?: string
+  bestFor: string
+  verdict: string
+  cost: string
+  launchWindow: string
+  freeLink: string
+  strengths: readonly string[]
+  limitations: readonly string[]
 }
 
 export interface ComparisonFaqItem {
@@ -54,12 +69,12 @@ export interface PlatformComparison {
   metaDescription: string
   keywords: string[]
   canonicalUrl: string
-  lastVerifiedDate: string
+  factsCheckedOn: string
+  sources: readonly ComparisonSource[]
   heroBadge: string
   heroTitle: string
   heroDescription: string
-  comparedPlatformProfile?: PlatformProfile
-  productHuntProfile?: PlatformProfile
+  comparedPlatformProfile: PlatformProfile
   launchNestsProfile: PlatformProfile
   quickComparisonDimensions: ComparisonDimension[]
   deepDives: ComparisonDeepDive[]

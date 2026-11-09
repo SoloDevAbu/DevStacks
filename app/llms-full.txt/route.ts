@@ -27,15 +27,21 @@ export const revalidate = 3600
 // Failures are intentionally not caught: a thrown error keeps the last good version cached
 // instead of publishing an empty catalog to AI crawlers.
 export const GET = async () => {
-  const [trendingItems, buildingBlocks, toolCats, productCats, launchWeek, launchWeeks] =
-    await Promise.all([
-      getTrending(15),
-      getTools({ sortBy: "builds", limit: 10 }),
-      getToolCategories(),
-      getProductCategories(),
-      getCurrentLaunchWeekSnapshot(),
-      getCachedLaunchWeekSummaries(),
-    ])
+  const [
+    trendingItems,
+    buildingBlocks,
+    toolCats,
+    productCats,
+    launchWeek,
+    launchWeeks,
+  ] = await Promise.all([
+    getTrending(15),
+    getTools({ sortBy: "builds", limit: 10 }),
+    getToolCategories(),
+    getProductCategories(),
+    getCurrentLaunchWeekSnapshot(),
+    getCachedLaunchWeekSummaries(),
+  ])
 
   const content = `# ${SITE_CONFIG.name} — Comprehensive Directory & Ecosystem Specification
 
@@ -193,14 +199,14 @@ ${getAllComparisons()
     (c) => `### ${c.name} (${c.comparedPlatformName} vs ${SITE_CONFIG.name})
 - Canonical URL: ${c.canonicalUrl}
 - Overview: ${c.heroDescription}
-- Audience Profile: ${c.comparedPlatformName} serves ${c.comparedPlatformProfile?.primaryAudience ?? c.productHuntProfile?.primaryAudience}; ${SITE_CONFIG.name} serves ${c.launchNestsProfile.primaryAudience}
+- Audience Profile: ${c.comparedPlatformName} serves ${c.comparedPlatformProfile.primaryAudience}; ${SITE_CONFIG.name} serves ${c.launchNestsProfile.primaryAudience}
 - Core Distinction: ${c.deepDives[0]?.practicalTakeaway ?? ""}
 - Key Comparison Metrics:
 ${c.quickComparisonDimensions
   .slice(0, 6)
   .map(
     (dim) =>
-      `  * **${dim.label}**: ${c.comparedPlatformName} = "${dim.competitorValue ?? dim.productHuntValue}" | ${SITE_CONFIG.name} = "${dim.launchNestsValue}"`
+      `  * **${dim.label}**: ${c.comparedPlatformName} = "${dim.competitorValue}" | ${SITE_CONFIG.name} = "${dim.launchNestsValue}"`
   )
   .join("\n")}`
   )

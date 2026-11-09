@@ -1,6 +1,11 @@
 import type { PlatformComparison } from "@/types/comparison"
 import { SITE_CONFIG } from "@/constants/site"
-import { ROUTES } from "@/constants/routes"
+import {
+  COMPARISON_FACTS_CHECKED_ON,
+  LAUNCHNESTS_ANGLES,
+  LAUNCHNESTS_FACTS,
+  LAUNCHNESTS_PROFILE,
+} from "@/constants/comparisons/launchnests"
 
 export const CODEHYPE_COMPARISON: PlatformComparison = {
   slug: "codehype",
@@ -8,257 +13,221 @@ export const CODEHYPE_COMPARISON: PlatformComparison = {
   targetKeyword: "CodeHype alternative",
   name: "CodeHype Alternative",
   comparedPlatformName: "CodeHype",
-  metaTitle: `CodeHype Alternative: LaunchNests vs CodeHype (${new Date().getFullYear()})`,
+  metaTitle: "CodeHype Alternative: LaunchNests vs CodeHype Compared",
   metaDescription:
-    "An objective, research-backed comparison between CodeHype and LaunchNests. Compare AI directory indexing, product launch mechanics, tech-stack graphs, submission pricing, and AI agent discovery.",
+    "CodeHype and LaunchNests both give free listings a dofollow link while your badge stays live. Compare queues, paid plans ($15-$25 vs $15-$19), focus and audience, with sources.",
   keywords: [
     "CodeHype alternative",
     "alternatives to CodeHype",
     "CodeHype vs LaunchNests",
     "sites like CodeHype",
-    "AI tool launch platforms",
-    "AI product directories",
-    "where to launch AI tools",
-    "SaaS launch directories",
-    "best AI directories 2026",
-    "submit AI product",
+    "AI product launch sites",
+    "where to launch software products",
   ],
   canonicalUrl: `${SITE_CONFIG.url}/codehype-alternative`,
-  lastVerifiedDate: "October 2026",
-  heroBadge: "Editorial Comparison & Platform Guide",
-  heroTitle: "CodeHype Alternative for AI Tools, Devtools & Indie SaaS Products",
+  factsCheckedOn: COMPARISON_FACTS_CHECKED_ON,
+  sources: [
+    {
+      label: "CodeHype: Pricing and FAQ",
+      url: "https://www.codehype.ai/pricing",
+    },
+    { label: "CodeHype: Submit", url: "https://www.codehype.ai/submit" },
+    {
+      label: "CodeHype: Why CodeHype",
+      url: "https://www.codehype.ai/why-codehype",
+    },
+  ],
+  heroBadge: "Comparison guide",
+  heroTitle: "CodeHype Alternative for Developer Tools and Software",
   heroDescription:
-    "CodeHype has established a fast-growing directory cataloging hundreds of artificial intelligence tools and automated software. LaunchNests takes an architectural and developer-centric approach: a permanent software catalog and two-way 'Built With' tech-stack graph connecting AI tools to the APIs, models, and infrastructure that power them.",
+    "CodeHype is a launch site and directory for AI tools, SaaS and startups, with weekly winners and a large social following. Its pricing is close to LaunchNests': free listings get a dofollow link while your badge stays live, and paid plans are one-time. The differences are focus, queue and audience.",
   comparedPlatformProfile: {
     name: "CodeHype",
-    tagline: "Discover the best AI tools and software",
+    tagline: "Launch site for AI tools, SaaS and startups",
     websiteUrl: "https://www.codehype.ai",
-    primaryAudience:
-      "General AI consumers, business operators, productivity enthusiasts, and creators seeking AI software to automate workflows.",
+    primaryAudience: "People looking for AI tools, SaaS and new startups.",
     discoveryLifespan:
-      "Directory listings organized across 50+ AI categories with daily feature carousels and launch schedules.",
+      "Weekly launches with weekly winners, plus monthly and yearly top lists.",
     pricingModel:
-      "Free submission queue with long waiting period (up to 30+ days); fast-track listings ranging from $39 to $99; agency promotion packages up to $299.",
+      "Free launch (14-day queue). Plus $15 and Pro $25, one-time per product. Ads $79-$99 a month; directory submission $49-$149.",
     keyStrengths: [
-      "Broad catalog focused squarely on the booming generative AI and workflow automation categories",
-      "Clean landing page design with categorized tag filters and tool bookmarks",
-      "Active social media promotion and featured badges for highlighted launches",
-      "Strong programmatic presence for consumer AI keywords",
+      "Free listings get a dofollow link while the badge stays verified (re-checked every 3 days)",
+      "Paid plans publish instantly with a permanent dofollow link",
+      "Large social following: CodeHype states a 170K+ combined audience, mostly Instagram and YouTube",
+      "Pro ($25) includes a week on the homepage and a 1,500-word blog post",
     ],
     keyLimitations: [
-      "Submissions are heavily monetized with high-friction paid queues ($39+ to launch quickly)",
-      "Lacks relational 'Built With' mapping (tools are listed in silos without revealing their underlying AI models, vector DBs, or APIs)",
-      "General consumer orientation with limited technical depth for developer infrastructure and SDKs",
-      "Does not offer native machine protocols for autonomous AI search assistants (no /llms.txt or MCP server)",
-      "Strictly AI-focused, creating friction for developer tools and traditional indie SaaS that aren't strictly AI wrappers",
+      "Free launches wait in a 14-day queue",
+      "Free listings need the badge installed",
+      "Focused on AI tools and SaaS rather than developer tools",
     ],
   },
-  launchNestsProfile: {
-    name: SITE_CONFIG.name,
-    tagline: SITE_CONFIG.tagline,
-    websiteUrl: SITE_CONFIG.url,
-    primaryAudience:
-      "Software engineers, AI engineers, indie SaaS founders, API creators, and autonomous AI search engines.",
-    discoveryLifespan:
-      "Perpetual catalog indexing. AI products and developer tools remain permanently discoverable across static category hubs, trending leaderboards, and two-way 'Built With' architecture pages.",
-    pricingModel:
-      "100% free core submissions with rapid 12–24h human review; affordable one-time verification ($15 Premium / $19 Premium+) with permanent Do-Follow backlinks and zero recurring subscription fees.",
-    keyStrengths: [
-      "Transparent 'Built With' graph linking AI software to the exact models (OpenAI, Anthropic, Gemini) and databases (Supabase, Neon, Pinecone) used",
-      "Affordable and fair founder pricing: free submissions with fast turnaround instead of $39+ paywalls",
-      "Full AI Engine Optimization (AEO) with /llms.txt, /llms-full.txt, raw Markdown twins, and an active Model Context Protocol (MCP) server",
-      "Do-Follow link to your site on paid tiers or with an active badge",
-      "Balanced developer ecosystem welcoming developer building blocks, open-source libraries, and indie SaaS alike",
-    ],
-    keyLimitations: [
-      "Curated specifically for software products and developer tools rather than consumer lifestyle apps",
-      "Younger domain footprint than multi-year legacy directories",
-      "Focuses on technical architectures and verified stacks rather than non-functional landing page concepts",
-    ],
-  },
+  launchNestsProfile: LAUNCHNESTS_PROFILE,
   quickComparisonDimensions: [
     {
+      key: "cost",
+      label: "Cost to launch",
+      competitorValue: "Free, or $15 / $25 one-time",
+      launchNestsValue: LAUNCHNESTS_FACTS.cost,
+    },
+    {
+      key: "queue",
+      label: "Free launch timing",
+      competitorValue: "14-day queue",
+      launchNestsValue: LAUNCHNESTS_FACTS.freeQueue,
+    },
+    {
+      key: "freelink",
+      label: "Dofollow link (free)",
+      competitorValue: "While the badge stays verified",
+      launchNestsValue: LAUNCHNESTS_FACTS.freeLink,
+    },
+    {
+      key: "paidlink",
+      label: "Dofollow link (paid)",
+      competitorValue: "Permanent on Plus ($15); two extra links on Pro",
+      launchNestsValue: LAUNCHNESTS_FACTS.paidLink,
+    },
+    {
+      key: "review",
+      label: "Review",
+      competitorValue: "Every launch, including paid, is reviewed by a person",
+      launchNestsValue: "Every submission is reviewed",
+    },
+    {
       key: "focus",
-      label: "Directory Focus",
-      competitorValue: "General AI Tools only",
-      launchNestsValue: "AI Tools, Devtools & Indie SaaS Stacks",
-      highlight: "launchNests",
-      description:
-        "CodeHype focuses on end-user AI tools; LaunchNests connects AI applications to the developer infrastructure powering them.",
+      label: "What it lists",
+      competitorValue: "AI tools, SaaS and startups",
+      launchNestsValue: LAUNCHNESTS_FACTS.focus,
     },
     {
-      key: "submissionPricing",
-      label: "Founder Submission Pricing",
-      competitorValue: "Free (long queue) or $39–$299 paid",
-      launchNestsValue: "Free (12–24h review) or $15 one-time",
-      highlight: "launchNests",
-      description:
-        "LaunchNests keeps submissions accessible to indie builders with zero predatory fast-track fees.",
+      key: "techstack",
+      label: "Tech-stack links",
+      competitorValue: "Not part of the listing format",
+      launchNestsValue: LAUNCHNESTS_FACTS.techStack,
     },
     {
-      key: "builtWithGraph",
-      label: "Tech Stack & Architecture Graph",
-      competitorValue: "None (isolated listings)",
-      launchNestsValue: "Full 'Built With' relational engine",
-      highlight: "launchNests",
-      description:
-        "Reveal what models, databases, and APIs power each tool, giving builders actionable architectural blueprints.",
-    },
-    {
-      key: "aiReadiness",
-      label: "AI Engine Optimization (GEO/LLMO)",
-      competitorValue: "HTML only",
-      launchNestsValue: "/llms.txt, Markdown twins & MCP server",
-      highlight: "launchNests",
-      description:
-        "Standardized machine endpoints allow ChatGPT, Claude, and Perplexity to ingest and cite LaunchNests listings accurately.",
-    },
-    {
-      key: "seoBacklinks",
-      label: "SEO Backlink Equity",
-      competitorValue: "Directory link with paid tier",
-      launchNestsValue: "Permanent Do-Follow link on verified tiers",
-      highlight: "launchNests",
-      description:
-        "Permanent, crawlable Do-Follow link.",
-    },
-    {
-      key: "developerDepth",
-      label: "Technical Depth for Engineers",
-      competitorValue: "Consumer marketing summaries",
-      launchNestsValue: "API docs, SDKs, production builds & stacks",
-      highlight: "launchNests",
-      description:
-        "Detailed developer profiles designed for software engineers choosing tools for their next project.",
+      key: "audience",
+      label: "Audience (self-reported)",
+      competitorValue: "170K+ across its social channels",
+      launchNestsValue: LAUNCHNESTS_FACTS.audience,
     },
   ],
   deepDives: [
     {
-      id: "pricing-fairness",
-      title: "Founder-Friendly Submission Pricing vs Predatory Paywalls",
-      subtitle:
-        "Why early-stage indie founders should not have to pay $39+ just to get discovered",
+      id: "links",
+      title: "Similar link models",
+      subtitle: "Badge-based dofollow on both",
       competitorAngle:
-        "CodeHype channels founders into paid packages ranging from $39 for basic fast-tracking to $299 for promotional boosts. Free submissions are placed into long queues that can take weeks or months to be reviewed, creating high financial friction for bootstrapped indie makers.",
+        "CodeHype's free launch links to your site as dofollow while its badge stays verified on your site, and it re-checks every 3 days. Plus ($15) and Pro ($25) give a permanent dofollow link without the badge; Pro adds two more backlinks.",
       launchNestsAngle:
-        "LaunchNests was founded on the principle that great software deserves visibility regardless of budget. Core submissions are 100% free with a human review turnaround of 12–24 hours. For founders who want enhanced visibility, our verified tiers are priced at just $15 one-time with permanent Do-Follow SEO backlinks and zero recurring charges.",
+        "LaunchNests works the same way: free listings are dofollow while the LaunchNests badge is live, and Premium ($15) or Premium+ ($19) give a permanent dofollow link.",
       practicalTakeaway:
-        "LaunchNests provides accessible, sustainable distribution for indie founders without extracting high fees before validation.",
+        "On links and price the two are close. Choose on audience and focus.",
     },
     {
-      id: "architecture-graph",
-      title: "Understanding What's Under the Hood: The Relational Graph",
-      subtitle:
-        "Moving beyond marketing taglines to verified technical architectures",
+      id: "queue",
+      title: "14-day queue vs next open week",
+      subtitle: "When a free launch goes live",
       competitorAngle:
-        "CodeHype lists AI tools as isolated consumer entries. You can read a tagline and pricing, but you have no visibility into how the product was actually built, which foundational models it uses, or what developer stack enables its features.",
+        "Free launches on CodeHype join a 14-day queue. Paid plans publish instantly, but every launch still goes through human review.",
       launchNestsAngle:
-        "LaunchNests pioneers the relational tech-stack graph. Every AI product lists its 'Built With' components — whether it's Next.js, LangChain, Supabase, Vercel AI SDK, or Claude. This allows developers to see battle-tested production blueprints and discover both the product and its underlying tooling simultaneously.",
-      practicalTakeaway:
-        "Builders visit LaunchNests not just to find tools, but to study how successful modern software is engineered.",
+        "Free LaunchNests launches go into an upcoming week that still has free slots, and Premium lets you pick any upcoming week. Every submission is reviewed.",
+      practicalTakeaway: "Similar waits; neither takes months.",
     },
     {
-      id: "ai-search-discovery",
-      title: "Engineered for AI Search Engines and LLMs",
-      subtitle:
-        "Ensuring your software is discovered by answer engines, not just web browsers",
+      id: "tech-stack",
+      title: "AI directory vs tech-stack links",
+      subtitle: "Who finds you afterwards",
       competitorAngle:
-        "CodeHype relies on traditional search engine optimization techniques aimed strictly at human web visitors browsing through Google.",
-      launchNestsAngle:
-        "LaunchNests is engineered from the ground up for both human visitors and autonomous AI search engines. With native /llms.txt and /llms-full.txt files, raw Markdown (.md) endpoints for every page, and an active Model Context Protocol (MCP) server, LaunchNests feeds clean, structured data directly into LLM knowledge bases.",
+        "CodeHype is organised around AI tools, SaaS and startups by category, with weekly winners. Its listings don't connect products to the tools they are built with.",
+      launchNestsAngle: LAUNCHNESTS_ANGLES.techStack,
       practicalTakeaway:
-        "Your product gets cited when developers and business owners ask conversational AI engines for recommendations.",
+        "AI and consumer SaaS may fit CodeHype's audience better; developer products fit LaunchNests.",
     },
   ],
   scenarios: [
     {
-      id: "codehype-best",
-      title: "When CodeHype is a Good Option",
-      badge: "Consumer AI Focus",
-      recommendedFor:
-        "Founders launching end-user consumer AI applications (image generators, writing assistants, avatar creators) with an advertising budget.",
+      id: "choose-codehype",
+      title: "When CodeHype is the better choice",
+      badge: "AI tools",
+      badgeVariant: "hot",
+      recommendedFor: "AI tools and SaaS aimed at a broad audience",
       explanation:
-        "If your target audience is non-technical business operators looking for off-the-shelf generative AI utilities and you have the budget to pay for expedited placement, CodeHype has built a focused consumer AI audience.",
+        "CodeHype's audience is larger and centred on AI tools and social channels.",
       bulletPoints: [
-        "Your product is strictly an end-user consumer AI utility",
-        "You have a marketing budget to pay $39+ for fast-track listing",
-        "You do not need developer-level tech-stack verification or API integrations",
+        "Your product is an AI tool or general SaaS",
+        "You want a week on the homepage and a blog post for $25",
+        "You want exposure through its Instagram and YouTube following",
       ],
     },
     {
-      id: "launchnests-best",
-      title: "When LaunchNests is the Right Choice",
-      badge: "Builders & Technical Founders",
-      recommendedFor:
-        "Developers, technical founders, and SaaS creators looking for fair-priced launch distribution, verified stack showcases, and permanent SEO authority.",
+      id: "choose-launchnests",
+      title: "When LaunchNests is the better choice",
+      badge: "Developers",
+      badgeVariant: "new",
+      recommendedFor: "Dev tools, APIs and technical SaaS",
       explanation:
-        "If you are building modern software, dev tools, or AI applications and want to be discovered by both human engineers and autonomous AI agents without paying exorbitant directory fees, LaunchNests is the platform built for you.",
+        "LaunchNests is built around developer products and their stacks.",
       bulletPoints: [
-        "You want 100% free or fair $15 one-time pricing with fast 12–24h moderation",
-        "You want to showcase your tech stack and prove real-world production engineering",
-        "You want a Do-Follow link to your site",
-        "You want to be indexed into /llms.txt and recommended by AI assistants like Cursor and ChatGPT",
+        "Your audience is developers",
+        "You want your product linked from the pages of the tools it is built with",
+        "You want your listing readable through /llms.txt and an MCP server",
+      ],
+    },
+    {
+      id: "choose-both",
+      title: "Use both",
+      badge: "Both",
+      badgeVariant: "neutral",
+      recommendedFor: "AI products with a developer audience",
+      explanation:
+        "Both badges can sit on your site, so both free listings can be dofollow.",
+      bulletPoints: [
+        "Submit to both on the free plan",
+        "Add both badges to your site",
       ],
     },
   ],
   canYouUseBoth: {
-    heading: "The Multi-Directory Distribution Strategy",
-    subheading:
-      "How savvy indie founders maximize directory backlinks and discovery",
+    heading: "Using CodeHype and LaunchNests together",
+    subheading: "Two free, badge-based listings",
     description:
-      "Directory distribution is not a zero-sum game. The strongest launch campaigns leverage multiple high-quality directories to build a diverse backlink profile, capture varied search intents, and establish broad ecosystem presence.",
+      "Because both reward a live badge with a dofollow link, listing on both costs nothing but two badges:",
     strategySteps: [
       {
         stepNumber: 1,
-        title: "Submit to LaunchNests for Rapid Verification & Do-Follow Equity",
-        timing: "Day 1 of Directory Distribution",
+        title: "Submit to both",
+        timing: "Day 1",
         action:
-          "Submit your product to LaunchNests, tag your developer tech stack, and secure your permanent Do-Follow backlink and machine-readable endpoints.",
-        outcome:
-          "Immediate indexing in Google, verified tech-stack profile, and inclusion in /llms.txt within 24 hours.",
+          "Submit to CodeHype (14-day queue) and LaunchNests (next open week).",
+        outcome: "Two launches within a few weeks.",
       },
       {
         stepNumber: 2,
-        title: "Submit to CodeHype Free Queue for Consumer Discovery",
-        timing: "Day 2",
-        action:
-          "Submit your tool to CodeHype's free submission queue to enter their review pipeline for eventual inclusion in their AI consumer category filters.",
-        outcome:
-          "Secondary directory footprint for consumer-oriented AI search terms once processed.",
-      },
-      {
-        stepNumber: 3,
-        title: "Leverage Verified Badges for Compound Traffic",
-        timing: "Post-Approval",
-        action:
-          "Embed the LaunchNests badge on your landing page and GitHub README to signal verified tech-stack trust to visiting developers and users.",
-        outcome:
-          "Enhanced visitor conversion rates and automated referral traffic loops.",
+        title: "Add both badges",
+        timing: "Before each launch",
+        action: "Put both badges on your site and keep them there.",
+        outcome: "Dofollow links from both free listings.",
       },
     ],
-    summary:
-      "Start with LaunchNests for fast, permanent developer-grade indexing, and expand across specialized directories to capture every segment of your market.",
+    summary: "CodeHype for AI and SaaS audiences; LaunchNests for developers.",
   },
   faqs: [
     {
-      question: "Is LaunchNests free to submit to compared to CodeHype?",
+      question: "Is CodeHype free?",
       answer:
-        "Yes. LaunchNests offers 100% free core submissions with human moderation within 12–24 hours. Optional verified tiers are just $15 one-time, whereas CodeHype's expedited packages range from $39 to $299.",
+        "Yes. CodeHype's free launch costs $0 and joins a 14-day queue. You install its badge to verify ownership and unlock a dofollow link. Plus ($15) and Pro ($25) are one-time payments that publish instantly.",
     },
     {
-      question: "Can I list non-AI products on LaunchNests?",
+      question: "Does CodeHype give a dofollow link?",
       answer:
-        "Absolutely. While CodeHype is restricted to artificial intelligence tools, LaunchNests welcomes all developer tools, APIs, software platforms, indie SaaS products, and open-source projects.",
+        "Yes. Free listings are dofollow while the badge stays verified on your site (CodeHype re-checks every 3 days), and Plus and Pro include a permanent dofollow link.",
     },
     {
-      question: "What is LaunchNests' 'Built With' tech-stack graph?",
+      question: "How is LaunchNests different from CodeHype?",
       answer:
-        "It is a relational database connecting software products to the developer tools, SDKs, and infrastructure layers they use. When you list a product on LaunchNests, you can showcase your exact architecture, and devtools gain verified proof of real-world production adoption.",
-    },
-    {
-      question: "Does LaunchNests support AI search engine optimization (AEO/GEO)?",
-      answer:
-        "Yes. LaunchNests provides standardized /llms.txt and /llms-full.txt files, clean Markdown endpoints (/api/md/*) for every directory page, and an active Model Context Protocol (MCP) server so autonomous AI assistants can easily read and cite your product.",
+        "The pricing and link models are similar. LaunchNests focuses on developer tools and the products built with them, links products to their tech stack, and publishes listings for AI tools via /llms.txt and an MCP server. CodeHype focuses on AI tools and SaaS and has a much larger social audience.",
     },
   ],
 }

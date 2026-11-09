@@ -56,7 +56,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: `25+ Best Free SaaS Directories for Backlinks & Traffic (${new Date().getFullYear()}) | ${SITE_CONFIG.name}`,
     description:
-      "Vetted, research-backed directory list for SaaS founders seeking permanent Do-Follow backlinks and early qualified users in 2026.",
+      "A list of SaaS directories for founders looking for backlinks and early users in 2026.",
     url: `${SITE_CONFIG.url}/guides/free-saas-directories-for-backlinks-2026`,
     type: "article",
     siteName: SITE_CONFIG.name,
@@ -364,7 +364,7 @@ const SaasDirectoriesGuidePage = () => {
     "@id": `${SITE_CONFIG.url}/guides/free-saas-directories-for-backlinks-2026#article`,
     headline: `25+ Best Free SaaS Directories for Backlinks & Traffic (${currentYear} Guide)`,
     description:
-      "The definitive research-backed directory submission guide for SaaS founders seeking permanent Do-Follow backlinks and early referral traction.",
+      "A directory submission guide for SaaS founders looking for backlinks and early referral traffic.",
     datePublished: "2026-01-15T00:00:00Z",
     dateModified: "2026-10-24T00:00:00Z",
     author: {
@@ -593,7 +593,7 @@ const SaasDirectoriesGuidePage = () => {
               </p>
             </div>
 
-            <div className="relative grid grid-cols-1 divide-y divide-dashed divide-border border border-dashed border-border bg-white md:grid-cols-2 md:divide-y-0 rounded-xl overflow-hidden">
+            <div className="relative grid grid-cols-1 divide-y divide-dashed divide-border overflow-hidden rounded-xl border border-dashed border-border bg-white md:grid-cols-2 md:divide-y-0">
               {DIRECTORY_TIERS.map((tier, idx) => (
                 <div
                   key={tier.tierNumber}
@@ -645,7 +645,7 @@ const SaasDirectoriesGuidePage = () => {
               </p>
             </div>
 
-            <div className="relative flex flex-col divide-y divide-dashed divide-border border border-dashed border-border bg-white rounded-xl overflow-hidden">
+            <div className="relative flex flex-col divide-y divide-dashed divide-border overflow-hidden rounded-xl border border-dashed border-border bg-white">
               {SUBMISSION_RULES.map((rule, idx) => (
                 <div
                   key={idx}

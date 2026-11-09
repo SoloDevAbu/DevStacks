@@ -63,7 +63,7 @@ ${alternatives
 
   const markdown = `# Best ${tool.name} Alternatives & Competitors — ${SITE_CONFIG.name}
 
-> Objective comparison of verified developer tools competing with ${tool.name} in the ${tool.category ?? "Developer Tools"} category.
+> Developer tools listed on ${SITE_CONFIG.name} alongside ${tool.name} in the ${tool.category ?? "Developer Tools"} category.
 
 \`\`\`yaml
 target_tool: "${tool.name}"

@@ -26,6 +26,8 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { CornerBrackets } from "@/components/shared/corner-brackets"
 import { ReadyToShowcaseCta } from "@/components/shared/ready-to-showcase-cta"
 import { RelatedResources } from "@/components/shared/related-resources"
+import { ComparisonSources } from "@/components/comparisons/comparison-sources"
+import { formatLongDate } from "@/utils/date"
 import { getFaviconUrl } from "@/utils/urls"
 import { GaAlternativeViewTracker } from "@/components/shared/ga-alternative-view-tracker"
 import {
@@ -96,8 +98,7 @@ export const ComparisonPageView = ({ comparison }: ComparisonPageViewProps) => {
     { name: comparison.name, url: comparison.canonicalUrl },
   ])
 
-  const competitorProfile = (comparison.comparedPlatformProfile ??
-    comparison.productHuntProfile)!
+  const competitorProfile = comparison.comparedPlatformProfile
 
   const webPageJsonLd = {
     "@type": "WebPage",
@@ -218,7 +219,7 @@ export const ComparisonPageView = ({ comparison }: ComparisonPageViewProps) => {
               <span>·</span>
               <span className="inline-flex items-center gap-1">
                 <Clock className="size-3.5 text-blue-600" />
-                Updated {comparison.lastVerifiedDate}
+                Facts checked {formatLongDate(comparison.factsCheckedOn)}
               </span>
               <span>·</span>
               <span className="inline-flex items-center gap-1">
@@ -322,7 +323,7 @@ export const ComparisonPageView = ({ comparison }: ComparisonPageViewProps) => {
                             </span>
                           </div>
                           <p className="text-xs leading-relaxed whitespace-normal text-slate-700 sm:text-sm">
-                            {dim.competitorValue ?? dim.productHuntValue}
+                            {dim.competitorValue}
                           </p>
                         </div>
                       </TableCell>
@@ -579,7 +580,7 @@ export const ComparisonPageView = ({ comparison }: ComparisonPageViewProps) => {
                         </span>
                       </div>
                       <p className="text-xs leading-relaxed text-slate-700 sm:text-sm">
-                        {deep.competitorAngle ?? deep.productHuntAngle}
+                        {deep.competitorAngle}
                       </p>
                     </div>
 
@@ -759,6 +760,12 @@ export const ComparisonPageView = ({ comparison }: ComparisonPageViewProps) => {
             </div>
           </section>
 
+          <ComparisonSources
+            platformName={comparison.comparedPlatformName}
+            factsCheckedOn={comparison.factsCheckedOn}
+            sources={comparison.sources}
+          />
+
           {/* More Launch Platform Comparisons */}
           {otherComparisons.length > 0 && (
             <section id="other-comparisons" className="flex flex-col gap-4">
@@ -774,8 +781,7 @@ export const ComparisonPageView = ({ comparison }: ComparisonPageViewProps) => {
 
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 {otherComparisons.map((other) => {
-                  const otherProf =
-                    other.comparedPlatformProfile ?? other.productHuntProfile
+                  const otherProf = other.comparedPlatformProfile
                   return (
                     <Link
                       key={other.slug}

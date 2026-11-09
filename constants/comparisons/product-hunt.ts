@@ -1,6 +1,13 @@
 import type { PlatformComparison } from "@/types/comparison"
 import { SITE_CONFIG } from "@/constants/site"
-import { ROUTES } from "@/constants/routes"
+import {
+  COMPARISON_FACTS_CHECKED_ON,
+  LAUNCHNESTS_ANGLES,
+  LAUNCHNESTS_FACTS,
+  LAUNCHNESTS_PROFILE,
+} from "@/constants/comparisons/launchnests"
+
+const PH_HELP = "https://help.producthunt.com/en/articles"
 
 export const PRODUCT_HUNT_COMPARISON: PlatformComparison = {
   slug: "producthunt",
@@ -8,347 +15,277 @@ export const PRODUCT_HUNT_COMPARISON: PlatformComparison = {
   targetKeyword: "Product Hunt alternative",
   name: "Product Hunt Alternative",
   comparedPlatformName: "Product Hunt",
-  metaTitle: "LaunchNests vs Product Hunt: Honest Comparison",
+  metaTitle: "Product Hunt Alternative: LaunchNests vs Product Hunt Compared",
   metaDescription:
-    "An objective, research-backed comparison between Product Hunt and LaunchNests. Compare launch mechanics, discovery lifespans, tech-stack graphs, AI agent readiness, and submission policies.",
+    "Product Hunt is free, but its team picks which launches get featured and the leaderboard resets daily. How that compares with a weekly launch on LaunchNests, with sources.",
   keywords: [
     "Product Hunt alternative",
     "alternatives to Product Hunt",
     "Product Hunt vs LaunchNests",
     "sites like Product Hunt",
     "product launch platforms",
-    "developer product directories",
     "launching developer tools",
-    "developer product discovery",
-    "tech stack database",
     "where to launch software products",
   ],
   canonicalUrl: `${SITE_CONFIG.url}/producthunt-alternative`,
-  lastVerifiedDate: "October 2026",
-  heroBadge: "Editorial Comparison & Platform Guide",
-  heroTitle: "Product Hunt Alternative for Developer Tools & Software Products",
+  factsCheckedOn: COMPARISON_FACTS_CHECKED_ON,
+  sources: [
+    {
+      label: "Product Hunt: How Product Hunt works",
+      url: `${PH_HELP}/17734306-1-how-product-hunt-works`,
+    },
+    {
+      label: "Product Hunt: What kind of products get featured",
+      url: `${PH_HELP}/17734341-2-what-kind-of-products-get-featured`,
+    },
+    {
+      label: "Product Hunt: Set your goals and pick your launch date",
+      url: `${PH_HELP}/17734355-3-set-your-goals-and-pick-your-launch-date`,
+    },
+    {
+      label: "Product Hunt: Relaunch your product",
+      url: `${PH_HELP}/17734411-7-relaunch-your-product`,
+    },
+    {
+      label: "Product Hunt: Launch FAQ and myths",
+      url: `${PH_HELP}/17734646-8-launch-faq-and-myths`,
+    },
+  ],
+  heroBadge: "Comparison guide",
+  heroTitle: "Product Hunt Alternative for Developer Tools and Software",
   heroDescription:
-    "Product Hunt is the tech industry's premier 24-hour launch competition for viral visibility and community buzz. LaunchNests takes a different approach: a permanent developer directory and relational tech-stack graph designed for continuous discovery, architectural blueprints, and autonomous AI search engines.",
-  productHuntProfile: {
+    "Product Hunt is the largest launch site in tech: launching is free, every launch lasts one Pacific-time day, and its team decides which launches are featured on the homepage. LaunchNests is a much smaller, developer-focused site where a launch runs for a week and the listing stays on category and tech-stack pages afterwards.",
+  comparedPlatformProfile: {
     name: "Product Hunt",
     tagline: "The best new products in tech",
     websiteUrl: "https://www.producthunt.com",
     primaryAudience:
-      "Broad tech ecosystem: early adopters, startup founders, venture capitalists, journalists, and general tech consumers.",
+      "A broad tech audience: early adopters, founders, investors and press.",
     discoveryLifespan:
-      "24-hour daily launch competition (12:01 AM to 11:59 PM PT). Products rank on daily leaderboards and shift to historical archives after day one.",
+      "One day. Launches go live at 12:01 AM Pacific and run until midnight Pacific.",
     pricingModel:
-      "Free core submissions; paid self-serve ads ($5,000–$10,000 CPM), managed campaigns ($10,000+), and newsletter sponsorships.",
+      "Launching, commenting and winning Product of the Day are free. Product Hunt also sells self-service ads.",
     keyStrengths: [
-      "Massive existing community with millions of monthly tech enthusiasts",
-      "High-visibility 24-hour viral launch day potential with press and VC attention",
-      "Prestigious social proof badges ('#1 Product of the Day/Week/Month')",
-      "Active comment discussions and community Q&A on launch day",
+      "By far the largest audience of any launch site",
+      "Free to launch, and you can schedule up to 30 days ahead",
+      "Featured launches compete for Product of the Day, a widely recognised badge",
+      "Product Hunt encourages linking straight to your product",
     ],
     keyLimitations: [
-      "Discovery is front-loaded; traffic often drops sharply after the 24-hour voting cycle",
-      "Strict 6-month cooldown between launches of the same product (major feature update required)",
-      "Excludes directories, templates, boilerplates, and waitlists without immediate access",
-      "Outbound product links use tracking redirects (/r/) with rel='nofollow' attributes",
-      "No relational mapping between products and their underlying developer tech stacks",
+      "The team hand-picks which launches are featured; a launch that isn't featured still goes live but off the homepage leaderboard",
+      "Ranking uses points, comments, time since launch and other signals, and the formula isn't public",
+      "Each launch competes for a single day",
+      "Relaunching within two months needs a relaunch request and is meant for major updates",
+      "Company and brand accounts can't submit launches",
     ],
   },
-  launchNestsProfile: {
-    name: SITE_CONFIG.name,
-    tagline: SITE_CONFIG.tagline,
-    websiteUrl: SITE_CONFIG.url,
-    primaryAudience:
-      "Software engineers, technical founders, devtool creators, and autonomous AI search agents.",
-    discoveryLifespan:
-      "Perpetual catalog indexing. Products and tools remain continuously discoverable across category hubs, trending momentum feeds, and 'Built With' tech-stack pages.",
-    pricingModel:
-      "100% free core submissions for products and dev tools; optional weekly/monthly sidebar sponsorships and featured placements.",
-    keyStrengths: [
-      "Perpetual categorized discovery that does not expire after 24 hours",
-      "Two-way 'Built With' graph linking software products to their underlying tools and APIs",
-      "Native AI search engine readiness via /llms.txt, /llms-full.txt, and a production Model Context Protocol (MCP) server",
-      "Direct outbound links with verified Do-Follow link equity for developer tools",
-      "Open to devtools, boilerplates, APIs, open-source libraries, and indie software",
-    ],
-    keyLimitations: [
-      "Smaller overall consumer audience compared to Product Hunt's decade of mainstream brand equity",
-      "Focuses specifically on software products and developer tools rather than general consumer tech or physical hardware",
-      "Curated manual moderation (12–24h review) rather than instant self-publishing",
-    ],
-  },
+  launchNestsProfile: LAUNCHNESTS_PROFILE,
   quickComparisonDimensions: [
     {
-      key: "purpose",
-      label: "Primary Purpose",
-      productHuntValue: "24-hour launch competition & daily leaderboard",
-      launchNestsValue: "Perpetual developer directory & tech-stack database",
-      highlight: "neutral",
-      description:
-        "How each platform frames its primary user and maker experience.",
+      key: "cost",
+      label: "Cost to launch",
+      competitorValue: "Free",
+      launchNestsValue: LAUNCHNESTS_FACTS.cost,
     },
     {
-      key: "audience",
-      label: "Primary Audience",
-      productHuntValue: "Broad tech ecosystem (consumers, founders, VCs)",
-      launchNestsValue: "Software engineers, devtool builders, AI agents",
-      highlight: "neutral",
-      description:
-        "Product Hunt serves general tech; LaunchNests focuses on developers.",
+      key: "window",
+      label: "Launch window",
+      competitorValue: "One day, 12:01 AM to midnight Pacific",
+      launchNestsValue: LAUNCHNESTS_FACTS.launchFormat,
     },
     {
-      key: "lifespan",
-      label: "Discovery Lifespan",
-      productHuntValue: "24-hour launch window (12:01 AM – 11:59 PM PT)",
-      launchNestsValue: "Permanent categorized indexing & weekly momentum",
-      highlight: "launchNests",
+      key: "homepage",
+      label: "Homepage placement",
+      competitorValue: "Only launches the team chooses to feature",
+      launchNestsValue: "Every approved launch in its week",
       description:
-        "Product Hunt discovery peaks in 1 day; LaunchNests remains cataloged.",
+        "On Product Hunt, unfeatured launches are live but not on the homepage leaderboard.",
+    },
+    {
+      key: "scheduling",
+      label: "Scheduling",
+      competitorValue: "From tomorrow up to 30 days ahead",
+      launchNestsValue: `${LAUNCHNESTS_FACTS.freeQueue}, or ${LAUNCHNESTS_FACTS.paidScheduling}`,
+    },
+    {
+      key: "ranking",
+      label: "Ranking",
+      competitorValue: "Points, comments, time and undisclosed signals",
+      launchNestsValue: "Community votes within the launch week",
+    },
+    {
+      key: "relaunch",
+      label: "Relaunching",
+      competitorValue: "After two months, or by request for major updates",
+      launchNestsValue: "No relaunch option yet; one listing per product",
     },
     {
       key: "techstack",
-      label: "Tech-Stack Relationship",
-      productHuntValue: "None (isolated product listings)",
-      launchNestsValue: "Two-way 'Built With' relational tech-stack graph",
-      highlight: "launchNests",
-      description:
-        "LaunchNests connects products to the tools, databases, and APIs powering them.",
+      label: "Tech-stack links",
+      competitorValue: "Not part of the launch format",
+      launchNestsValue: LAUNCHNESTS_FACTS.techStack,
     },
     {
-      key: "linkStructure",
-      label: "Outbound Link Attributes",
-      productHuntValue: "Tracking redirect (/r/) with rel='nofollow'",
-      launchNestsValue: "Direct website links (Do-Follow on verified listings)",
-      highlight: "launchNests",
-      description: "How search engines process outbound links to your domain.",
-    },
-    {
-      key: "aiAccessibility",
-      label: "AI & Machine Accessibility",
-      productHuntValue: "Standard HTML pages; no /llms.txt or MCP server",
-      launchNestsValue: "/llms.txt, /llms-full.txt, raw .md, & live MCP server",
-      highlight: "launchNests",
-      description:
-        "Readiness for LLM retrieval (ChatGPT, Claude, Perplexity, Cursor).",
-    },
-    {
-      key: "submissionRules",
-      label: "Relaunch & Submission Policy",
-      productHuntValue: "Strict 6-month cooldown; no directories/boilerplates",
-      launchNestsValue:
-        "Continuous listing; devtools, boilerplates & APIs welcome",
-      highlight: "launchNests",
-      description:
-        "Eligibility rules for software, devtools, and iterative product updates.",
-    },
-    {
-      key: "socialProof",
-      label: "Social Proof Badges",
-      productHuntValue: "Prestigious '#1 Product of the Day' embed badges",
-      launchNestsValue:
-        "Community upvotes, trending score, & verified builds count",
-      highlight: "productHunt",
-      description:
-        "Product Hunt badges carry unmatched recognition among tech media and investors.",
-    },
-    {
-      key: "pricing",
-      label: "Core Listing Fee",
-      productHuntValue: "Free submission (advertising starting at $5,000)",
-      launchNestsValue: "Free submission (optional self-serve sponsorships)",
-      highlight: "neutral",
-      description: "Both platforms offer free submission for makers.",
-    },
-    {
-      key: "idealFit",
-      label: "Best Suited For",
-      productHuntValue: "Mainstream apps seeking viral launch-day buzz",
-      launchNestsValue: "Developer products, APIs, and tech-stack visibility",
-      highlight: "neutral",
-      description:
-        "Different strategic priorities depending on your product type.",
+      key: "audience",
+      label: "Audience size",
+      competitorValue: "Very large global tech audience",
+      launchNestsValue: LAUNCHNESTS_FACTS.audience,
     },
   ],
   deepDives: [
     {
-      id: "discovery-lifespan",
-      title: "Launch-Day Spike vs Perpetual Directory Discovery",
-      subtitle:
-        "The difference between an ephemeral voting event and lasting catalog visibility",
-      productHuntAngle:
-        "Product Hunt revolves around a high-stakes 24-hour cycle. Products go live at 12:01 AM PT, and makers spend the entire day rallying supporters, answering comments, and competing for a top 5 badge. For successful launches, the traffic spike can be intense. However, once the 24 hours conclude, products move off the homepage into archive lists, and daily referral traffic typically declines significantly.",
+      id: "featuring",
+      title: "Getting featured vs being listed",
+      subtitle: "Who decides whether your launch is seen",
+      competitorAngle:
+        "Product Hunt's team reviews every launch and hand-picks which ones appear on the homepage leaderboard. Its help center calls this an editorial decision: meeting the guidelines doesn't guarantee a spot. A launch that isn't featured still goes live and can be found, but it doesn't compete for Product of the Day.",
       launchNestsAngle:
-        "LaunchNests is architected as an ongoing developer reference directory. While it features 'This Week's Launches' on the homepage to highlight new submissions, products and tools do not disappear after a single day. Instead, they remain permanently indexed in structured categories, filterable by pricing and adoption, and continuously linked from the 'Built With' profiles of other tools.",
+        "LaunchNests reviews every submission too, but there is no second featuring step. An approved launch appears in its launch week on the homepage alongside the others, and stays on its category and tech-stack pages afterwards.",
       practicalTakeaway:
-        "Use Product Hunt when you want a concentrated spike of immediate attention for a major milestone. Use LaunchNests to establish steady, searchable discovery among developers researching production solutions.",
+        "If you can get featured, Product Hunt's reach is far bigger than ours. LaunchNests is a predictable extra listing, not a replacement for that reach.",
     },
     {
-      id: "audience-focus",
-      title: "Broad Tech Enthusiasts vs Software Engineers",
-      subtitle:
-        "Aligning your product category with the visitors who browse each platform",
-      productHuntAngle:
-        "Product Hunt's audience spans consumer tech, lifestyle apps, productivity tools, AI novelties, marketing SaaS, and hardware. While developer tools do launch on Product Hunt, they compete on the same leaderboard against mainstream consumer applications, gamified apps, and B2B marketing tools that naturally appeal to a wider non-technical voting base.",
+      id: "one-day",
+      title: "One day vs one week",
+      subtitle: "How long a launch competes",
+      competitorAngle:
+        "Every Product Hunt launch runs for one Pacific-time day. Your position depends on points, comments, time since launch and other signals; upvotes from established members count for more, and Product Hunt doesn't publish the formula.",
       launchNestsAngle:
-        "LaunchNests is purposefully built for software engineering. The platform strictly distinguishes between 'Tools' (libraries, databases, auth providers, cloud infrastructure, dev utilities) and 'Products' (end-user software and SaaS). Visitors come specifically to discover APIs, inspect architectures, and evaluate tools they can integrate into their codebases.",
+        "A LaunchNests launch runs for a week on the homepage and ranks by community votes within that week. After the week it moves to the archive and keeps its category and tech-stack pages.",
       practicalTakeaway:
-        "If you are launching a consumer mobile app or general productivity tool, Product Hunt is a natural fit. If you are launching an API, SDK, database, backend service, or developer tool, LaunchNests provides an audience that genuinely understands your technical stack.",
+        "A one-day launch rewards having your audience ready on the day. A weekly launch is more forgiving, but the pool of voters on LaunchNests is much smaller.",
     },
     {
-      id: "tech-stack-graph",
-      title: "Isolated Product Profiles vs The 'Built With' Graph",
-      subtitle:
-        "How architectural connections create bidirectional organic discovery",
-      productHuntAngle:
-        "On Product Hunt, each product listing is an independent entity. There is no native data model showing which developer tools, databases, or cloud infrastructure power the product, nor can users discover other products built with the same tech stack.",
-      launchNestsAngle:
-        "LaunchNests implements a relational 'Built With' graph. When makers submit a product, they tag the underlying tools (e.g. Supabase, Next.js, Stripe, Tailwind CSS, OpenAI API). This creates automatic two-way discovery: your product showcases its architecture, while the profile for each tool displays your product as a verified real-world build.",
+      id: "tech-stack",
+      title: "Launch page vs tech-stack links",
+      subtitle: "Discovery after launch day",
+      competitorAngle:
+        "Product Hunt organises products by launch day, topic and maker. Its launch format doesn't connect a product to the developer tools it is built with.",
+      launchNestsAngle: LAUNCHNESTS_ANGLES.techStack,
       practicalTakeaway:
-        "This relational model enables perpetual organic discovery: as other developers browse popular tools in your stack, they discover your product as a live production example.",
+        "For developer-facing products, tech-stack links give people a way to find you long after the launch, through the tools you already use.",
     },
     {
-      id: "ai-readiness",
-      title: "Standard Web Browsing vs AI & Machine Accessibility (AEO/GEO)",
-      subtitle:
-        "Preparing your product for autonomous agents and LLM answer engines",
-      productHuntAngle:
-        "Product Hunt serves human web visitors through traditional HTML and client-rendered web views. It does not provide public machine-readable indexes, structured /llms.txt manifests, or API protocols for generative AI search engines.",
-      launchNestsAngle:
-        "LaunchNests is engineered specifically for Answer Engine Optimization (AEO) and Generative Engine Optimization (GEO). It provides root-level /llms.txt and /llms-full.txt files, clean raw Markdown (.md) endpoints for every tool and product profile, and a live Model Context Protocol (MCP) server at /api/mcp. This allows AI assistants like ChatGPT, Claude, and Perplexity to ingest accurate, structured product information directly.",
+      id: "ai-access",
+      title: "Machine-readable listings",
+      subtitle: "How AI tools can read your listing",
+      competitorAngle:
+        "Product Hunt pages are built for people browsing the site. We didn't find an equivalent of /llms.txt or an MCP server in its launch documentation.",
+      launchNestsAngle: LAUNCHNESTS_ANGLES.aiAccess,
       practicalTakeaway:
-        "As software discovery increasingly shifts to AI assistants and code editors (Cursor, Windsurf), machine-readable protocols ensure your product is visible to both human developers and autonomous agents.",
-    },
-    {
-      id: "submission-and-links",
-      title: "Submission Rules, Cooldowns & Link Equity",
-      subtitle:
-        "Understanding platform guidelines, restrictions, and SEO link attributes",
-      productHuntAngle:
-        "Product Hunt enforces strict guidelines: personal accounts only, a 6-month mandatory cooldown between posts of the same product (requiring substantial new features), and an explicit policy of not featuring directories, templates, boilerplates, or waitlists without immediate access. Furthermore, outbound product links pass through tracking redirects (/r/) with rel='nofollow' attributes, which search engines do not treat as direct authority endorsements.",
-      launchNestsAngle:
-        "LaunchNests allows open submission for developer tools, SaaS applications, open-source repositories, APIs, and boilerplates with straightforward 12–24 hour moderation. There is no arbitrary 6-month cooldown for active iterations. Verified listings receive direct, permanent links to their domains.",
-      practicalTakeaway:
-        "If you build boilerplates, developer templates, or iterate frequently, Product Hunt's featuring policies may restrict you, whereas LaunchNests welcomes developer-first utilities.",
+        "Useful if your users ask AI assistants for tool recommendations; it doesn't replace reach.",
     },
   ],
   scenarios: [
     {
-      id: "choose-product-hunt",
-      title: "Choose Product Hunt If:",
-      badge: "One-Day Viral Launch",
+      id: "choose-producthunt",
+      title: "When Product Hunt is the better choice",
+      badge: "Reach",
       badgeVariant: "hot",
-      recommendedFor: "Consumer Apps, B2B SaaS, Major Milestones & PR",
+      recommendedFor:
+        "Products with an audience ready to show up on launch day",
       explanation:
-        "Product Hunt remains the industry standard when you need a single, high-intensity day of concentrated community attention and mainstream press visibility.",
+        "Nothing else in this list matches Product Hunt's audience. If you can prepare a strong launch day, start here.",
       bulletPoints: [
-        "You are launching a consumer mobile app, design tool, or general-purpose productivity SaaS.",
-        "You have organized a launch team, active supporters, and community followers ready to upvote on launch day.",
-        "Earning a '#1 Product of the Day' badge is a primary goal for social proof, landing page badges, or pitch decks.",
-        "You are seeking early feedback from investors, journalists, and mainstream tech early adopters.",
+        "You can rally users, followers or a community on one specific day",
+        "Your product suits a broad tech audience, not only developers",
+        "You want a chance at Product of the Day and press attention",
       ],
     },
     {
       id: "choose-launchnests",
-      title: "Choose LaunchNests If:",
-      badge: "Perpetual Dev Directory",
+      title: "When LaunchNests is the better choice",
+      badge: "Developers",
       badgeVariant: "new",
-      recommendedFor: "Developer Tools, APIs, Software Products & Tech Stacks",
+      recommendedFor: "Dev tools, APIs and technical SaaS",
       explanation:
-        "LaunchNests is designed for developers who want continuous discoverability, architectural context, and machine-readable presence without the pressure of a 24-hour voting sprint.",
+        "LaunchNests is a smaller, developer-focused listing that doesn't depend on being featured or on one day's performance.",
       bulletPoints: [
-        "You built a developer tool, API, database, open-source library, starter kit, or developer-focused SaaS.",
-        "You want your product cataloged permanently in searchable categories rather than disappearing after 24 hours.",
-        "You want to showcase your tech stack and be discovered through two-way 'Built With' relationships.",
-        "You care about AI search engine visibility across ChatGPT, Claude, and Perplexity via /llms.txt and MCP protocols.",
-        "You want clean, direct backlink equity without tracking redirects or nofollow restrictions.",
+        "You want a listing that stays up regardless of votes",
+        "You want your product linked from the pages of the tools it is built with",
+        "You want a week on the homepage instead of a single day",
       ],
     },
     {
       id: "choose-both",
-      title: "Choose Both If:",
-      badge: "Omnichannel Launch",
+      title: "Use both",
+      badge: "Both",
       badgeVariant: "neutral",
-      recommendedFor: "Comprehensive Product Distribution Strategy",
+      recommendedFor: "Most software launches",
       explanation:
-        "The most effective launch strategy is not choosing one over the other, but using each platform for its complementary strengths.",
+        "The two don't conflict. Many founders list on smaller sites in the weeks around a Product Hunt launch.",
       bulletPoints: [
-        "Launch on Product Hunt to capture day-one excitement, initial community comments, and social proof.",
-        "List on LaunchNests on the same day to secure permanent directory indexing, tech-stack mapping, and AI indexing.",
-        "Use Product Hunt's badge on your landing page while letting LaunchNests provide steady developer discovery month after month.",
+        "List on LaunchNests first so the listing and its stack links are already live",
+        "Pick a Product Hunt date up to 30 days out and prepare your launch day",
+        "Link to your Product Hunt launch from your other listings on the day",
       ],
     },
   ],
   canYouUseBoth: {
-    heading: "Can You Use Both Platforms Together?",
-    subheading:
-      "A practical omnichannel distribution strategy for modern software builders",
+    heading: "Using Product Hunt and LaunchNests together",
+    subheading: "A simple order that works for most launches",
     description:
-      "Product Hunt and LaunchNests are not mutually exclusive. In fact, combining them offers a balanced distribution strategy that covers both immediate launch-day momentum and long-term organic discoverability.",
+      "Product Hunt gives you a single, large launch day. LaunchNests gives you a smaller, longer-lived developer listing. Here is one way to sequence them:",
     strategySteps: [
       {
         stepNumber: 1,
-        title: "Pre-Launch & Foundation",
-        timing: "1–2 Weeks Before Launch",
+        title: "List on LaunchNests",
+        timing: "Two to four weeks before",
         action:
-          "Submit your product to LaunchNests. Tag your tech stack (databases, auth, frontend, hosting). Allow 12–24h for moderation so your permanent profile and /llms.txt entries are indexed.",
+          "Submit your product, list the tools it is built with, and add the badge to your site if you want a dofollow link on the free plan.",
         outcome:
-          "Your technical profile is live, your tech-stack relationships are mapped, and AI crawlers begin ingesting your product metadata.",
+          "Your listing and its tech-stack links are live before the big launch.",
       },
       {
         stepNumber: 2,
-        title: "Launch Day Sprint",
-        timing: "Launch Day (12:01 AM PT)",
+        title: "Schedule on Product Hunt",
+        timing: "Up to 30 days before",
         action:
-          "Launch on Product Hunt. Rally your community, respond to founder questions in comments, and compete for daily leaderboard placement.",
-        outcome:
-          "Capture maximum same-day visitor spikes, early user feedback, and potential 'Product of the Day' recognition.",
+          "Pick your Product Hunt date (it can be from tomorrow up to 30 days ahead) and prepare your launch assets and outreach.",
+        outcome: "A fixed date to build towards.",
       },
       {
         stepNumber: 3,
-        title: "Post-Launch Compound Discovery",
-        timing: "Weeks & Months Following Launch",
+        title: "Launch day",
+        timing: "Launch day",
         action:
-          "Embed your Product Hunt badge on your website for social proof. Meanwhile, your LaunchNests profile continues generating discovery as developers search tools in your stack and AI assistants query /llms.txt.",
+          "Launch on Product Hunt at 12:01 AM Pacific and point your existing audience to it.",
         outcome:
-          "You avoid the post-launch traffic cliff by maintaining a permanent, categorized presence in the developer ecosystem.",
+          "Your one-day push on Product Hunt, with the LaunchNests listing still there afterwards.",
       },
     ],
     summary:
-      "By using both platforms, you don't have to choose between a viral launch day and sustainable long-term discovery.",
+      "Product Hunt for reach on the day, LaunchNests as one of the developer listings that stay up afterwards.",
   },
   faqs: [
     {
-      question:
-        "Is LaunchNests a direct competitor or alternative to Product Hunt?",
+      question: "Is it free to launch on Product Hunt?",
       answer:
-        "LaunchNests serves as an alternative approach to product discovery, especially for developer tools, APIs, and software applications. While Product Hunt focuses on a 24-hour daily launch competition for broad tech products, LaunchNests provides a permanent directory, a relational 'Built With' tech-stack database, and machine-readable endpoints for AI search engines. Many makers use both platforms together.",
+        "Yes. Product Hunt's help center says submitting a launch, commenting and reaching Product of the Day are all free. It also sells self-service ads, which are separate from launching.",
     },
     {
-      question:
-        "Can I launch the same product on both Product Hunt and LaunchNests?",
+      question: "Does every Product Hunt launch appear on the homepage?",
       answer:
-        "Yes. There are no exclusivity restrictions on either platform. Launching on Product Hunt gives you a 24-hour burst of early-adopter visibility, while listing on LaunchNests ensures your product remains permanently searchable by category, tech stack, and AI agents long after the launch day ends.",
+        "No. Product Hunt's team hand-picks which launches to feature on the homepage leaderboard. A launch that isn't featured still goes live, but it doesn't compete for that day's ranking.",
     },
     {
-      question: "Why would a developer choose LaunchNests over Product Hunt?",
+      question: "How long does a Product Hunt launch last?",
       answer:
-        "Developers often choose LaunchNests when they are building technical products (libraries, APIs, databases, boilerplates) that may not appeal to Product Hunt's general consumer audience. LaunchNests listings also do not expire after 24 hours, do not require a 6-month cooldown between updates, and include two-way tech-stack discovery linking tools to real-world builds.",
+        "One day. Launches go live at 12:01 AM Pacific Time on the scheduled date and run until midnight Pacific.",
     },
     {
-      question:
-        "How does product discovery work on LaunchNests after launch week?",
+      question: "How often can I relaunch on Product Hunt?",
       answer:
-        "On LaunchNests, products do not disappear into archives. They remain permanently accessible through category hubs, filterable by pricing and adoption, searchable via global search, and discoverable through the 'Built With' profiles of all the underlying tools used to build them. Additionally, autonomous AI assistants retrieve structured data from /llms.txt and our MCP server.",
+        "If more than two months have passed since your last launch you can submit as usual. Within two months you need to send a relaunch request, and relaunches are meant for major updates.",
     },
     {
-      question: "Is listing a product or developer tool on LaunchNests free?",
-      answer:
-        "Yes, listing on LaunchNests is 100% free for software products, developer tools, open-source repositories, and indie projects. Every approved submission receives permanent directory indexing, structured JSON-LD schema, and inclusion in AI crawler feeds. Optional paid sponsorships are available for makers seeking additional sidebar or banner visibility.",
+      question: "How is LaunchNests different from Product Hunt?",
+      answer: `LaunchNests is much smaller and focused on software for developers. Launches run for a week instead of a day, every approved launch is shown in its week, listings stay up with no vote minimum, and products link to the tools they are built with. Product Hunt has a far larger audience. LaunchNests is free, with optional one-time plans; free listings get a dofollow link while the LaunchNests badge stays on your site.`,
     },
     {
-      question:
-        "How does LaunchNests handle outbound links compared to Product Hunt?",
+      question: "Should I launch on Product Hunt or LaunchNests?",
       answer:
-        "Product Hunt routes outbound website clicks through tracking redirect links (/r/) with rel='nofollow' attributes. LaunchNests provides direct outbound links on product profiles, and verified listings include Do-Follow links to pass domain authority directly to your product.",
+        "Most products should do both. Use Product Hunt for a single high-reach launch day, and LaunchNests for a developer listing that stays up and links your product to its tech stack.",
     },
   ],
 }

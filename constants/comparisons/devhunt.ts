@@ -1,6 +1,11 @@
 import type { PlatformComparison } from "@/types/comparison"
 import { SITE_CONFIG } from "@/constants/site"
-import { ROUTES } from "@/constants/routes"
+import {
+  COMPARISON_FACTS_CHECKED_ON,
+  LAUNCHNESTS_ANGLES,
+  LAUNCHNESTS_FACTS,
+  LAUNCHNESTS_PROFILE,
+} from "@/constants/comparisons/launchnests"
 
 export const DEVHUNT_COMPARISON: PlatformComparison = {
   slug: "devhunt",
@@ -8,257 +13,222 @@ export const DEVHUNT_COMPARISON: PlatformComparison = {
   targetKeyword: "DevHunt alternative",
   name: "DevHunt Alternative",
   comparedPlatformName: "DevHunt",
-  metaTitle: `DevHunt Alternative: LaunchNests vs DevHunt (${new Date().getFullYear()})`,
+  metaTitle: "DevHunt Alternative: LaunchNests vs DevHunt for Developer Tools",
   metaDescription:
-    "An objective, research-backed comparison between DevHunt and LaunchNests. Compare launch mechanics, discovery lifespans, relational tech-stack graphs, AI search readiness, and submission models for developer tools.",
+    "DevHunt and LaunchNests both run weekly launches for developer tools. Compare free vs paid links ($49 on DevHunt, $15 on LaunchNests), audience and scope, with sources.",
   keywords: [
     "DevHunt alternative",
     "alternatives to DevHunt",
     "DevHunt vs LaunchNests",
     "sites like DevHunt",
-    "developer tool launch platforms",
-    "dev tool directories",
-    "where to launch developer tools",
-    "developer product discovery",
-    "open source launchpads",
-    "devtool marketing",
+    "launch developer tools",
+    "dev tool launch platforms",
   ],
   canonicalUrl: `${SITE_CONFIG.url}/devhunt-alternative`,
-  lastVerifiedDate: "October 2026",
-  heroBadge: "Editorial Comparison & Platform Guide",
-  heroTitle: "DevHunt Alternative for Developer Tools & Software Infrastructure",
+  factsCheckedOn: COMPARISON_FACTS_CHECKED_ON,
+  sources: [
+    { label: "DevHunt: FAQ", url: "https://devhunt.org/faq" },
+    { label: "DevHunt: Home", url: "https://devhunt.org" },
+  ],
+  heroBadge: "Comparison guide",
+  heroTitle: "DevHunt Alternative for Developer Tools",
   heroDescription:
-    "DevHunt is an open-source daily launch platform created by developers for developers. LaunchNests takes a comprehensive architectural approach: pairing a community launch feed with a permanent relational tech-stack graph, category discovery hubs, and native machine-readable protocols for autonomous AI search engines.",
+    "DevHunt and LaunchNests are closer than most launch sites: both are for developer tools and both run weekly launches. DevHunt is older, open source and has a much larger audience. The main differences are link policy, price and what each lists.",
   comparedPlatformProfile: {
     name: "DevHunt",
-    tagline: "A launchpad for dev tools, built by developers",
+    tagline: "Weekly launches for developer tools",
     websiteUrl: "https://devhunt.org",
-    primaryAudience:
-      "Software engineers, devtool founders, open-source maintainers, and developer advocates seeking launch-day peer feedback.",
+    primaryAudience: "Developers looking for new developer tools.",
     discoveryLifespan:
-      "24-hour daily launch competition. Tools compete for upvotes during their scheduled day and receive a 'Tool of the Day/Week' badge before transitioning into historical archive pages.",
+      "A new batch of launches every week on the homepage; every tool keeps a permanent page.",
     pricingModel:
-      "Free submission queue with community review; optional featured promotions, newsletter sponsorships, and launch boosts.",
+      "Free listing (nofollow). Paid launch $49 once (choose your week, newsletter spot, dofollow link, boost). Super boosts $99-$199. Ads from $99 a week.",
     keyStrengths: [
-      "100% developer-focused audience with zero consumer noise",
-      "Open-source codebase fostering community trust and transparency",
-      "Prestigious daily and weekly developer awards badge",
-      "Constructive, code-level feedback and GitHub issue submissions from technical peers",
+      "Developer tools only, so the audience matches dev products",
+      "Open source",
+      "Large audience: DevHunt states 655,823 unique visitors since launch and 7,464 tools launched",
+      "Weekly winners are featured in the newsletter and on social, and get a badge",
     ],
     keyLimitations: [
-      "Discovery is heavily front-loaded; traffic drops significantly after the 24-hour voting window",
-      "No relational 'Built With' graph connecting developer tools to the live indie SaaS apps built with them",
-      "Lacks static category hubs for long-tail search discovery (e.g. database tools, auth libraries, observability APIs)",
-      "Does not offer native machine protocols for AI assistants (no /llms.txt, Markdown twins, or MCP server)",
-      "Limited editorial guides and programmatic comparison assets to support sustained organic SEO rankings",
+      "Free listings get a nofollow link; dofollow needs the $49 launch",
+      "Super boosts ($99-$199) open the week at #1-#3 on the homepage",
+      "Voting needs a GitHub or Google sign-in",
     ],
   },
-  launchNestsProfile: {
-    name: SITE_CONFIG.name,
-    tagline: SITE_CONFIG.tagline,
-    websiteUrl: SITE_CONFIG.url,
-    primaryAudience:
-      "Full-stack developers, SaaS founders, API creators, devtool architects, and autonomous AI search agents.",
-    discoveryLifespan:
-      "Perpetual catalog indexing. Dev tools and software products remain discoverable permanently across static category hubs, trending leaderboards, and two-way 'Built With' ecosystem pages.",
-    pricingModel:
-      "100% free core submissions for dev tools and products; optional affordable one-time verification ($15 Premium / $19 Premium+) with permanent Do-Follow link equity and zero recurring fees.",
-    keyStrengths: [
-      "Proprietary 'Built With' relational graph connecting dev tools directly to indie apps built on top of them",
-      "Static category hubs and programmatic alternatives matrix capturing organic search traffic 365 days a year",
-      "Native AI engine readiness with /llms.txt, /llms-full.txt, machine Markdown twin endpoints, and an active Model Context Protocol (MCP) server",
-      "Do-Follow link to your site on paid tiers or with an active badge",
-      "Balanced ecosystem welcoming both developer infrastructure (APIs, SDKs, DBs) and end-user software products",
-    ],
-    keyLimitations: [
-      "Younger platform with a growing community compared to mature 10-year launchboards",
-      "Curated strictly for software products, developer infrastructure, and technical tools rather than non-technical agencies",
-      "Does not host interactive live audio stages or Discord-only voice rooms",
-    ],
-  },
+  launchNestsProfile: LAUNCHNESTS_PROFILE,
   quickComparisonDimensions: [
     {
-      key: "focus",
-      label: "Ecosystem Focus",
-      competitorValue: "Developer Tools only",
-      launchNestsValue: "Developer Tools + Indie Software & Stacks",
-      highlight: "launchNests",
-      description:
-        "LaunchNests connects the tools developers use to the products they build, creating a virtuous feedback loop.",
+      key: "cost",
+      label: "Cost to launch",
+      competitorValue: "Free, or $49 paid launch",
+      launchNestsValue: LAUNCHNESTS_FACTS.cost,
     },
     {
-      key: "discoveryLifespan",
-      label: "Discovery Lifespan",
-      competitorValue: "24-Hour launch competition",
-      launchNestsValue: "Perpetual catalog & category hubs",
-      highlight: "launchNests",
-      description:
-        "DevHunt optimizes for a single-day spike; LaunchNests delivers sustained inbound traffic month after month.",
+      key: "window",
+      label: "Launch window",
+      competitorValue: "Weekly batch on the homepage",
+      launchNestsValue: LAUNCHNESTS_FACTS.launchFormat,
     },
     {
-      key: "builtWithGraph",
-      label: "Two-Way Tech Stack Graph",
-      competitorValue: "None",
-      launchNestsValue: "Full 'Built With' relational engine",
-      highlight: "launchNests",
+      key: "freelink",
+      label: "Dofollow link (free)",
+      competitorValue: "No, free listings are nofollow",
+      launchNestsValue: LAUNCHNESTS_FACTS.freeLink,
       description:
-        "Showcase real-world adoption by linking your devtool to verified production products that run on it.",
+        "This is the biggest practical difference for a free listing.",
     },
     {
-      key: "aiReadiness",
-      label: "AI Search Readiness (GEO/LLMO)",
-      competitorValue: "Standard HTML only",
-      launchNestsValue: "/llms.txt, Markdown twins & MCP server",
-      highlight: "launchNests",
-      description:
-        "Autonomous AI coding agents (Claude, Gemini, Cursor) ingest LaunchNests tooling data via standardized protocols.",
+      key: "paidlink",
+      label: "Dofollow link (paid)",
+      competitorValue: "Permanent, with the $49 launch",
+      launchNestsValue: LAUNCHNESTS_FACTS.paidLink,
     },
     {
-      key: "seoBacklinks",
-      label: "SEO Link Equity",
-      competitorValue: "Profile links with community voting",
-      launchNestsValue: "Permanent Do-Follow links on verified tiers",
-      highlight: "launchNests",
-      description:
-        "Followed outbound link to your site on paid tiers or with an active badge.",
+      key: "boosts",
+      label: "Paid ranking boosts",
+      competitorValue: "Super boosts $99-$199 for the top three opening spots",
+      launchNestsValue: "Premium+ ($19) gets top placement on directory pages",
     },
     {
-      key: "categoryTaxonomy",
-      label: "Category Hub Architecture",
-      competitorValue: "Basic tag filters",
-      launchNestsValue: "Dedicated static category landing pages",
-      highlight: "launchNests",
-      description:
-        "Indexable static hubs for Authentication, Databases, AI APIs, Frontend Frameworks, and Hosting.",
+      key: "scope",
+      label: "What it lists",
+      competitorValue: "Developer tools only",
+      launchNestsValue: LAUNCHNESTS_FACTS.focus,
+    },
+    {
+      key: "techstack",
+      label: "Tech-stack links",
+      competitorValue: "Not part of the listing format",
+      launchNestsValue: LAUNCHNESTS_FACTS.techStack,
+    },
+    {
+      key: "audience",
+      label: "Audience (self-reported)",
+      competitorValue: "655,823 unique visitors since launch",
+      launchNestsValue: LAUNCHNESTS_FACTS.audience,
     },
   ],
   deepDives: [
     {
-      id: "discovery-lifespan",
-      title: "24-Hour Spike vs Perpetual Ecosystem Indexing",
-      subtitle:
-        "Why launch day is only 5% of your developer tool's distribution journey",
+      id: "links",
+      title: "Free links: nofollow vs badge-based dofollow",
+      subtitle: "What a free listing gives you",
       competitorAngle:
-        "DevHunt is designed around a high-intensity 24-hour voting cycle. Founders rally their community, compete for upvotes on Hacker News and Twitter, and battle for the 'Tool of the Day' badge. Once the day concludes, however, the tool transitions into historical archive archives where click-through rates decline precipitously.",
+        "DevHunt's FAQ says every tool gets a permanent page with a nofollow link. The paid launch ($49 once) adds a permanent dofollow link, a choice of launch week, a newsletter spot and a boost.",
       launchNestsAngle:
-        "LaunchNests treats launch day as day zero. Every tool is cataloged into dedicated static category landing pages, indexed into programmatic alternative matrices, and linked to production apps using it. A devtool submitted in January continues generating qualified developer clicks in December through organic search and AI engine queries.",
+        "LaunchNests free listings are nofollow by default and switch to dofollow while the LaunchNests badge is live on your site; we re-check the badge regularly. Premium ($15 once) gives a permanent dofollow link without the badge.",
       practicalTakeaway:
-        "Launch on DevHunt for immediate technical feedback and social proof. Launch on LaunchNests for durable, compound organic search discovery and permanent relational proof.",
+        "If you don't want to pay, LaunchNests gives a way to a dofollow link; DevHunt doesn't. If you'll pay, compare $49 on DevHunt (larger audience) with $15 on LaunchNests.",
     },
     {
-      id: "built-with-graph",
-      title: "The Relational 'Built With' Graph Advantage",
-      subtitle:
-        "Demonstrating real-world production adoption over vanity upvotes",
+      id: "weekly",
+      title: "Two weekly launch formats",
+      subtitle: "How a launch week works",
       competitorAngle:
-        "On traditional launch boards like DevHunt, product credibility is measured almost entirely through upvotes and comments. While useful, upvotes can easily be influenced by social following rather than technical utility.",
+        "DevHunt shows a new batch of launches each week. Paid launches win ties and get their own post on X; super boosts ($99-$199) open the week at #1-#3, after which the homepage ranks by votes. The most-voted tools at the end of the week win and are featured in the Tuesday newsletter.",
       launchNestsAngle:
-        "LaunchNests provides a dedicated two-way graph. When an indie founder submits a SaaS app, they tag the tools and APIs used in their stack (e.g. Supabase, Resend, Tailwind, Stripe). The devtool's profile automatically inherits verified proof cards showing real production applications built with that tool.",
+        "LaunchNests also runs weekly launches ranked by votes. Premium+ listings are pinned at the top of directory pages; there's no newsletter.",
       practicalTakeaway:
-        "Developers trust tools with verified production deployments. LaunchNests turns every maker who builds with your API into an organic brand ambassador.",
+        "The formats are similar. DevHunt's audience and newsletter are the main reasons to prefer it.",
     },
     {
-      id: "ai-search-agents",
-      title: "Optimized for the Age of AI Search and LLM Coding Agents",
-      subtitle:
-        "Getting recommended when developers prompt ChatGPT, Claude, and Cursor",
+      id: "tech-stack",
+      title: "Tool pages vs tech-stack links",
+      subtitle: "Discovery after the launch week",
       competitorAngle:
-        "DevHunt serves human browser traffic via standard client-side HTML, with no structured machine twin endpoints or Open Knowledge formats.",
-      launchNestsAngle:
-        "LaunchNests implements complete AI Engine Optimization (AEO). Every directory page provides a clean Markdown twin (/api/md/*), comprehensive /llms.txt and /llms-full.txt indices, and a native Model Context Protocol (MCP) server allowing AI IDEs to search tools programmatically.",
+        "DevHunt lists developer tools. Its listings don't connect products to the tools they are built with.",
+      launchNestsAngle: LAUNCHNESTS_ANGLES.techStack,
       practicalTakeaway:
-        "When an engineer asks their AI assistant 'What are the best open-source auth tools for Next.js?', LaunchNests' structured datasets ensure your tool is cited accurately.",
+        "LaunchNests also lists products built with developer tools, not only the tools themselves.",
     },
   ],
   scenarios: [
     {
-      id: "devhunt-best",
-      title: "When DevHunt is the Right Choice",
-      badge: "High Launch-Day Engagement",
-      recommendedFor:
-        "Solo developers launching an open-source CLI, library, or experimental devtool seeking immediate peer code reviews.",
+      id: "choose-devhunt",
+      title: "When DevHunt is the better choice",
+      badge: "Dev audience",
+      badgeVariant: "hot",
+      recommendedFor: "Developer tools that want the larger dev audience",
       explanation:
-        "If you want focused, peer-to-peer feedback from fellow engineers on launch day and have an active developer community to rally for upvotes, DevHunt delivers great community energy.",
+        "DevHunt has a much bigger developer audience and a weekly newsletter.",
       bulletPoints: [
-        "You want technical critique on your GitHub repository, architecture, and documentation",
-        "You want to win a prestigious 'Tool of the Day' badge for your website footer",
-        "Your product is strictly a developer utility and does not target non-technical founders",
+        "Your product is a developer tool",
+        "You're willing to pay $49 for a dofollow link and newsletter spot",
+        "You can bring voters during your launch week",
       ],
     },
     {
-      id: "launchnests-best",
-      title: "When LaunchNests is the Right Choice",
-      badge: "Compound Growth & Tech Stacks",
-      recommendedFor:
-        "Developer tools, APIs, and SaaS platforms seeking permanent organic search ranking, verified production case studies, and AI visibility.",
+      id: "choose-launchnests",
+      title: "When LaunchNests is the better choice",
+      badge: "Free dofollow",
+      badgeVariant: "new",
+      recommendedFor: "Dev tools and products built with them",
       explanation:
-        "If you want continuous developer discovery without having to chase votes every month, and want to show what applications are actively being built with your tool, LaunchNests is built for your growth.",
+        "LaunchNests is cheaper and lists products as well as tools.",
       bulletPoints: [
-        "You need perpetual SEO category ranking that delivers qualified traffic every single month",
-        "You want to build a verified 'Built With' showcase showing real apps built on your SDK",
-        "You want a Do-Follow link to your site",
-        "You want your documentation and features surfaced to AI assistants (Cursor, ChatGPT, Claude)",
+        "You want a dofollow link without paying (by keeping the badge live)",
+        "You'd rather pay $15 than $49",
+        "Your product is built with developer tools but isn't one itself",
+      ],
+    },
+    {
+      id: "choose-both",
+      title: "Use both",
+      badge: "Both",
+      badgeVariant: "neutral",
+      recommendedFor: "Developer tools",
+      explanation:
+        "Both are built for developer tools; launching on both is normal.",
+      bulletPoints: [
+        "Launch on the two in different weeks so you can promote each",
+        "List the tools you use on LaunchNests to appear on their pages",
       ],
     },
   ],
   canYouUseBoth: {
-    heading: "The Multi-Platform Distribution Playbook",
-    subheading:
-      "How top developer tool founders orchestrate both platforms for maximum reach",
+    heading: "Using DevHunt and LaunchNests together",
+    subheading: "Two weekly launches, staggered",
     description:
-      "DevHunt and LaunchNests are complementary platforms. You do not have to choose one over the other; in fact, the most successful devtool launches leverage both platforms across different phases of their launch lifecycle.",
+      "Since both run weekly launches, stagger them so each gets your full attention:",
     strategySteps: [
       {
         stepNumber: 1,
-        title: "Index Early on LaunchNests for Permanent SEO & Schema",
-        timing: "1–2 Weeks Prior to Public Launch",
+        title: "Launch on LaunchNests",
+        timing: "Week 1",
         action:
-          "Submit your developer tool to LaunchNests to establish canonical indexing, generate your machine-readable endpoints, and map initial tech-stack dependencies.",
-        outcome:
-          "Google indexes your category profiles and competitors matrix before public launch day.",
+          "Launch on LaunchNests, list your tech stack, and add the badge to your site if you're on the free plan.",
+        outcome: "A developer listing with stack links.",
       },
       {
         stepNumber: 2,
-        title: "Coordinate DevHunt Launch Day for Community Momentum",
-        timing: "Public Launch Day",
-        action:
-          "Schedule your tool on DevHunt, rally your Twitter and GitHub followers, engage in comment threads, and aim for a top spot on the daily leaderboard.",
-        outcome:
-          "Immediate spike in GitHub stars, early tester feedback, and developer social proof.",
-      },
-      {
-        stepNumber: 3,
-        title: "Tag Real Builds on LaunchNests for Sustained Inbound",
-        timing: "Post-Launch & Ongoing",
-        action:
-          "Invite products built with your devtool to list on LaunchNests and tag your tool in their tech stack. Embed the LaunchNests badge on your GitHub README.",
-        outcome:
-          "Continuous organic discovery, recurring referral traffic, and passive inbound developer signups.",
+        title: "Launch on DevHunt",
+        timing: "A later week",
+        action: "Launch on DevHunt and promote it to your audience.",
+        outcome: "A second launch week in front of DevHunt's larger audience.",
       },
     ],
     summary:
-      "Treat DevHunt as your high-impact launch-day megaphone, and LaunchNests as your permanent developer distribution engine.",
+      "DevHunt for audience; LaunchNests for cheaper links and stack-based discovery.",
   },
   faqs: [
     {
-      question: "Is DevHunt completely free to submit developer tools?",
+      question: "Is DevHunt free?",
       answer:
-        "Yes, DevHunt provides free submissions for developer tools subject to community review. They also offer optional paid promotions and launch day boosts for makers who want additional visibility.",
+        "Yes. DevHunt's FAQ says listing is free and every tool gets a permanent page with a nofollow link. A paid launch costs $49 once and adds a choice of launch week, a newsletter spot, a dofollow link and a boost.",
     },
     {
-      question: "How does LaunchNests differ from DevHunt?",
+      question: "Does DevHunt give a dofollow link?",
       answer:
-        "DevHunt is an open-source daily launch competition focused strictly on developer utilities. LaunchNests is a permanent relational software catalog featuring both dev tools and end-user products, connected by a two-way 'Built With' graph, static category landing hubs, and native AI engine protocols (/llms.txt and MCP server).",
+        "Only on paid launches. Free listings are nofollow; paid launches get a permanent dofollow link.",
     },
     {
-      question: "Does LaunchNests provide Do-Follow SEO backlinks for developer tools?",
-      answer:
-        "Yes. Approved tools on the Premium and Premium+ tiers receive permanent Do-Follow backlinks directly to their landing pages, boosting organic domain authority in Google search.",
+      question: "Is DevHunt open source?",
+      answer: "Yes, according to its FAQ.",
     },
     {
-      question: "Can I submit both a developer tool and a SaaS product to LaunchNests?",
+      question: "How is LaunchNests different from DevHunt?",
       answer:
-        "Yes. LaunchNests supports both entities: developer tools (APIs, SDKs, databases, frameworks) and software products (SaaS platforms, micro-tools, indie apps). Products can tag the tools they are built with, creating rich relational showcases on both profiles.",
+        "Both run weekly launches for developer products. LaunchNests free listings can get a dofollow link by keeping the badge live, its paid plan is $15 once rather than $49, and it lists products built with developer tools as well as the tools. DevHunt has a much larger audience, a weekly newsletter and is open source.",
     },
   ],
 }
