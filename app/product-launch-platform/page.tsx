@@ -1,12 +1,8 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 import { ArrowLeft, ChevronRight, HelpCircle } from "lucide-react"
-import {
-  getCachedProductsStats,
-} from "@/db/queries/products/list"
-import {
-  getCachedToolsStats,
-} from "@/db/queries/tools/list"
+import { getCachedProductsStats } from "@/db/queries/products/list"
+import { getCachedToolsStats } from "@/db/queries/tools/list"
 import { Button } from "@/components/ui/button"
 import { CornerBrackets } from "@/components/shared/corner-brackets"
 import { ReadyToShowcaseCta } from "@/components/shared/ready-to-showcase-cta"
@@ -162,41 +158,42 @@ const LAUNCH_PHASES = [
   },
 ]
 
+// Competitor values come from each site's own pages; see the comparison pages for sources.
 const PLATFORM_COMPARISON = [
   {
     feature: "Launch Window",
-    launchNests: "Weekly + Perpetual",
-    productHunt: "24 Hours",
-    devHunt: "24 Hours",
-    uneed: "Rolling daily/monthly",
+    launchNests: "One week, then a permanent listing",
+    productHunt: "One day (Pacific time)",
+    devHunt: "One week",
+    uneed: "Launch day, then rolling leaderboards",
   },
   {
-    feature: "Submission Review",
-    launchNests: "12–24 Hours",
-    productHunt: "Self-scheduled",
-    devHunt: "Community review",
-    uneed: "30–150 day backlog",
+    feature: "Free Launch Timing",
+    launchNests: "Next week with free slots",
+    productHunt: "Tomorrow to 30 days ahead",
+    devHunt: "Pick a launch week",
+    uneed: "Assigned, 50+ days out",
   },
   {
-    feature: "SEO Link Type",
-    launchNests: "Permanent Do-Follow",
-    productHunt: "Redirect (/r/)",
-    devHunt: "Profile Link",
-    uneed: "Conditional (20+ votes)",
+    feature: "Free Dofollow Link",
+    launchNests: "While the badge is live",
+    productHunt: "Not stated",
+    devHunt: "No (nofollow)",
+    uneed: "Upvote score of 20+",
   },
   {
-    feature: "Tech Stack Graph",
+    feature: "Paid Option",
+    launchNests: "$15 / $19 one-time",
+    productHunt: "Ads only",
+    devHunt: "$49 launch",
+    uneed: "$14.99 / $39.99",
+  },
+  {
+    feature: "Tech Stack Links",
     launchNests: "Yes ('Built With')",
-    productHunt: "No",
-    devHunt: "No",
-    uneed: "No",
-  },
-  {
-    feature: "AI Engine Ingestion",
-    launchNests: "/llms.txt + MCP",
-    productHunt: "No",
-    devHunt: "No",
-    uneed: "No",
+    productHunt: "Not in launch format",
+    devHunt: "Not in listing format",
+    uneed: "Not in listing format",
   },
 ]
 
@@ -204,7 +201,7 @@ const FAQS = [
   {
     question: "Is LaunchNests free to launch on?",
     answer:
-      "Yes. Core submissions for software products and developer tools are 100% free with human review within 12–24 hours. We also offer affordable one-time verification tiers ($15 Premium / $19 Premium+) for permanent Do-Follow backlinks and featured placements.",
+      "Yes. Launching a software product or developer tool is free, and every submission is reviewed before it goes live. Free listings are nofollow by default and dofollow while the LaunchNests badge stays on your site. Premium ($15) and Premium+ ($19) are one-time payments for choosing any launch week, a permanent dofollow link and better placement.",
   },
   {
     question: "Can I launch both SaaS products and developer tools?",
@@ -335,11 +332,13 @@ const ProductLaunchPlatformPage = async () => {
             <div className={comparisonTrustBar}>
               <span>{totalCatalogItems}+ Launches Cataloged</span>
               <span>·</span>
-              <span>{toolStats.totalBuilds.toLocaleString()} Production Builds</span>
+              <span>
+                {toolStats.totalBuilds.toLocaleString()} Production Builds
+              </span>
               <span>·</span>
-              <span>12–24h Review Guarantee</span>
+              <span>Every Submission Reviewed</span>
               <span>·</span>
-              <span>Permanent Do-Follow Links</span>
+              <span>Dofollow With a Live Badge or Premium</span>
             </div>
           </header>
 
@@ -350,13 +349,13 @@ const ProductLaunchPlatformPage = async () => {
                 Four Built-In Distribution Engines
               </h2>
               <p className={comparisonSectionSubtitle}>
-                Most launch sites stop working the moment your 24-hour launch day
-                ends. LaunchNests activates four continuous channels working for
-                your software year-round.
+                Most launch sites stop working the moment your 24-hour launch
+                day ends. LaunchNests activates four continuous channels working
+                for your software year-round.
               </p>
             </div>
 
-            <div className="relative grid grid-cols-1 divide-y divide-dashed divide-border border border-dashed border-border bg-white md:grid-cols-2 lg:grid-cols-4 md:divide-y-0 md:divide-x rounded-xl overflow-hidden">
+            <div className="relative grid grid-cols-1 divide-y divide-dashed divide-border overflow-hidden rounded-xl border border-dashed border-border bg-white md:grid-cols-2 md:divide-x md:divide-y-0 lg:grid-cols-4">
               {DISTRIBUTION_ENGINES.map((engine) => (
                 <div
                   key={engine.number}
@@ -407,7 +406,7 @@ const ProductLaunchPlatformPage = async () => {
               </p>
             </div>
 
-            <div className="relative grid grid-cols-1 divide-y divide-dashed divide-border border border-dashed border-border bg-white md:grid-cols-3 md:divide-y-0 md:divide-x rounded-xl overflow-hidden">
+            <div className="relative grid grid-cols-1 divide-y divide-dashed divide-border overflow-hidden rounded-xl border border-dashed border-border bg-white md:grid-cols-3 md:divide-x md:divide-y-0">
               {LAUNCH_PHASES.map((phase) => (
                 <div
                   key={phase.phaseNumber}

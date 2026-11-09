@@ -40,4 +40,13 @@ export const formatCommentTime = (
   })
 }
 
-export const toIsoDate = (date: Date): string => date.toISOString().split("T")[0]
+export const formatLongDate = (isoDate: string): string =>
+  new Date(isoDate).toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+    timeZone: "UTC",
+  })
+
+export const toIsoDate = (date: Date): string =>
+  date.toISOString().split("T")[0]

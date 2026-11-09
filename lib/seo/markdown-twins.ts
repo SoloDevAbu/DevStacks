@@ -333,7 +333,7 @@ ${faqsList}
 export const generateComparisonMarkdown = (
   comp: PlatformComparison
 ): string => {
-  const competitor = comp.comparedPlatformProfile ?? comp.productHuntProfile!
+  const competitor = comp.comparedPlatformProfile
   const ln = comp.launchNestsProfile
 
   return `# ${comp.heroTitle}
@@ -341,8 +341,9 @@ export const generateComparisonMarkdown = (
 > ${comp.heroDescription}
 
 - Canonical URL: ${comp.canonicalUrl}
-- Last Verified: ${comp.lastVerifiedDate}
-- Editorial Status: Research-backed, independent comparison
+- Facts checked: ${comp.factsCheckedOn}
+- Written by: the ${ln.name} team. We run ${ln.name}, so weigh this accordingly.
+- Sources: ${comp.sources.map((source) => source.url).join(", ")}
 
 ---
 
@@ -352,8 +353,7 @@ export const generateComparisonMarkdown = (
 |---|---|---|
 ${comp.quickComparisonDimensions
   .map(
-    (d) =>
-      `| **${d.label}** | ${d.competitorValue ?? d.productHuntValue} | ${d.launchNestsValue} |`
+    (d) => `| **${d.label}** | ${d.competitorValue} | ${d.launchNestsValue} |`
   )
   .join("\n")}
 
@@ -396,7 +396,7 @@ ${comp.deepDives
     (deep, idx) => `### ${idx + 1}. ${deep.title}
 *${deep.subtitle}*
 
-- **${comp.comparedPlatformName} Approach:** ${deep.competitorAngle ?? deep.productHuntAngle}
+- **${comp.comparedPlatformName} Approach:** ${deep.competitorAngle}
 - **${ln.name} Approach:** ${deep.launchNestsAngle}
 - **Practical Takeaway:** ${deep.practicalTakeaway}`
   )
