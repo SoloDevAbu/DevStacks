@@ -9,7 +9,7 @@
   "compatibility_date": "2026-10-01",
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
   // Monday 00:00 UTC is when scheduled launches go live; 00:30 retries the rollover in case the first run failed.
-  // 03:00 daily runs the badge re-check and must match BADGE_CHECK_CRON in constants/badges.ts.
+  // 03:00 daily runs the badge re-check. All three must match CRON in constants/cron.ts.
   "triggers": {
     "crons": ["0 0 * * 1", "30 0 * * 1", "0 3 * * *"],
   },

@@ -9,6 +9,7 @@ import { isCronAuthorized } from "@/lib/auth/cron"
 import { warmPaths } from "@/lib/cache/warm"
 import { submitToIndexNow } from "@/lib/seo/indexnow"
 import { getListingPath } from "@/utils/urls"
+import { getLiveBlogPathsForItems } from "@/db/queries/blogs"
 
 export const dynamic = "force-dynamic"
 
@@ -25,6 +26,7 @@ const ROLLOVER_MACHINE_PATHS = [
 // signals. Every listing query hides future-week launches, so the cron expires all listing caches
 // and the new launches' own pages (cached as 404 until now), re-renders the pages that list the
 // new week and pings IndexNow so crawlers and AI search pick them up without waiting for a recrawl.
+// The IndexNow result is part of the response, which worker.ts writes to the Workers logs.
 export const POST = async (req: NextRequest) => {
   if (!isCronAuthorized(req)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
@@ -41,11 +43,28 @@ export const POST = async (req: NextRequest) => {
   const launchPaths = launches.map(getListingPath)
   launchPaths.forEach((path) => revalidatePath(path))
   const weekPath = ROUTES.LAUNCH_WEEK(year, week)
-
-  after(async () => {
-    await warmPaths([...ROLLOVER_HUB_PATHS, weekPath, ...ROLLOVER_MACHINE_PATHS])
-    await submitToIndexNow([...ROLLOVER_HUB_PATHS, weekPath, ...launchPaths])
+  const blogPaths = await getLiveBlogPathsForItems({
+    toolIds: launches.filter((item) => item.itemKind === "tool").map((item) => item.id),
+    productIds: launches
+      .filter((item) => item.itemKind === "product")
+      .map((item) => item.id),
   })
 
-  return NextResponse.json({ year, week, launches: launchPaths.length })
+  after(() =>
+    warmPaths([...ROLLOVER_HUB_PATHS, weekPath, ...ROLLOVER_MACHINE_PATHS])
+  )
+  const indexNow = await submitToIndexNow([
+    ...ROLLOVER_HUB_PATHS,
+    weekPath,
+    ...launchPaths,
+    ...blogPaths,
+  ])
+
+  return NextResponse.json({
+    year,
+    week,
+    launches: launchPaths.length,
+    blogs: blogPaths.length,
+    indexNow,
+  })
 }

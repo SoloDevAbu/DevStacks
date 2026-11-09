@@ -1,8 +1,11 @@
-import { type NextRequest, NextResponse } from "next/server"
+import { type NextRequest, NextResponse, after } from "next/server"
 import { getAdminSession } from "@/lib/auth/admin"
 import { generateAndSaveLaunchBlog } from "@/lib/ai/launch-blog-service"
 import { z } from "zod"
 import { revalidateCatalog } from "@/lib/cache/revalidate"
+import { isBlogLive } from "@/lib/catalog/visibility"
+import { submitToIndexNow } from "@/lib/seo/indexnow"
+import { ROUTES } from "@/constants/routes"
 
 const regenerateSchema = z.object({
   itemType: z.enum(["tool", "product"]),
@@ -45,6 +48,11 @@ export const POST = async (req: NextRequest) => {
     }
 
     revalidateCatalog({ blogSlug: result.blog?.slug })
+
+    const blog = result.blog
+    if (blog && isBlogLive(blog)) {
+      after(() => submitToIndexNow([ROUTES.BLOG_POST(blog.slug)]))
+    }
 
     return NextResponse.json(
       { success: true, blog: result.blog },

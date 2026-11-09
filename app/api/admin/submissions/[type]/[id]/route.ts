@@ -3,9 +3,10 @@ import { getAdminSession } from "@/lib/auth/admin"
 import { updateSubmissionStatusAndTriggerBlog } from "@/db/queries/admin/submissions"
 import { z } from "zod"
 import { revalidateCatalog } from "@/lib/cache/revalidate"
-import { isPubliclyVisible } from "@/lib/catalog/visibility"
+import { isBlogLive, isPubliclyVisible } from "@/lib/catalog/visibility"
 import { submitToIndexNow } from "@/lib/seo/indexnow"
 import { getListingPath } from "@/utils/urls"
+import { ROUTES } from "@/constants/routes"
 
 const statusSchema = z.object({
   status: z.enum(["pending", "approved", "rejected"]),
@@ -53,8 +54,12 @@ export const PATCH = async (
     })
 
     if (isPubliclyVisible(result.item)) {
-      const listingPath = getListingPath({ itemKind: type, slug: result.item.slug })
-      after(() => submitToIndexNow([listingPath]))
+      const blog = result.blogResult?.blog
+      const paths = [
+        getListingPath({ itemKind: type, slug: result.item.slug }),
+        ...(blog && isBlogLive(blog) ? [ROUTES.BLOG_POST(blog.slug)] : []),
+      ]
+      after(() => submitToIndexNow(paths))
     }
 
     return NextResponse.json(
