@@ -17,11 +17,8 @@ export const BADGE_STYLE_OPTIONS: ReadonlyArray<{
   { value: BADGE_STYLE.SHIELD, label: "GitHub Shield" },
 ]
 
-// Matched against the scheduled event in worker.ts, so it must stay identical to the entry in
-// wrangler.jsonc. The job runs daily and only picks up listings past INTERVAL_DAYS, which spreads
-// the outbound fetches instead of checking every badge in one run.
-export const BADGE_CHECK_CRON = "0 3 * * *"
-
+// The re-check (CRON.BADGE_CHECK) runs daily and only picks up listings past INTERVAL_DAYS, which
+// spreads the outbound fetches instead of checking every badge in one run.
 export const BADGE_CHECK = {
   INTERVAL_DAYS: 7,
   BATCH_SIZE: 40,

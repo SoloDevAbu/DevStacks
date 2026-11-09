@@ -1,10 +1,12 @@
 import { TIER } from "@/constants/plans"
+import { ROUTES } from "@/constants/routes"
 import { cache } from "react"
 import { db } from "@/db"
 import { blogs, tools, products, users } from "@/db/schema"
 import type { Blog, NewBlog } from "@/db/schema"
 import type { BlogListItem } from "@/types/blog"
-import { and, desc, eq, lte, ne, or, sql, inArray } from "drizzle-orm"
+import { blogIsLive, isBlogLive } from "@/lib/catalog/visibility"
+import { and, desc, eq, ne, or, sql, inArray } from "drizzle-orm"
 
 export interface ListPublishedBlogsOptions {
   page?: number
@@ -70,15 +72,7 @@ export const getBlogBySlug = cache(
 
     const { blog, tool, product, submitter } = result
 
-    // Gating check:
-    // Blog is live if status is "published" OR (status is "scheduled" and publishedAt <= now)
-    const isLive =
-      blog.status === "published" ||
-      (blog.status === "scheduled" &&
-        blog.publishedAt !== null &&
-        blog.publishedAt <= now)
-
-    if (isLive) {
+    if (isBlogLive(blog, now)) {
       return { blog, tool, product, submitter }
     }
 
@@ -109,10 +103,7 @@ export const listPublishedBlogs = async ({
   const offset = (safePage - 1) * safeLimit
   const now = new Date()
 
-  const liveCondition = or(
-    eq(blogs.status, "published"),
-    and(eq(blogs.status, "scheduled"), lte(blogs.publishedAt, now))
-  )
+  const liveCondition = blogIsLive(now)
 
   const tierOrderSql = sql`
     CASE 
@@ -202,6 +193,27 @@ export const resolveUniqueBlogSlug = async (
   }
 }
 
+export const getLiveBlogPathsForItems = async ({
+  toolIds,
+  productIds,
+}: {
+  toolIds: string[]
+  productIds: string[]
+}): Promise<string[]> => {
+  const itemFilters = [
+    toolIds.length > 0 ? inArray(blogs.toolId, toolIds) : undefined,
+    productIds.length > 0 ? inArray(blogs.productId, productIds) : undefined,
+  ].filter(Boolean)
+  if (itemFilters.length === 0) return []
+
+  const rows = await db
+    .select({ slug: blogs.slug })
+    .from(blogs)
+    .where(and(blogIsLive(), or(...itemFilters)))
+
+  return rows.map(({ slug }) => ROUTES.BLOG_POST(slug))
+}
+
 export const getSimilarBlogs = async ({
   currentBlogId,
   categoryId,
@@ -214,13 +226,7 @@ export const getSimilarBlogs = async ({
   const now = new Date()
   const safeLimit = Math.max(1, Math.min(10, limit))
 
-  const liveCondition = and(
-    ne(blogs.id, currentBlogId),
-    or(
-      eq(blogs.status, "published"),
-      and(eq(blogs.status, "scheduled"), lte(blogs.publishedAt, now))
-    )
-  )
+  const liveCondition = and(ne(blogs.id, currentBlogId), blogIsLive(now))
 
   const categoryMatchSql = categoryId
     ? sql`
