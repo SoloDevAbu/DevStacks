@@ -91,8 +91,18 @@ export const getProductBySlug = async (slug: string) => {
 
   if (!product) return null
 
-  // Fetch built with tools
-  const toolsData = await db
+  const builtWithTools = await getProductBuiltWithTools(product.id)
+
+  return {
+    ...product,
+    builtWithTools,
+  }
+}
+
+export const getProductBuiltWithTools = async (
+  productId: string
+): Promise<ProductBuiltWith[]> => {
+  const rows = await db
     .select({
       name: productTools.name,
       toolId: productTools.toolId,
@@ -100,18 +110,13 @@ export const getProductBySlug = async (slug: string) => {
     })
     .from(productTools)
     .leftJoin(tools, eq(productTools.toolId, tools.id))
-    .where(eq(productTools.productId, product.id))
+    .where(eq(productTools.productId, productId))
 
-  const builtWithTools: ProductBuiltWith[] = toolsData.map((t) => ({
-    name: t.name,
-    toolSlug: t.toolSlug ?? null,
-    toolId: t.toolId ?? null,
+  return rows.map((row) => ({
+    name: row.name,
+    toolSlug: row.toolSlug ?? null,
+    toolId: row.toolId ?? null,
   }))
-
-  return {
-    ...product,
-    builtWithTools,
-  }
 }
 
 export const getRelatedProducts = async (

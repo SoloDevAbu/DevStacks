@@ -59,6 +59,8 @@ import { Button } from "@/components/ui/button"
 import { ProductActionButtons } from "@/components/products/product-action-buttons"
 import { HoverOutline } from "@/components/shared/hover-outline"
 import { DetailSectionHeader } from "@/components/shared/detail-section-header"
+import { LaunchProfileSection } from "@/components/shared/launch-profile-section"
+import { getLiveBlogForItem } from "@/db/queries/blogs"
 import { ScreenshotsCarousel } from "@/components/shared/screenshots-carousel"
 import { CommentsSection } from "@/components/shared/comments-section"
 import { GaItemViewTracker } from "@/components/shared/ga-item-view-tracker"
@@ -85,6 +87,7 @@ import {
   faqAnswerText,
   footerAiButton,
   detailSectionText,
+  techStackChipLink,
 } from "@/utils/styles"
 import type { Tier, Pricing } from "@/constants/plans"
 
@@ -199,11 +202,12 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
   const siteUrl = SITE_CONFIG.url
   const productUrl = `${siteUrl}/products/${product.slug}`
 
-  const [relatedProducts, customFaqs] = await Promise.all([
+  const [relatedProducts, customFaqs, launchProfile] = await Promise.all([
     product.categoryId
       ? getRelatedProducts(product.categoryId, product.id, 4)
       : [],
     getProductFaqs(product.id),
+    getLiveBlogForItem("product", product.id),
   ])
   const categoryPath = getCategoryPath("product", product.categorySlug)
   const outboundRel = getLinkRel(product.tier, product.badgeVerified)
@@ -610,6 +614,10 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
           </section>
         )}
 
+        {launchProfile && (
+          <LaunchProfileSection itemName={product.name} blog={launchProfile} />
+        )}
+
         {/* Section 3: Value Proposition & Deep Dive */}
         {(product.problemStatement ||
           product.solution ||
@@ -677,7 +685,7 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
                   <Link
                     key={t.name}
                     href={ROUTES.TOOL(t.toolSlug)}
-                    className="inline-flex items-center gap-2 rounded-lg border border-dashed border-border bg-slate-50/50 px-3.5 py-2 text-xs font-semibold text-slate-800 transition-all hover:border-indigo-300 hover:bg-indigo-50/60 hover:text-indigo-900"
+                    className={techStackChipLink}
                   >
                     <Wrench className="size-3.5 text-indigo-600" />
                     <span>{t.name}</span>

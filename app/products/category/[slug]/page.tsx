@@ -29,6 +29,7 @@ import { SITE_CONFIG } from "@/constants/site"
 import { ROUTES } from "@/constants/routes"
 import { Badge } from "@/components/ui/badge"
 import { LEGACY_CATEGORY_REDIRECTS } from "@/constants/categories"
+import { indexingRobots, isCategoryIndexable } from "@/utils/indexing"
 
 export const revalidate = 21600
 
@@ -58,11 +59,11 @@ export const generateMetadata = async (
   }
 
   const stats = await getCategoryStats(category.id)
-  const isIndexable = stats.productCount >= 1
+  const isIndexable = isCategoryIndexable(stats.productCount)
 
   const baseTitle = `${category.name} Developer Products & Software`
   const title = baseTitle
-  const description = `Discover ${stats.productCount} verified ${category.name} software products, SaaS tools, and developer projects on ${SITE_CONFIG.name}. Ranked by community upvotes, reviews, and built-with architectures.`
+  const description = `Explore ${stats.productCount} ${category.name} products launched on ${SITE_CONFIG.name}, ranked by community likes, with the tech stack each one is built on.`
   const canonicalUrl = `${SITE_CONFIG.url}/products/category/${category.slug}`
 
   return {
@@ -78,10 +79,7 @@ export const generateMetadata = async (
     alternates: {
       canonical: canonicalUrl,
     },
-    robots: {
-      index: isIndexable,
-      follow: true,
-    },
+    robots: indexingRobots(isIndexable),
     openGraph: {
       title: `${baseTitle} | ${SITE_CONFIG.name}`,
       description,

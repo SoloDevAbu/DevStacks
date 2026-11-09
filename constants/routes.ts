@@ -47,6 +47,8 @@ export const ROUTES = {
   TERMS: "/terms",
   REFUND: "/refund",
   FAQ: "/faq",
+  MCP: "/mcp",
+  CLI: "/cli",
   DASHBOARD: "/dashboard",
   DASHBOARD_PRODUCTS: "/dashboard/products",
   DASHBOARD_PRODUCT_EDIT: (slug: string) =>

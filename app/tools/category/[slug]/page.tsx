@@ -29,6 +29,7 @@ import { SITE_CONFIG } from "@/constants/site"
 import { ROUTES } from "@/constants/routes"
 import { Badge } from "@/components/ui/badge"
 import { LEGACY_CATEGORY_REDIRECTS } from "@/constants/categories"
+import { indexingRobots, isCategoryIndexable } from "@/utils/indexing"
 
 export const revalidate = 21600
 
@@ -58,11 +59,11 @@ export const generateMetadata = async (
   }
 
   const stats = await getCategoryStats(category.id)
-  const isIndexable = stats.toolCount >= 1
+  const isIndexable = isCategoryIndexable(stats.toolCount)
 
   const baseTitle = `${category.name} Developer Tools & APIs`
   const title = baseTitle
-  const description = `Discover ${stats.toolCount} verified ${category.name} developer tools, APIs, and infrastructure layers on ${SITE_CONFIG.name}. Ranked by community upvotes and ${stats.totalBuilds.toLocaleString()} verified production builds.`
+  const description = `Explore ${stats.toolCount} ${category.name} developer tools and APIs listed on ${SITE_CONFIG.name}, ranked by community upvotes and the products built with them.`
   const canonicalUrl = `${SITE_CONFIG.url}/tools/category/${category.slug}`
 
   return {
@@ -78,10 +79,7 @@ export const generateMetadata = async (
     alternates: {
       canonical: canonicalUrl,
     },
-    robots: {
-      index: isIndexable,
-      follow: true,
-    },
+    robots: indexingRobots(isIndexable),
     openGraph: {
       title: `${baseTitle} | ${SITE_CONFIG.name}`,
       description,

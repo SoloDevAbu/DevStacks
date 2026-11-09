@@ -60,7 +60,7 @@ export const metadata: Metadata = {
     canonical: `${SITE_CONFIG.url}/saas-directory`,
   },
   openGraph: {
-    title: `SaaS Directory — Discover & Submit Verified Software Products (${new Date().getFullYear()}) | ${SITE_CONFIG.name}`,
+    title: `SaaS Directory — Discover & Submit Software Products (${new Date().getFullYear()}) | ${SITE_CONFIG.name}`,
     description:
       "Curated directory of verified SaaS products, indie software tools, and live tech stacks. Submit your product for continuous discovery.",
     url: `${SITE_CONFIG.url}/saas-directory`,
@@ -227,7 +227,7 @@ const SaasDirectoryPage = async () => {
           {/* Hero Section */}
           <header className={comparisonHeroWrapper}>
             <div className={comparisonCategoryPill}>
-              <span>Verified Software Catalog · {currentYear}</span>
+              <span>Software Catalog · {currentYear}</span>
             </div>
 
             <h1 className={comparisonH1}>

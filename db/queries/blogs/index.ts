@@ -36,6 +36,14 @@ export const getBlogByItem = async (
   return blog ?? null
 }
 
+export const getLiveBlogForItem = async (
+  itemType: "tool" | "product",
+  itemId: string
+): Promise<Blog | null> => {
+  const blog = await getBlogByItem(itemType, itemId)
+  return blog && isBlogLive(blog) ? blog : null
+}
+
 export const getBlogBySlug = cache(
   async (
     slug: string,

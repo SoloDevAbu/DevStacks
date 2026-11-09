@@ -9,6 +9,7 @@ import { ToolCard } from "@/components/shared/tool-card"
 import { ProductCard } from "@/components/shared/product-card"
 import { HoverOutline } from "@/components/shared/hover-outline"
 import { getMakerProfile } from "@/db/queries/users/get-profile"
+import { indexingRobots, isMakerIndexable } from "@/utils/indexing"
 import { formatLocation, formatGeoMetaTags } from "@/utils/country"
 import { SITE_CONFIG } from "@/constants/site"
 import { ROUTES } from "@/constants/routes"
@@ -49,10 +50,10 @@ export const generateMetadata = async ({
     }
   }
 
-  const isSubstantive =
-    maker.toolsCount > 0 ||
-    maker.productsCount > 0 ||
-    Boolean(maker.bio && maker.bio.trim().length > 50)
+  const isSubstantive = isMakerIndexable({
+    listingsCount: maker.toolsCount + maker.productsCount,
+    bio: maker.bio,
+  })
 
   const displayName = maker.name || `@${maker.username}`
   const baseTitle = `${displayName} — Maker Profile & Launches`
@@ -80,15 +81,7 @@ export const generateMetadata = async ({
     alternates: {
       canonical: profileUrl,
     },
-    robots: isSubstantive
-      ? {
-          index: true,
-          follow: true,
-        }
-      : {
-          index: false,
-          follow: true,
-        },
+    robots: indexingRobots(isSubstantive),
     other: Object.keys(geoTags).length > 0 ? geoTags : undefined,
     openGraph: {
       title: `${baseTitle} | ${SITE_CONFIG.name}`,

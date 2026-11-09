@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
-import { ALTERNATIVES_MIN_SIBLINGS } from "@/constants/rankings"
+import { indexingRobots, isAlternativesIndexable } from "@/utils/indexing"
 import Link from "next/link"
 import {
   ArrowLeft,
@@ -70,11 +70,11 @@ export const generateMetadata = async (
     ? await getRelatedTools(tool.categoryId, tool.id, 20)
     : []
 
-  const isIndexable = alternatives.length >= ALTERNATIVES_MIN_SIBLINGS
+  const isIndexable = isAlternativesIndexable(alternatives.length)
 
   const baseTitle = `Top ${tool.name} Alternatives & Competitors (${currentYear})`
   const title = baseTitle
-  const description = `Compare the best verified ${tool.name} alternatives in ${tool.category ?? "developer tools"} for ${currentYear}. Ranked by real-world production builds, pricing models, and developer upvotes on ${SITE_CONFIG.name}.`
+  const description = `Compare ${tool.name} alternatives in ${tool.category ?? "developer tools"} for ${currentYear}, ranked by community upvotes and the products built with them on ${SITE_CONFIG.name}.`
   const canonicalUrl = `${SITE_CONFIG.url}/alternatives/${tool.slug}`
 
   return {
@@ -92,10 +92,7 @@ export const generateMetadata = async (
     alternates: {
       canonical: canonicalUrl,
     },
-    robots: {
-      index: isIndexable,
-      follow: true,
-    },
+    robots: indexingRobots(isIndexable),
     openGraph: {
       title: `${baseTitle} | ${SITE_CONFIG.name}`,
       description,
@@ -262,12 +259,12 @@ const AlternativesPage = async (props: AlternativesPageProps) => {
               <strong className="font-semibold text-slate-800">
                 {tool.name}
               </strong>
-              ? Compare verified tools and APIs in the{" "}
+              ? Compare tools and APIs in the{" "}
               <strong className="font-semibold text-slate-800">
                 {tool.category ?? "Developer Tools"}
               </strong>{" "}
-              category. Ranked transparently by verified production builds,
-              pricing tiers, and developer upvotes.
+              category, ranked by community upvotes and the products built
+              with them on LaunchNests.
             </p>
 
             {/* Target Tool Anchor Card */}

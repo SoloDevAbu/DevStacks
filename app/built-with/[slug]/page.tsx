@@ -33,6 +33,8 @@ import {
 import { SITE_CONFIG } from "@/constants/site"
 import { ROUTES } from "@/constants/routes"
 
+import { indexingRobots, isBuiltWithIndexable } from "@/utils/indexing"
+
 export const revalidate = 86400
 
 export const generateStaticParams = async () => []
@@ -62,11 +64,11 @@ export const generateMetadata = async (
     tool.name,
     50
   )
-  const isIndexable = builtWithProducts.length >= 1
+  const isIndexable = isBuiltWithIndexable(builtWithProducts.length)
 
   const baseTitle = `Products Built With ${tool.name} — Production Showcase`
   const title = baseTitle
-  const description = `Discover ${builtWithProducts.length} verified live apps, SaaS products, and developer projects built with ${tool.name}. Explore tech stacks, maker profiles, and architectures on ${SITE_CONFIG.name}.`
+  const description = `See ${builtWithProducts.length} products launched on ${SITE_CONFIG.name} that are built with ${tool.name}. Explore tech stacks, maker profiles, and architectures on ${SITE_CONFIG.name}.`
   const canonicalUrl = `${SITE_CONFIG.url}/built-with/${tool.slug}`
 
   return {
@@ -84,10 +86,7 @@ export const generateMetadata = async (
     alternates: {
       canonical: canonicalUrl,
     },
-    robots: {
-      index: isIndexable,
-      follow: true,
-    },
+    robots: indexingRobots(isIndexable),
     openGraph: {
       title: `${baseTitle} | ${SITE_CONFIG.name}`,
       description,
@@ -264,12 +263,11 @@ const BuiltWithPage = async (props: BuiltWithPageProps) => {
                 </h1>
 
                 <p className="max-w-2xl text-sm leading-relaxed font-normal text-slate-600 sm:text-base">
-                  Discover live applications, SaaS platforms, and indie
-                  developer projects verified to run on{" "}
+                  Products launched on LaunchNests whose makers list{" "}
                   <strong className="font-semibold text-slate-800">
                     {tool.name}
                   </strong>
-                  . Inspect real-world tech stacks and production architectures.
+                  {" "}in their tech stack.
                 </p>
 
                 <div className="mt-2 flex flex-wrap items-center gap-2.5 text-xs text-slate-600">

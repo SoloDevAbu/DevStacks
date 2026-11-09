@@ -13,6 +13,9 @@ import {
   PlusCircle,
 } from "lucide-react"
 import { getSimilarBlogs } from "@/db/queries/blogs"
+import { getProductBuiltWithTools } from "@/db/queries/products/get"
+import { getCategoryById } from "@/db/queries/categories/list"
+import { BlogContextLinks } from "@/components/blog/blog-context-links"
 import { loadBlogPost } from "@/lib/blog/load-blog"
 import { BlogRowItem } from "@/components/blog/blog-row-item"
 import { BLOG_ARTICLE_LABEL } from "@/constants/blog"
@@ -150,11 +153,15 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     }
   )
 
-  const similarBlogs = await getSimilarBlogs({
-    currentBlogId: blog.id,
-    categoryId: item.categoryId,
-    limit: 3,
-  })
+  const [similarBlogs, builtWithTools, category] = await Promise.all([
+    getSimilarBlogs({
+      currentBlogId: blog.id,
+      categoryId: item.categoryId,
+      limit: 3,
+    }),
+    data.product ? getProductBuiltWithTools(data.product.id) : [],
+    item.categoryId ? getCategoryById(item.categoryId) : null,
+  ])
 
   // Extract headings from markdown and build comprehensive Table of Contents
   const markdownHeadings = extractHeadingsFromMarkdown(blog.content)
@@ -394,6 +401,13 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             {blog.faqs && blog.faqs.length > 0 && (
               <BlogFaqs faqs={blog.faqs} />
             )}
+
+            <BlogContextLinks
+              itemName={item.name}
+              itemKind={data.product ? "product" : "tool"}
+              builtWithTools={builtWithTools}
+              category={category}
+            />
 
             {/* Mobile / Tablet Inlined Product Card (shown only when right sidebar is hidden on < xl) */}
             <div className="p-6 sm:p-8 block xl:hidden bg-slate-50/20">

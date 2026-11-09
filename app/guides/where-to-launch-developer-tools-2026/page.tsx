@@ -4,6 +4,7 @@ import { ArrowLeft, ChevronRight, ChevronRight as ArrowSub } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { CornerBrackets } from "@/components/shared/corner-brackets"
 import { ReadyToShowcaseCta } from "@/components/shared/ready-to-showcase-cta"
+import { RelatedResources } from "@/components/shared/related-resources"
 import {
   Table,
   TableHeader,
@@ -513,6 +514,8 @@ const WhereToLaunchDevtoolsGuidePage = () => {
           </section>
 
           {/* Closing Call to Action */}
+          <RelatedResources currentPath={ROUTES.GUIDE_LAUNCH_DEVTOOLS} />
+
           <ReadyToShowcaseCta
             title={`Ready to Launch Your Developer Tool on ${SITE_CONFIG.name}?`}
             description="Get indexed across our permanent category hubs, connect to verified production builds, and secure permanent Do-Follow SEO backlinks."
