@@ -184,6 +184,16 @@ export const getCategoryBySlug = async (slug: string) => {
   return row ?? null
 }
 
+export const getCategoryById = async (id: string) => {
+  const [row] = await db
+    .select({ name: categories.name, slug: categories.slug })
+    .from(categories)
+    .where(eq(categories.id, id))
+    .limit(1)
+
+  return row ?? null
+}
+
 export const getCategoryStats = async (categoryId: string) => {
   const [toolStats] = await db
     .select({

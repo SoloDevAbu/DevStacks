@@ -65,6 +65,8 @@ import { Button } from "@/components/ui/button"
 import { ToolActionButtons } from "@/components/tools/tool-action-buttons"
 import { HoverOutline } from "@/components/shared/hover-outline"
 import { DetailSectionHeader } from "@/components/shared/detail-section-header"
+import { LaunchProfileSection } from "@/components/shared/launch-profile-section"
+import { getLiveBlogForItem } from "@/db/queries/blogs"
 import { ScreenshotsCarousel } from "@/components/shared/screenshots-carousel"
 import { CommentsSection } from "@/components/shared/comments-section"
 import { GaItemViewTracker } from "@/components/shared/ga-item-view-tracker"
@@ -196,11 +198,13 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
     notFound()
   }
 
-  const [builtWithProducts, relatedTools, customFaqs] = await Promise.all([
-    getProductsBuiltWithTool(tool.slug, tool.name, 10),
-    tool.categoryId ? getRelatedTools(tool.categoryId, tool.id, 4) : [],
-    getToolFaqs(tool.id),
-  ])
+  const [builtWithProducts, relatedTools, customFaqs, launchProfile] =
+    await Promise.all([
+      getProductsBuiltWithTool(tool.slug, tool.name, 10),
+      tool.categoryId ? getRelatedTools(tool.categoryId, tool.id, 4) : [],
+      getToolFaqs(tool.id),
+      getLiveBlogForItem("tool", tool.id),
+    ])
   const categoryPath = getCategoryPath("tool", tool.categorySlug)
   const outboundRel = getLinkRel(tool.tier, tool.badgeVerified)
 
@@ -620,6 +624,10 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
               <p className={detailSectionText}>{tool.useCases}</p>
             </div>
           </section>
+        )}
+
+        {launchProfile && (
+          <LaunchProfileSection itemName={tool.name} blog={launchProfile} />
         )}
 
         {/* Section 3: Value Proposition & Deep Dive */}

@@ -7,6 +7,13 @@ import {
   MARKDOWN_TWIN_ROUTES,
   type MarkdownTwinRoute,
 } from "@/constants/markdown-twins"
+import {
+  CACHED_LIST_PATHS,
+  LIST_BROWSE_PREFIX,
+  LIST_QUERY_KEYS,
+} from "@/constants/list-pages"
+
+const NOT_FOUND_PATH = "/_not-found"
 
 const getClientIp = (request: NextRequest) =>
   request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
@@ -57,6 +64,13 @@ const getMarkdownAliasPath = (pathname: string): string | null => {
   if (found) return (found.route.alias ?? found.route.twin)(found.match)
   const compSlug = getComparisonSlugFromPath(pathname)
   return compSlug ? comparisonTwin(compSlug) : null
+}
+
+const getListBrowsePath = (request: NextRequest): string | null => {
+  const { pathname, searchParams, search } = request.nextUrl
+  if (!CACHED_LIST_PATHS.includes(pathname)) return null
+  const hasListQuery = LIST_QUERY_KEYS.some((key) => searchParams.has(key))
+  return hasListQuery ? `${LIST_BROWSE_PREFIX}${pathname}${search}` : null
 }
 
 const getRateLimit = (method: string, pathname: string) => {
@@ -155,6 +169,11 @@ export const middleware = (request: NextRequest) => {
     return response
   }
 
+  // The browse routes only exist as rewrite targets, so a direct request gets the 404 page.
+  if (pathname.startsWith(`${LIST_BROWSE_PREFIX}/`)) {
+    return rewriteWithHeaders(NOT_FOUND_PATH)
+  }
+
   // MCP alias rewrite: /.well-known/mcp -> /.well-known/mcp.json
   if (pathname === "/.well-known/mcp") {
     return rewriteWithHeaders("/.well-known/mcp.json")
@@ -174,6 +193,9 @@ export const middleware = (request: NextRequest) => {
     if (twinPath) return rewriteWithHeaders(twinPath)
   }
 
+  const listBrowsePath = getListBrowsePath(request)
+  if (listBrowsePath) return rewriteWithHeaders(listBrowsePath)
+
   return nextWithHeaders()
 }
 
@@ -191,6 +213,7 @@ export const config = {
     "/alternatives/:path*",
     "/built-with/:path*",
     "/trending/:path*",
+    "/browse/:path*",
     "/compare/:path*",
     "/producthunt-alternative",
     "/producthunt-alternative.md",

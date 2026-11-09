@@ -853,6 +853,12 @@ export const comparisonLeadParagraph =
 export const comparisonTrustBar =
   "flex flex-wrap items-center justify-center gap-3 sm:gap-4 text-xs font-medium text-slate-500 pt-2 border-t border-dashed border-slate-200/80 w-full max-w-xl"
 
+export const relatedResourceCard =
+  "group relative flex flex-col gap-1.5 rounded-xl border border-dashed border-border bg-white p-4 shadow-2xs transition-all hover:border-slate-400 hover:shadow-xs"
+
+export const techStackChipLink =
+  "inline-flex items-center gap-2 rounded-lg border border-dashed border-border bg-slate-50/50 px-3.5 py-2 text-xs font-semibold text-slate-800 transition-all hover:border-indigo-300 hover:bg-indigo-50/60 hover:text-indigo-900"
+
 export const comparisonSectionTitle =
   "text-xl sm:text-2xl font-bold tracking-tight text-slate-900"
 

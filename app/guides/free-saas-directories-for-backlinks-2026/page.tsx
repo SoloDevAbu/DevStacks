@@ -4,6 +4,7 @@ import { ArrowLeft, ChevronRight, ExternalLink } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { CornerBrackets } from "@/components/shared/corner-brackets"
 import { ReadyToShowcaseCta } from "@/components/shared/ready-to-showcase-cta"
+import { RelatedResources } from "@/components/shared/related-resources"
 import {
   Table,
   TableHeader,
@@ -669,6 +670,8 @@ const SaasDirectoriesGuidePage = () => {
           </section>
 
           {/* Closing Call to Action */}
+          <RelatedResources currentPath={ROUTES.GUIDE_SAAS_DIRECTORIES} />
+
           <ReadyToShowcaseCta
             title={`Start With The Highest ROI Directory: ${SITE_CONFIG.name}`}
             description="Get your SaaS or developer tool indexed with permanent Do-Follow backlink equity and 12–24h review turnaround. Free submissions welcome."

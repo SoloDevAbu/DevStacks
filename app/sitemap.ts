@@ -10,7 +10,11 @@ import { listPublishedBlogs } from "@/db/queries/blogs"
 import { ROUTES } from "@/constants/routes"
 import { normalizeSitemapUrl } from "@/utils/urls"
 import { getAllComparisons } from "@/constants/comparisons"
-import { ALTERNATIVES_MIN_SIBLINGS } from "@/constants/rankings"
+import {
+  isAlternativesIndexable,
+  isBuiltWithIndexable,
+  isCategoryIndexable,
+} from "@/utils/indexing"
 import { getCachedLaunchWeekSummaries } from "@/lib/launches/launch-archive"
 
 export const revalidate = 3600
@@ -68,13 +72,13 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
       priority: 0.85,
     },
     {
-      url: normalizeSitemapUrl("/mcp"),
+      url: normalizeSitemapUrl(ROUTES.MCP),
       lastModified: now,
       changeFrequency: "weekly",
       priority: 0.8,
     },
     {
-      url: normalizeSitemapUrl("/cli"),
+      url: normalizeSitemapUrl(ROUTES.CLI),
       lastModified: now,
       changeFrequency: "weekly",
       priority: 0.8,
@@ -190,11 +194,10 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
     })
   )
 
-  // Tool Category Hubs with >= 1 approved tools
   if (toolCategories && toolCategories.length > 0) {
     dynamicRoutes.push(
       ...toolCategories
-        .filter((cat) => cat.count >= 1)
+        .filter((cat) => isCategoryIndexable(cat.count))
         .map((cat) => ({
           url: normalizeSitemapUrl(ROUTES.TOOL_CATEGORY(cat.slug)),
           lastModified: now,
@@ -204,11 +207,10 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
     )
   }
 
-  // Product Category Hubs with >= 1 approved products
   if (productCategories && productCategories.length > 0) {
     dynamicRoutes.push(
       ...productCategories
-        .filter((cat) => cat.count >= 1)
+        .filter((cat) => isCategoryIndexable(cat.count))
         .map((cat) => ({
           url: normalizeSitemapUrl(ROUTES.PRODUCT_CATEGORY(cat.slug)),
           lastModified: now,
@@ -218,16 +220,9 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
     )
   }
 
+  // Paginated list pages stay crawlable through their links; the sitemap lists only the pages
+  // that hold content of their own.
   if (dbProducts && dbProducts.length > 0) {
-    const totalProductPages = Math.ceil(dbProducts.length / 20)
-    for (let p = 2; p <= totalProductPages; p++) {
-      dynamicRoutes.push({
-        url: normalizeSitemapUrl(`/products?page=${p}`),
-        lastModified: now,
-        changeFrequency: "daily" as const,
-        priority: 0.8,
-      })
-    }
     dynamicRoutes.push(
       ...dbProducts.map((product) => ({
         url: normalizeSitemapUrl(`/products/${product.slug}`),
@@ -239,16 +234,6 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
   }
 
   if (dbTools && dbTools.length > 0) {
-    const totalToolPages = Math.ceil(dbTools.length / 20)
-    for (let p = 2; p <= totalToolPages; p++) {
-      dynamicRoutes.push({
-        url: normalizeSitemapUrl(`/tools?page=${p}`),
-        lastModified: now,
-        changeFrequency: "daily" as const,
-        priority: 0.8,
-      })
-    }
-    // Base tool profile URLs
     dynamicRoutes.push(
       ...dbTools.map((tool) => ({
         url: normalizeSitemapUrl(`/tools/${tool.slug}`),
@@ -258,10 +243,9 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
       }))
     )
 
-    // Dedicated Built-With showcase pages for tools with >= 1 verified builds
     dynamicRoutes.push(
       ...dbTools
-        .filter((tool) => (tool.buildsCount ?? 0) >= 1)
+        .filter((tool) => isBuiltWithIndexable(tool.buildsCount ?? 0))
         .map((tool) => ({
           url: normalizeSitemapUrl(`/built-with/${tool.slug}`),
           lastModified: tool.updatedAt ?? now,
@@ -270,7 +254,7 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
         }))
     )
 
-    // Dedicated Alternatives pages for tools with >= 1 sibling in the same category
+    // A tool's category count includes the tool itself.
     const categoryCountMap = new Map<string, number>()
     for (const cat of toolCategories) {
       categoryCountMap.set(cat.id, cat.count)
@@ -281,7 +265,7 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
         .filter((tool) => {
           if (!tool.categoryId) return false
           const count = categoryCountMap.get(tool.categoryId) ?? 0
-          return count > ALTERNATIVES_MIN_SIBLINGS
+          return isAlternativesIndexable(count - 1)
         })
         .map((tool) => ({
           url: normalizeSitemapUrl(`/alternatives/${tool.slug}`),
@@ -294,14 +278,12 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
 
   if (dbMakers && dbMakers.length > 0) {
     dynamicRoutes.push(
-      ...dbMakers
-        .filter((maker) => Boolean(maker.username))
-        .map((maker) => ({
-          url: normalizeSitemapUrl(`/makers/${maker.username}`),
-          lastModified: maker.updatedAt ?? maker.createdAt ?? now,
-          changeFrequency: "weekly" as const,
-          priority: 0.75,
-        }))
+      ...dbMakers.map((maker) => ({
+        url: normalizeSitemapUrl(`/makers/${maker.username}`),
+        lastModified: maker.updatedAt ?? maker.createdAt ?? now,
+        changeFrequency: "weekly" as const,
+        priority: 0.75,
+      }))
     )
   }
 
@@ -317,7 +299,8 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
   }
 
   // Hubs change when a listing does, so they carry the newest listing update instead of the
-  // time the sitemap happened to be generated; policy pages carry no date at all.
+  // time the sitemap happened to be generated. Editorial and policy pages carry no date, because
+  // nothing here knows when their copy last changed.
   const catalogLastModified = [...(dbProducts ?? []), ...(dbTools ?? [])].reduce(
     (latest, item) =>
       item.updatedAt && new Date(item.updatedAt) > latest
@@ -328,7 +311,21 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
   const hubLastModified =
     catalogLastModified.getTime() > 0 ? catalogLastModified : now
   const undatedUrls = new Set(
-    [ROUTES.PRIVACY, ROUTES.TERMS, ROUTES.REFUND].map(normalizeSitemapUrl)
+    [
+      ROUTES.PRIVACY,
+      ROUTES.TERMS,
+      ROUTES.REFUND,
+      ROUTES.PRICING,
+      ROUTES.FAQ,
+      ROUTES.SUBMIT,
+      ROUTES.MCP,
+      ROUTES.CLI,
+      ROUTES.PRODUCTHUNT_ALTERNATIVES,
+      ROUTES.SAAS_DIRECTORY,
+      ROUTES.PRODUCT_LAUNCH_PLATFORM,
+      ROUTES.GUIDE_SAAS_DIRECTORIES,
+      ROUTES.GUIDE_LAUNCH_DEVTOOLS,
+    ].map(normalizeSitemapUrl)
   )
 
   const seen = new Set<string>()

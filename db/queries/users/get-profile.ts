@@ -4,6 +4,7 @@ import { users, makerFaqs, tools, products, categories } from "@/db/schema"
 import { eq, desc, asc, and, isNotNull, sql, inArray, or } from "drizzle-orm"
 import type { MakerProfile, DbTool, DbProduct } from "@/types/entities"
 import { launchedByNow } from "@/lib/catalog/visibility"
+import { isMakerIndexable } from "@/utils/indexing"
 
 export const generateUniqueUsername = async (
   name?: string | null,
@@ -202,25 +203,26 @@ export const getCurrentUserProfile = async (userId: string) => {
   }
 }
 
+// Select-list subqueries render bare column names, so the outer users.id must be qualified by hand.
+const outerUserId = sql`${users}.${sql.identifier(users.id.name)}`
+
 export const getActiveMakersForSitemap = async (limit = 5000) => {
-  return db
+  const rows = await db
     .select({
       username: users.username,
+      bio: users.bio,
       updatedAt: users.updatedAt,
       createdAt: users.createdAt,
+      listingsCount: sql<number>`(
+        (SELECT count(*) FROM ${tools} WHERE ${tools.submitterId} = ${outerUserId} AND ${tools.status} = 'approved' AND ${tools.isDeleted} = false)
+        + (SELECT count(*) FROM ${products} WHERE ${products.submitterId} = ${outerUserId} AND ${products.status} = 'approved' AND ${products.isDeleted} = false)
+      )::int`,
     })
     .from(users)
-    .where(
-      and(
-        isNotNull(users.username),
-        or(
-          sql`EXISTS (SELECT 1 FROM ${tools} WHERE ${tools.submitterId} = ${users.id} AND ${tools.status} = 'approved' AND ${tools.isDeleted} = false)`,
-          sql`EXISTS (SELECT 1 FROM ${products} WHERE ${products.submitterId} = ${users.id} AND ${products.status} = 'approved' AND ${products.isDeleted} = false)`,
-          and(isNotNull(users.bio), sql`length(trim(${users.bio})) > 50`)
-        )
-      )
-    )
+    .where(isNotNull(users.username))
     .limit(limit)
+
+  return rows.filter(isMakerIndexable)
 }
 
 export const getAllMakers = getActiveMakersForSitemap

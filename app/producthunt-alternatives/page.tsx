@@ -25,6 +25,7 @@ import {
 } from "@/lib/seo/schema"
 import { SITE_CONFIG } from "@/constants/site"
 import { ROUTES } from "@/constants/routes"
+import { RelatedResources } from "@/components/shared/related-resources"
 
 export const revalidate = 3600
 
@@ -591,6 +592,8 @@ const ProductHuntAlternativesPage = () => {
                 </div>
               </div>
             </section>
+
+            <RelatedResources currentPath={ROUTES.PRODUCTHUNT_ALTERNATIVES} />
 
             {/* In-depth Comparison Links Hub */}
             <section className="border-t border-dashed border-border pt-8">

@@ -25,6 +25,7 @@ import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { CornerBrackets } from "@/components/shared/corner-brackets"
 import { ReadyToShowcaseCta } from "@/components/shared/ready-to-showcase-cta"
+import { RelatedResources } from "@/components/shared/related-resources"
 import { getFaviconUrl } from "@/utils/urls"
 import { GaAlternativeViewTracker } from "@/components/shared/ga-alternative-view-tracker"
 import {
@@ -766,8 +767,8 @@ export const ComparisonPageView = ({ comparison }: ComparisonPageViewProps) => {
                   More Launch Platform Comparisons
                 </h2>
                 <p className={comparisonSectionSubtitle}>
-                  Explore objective breakdowns of other popular directories,
-                  launchpads, and developer discovery ecosystems.
+                  How other directories, launchpads and discovery sites compare,
+                  written by the LaunchNests team.
                 </p>
               </div>
 
@@ -818,6 +819,8 @@ export const ComparisonPageView = ({ comparison }: ComparisonPageViewProps) => {
               </div>
             </section>
           )}
+
+          <RelatedResources currentPath={comparison.routePath} />
 
           {/* Closing Call to Action */}
           <section className={comparisonCtaCard}>
