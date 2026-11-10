@@ -1,5 +1,5 @@
 // Custom Worker entry: the OpenNext-generated handler plus a scheduled() handler for the weekly
-// launch rollover and the badge re-check. `.open-next/worker.js` only exists after `opennextjs-cloudflare build`.
+// launch rollover, the badge re-check and the launch directory link check. `.open-next/worker.js` only exists after `opennextjs-cloudflare build`.
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { default as openNextHandler } from "./.open-next/worker.js"
@@ -54,7 +54,9 @@ const runRollover = async (env: CronEnv, isRetry: boolean) => {
   const bucket = env.NEXT_INC_CACHE_R2_BUCKET
 
   if (isRetry && (await bucket?.head(marker))) {
-    console.log(`[Cron] Rollover for ${year}-W${week} already ran, retry skipped`)
+    console.log(
+      `[Cron] Rollover for ${year}-W${week} already ran, retry skipped`
+    )
     return
   }
 
@@ -66,7 +68,12 @@ const worker = {
   fetch: openNextHandler.fetch,
   scheduled: (event: ScheduledEvent, env: CronEnv, ctx: ScheduledContext) => {
     if (event.cron === CRON.BADGE_CHECK) {
-      ctx.waitUntil(triggerCronRoute(env, ROUTES.CRON_BADGE_CHECK))
+      ctx.waitUntil(
+        Promise.all([
+          triggerCronRoute(env, ROUTES.CRON_BADGE_CHECK),
+          triggerCronRoute(env, ROUTES.CRON_DIRECTORY_CHECK),
+        ])
+      )
       return
     }
     ctx.waitUntil(runRollover(env, event.cron === CRON.ROLLOVER_RETRY))

@@ -459,6 +459,15 @@ const SaasDirectoriesGuidePage = () => {
               >
                 Browse SaaS Directory
               </Button>
+              <Button
+                variant="outline"
+                size="default"
+                nativeButton={false}
+                render={<Link href={ROUTES.DIRECTORIES} />}
+                className="w-full text-xs font-semibold text-slate-700 sm:w-auto"
+              >
+                See Measured Link Checks
+              </Button>
             </div>
 
             <div className={comparisonTrustBar}>
@@ -478,7 +487,15 @@ const SaasDirectoriesGuidePage = () => {
               </h2>
               <p className={comparisonSectionSubtitle}>
                 Sorted by platform category, backlink equity, and submission
-                review speed.
+                review speed. For the link each launch directory actually gives
+                today, see our{" "}
+                <Link
+                  href={ROUTES.DIRECTORIES}
+                  className="font-semibold text-indigo-600 hover:underline"
+                >
+                  launch directory database
+                </Link>
+                , which re-checks a real listing every week.
               </p>
             </div>
 

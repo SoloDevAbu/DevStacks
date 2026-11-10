@@ -169,6 +169,7 @@ export const FOOTER_COLUMNS: readonly FooterColumn[] = [
         href: ROUTES.GUIDE_LAUNCH_DEVTOOLS,
       },
       { label: "Free SaaS Directories", href: ROUTES.GUIDE_SAAS_DIRECTORIES },
+      { label: "Launch Directory Database", href: ROUTES.DIRECTORIES },
       {
         label: "Product Hunt Alternatives",
         href: ROUTES.PRODUCTHUNT_ALTERNATIVES,
