@@ -5,21 +5,16 @@ import {
   type BadgeCheckOutcome,
 } from "@/constants/badges"
 import { SITE_CONFIG } from "@/constants/site"
+import {
+  isBotChallenge,
+  isUnfollowedRel,
+  normalizeHost,
+  pageBlocksLinks,
+} from "@/lib/links/html-links"
 
-const UNFOLLOWED_REL_TOKENS = ["nofollow", "ugc", "sponsored"]
-const BLOCKING_ROBOTS_DIRECTIVES = ["nofollow", "noindex", "none"]
 const PAGE_GONE_STATUSES = [404, 410]
-const BOT_CHALLENGE_TITLE = "just a moment"
-
-const normalizeHost = (host: string) => host.replace(/^www\./, "").toLowerCase()
 
 const trimTrailingSlash = (path: string) => path.replace(/\/+$/, "")
-
-const hasToken = (value: string | null | undefined, tokens: string[]) =>
-  (value ?? "")
-    .toLowerCase()
-    .split(/[\s,]+/)
-    .some((token) => tokens.includes(token))
 
 export const toPageUrl = (rawUrl?: string | null): URL | null => {
   const trimmed = rawUrl?.trim()
@@ -73,27 +68,14 @@ export const findBadgeLink = (
     )
   if (listingLinks.length === 0) return BADGE_CHECK_OUTCOME.MISSING
 
-  const pageBlocksLinks = [
-    robotsHeader,
-    $('meta[name="robots" i]').attr("content"),
-  ].some((value) => hasToken(value, BLOCKING_ROBOTS_DIRECTIVES))
   const hasFollowedLink = listingLinks.some(
-    (link) => !hasToken($(link).attr("rel"), UNFOLLOWED_REL_TOKENS)
+    (link) => !isUnfollowedRel($(link).attr("rel"))
   )
 
-  return hasFollowedLink && !pageBlocksLinks
+  return hasFollowedLink && !pageBlocksLinks($, robotsHeader)
     ? BADGE_CHECK_OUTCOME.ACTIVE
     : BADGE_CHECK_OUTCOME.NOT_FOLLOWED
 }
-
-const isBotChallenge = (response: Response, html: string) =>
-  response.headers.has("cf-mitigated") ||
-  cheerio
-    .load(html)("title")
-    .text()
-    .trim()
-    .toLowerCase()
-    .startsWith(BOT_CHALLENGE_TITLE)
 
 // Only a page that answered can prove a badge is gone. Timeouts, bot walls and server errors are
 // reported as inconclusive so a site's outage or firewall never costs its maker the link.

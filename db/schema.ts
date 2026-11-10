@@ -882,6 +882,32 @@ export const feedbacks = pgTable(
 )
 
 // ---------------------------------------------------------------------------
+// directory_link_checks — one row per check of a launch directory's sample listing.
+// Directory details live in constants/launch-directories.ts; only measurements are stored.
+// ---------------------------------------------------------------------------
+
+export const directoryLinkChecks = pgTable(
+  "directory_link_checks",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    directorySlug: text("directory_slug").notNull(),
+    outcome: text("outcome").notNull(),
+    rel: text("rel"),
+    linkPath: text("link_path"),
+    httpStatus: integer("http_status"),
+    checkedAt: timestamp("checked_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (t) => [
+    index("directory_link_checks_slug_checked_at_idx").on(
+      t.directorySlug,
+      t.checkedAt
+    ),
+  ]
+)
+
+// ---------------------------------------------------------------------------
 // blogs — AI-generated and curated launch spotlights for Premium listings
 // ---------------------------------------------------------------------------
 

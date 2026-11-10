@@ -3,12 +3,11 @@ import { db } from "@/db"
 import { tools, products } from "@/db/schema"
 import { BADGE_CHECK } from "@/constants/badges"
 import type { BadgeCheckUpdate } from "@/lib/badges/badge-state"
+import { DAY_MS } from "@/utils/date"
 
 export type ListingKind = "tool" | "product"
 
 type ListingTable = typeof tools | typeof products
-
-const DAY_MS = 24 * 60 * 60 * 1000
 
 const getListingTable = (itemKind: ListingKind): ListingTable =>
   itemKind === "tool" ? tools : products

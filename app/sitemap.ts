@@ -10,6 +10,8 @@ import { listPublishedBlogs } from "@/db/queries/blogs"
 import { ROUTES } from "@/constants/routes"
 import { normalizeSitemapUrl } from "@/utils/urls"
 import { getAllComparisons } from "@/constants/comparisons"
+import { DIRECTORY_FACTS_CHECKED_ON } from "@/constants/directories"
+import { LAUNCH_DIRECTORIES } from "@/constants/launch-directories"
 import {
   isAlternativesIndexable,
   isBuiltWithIndexable,
@@ -155,6 +157,18 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
       changeFrequency: "weekly",
       priority: 0.85,
     },
+    {
+      url: normalizeSitemapUrl(ROUTES.DIRECTORIES),
+      lastModified: new Date(DIRECTORY_FACTS_CHECKED_ON),
+      changeFrequency: "weekly",
+      priority: 0.85,
+    },
+    ...LAUNCH_DIRECTORIES.map((directory) => ({
+      url: normalizeSitemapUrl(ROUTES.DIRECTORY(directory.slug)),
+      lastModified: new Date(DIRECTORY_FACTS_CHECKED_ON),
+      changeFrequency: "weekly" as const,
+      priority: 0.7,
+    })),
     ...getAllComparisons().map((comparison) => ({
       url: normalizeSitemapUrl(comparison.routePath || comparison.canonicalUrl),
       lastModified: new Date(comparison.factsCheckedOn),

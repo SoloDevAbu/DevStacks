@@ -859,6 +859,18 @@ export const relatedResourceCard =
 export const techStackChipLink =
   "inline-flex items-center gap-2 rounded-lg border border-dashed border-border bg-slate-50/50 px-3.5 py-2 text-xs font-semibold text-slate-800 transition-all hover:border-indigo-300 hover:bg-indigo-50/60 hover:text-indigo-900"
 
+export const directoryLinkCard =
+  "flex items-center justify-between rounded-lg border border-dashed border-border p-3.5 text-xs font-semibold text-slate-700 hover:border-slate-300 hover:bg-slate-50 hover:text-blue-600"
+
+export const directoryInlineLink =
+  "font-medium text-indigo-600 break-all hover:text-indigo-800 hover:underline"
+
+export const directoryOutcomeTone = {
+  positive: "border-emerald-200 bg-emerald-50 text-emerald-700",
+  negative: "border-amber-200 bg-amber-50 text-amber-800",
+  neutral: "border-slate-200 bg-slate-50 text-slate-600",
+} as const
+
 export const comparisonSectionTitle =
   "text-xl sm:text-2xl font-bold tracking-tight text-slate-900"
 
@@ -952,18 +964,17 @@ export const categoryFaqHeaderBg = (theme: "indigo" | "violet" = "indigo") =>
 export const directoryTelemetryBar =
   "flex w-full items-center justify-between border-b border-dashed border-border bg-slate-50/60 px-6 py-2.5 md:px-8 text-xs text-slate-600"
 
-
 export const upgradeModalContainer =
   "w-[94vw] max-w-[540px] sm:max-w-[540px] p-0 overflow-hidden border border-slate-200/90 shadow-2xl rounded-2xl bg-white font-sans flex flex-col max-h-[88vh]"
 
 export const upgradeListingCard = (selected: boolean, disabled: boolean) =>
   cn(
-    "relative flex items-center justify-between gap-3 rounded-xl border p-3.5 transition-all text-left",
+    "relative flex items-center justify-between gap-3 rounded-xl border p-3.5 text-left transition-all",
     selected
-      ? "border-blue-600 bg-blue-50/50 ring-1 ring-blue-600/30 shadow-xs"
+      ? "border-blue-600 bg-blue-50/50 shadow-xs ring-1 ring-blue-600/30"
       : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/50",
     disabled
-      ? "opacity-50 cursor-not-allowed pointer-events-none bg-slate-50 border-slate-100"
+      ? "pointer-events-none cursor-not-allowed border-slate-100 bg-slate-50 opacity-50"
       : "cursor-pointer"
   )
 
@@ -978,7 +989,7 @@ export const submitTierFullWidthGrid =
 
 export const submitTierFullWidthColumn = (isSelected: boolean, tier: Tier) =>
   cn(
-    "group relative flex flex-col justify-between p-6 md:p-8 transition-colors cursor-pointer",
+    "group relative flex cursor-pointer flex-col justify-between p-6 transition-colors md:p-8",
     isSelected
       ? tier === TIER.PREMIUM_PLUS
         ? "bg-linear-to-b from-amber-50/50 via-amber-50/20 to-white"
@@ -996,25 +1007,21 @@ export const submitPricingHeader =
 
 export const submitCompactTierGrid = "grid grid-cols-1 gap-4 sm:grid-cols-2"
 
-export const submitCompactTierCard = (
-  isSelected: boolean,
-  tier: Tier
-) =>
+export const submitCompactTierCard = (isSelected: boolean, tier: Tier) =>
   cn(
-    "relative flex flex-col justify-between rounded-xl border p-4 sm:p-5 text-left transition-all cursor-pointer shadow-2xs",
+    "relative flex cursor-pointer flex-col justify-between rounded-xl border p-4 text-left shadow-2xs transition-all sm:p-5",
     isSelected
       ? tier === TIER.PREMIUM_PLUS
-        ? "border-amber-400 bg-linear-to-b from-amber-50/60 via-white to-amber-50/30 ring-2 ring-amber-500/30 shadow-xs"
-        : "border-blue-400 bg-linear-to-b from-blue-50/60 via-white to-blue-50/30 ring-2 ring-blue-500/30 shadow-xs"
+        ? "border-amber-400 bg-linear-to-b from-amber-50/60 via-white to-amber-50/30 shadow-xs ring-2 ring-amber-500/30"
+        : "border-blue-400 bg-linear-to-b from-blue-50/60 via-white to-blue-50/30 shadow-xs ring-2 ring-blue-500/30"
       : "border-slate-200/90 bg-white hover:border-slate-300 hover:bg-slate-50/50"
   )
 
-
 export const submitTierCard = (isSelected: boolean) =>
   cn(
-    "relative flex flex-col justify-between rounded-xl border p-4 text-left transition-all cursor-pointer",
+    "relative flex cursor-pointer flex-col justify-between rounded-xl border p-4 text-left transition-all",
     isSelected
-      ? "border-blue-600 bg-blue-50/40 ring-1 ring-blue-600/30 shadow-xs"
+      ? "border-blue-600 bg-blue-50/40 shadow-xs ring-1 ring-blue-600/30"
       : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/50"
   )
 

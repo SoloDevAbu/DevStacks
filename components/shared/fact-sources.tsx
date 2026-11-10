@@ -6,17 +6,17 @@ import {
   comparisonSectionTitle,
 } from "@/utils/styles"
 
-interface ComparisonSourcesProps {
+interface FactSourcesProps {
   platformName: string
   factsCheckedOn: string
   sources: readonly ComparisonSource[]
 }
 
-export const ComparisonSources = ({
+export const FactSources = ({
   platformName,
   factsCheckedOn,
   sources,
-}: ComparisonSourcesProps) => (
+}: FactSourcesProps) => (
   <section id="sources" className="flex flex-col gap-4">
     <div>
       <h2 className={comparisonSectionTitle}>Sources</h2>

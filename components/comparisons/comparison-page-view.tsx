@@ -26,7 +26,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { CornerBrackets } from "@/components/shared/corner-brackets"
 import { ReadyToShowcaseCta } from "@/components/shared/ready-to-showcase-cta"
 import { RelatedResources } from "@/components/shared/related-resources"
-import { ComparisonSources } from "@/components/comparisons/comparison-sources"
+import { FactSources } from "@/components/shared/fact-sources"
 import { formatLongDate } from "@/utils/date"
 import { getFaviconUrl } from "@/utils/urls"
 import { GaAlternativeViewTracker } from "@/components/shared/ga-alternative-view-tracker"
@@ -760,7 +760,7 @@ export const ComparisonPageView = ({ comparison }: ComparisonPageViewProps) => {
             </div>
           </section>
 
-          <ComparisonSources
+          <FactSources
             platformName={comparison.comparedPlatformName}
             factsCheckedOn={comparison.factsCheckedOn}
             sources={comparison.sources}

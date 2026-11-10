@@ -48,5 +48,7 @@ export const formatLongDate = (isoDate: string): string =>
     timeZone: "UTC",
   })
 
+export const DAY_MS = 24 * 60 * 60 * 1000
+
 export const toIsoDate = (date: Date): string =>
   date.toISOString().split("T")[0]
