@@ -1,15 +1,25 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 import { SITE_CONFIG } from "@/constants/site"
+import { buildSocialMetadata } from "@/utils/seo"
 import { AI_PROMPTS } from "@/lib/prompts"
 import { AskAiBar } from "@/components/shared/ask-ai-bar"
 
+const PAGE_TITLE = "MCP Server Documentation"
+const PAGE_DESCRIPTION = `Connect AI agents and LLMs (Cursor, Claude, Windsurf) to ${SITE_CONFIG.name} via Model Context Protocol tools.`
+const PAGE_URL = `${SITE_CONFIG.url}/mcp`
+
 export const metadata: Metadata = {
-  title: "MCP Server Documentation",
-  description: `Connect AI agents and LLMs (Cursor, Claude, Windsurf) to ${SITE_CONFIG.name} via Model Context Protocol tools.`,
+  title: PAGE_TITLE,
+  description: PAGE_DESCRIPTION,
   alternates: {
-    canonical: `${SITE_CONFIG.url}/mcp`,
+    canonical: PAGE_URL,
   },
+  ...buildSocialMetadata({
+    title: PAGE_TITLE,
+    description: PAGE_DESCRIPTION,
+    url: PAGE_URL,
+  }),
 }
 
 const McpPage = () => {

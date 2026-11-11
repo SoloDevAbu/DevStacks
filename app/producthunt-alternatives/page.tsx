@@ -42,7 +42,7 @@ import type { RoundupEntry } from "@/types/comparison"
 import { RelatedResources } from "@/components/shared/related-resources"
 import { formatLongDate } from "@/utils/date"
 
-export const revalidate = 3600
+export const revalidate = 86400
 
 const PAGE_PATH = ROUTES.PRODUCTHUNT_ALTERNATIVES
 const PAGE_URL = `${SITE_CONFIG.url}${PAGE_PATH}`

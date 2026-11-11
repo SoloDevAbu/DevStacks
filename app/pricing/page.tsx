@@ -18,7 +18,7 @@ import { getLaunchPromoStatus } from "@/db/queries/launches/availability"
 import { PricingTiersSection } from "@/components/pricing/pricing-tiers-section"
 import { PricingSponsorshipSection } from "@/components/pricing/pricing-sponsorship-section"
 
-export const revalidate = 3600
+export const revalidate = 86400
 
 export const metadata: Metadata = {
   title: "Pricing: Launch Listings & Sponsorship",
@@ -125,7 +125,11 @@ const PricingPage = async () => {
                       {LAUNCH_PROMO.PROMO_TITLE}
                     </h3>
                     <p className="mt-0.5 text-xs text-slate-600">
-                      First {LAUNCH_PROMO.MAX_LAUNCHES} launches get a 100% free Lifetime Premium Listing ({LAUNCH_PROMO.VALUE_GIFTED} value) with permanent Do-Follow SEO backlink and AI launch spotlight. Only {promoStatus.promoRemaining} spots remaining!
+                      First {LAUNCH_PROMO.MAX_LAUNCHES} launches get a 100% free
+                      Lifetime Premium Listing ({LAUNCH_PROMO.VALUE_GIFTED}{" "}
+                      value) with permanent Do-Follow SEO backlink and AI launch
+                      spotlight. Only {promoStatus.promoRemaining} spots
+                      remaining!
                     </p>
                   </div>
                 </div>

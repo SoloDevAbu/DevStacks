@@ -33,7 +33,7 @@ import {
   comparisonTableCard,
 } from "@/utils/styles"
 
-export const revalidate = 3600
+export const revalidate = 86400
 
 export const metadata: Metadata = {
   title: "Product Launch Platform for SaaS & Dev Tools",

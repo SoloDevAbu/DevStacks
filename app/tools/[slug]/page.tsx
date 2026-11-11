@@ -37,7 +37,7 @@ import { AI_PROVIDERS } from "@/constants/ai-providers"
 import { AI_PROMPTS } from "@/lib/prompts"
 import { PLATFORMS } from "@/constants/platforms"
 import { EntitySocialLinks } from "@/components/shared/entity-social-links"
-import { getTools } from "@/db/queries/tools/list"
+import { getToolStaticParams } from "@/lib/catalog/static-params"
 import {
   toolSchema,
   breadcrumbSchema,
@@ -100,16 +100,9 @@ interface ToolPageProps {
   params: Promise<{ slug: string }>
 }
 
-export const revalidate = 86400
+export const revalidate = 604800
 
-export const generateStaticParams = async () => {
-  try {
-    const toolsList = await getTools({ limit: 50 })
-    return (toolsList ?? []).map((t) => ({ slug: t.slug }))
-  } catch {
-    return []
-  }
-}
+export const generateStaticParams = getToolStaticParams
 
 export const generateMetadata = async ({
   params,
@@ -402,7 +395,10 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
                       className="size-6 md:size-7"
                     />
                   </div>
-                  <LaunchBadge submitterId={tool.submitterId} tier={tool.tier} />
+                  <LaunchBadge
+                    submitterId={tool.submitterId}
+                    tier={tool.tier}
+                  />
                   <Badge
                     variant="outline"
                     className={pricingBadgeColor(tool.pricing as Pricing)}

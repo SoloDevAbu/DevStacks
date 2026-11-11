@@ -26,14 +26,15 @@ import {
   safeJsonLd,
 } from "@/lib/seo/schema"
 import { SITE_CONFIG } from "@/constants/site"
+import { getProductCategoryStaticParams } from "@/lib/catalog/static-params"
 import { ROUTES } from "@/constants/routes"
 import { Badge } from "@/components/ui/badge"
 import { LEGACY_CATEGORY_REDIRECTS } from "@/constants/categories"
 import { indexingRobots, isCategoryIndexable } from "@/utils/indexing"
 
-export const revalidate = 21600
+export const revalidate = 86400
 
-export const generateStaticParams = async () => []
+export const generateStaticParams = getProductCategoryStaticParams
 
 type ProductCategoryPageProps = {
   params: Promise<{ slug: string }>
@@ -47,7 +48,9 @@ export const generateMetadata = async (
 
   if (!category) {
     if (LEGACY_CATEGORY_REDIRECTS[slug]) {
-      permanentRedirect(ROUTES.PRODUCT_CATEGORY(LEGACY_CATEGORY_REDIRECTS[slug]))
+      permanentRedirect(
+        ROUTES.PRODUCT_CATEGORY(LEGACY_CATEGORY_REDIRECTS[slug])
+      )
     }
     return {
       title: "Category Not Found",
@@ -61,7 +64,7 @@ export const generateMetadata = async (
   const stats = await getCategoryStats(category.id)
   const isIndexable = isCategoryIndexable(stats.productCount)
 
-  const baseTitle = `${category.name} Developer Products & Software`
+  const baseTitle = `${category.name} Products & Software`
   const title = baseTitle
   const description = `Explore ${stats.productCount} ${category.name} products launched on ${SITE_CONFIG.name}, ranked by community likes, with the tech stack each one is built on.`
   const canonicalUrl = `${SITE_CONFIG.url}/products/category/${category.slug}`
@@ -110,7 +113,9 @@ const CategoryProductsPage = async (props: ProductCategoryPageProps) => {
 
   if (!category) {
     if (LEGACY_CATEGORY_REDIRECTS[slug]) {
-      permanentRedirect(ROUTES.PRODUCT_CATEGORY(LEGACY_CATEGORY_REDIRECTS[slug]))
+      permanentRedirect(
+        ROUTES.PRODUCT_CATEGORY(LEGACY_CATEGORY_REDIRECTS[slug])
+      )
     }
     notFound()
   }

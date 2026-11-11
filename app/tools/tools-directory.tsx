@@ -23,7 +23,6 @@ import { getCategoryPath, toAbsoluteUrl } from "@/utils/urls"
 import { CrawlablePagination } from "@/components/shared/crawlable-pagination"
 import { notFound, permanentRedirect } from "next/navigation"
 
-
 export type ToolsSearchParams = {
   category?: string
   q?: string
@@ -65,7 +64,7 @@ export const getToolsMetadata = async (
 
   const description = category
     ? `Browse verified developer tools, infrastructure, and APIs in the ${category} category on ${SITE_CONFIG.name}. Explore upvotes and products built with them.`
-    : `Browse the complete directory of developer tools, APIs, and infrastructure on ${SITE_CONFIG.name}.`
+    : `Browse developer tools, APIs, SDKs and infrastructure listed on ${SITE_CONFIG.name}, ranked by community upvotes, with the products built on each one.`
 
   const cleanCategory = category?.trim()
   const hasSearchQuery = Boolean(q && q.trim())
@@ -241,10 +240,13 @@ export const ToolsDirectory = async ({
           currentPage={currentPage}
           totalPages={totalPages}
           basePath={ROUTES.TOOLS}
-          params={{ category, pricing, sortBy: sortBy === "upvotes" ? undefined : sortBy }}
+          params={{
+            category,
+            pricing,
+            sortBy: sortBy === "upvotes" ? undefined : sortBy,
+          }}
         />
       </div>
     </>
   )
 }
-

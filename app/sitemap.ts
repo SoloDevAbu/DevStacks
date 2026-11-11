@@ -12,14 +12,11 @@ import { normalizeSitemapUrl } from "@/utils/urls"
 import { getAllComparisons } from "@/constants/comparisons"
 import { DIRECTORY_FACTS_CHECKED_ON } from "@/constants/directories"
 import { LAUNCH_DIRECTORIES } from "@/constants/launch-directories"
-import {
-  isAlternativesIndexable,
-  isBuiltWithIndexable,
-  isCategoryIndexable,
-} from "@/utils/indexing"
+import { isBuiltWithIndexable, isCategoryIndexable } from "@/utils/indexing"
+import { filterToolsWithAlternatives } from "@/lib/catalog/static-params"
 import { getCachedLaunchWeekSummaries } from "@/lib/launches/launch-archive"
 
-export const revalidate = 3600
+export const revalidate = 86400
 
 const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
   const now = new Date()
@@ -266,25 +263,13 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
         }))
     )
 
-    // A tool's category count includes the tool itself.
-    const categoryCountMap = new Map<string, number>()
-    for (const cat of toolCategories) {
-      categoryCountMap.set(cat.id, cat.count)
-    }
-
     dynamicRoutes.push(
-      ...dbTools
-        .filter((tool) => {
-          if (!tool.categoryId) return false
-          const count = categoryCountMap.get(tool.categoryId) ?? 0
-          return isAlternativesIndexable(count - 1)
-        })
-        .map((tool) => ({
-          url: normalizeSitemapUrl(`/alternatives/${tool.slug}`),
-          lastModified: tool.updatedAt ?? now,
-          changeFrequency: "weekly" as const,
-          priority: 0.75,
-        }))
+      ...filterToolsWithAlternatives(dbTools, toolCategories).map((tool) => ({
+        url: normalizeSitemapUrl(`/alternatives/${tool.slug}`),
+        lastModified: tool.updatedAt ?? now,
+        changeFrequency: "weekly" as const,
+        priority: 0.75,
+      }))
     )
   }
 

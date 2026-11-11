@@ -12,6 +12,7 @@ import { getMakerProfile } from "@/db/queries/users/get-profile"
 import { indexingRobots, isMakerIndexable } from "@/utils/indexing"
 import { formatLocation, formatGeoMetaTags } from "@/utils/country"
 import { SITE_CONFIG } from "@/constants/site"
+import { getMakerStaticParams } from "@/lib/catalog/static-params"
 import { ROUTES } from "@/constants/routes"
 import { NOFOLLOW_LINK_REL, UGC_LINK_REL } from "@/utils/urls"
 import { AI_PROVIDERS } from "@/constants/ai-providers"
@@ -26,9 +27,9 @@ import {
 } from "@/lib/seo/schema"
 import { formatMetaDescription } from "@/utils/seo"
 
-export const revalidate = 86400
+export const revalidate = 604800
 
-export const generateStaticParams = async () => []
+export const generateStaticParams = getMakerStaticParams
 
 interface MakerPageProps {
   params: Promise<{ username: string }>

@@ -15,7 +15,7 @@ export const PRODUCT_HUNT_COMPARISON: PlatformComparison = {
   targetKeyword: "Product Hunt alternative",
   name: "Product Hunt Alternative",
   comparedPlatformName: "Product Hunt",
-  metaTitle: "Product Hunt Alternative: LaunchNests vs Product Hunt Compared",
+  metaTitle: "Product Hunt Alternative: LaunchNests Compared",
   metaDescription:
     "Product Hunt is free, but its team picks which launches get featured and the leaderboard resets daily. How that compares with a weekly launch on LaunchNests, with sources.",
   keywords: [

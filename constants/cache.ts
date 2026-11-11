@@ -19,10 +19,16 @@ export const AI_SURFACE_ARCHIVE_WEEKS = 8
 export const AI_SURFACE_FRESHNESS_NOTE =
   "Refreshed hourly, whenever a listing changes, and at every weekly launch rollover (Monday 00:00 UTC)"
 
-// Every regeneration of a page or an unstable_cache entry re-queries the database and costs one
-// R2 write, so data caches refresh hourly and freshness comes from tag revalidation on mutations
-// and the weekly rollover cron instead.
+// A launch directory only changes when a listing is submitted, edited or voted on, and once a week
+// at the rollover. Every regeneration of a page or an unstable_cache entry re-queries the database
+// and costs one R2 write, so the timers below are only a daily safety net: freshness comes from tag
+// and path revalidation on mutations (lib/cache/revalidate.ts) and from the weekly rollover cron.
+// Page files repeat these numbers as literals because Next.js reads `revalidate` statically.
 export const CACHE_REVALIDATE_SECONDS = {
-  LISTS: 3600,
-  CATEGORIES: 21600,
+  LISTS: 86400,
+  CATEGORIES: 86400,
 } as const
+
+// Upper bound on the listing, maker, blog and category pages rendered during the build. Pages past
+// it still render on first visit and are cached from then on.
+export const STATIC_PARAMS_LIMIT = 1000

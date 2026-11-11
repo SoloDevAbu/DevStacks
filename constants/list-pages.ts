@@ -8,6 +8,7 @@ export const CACHED_LIST_PATHS: readonly string[] = [
   ROUTES.TOOLS,
   ROUTES.BLOG,
   ROUTES.TRENDING,
+  ROUTES.MAKERS,
 ]
 
 export const LIST_QUERY_KEYS = [

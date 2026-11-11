@@ -6,6 +6,7 @@ import { HOMEPAGE_LIMITS } from "@/constants/rankings"
 import { getWeeklyLaunches } from "@/lib/launches/weekly-launches"
 import { getCurrentWeek } from "@/utils/iso-weeks"
 import { isCronAuthorized } from "@/lib/auth/cron"
+import { revalidateHubs } from "@/lib/cache/revalidate"
 import { warmPaths } from "@/lib/cache/warm"
 import { submitToIndexNow } from "@/lib/seo/indexnow"
 import { getListingPath } from "@/utils/urls"
@@ -33,6 +34,9 @@ export const POST = async (req: NextRequest) => {
   }
 
   Object.values(CACHE_TAGS).forEach((tag) => revalidateTag(tag, { expire: 0 }))
+  revalidateHubs()
+  // A launch going live adds a listing to its maker's profile, which no mutation signals either.
+  revalidatePath(ROUTES.MAKER_PATTERN, "page")
 
   const { year, week } = getCurrentWeek()
   const launches = await getWeeklyLaunches({
@@ -44,7 +48,9 @@ export const POST = async (req: NextRequest) => {
   launchPaths.forEach((path) => revalidatePath(path))
   const weekPath = ROUTES.LAUNCH_WEEK(year, week)
   const blogPaths = await getLiveBlogPathsForItems({
-    toolIds: launches.filter((item) => item.itemKind === "tool").map((item) => item.id),
+    toolIds: launches
+      .filter((item) => item.itemKind === "tool")
+      .map((item) => item.id),
     productIds: launches
       .filter((item) => item.itemKind === "product")
       .map((item) => item.id),

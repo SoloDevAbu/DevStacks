@@ -29,7 +29,7 @@ import { AI_PROVIDERS } from "@/constants/ai-providers"
 import { AI_PROMPTS } from "@/lib/prompts"
 import { PLATFORMS } from "@/constants/platforms"
 import { EntitySocialLinks } from "@/components/shared/entity-social-links"
-import { getProducts } from "@/db/queries/products/list"
+import { getProductStaticParams } from "@/lib/catalog/static-params"
 import { getRelatedProducts } from "@/db/queries/products/get"
 import { getProductFaqs } from "@/db/queries/faqs/get-faqs"
 import { MakerDetailSection } from "@/components/shared/maker-detail-section"
@@ -95,16 +95,9 @@ interface ProductPageProps {
   params: Promise<{ slug: string }>
 }
 
-export const revalidate = 86400
+export const revalidate = 604800
 
-export const generateStaticParams = async () => {
-  try {
-    const products = await getProducts({ limit: 50 })
-    return (products ?? []).map((p) => ({ slug: p.slug }))
-  } catch {
-    return []
-  }
-}
+export const generateStaticParams = getProductStaticParams
 
 export const generateMetadata = async ({
   params,
@@ -399,7 +392,10 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
                       className="size-6 md:size-7"
                     />
                   </div>
-                  <LaunchBadge submitterId={product.submitterId} tier={product.tier} />
+                  <LaunchBadge
+                    submitterId={product.submitterId}
+                    tier={product.tier}
+                  />
                   <Badge
                     variant="outline"
                     className={pricingBadgeColor(product.pricing as Pricing)}

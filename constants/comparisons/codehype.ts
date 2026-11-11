@@ -13,7 +13,7 @@ export const CODEHYPE_COMPARISON: PlatformComparison = {
   targetKeyword: "CodeHype alternative",
   name: "CodeHype Alternative",
   comparedPlatformName: "CodeHype",
-  metaTitle: "CodeHype Alternative: LaunchNests vs CodeHype Compared",
+  metaTitle: "CodeHype Alternative: LaunchNests vs CodeHype",
   metaDescription:
     "CodeHype and LaunchNests both give free listings a dofollow link while your badge stays live. Compare queues, paid plans ($15-$25 vs $15-$19), focus and audience, with sources.",
   keywords: [

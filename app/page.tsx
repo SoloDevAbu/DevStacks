@@ -14,7 +14,7 @@ import { getCachedPopularBuildingBlocks } from "@/lib/rankings/popular"
 import { getListingPath, toAbsoluteUrl } from "@/utils/urls"
 import type { FeedItem } from "@/components/shared/feed-card"
 
-export const revalidate = 3600
+export const revalidate = 86400
 
 const HOME_TITLE = `${SITE_CONFIG.name} — New Product & Dev Tool Launches This Week`
 const HOME_DESCRIPTION = `See this week's new products and developer tools on ${SITE_CONFIG.name}, ranked by community votes. Launch yours free and get found on Google and AI search.`

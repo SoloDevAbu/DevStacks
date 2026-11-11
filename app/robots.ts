@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next"
+import { ROUTES } from "@/constants/routes"
 import { normalizeSitemapUrl } from "@/utils/urls"
 
 const DISALLOWED_PATHS = [
@@ -15,6 +16,7 @@ const DISALLOWED_PATHS = [
   "/api/admin",
   "/api/admin/",
   "/dashboard/",
+  "/submit?",
   "/*?*q=*",
   "/*?*sortBy=*",
   "/*?*pricing=*",
@@ -73,7 +75,7 @@ const robots = (): MetadataRoute.Robots => {
         disallow: DISALLOWED_PATHS,
       },
     ],
-    sitemap: normalizeSitemapUrl("/sitemap.xml"),
+    sitemap: normalizeSitemapUrl(ROUTES.SITEMAP),
   }
 }
 

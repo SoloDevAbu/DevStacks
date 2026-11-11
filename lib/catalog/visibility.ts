@@ -1,5 +1,6 @@
-import { and, eq, isNull, lt, lte, or } from "drizzle-orm"
+import { and, eq, isNull, lt, lte, ne, or } from "drizzle-orm"
 import { blogs, type tools, type products } from "@/db/schema"
+import { BLOG_PLACEHOLDER_CONTENT } from "@/constants/blog"
 import { getCurrentWeek } from "@/utils/iso-weeks"
 
 interface LaunchSchedule {
@@ -29,20 +30,26 @@ export const isPubliclyVisible = (listing: ListingVisibility): boolean =>
 interface BlogSchedule {
   status: string
   publishedAt: Date | null
+  content: string
 }
 
-// A scheduled blog post goes live with its listing's launch date.
+// A scheduled blog post goes live with its listing's launch date. A post whose generation never
+// finished still holds the placeholder body and stays private until it is regenerated.
 export const isBlogLive = (
-  { status, publishedAt }: BlogSchedule,
+  { status, publishedAt, content }: BlogSchedule,
   now: Date = new Date()
 ): boolean =>
-  status === "published" ||
-  (status === "scheduled" && publishedAt !== null && publishedAt <= now)
+  content !== BLOG_PLACEHOLDER_CONTENT &&
+  (status === "published" ||
+    (status === "scheduled" && publishedAt !== null && publishedAt <= now))
 
 export const blogIsLive = (now: Date = new Date()) =>
-  or(
-    eq(blogs.status, "published"),
-    and(eq(blogs.status, "scheduled"), lte(blogs.publishedAt, now))
+  and(
+    ne(blogs.content, BLOG_PLACEHOLDER_CONTENT),
+    or(
+      eq(blogs.status, "published"),
+      and(eq(blogs.status, "scheduled"), lte(blogs.publishedAt, now))
+    )
   )
 
 export const launchedByNow = (table: typeof tools | typeof products) => {

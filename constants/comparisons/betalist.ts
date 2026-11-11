@@ -13,7 +13,7 @@ export const BETALIST_COMPARISON: PlatformComparison = {
   targetKeyword: "BetaList alternative",
   name: "BetaList Alternative",
   comparedPlatformName: "BetaList",
-  metaTitle: "BetaList Alternative: LaunchNests vs BetaList (Paid Submissions)",
+  metaTitle: "BetaList Alternative: LaunchNests vs BetaList",
   metaDescription:
     "Every BetaList submission is paid, with a refund if you aren't selected. How its curated features, links and audience compare with LaunchNests, using BetaList's own pages.",
   keywords: [
