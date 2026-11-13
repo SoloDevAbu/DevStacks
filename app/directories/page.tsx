@@ -32,7 +32,7 @@ import {
   comparisonTrustBar,
 } from "@/utils/styles"
 
-export const revalidate = 3600
+export const revalidate = 86400
 
 const PAGE_PATH = ROUTES.DIRECTORIES
 const PAGE_URL = `${SITE_CONFIG.url}${PAGE_PATH}`

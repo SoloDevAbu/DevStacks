@@ -13,8 +13,7 @@ export const MICROLAUNCH_COMPARISON: PlatformComparison = {
   targetKeyword: "MicroLaunch alternative",
   name: "MicroLaunch Alternative",
   comparedPlatformName: "MicroLaunch",
-  metaTitle:
-    "MicroLaunch Alternative: LaunchNests vs MicroLaunch (30-Day Launches)",
+  metaTitle: "MicroLaunch Alternative: LaunchNests Compared",
   metaDescription:
     "MicroLaunch runs 30-day launches with paid plans from $39 to $149. How its launch format, pricing and links compare with LaunchNests, sourced from MicroLaunch's own pages.",
   keywords: [

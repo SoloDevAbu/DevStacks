@@ -16,7 +16,7 @@ import {
 import { SITE_CONFIG } from "@/constants/site"
 import { ROUTES } from "@/constants/routes"
 
-export const revalidate = 21600
+export const revalidate = 86400
 
 export const generateMetadata = async (): Promise<Metadata> => {
   const title = `Developer Tools Categories — APIs, Infrastructure & SDKs`

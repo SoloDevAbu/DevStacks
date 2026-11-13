@@ -14,7 +14,7 @@ export const UNEED_COMPARISON: PlatformComparison = {
   targetKeyword: "Uneed alternative",
   name: "Uneed Alternative",
   comparedPlatformName: "Uneed",
-  metaTitle: "Uneed Alternative: LaunchNests vs Uneed (Queue, Votes, Pricing)",
+  metaTitle: "Uneed Alternative: LaunchNests vs Uneed",
   metaDescription:
     "Uneed's free line launches you at least 50 days out and needs an upvote score of 10 to stay published. How that compares with LaunchNests, with Uneed's own pages as sources.",
   keywords: [

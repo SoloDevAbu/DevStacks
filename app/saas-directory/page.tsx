@@ -38,7 +38,7 @@ import {
   comparisonTableCard,
 } from "@/utils/styles"
 
-export const revalidate = 3600
+export const revalidate = 86400
 
 export const metadata: Metadata = {
   title: "SaaS Directory: Discover & Submit SaaS Products",
@@ -287,12 +287,12 @@ const SaasDirectoryPage = async () => {
               </p>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 border border-dashed border-border bg-white rounded-xl overflow-hidden">
+            <div className="grid grid-cols-2 overflow-hidden rounded-xl border border-dashed border-border bg-white sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
               {categories.map((cat) => (
                 <Link
                   key={cat.id}
                   href={ROUTES.PRODUCT_CATEGORY(cat.slug)}
-                  className="group relative flex flex-col justify-between p-3.5 border-b border-r border-dashed border-border transition-colors hover:bg-slate-50/50"
+                  className="group relative flex flex-col justify-between border-r border-b border-dashed border-border p-3.5 transition-colors hover:bg-slate-50/50"
                 >
                   <span className="text-xs font-semibold text-slate-900 transition-colors group-hover:text-indigo-600">
                     {cat.name}
@@ -313,7 +313,8 @@ const SaasDirectoryPage = async () => {
                   Top Rated SaaS Products
                 </h2>
                 <p className={comparisonSectionSubtitle}>
-                  Ranked by community upvotes and verified developer architectures.
+                  Ranked by community upvotes and verified developer
+                  architectures.
                 </p>
               </div>
               <Link
@@ -324,7 +325,7 @@ const SaasDirectoryPage = async () => {
               </Link>
             </div>
 
-            <div className="flex flex-col divide-y divide-dashed divide-border border border-dashed border-border bg-white rounded-xl overflow-hidden shadow-2xs">
+            <div className="flex flex-col divide-y divide-dashed divide-border overflow-hidden rounded-xl border border-dashed border-border bg-white shadow-2xs">
               {products.map((product, idx) => (
                 <ProductCard
                   key={product.id}
@@ -454,7 +455,7 @@ const SaasDirectoryPage = async () => {
               </p>
             </div>
 
-            <div className="relative grid grid-cols-1 divide-y divide-dashed divide-border border border-dashed border-border bg-white md:grid-cols-2 md:divide-y-0 md:divide-x rounded-xl overflow-hidden">
+            <div className="relative grid grid-cols-1 divide-y divide-dashed divide-border overflow-hidden rounded-xl border border-dashed border-border bg-white md:grid-cols-2 md:divide-x md:divide-y-0">
               <div className="group relative flex flex-col p-6 md:p-8">
                 <CornerBrackets />
                 <div className="flex items-center justify-between border-b border-dashed border-border pb-3">

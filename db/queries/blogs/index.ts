@@ -7,6 +7,7 @@ import type { Blog, NewBlog } from "@/db/schema"
 import type { BlogListItem } from "@/types/blog"
 import { blogIsLive, isBlogLive } from "@/lib/catalog/visibility"
 import { and, desc, eq, ne, or, sql, inArray } from "drizzle-orm"
+import { getSlugLookupForms } from "@/utils/slug"
 
 export interface ListPublishedBlogsOptions {
   page?: number
@@ -28,9 +29,7 @@ export const getBlogByItem = async (
   itemId: string
 ): Promise<Blog | null> => {
   const condition =
-    itemType === "tool"
-      ? eq(blogs.toolId, itemId)
-      : eq(blogs.productId, itemId)
+    itemType === "tool" ? eq(blogs.toolId, itemId) : eq(blogs.productId, itemId)
 
   const [blog] = await db.select().from(blogs).where(condition).limit(1)
   return blog ?? null
@@ -71,7 +70,7 @@ export const getBlogBySlug = cache(
       .leftJoin(tools, eq(blogs.toolId, tools.id))
       .leftJoin(products, eq(blogs.productId, products.id))
       .leftJoin(users, eq(blogs.submitterId, users.id))
-      .where(eq(blogs.slug, slug))
+      .where(inArray(blogs.slug, getSlugLookupForms(slug)))
       .limit(1)
 
     if (!result || !result.blog) {
@@ -275,5 +274,3 @@ export const getSimilarBlogs = async ({
 
   return items
 }
-
-

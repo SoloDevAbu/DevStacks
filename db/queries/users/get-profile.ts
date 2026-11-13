@@ -177,6 +177,17 @@ export const getMakerProfile = cache(
   }
 )
 
+export const getUsernameById = async (
+  userId: string
+): Promise<string | null> => {
+  const [user] = await db
+    .select({ username: users.username })
+    .from(users)
+    .where(eq(users.id, userId))
+    .limit(1)
+  return user?.username ?? null
+}
+
 export const getCurrentUserProfile = async (userId: string) => {
   const [user] = await db
     .select()

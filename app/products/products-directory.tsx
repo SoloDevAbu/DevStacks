@@ -23,7 +23,6 @@ import { getCategoryPath, toAbsoluteUrl } from "@/utils/urls"
 import { CrawlablePagination } from "@/components/shared/crawlable-pagination"
 import { notFound, permanentRedirect } from "next/navigation"
 
-
 export type ProductsSearchParams = {
   category?: string
   q?: string
@@ -65,7 +64,7 @@ export const getProductsMetadata = async (
 
   const description = category
     ? `Browse developer-built products and software in the ${category} category on ${SITE_CONFIG.name}. Explore built-with tech stacks, likes, and community reviews.`
-    : `Browse the complete directory of developer tools, software, and products on ${SITE_CONFIG.name}.`
+    : `Browse software products, SaaS and AI apps launched on ${SITE_CONFIG.name}, ranked by community likes, with the tech stack each one is built on.`
 
   const cleanCategory = category?.trim()
   const hasSearchQuery = Boolean(q && q.trim())
@@ -239,10 +238,13 @@ export const ProductsDirectory = async ({
           currentPage={currentPage}
           totalPages={totalPages}
           basePath={ROUTES.PRODUCTS}
-          params={{ category, pricing, sortBy: sortBy === "upvotes" ? undefined : sortBy }}
+          params={{
+            category,
+            pricing,
+            sortBy: sortBy === "upvotes" ? undefined : sortBy,
+          }}
         />
       </div>
     </>
   )
 }
-

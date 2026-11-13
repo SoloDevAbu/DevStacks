@@ -16,6 +16,7 @@ import {
   type LaunchItemData,
 } from "@/lib/ai/blog-generator"
 import { slugify } from "@/utils/slug"
+import { BLOG_PLACEHOLDER_CONTENT } from "@/constants/blog"
 import { resolveUniqueBlogSlug } from "@/db/queries/blogs"
 
 export interface GenerateBlogOptions {
@@ -176,7 +177,11 @@ export const generateAndSaveLaunchBlog = async ({
         ? eq(blogs.toolId, itemId)
         : eq(blogs.productId, itemId)
 
-    const [existingBlog] = await db.select().from(blogs).where(blogCondition).limit(1)
+    const [existingBlog] = await db
+      .select()
+      .from(blogs)
+      .where(blogCondition)
+      .limit(1)
 
     if (
       existingBlog &&
@@ -205,7 +210,7 @@ export const generateAndSaveLaunchBlog = async ({
           metaTitle: `${itemData.name}: ${itemData.tagline.slice(0, 40)} | LaunchNests`,
           metaDescription: `Discover ${itemData.name}: ${itemData.tagline}. Full architecture, workflows, and developer breakdown.`,
           excerpt: itemData.tagline,
-          content: "Generating technical architecture spotlight with AI...",
+          content: BLOG_PLACEHOLDER_CONTENT,
           coverImageUrl: itemData.images?.[0] || null,
           itemType,
           toolId: itemType === "tool" ? itemId : null,
@@ -282,9 +287,10 @@ export const generateAndSaveLaunchBlog = async ({
     }
   } catch (err) {
     const errorMsg =
-      err instanceof Error ? err.message : "Unexpected error in launch blog service."
+      err instanceof Error
+        ? err.message
+        : "Unexpected error in launch blog service."
     console.error("[LaunchBlogService - Unexpected Error]:", err)
     return { success: false, error: errorMsg }
   }
 }
-

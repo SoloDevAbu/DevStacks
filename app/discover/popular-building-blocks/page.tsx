@@ -15,7 +15,7 @@ import { getPopularBuildingBlocks } from "@/lib/rankings/popular"
 import type { FeedItem } from "@/components/shared/feed-card"
 import { PopularBuildingBlocksContent } from "./popular-building-blocks-content"
 
-export const revalidate = 3600
+export const revalidate = 86400
 
 export const metadata: Metadata = {
   title: "Popular Building Blocks — Developer Tools & Infrastructure",

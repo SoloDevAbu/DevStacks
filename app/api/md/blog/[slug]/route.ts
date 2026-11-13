@@ -1,8 +1,5 @@
 import { NextResponse } from "next/server"
-import { headers } from "next/headers"
-import { getBlogBySlug } from "@/db/queries/blogs"
-import { getAdminSession } from "@/lib/auth/admin"
-import { auth } from "@/lib/auth"
+import { loadBlogPost } from "@/lib/blog/load-blog"
 import {
   generateBlogMarkdown,
   createMarkdownResponse,
@@ -17,22 +14,8 @@ export const GET = async (
   props: { params: Promise<{ slug: string }> }
 ) => {
   const { slug } = await props.params
-  const reqHeaders = await headers()
-
-  // Authenticate viewer for scheduled preview check
-  const [adminAuth, session] = await Promise.all([
-    getAdminSession(reqHeaders),
-    auth.api.getSession({ headers: reqHeaders }).catch(() => null),
-  ])
-
-  const isAdmin = adminAuth.isAdmin
-  const viewerId = session?.user?.id || null
-
-  const data = await getBlogBySlug(slug, {
-    allowScheduledPreview: true,
-    isAdmin,
-    viewerId,
-  })
+  // Reads the session only in draft mode, so the twin of a published post is cached like its page.
+  const data = await loadBlogPost(slug)
 
   if (!data) {
     return new NextResponse(
@@ -87,4 +70,3 @@ export const GET = async (
     `${SITE_CONFIG.url}/blog/${blog.slug}`
   )
 }
-

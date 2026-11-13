@@ -20,6 +20,7 @@ import { loadBlogPost } from "@/lib/blog/load-blog"
 import { BlogRowItem } from "@/components/blog/blog-row-item"
 import { BLOG_ARTICLE_LABEL } from "@/constants/blog"
 import { SITE_CONFIG } from "@/constants/site"
+import { getBlogStaticParams } from "@/lib/catalog/static-params"
 import { ROUTES } from "@/constants/routes"
 import { PLANS, type Tier } from "@/constants/plans"
 import { BlogPreviewBanner } from "@/components/blog/blog-preview-banner"
@@ -54,10 +55,10 @@ import {
 import { getLinkRel, getOutboundUrl } from "@/utils/urls"
 import { cleanTitle, formatMetaDescription } from "@/utils/seo"
 
-export const revalidate = 86400
+export const revalidate = 604800
 
-// Posts render on first visit and are then cached; scheduled posts are previewed via draft mode.
-export const generateStaticParams = async () => []
+// Live posts are rendered at build time; scheduled posts are previewed via draft mode.
+export const generateStaticParams = getBlogStaticParams
 
 interface BlogPostPageProps {
   params: Promise<{ slug: string }>

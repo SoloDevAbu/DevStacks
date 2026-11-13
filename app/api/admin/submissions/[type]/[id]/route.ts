@@ -3,6 +3,7 @@ import { getAdminSession } from "@/lib/auth/admin"
 import { updateSubmissionStatusAndTriggerBlog } from "@/db/queries/admin/submissions"
 import { z } from "zod"
 import { revalidateCatalog } from "@/lib/cache/revalidate"
+import { getUsernameById } from "@/db/queries/users/get-profile"
 import { isBlogLive, isPubliclyVisible } from "@/lib/catalog/visibility"
 import { submitToIndexNow } from "@/lib/seo/indexnow"
 import { getListingPath } from "@/utils/urls"
@@ -38,7 +39,10 @@ export const PATCH = async (
     const parsed = statusSchema.safeParse(body)
     if (!parsed.success) {
       return NextResponse.json(
-        { error: "Invalid status. Must be 'pending', 'approved', or 'rejected'." },
+        {
+          error:
+            "Invalid status. Must be 'pending', 'approved', or 'rejected'.",
+        },
         { status: 400 }
       )
     }
@@ -48,9 +52,14 @@ export const PATCH = async (
       id,
       status: parsed.data.status,
     })
+    // The maker's profile lists this submission, and is otherwise cached for a week.
+    const makerUsername = result.item.submitterId
+      ? await getUsernameById(result.item.submitterId).catch(() => null)
+      : null
     revalidateCatalog({
       [type === "tool" ? "toolSlug" : "productSlug"]: result.item.slug,
       blogSlug: result.blogResult?.blog?.slug,
+      makerUsername: makerUsername ?? undefined,
     })
 
     if (isPubliclyVisible(result.item)) {
@@ -78,4 +87,3 @@ export const PATCH = async (
     return NextResponse.json({ error: message }, { status: 500 })
   }
 }
-

@@ -31,13 +31,14 @@ import {
   safeJsonLd,
 } from "@/lib/seo/schema"
 import { SITE_CONFIG } from "@/constants/site"
+import { getBuiltWithStaticParams } from "@/lib/catalog/static-params"
 import { ROUTES } from "@/constants/routes"
 
 import { indexingRobots, isBuiltWithIndexable } from "@/utils/indexing"
 
 export const revalidate = 86400
 
-export const generateStaticParams = async () => []
+export const generateStaticParams = getBuiltWithStaticParams
 
 type BuiltWithPageProps = {
   params: Promise<{ slug: string }>
@@ -266,8 +267,8 @@ const BuiltWithPage = async (props: BuiltWithPageProps) => {
                   Products launched on LaunchNests whose makers list{" "}
                   <strong className="font-semibold text-slate-800">
                     {tool.name}
-                  </strong>
-                  {" "}in their tech stack.
+                  </strong>{" "}
+                  in their tech stack.
                 </p>
 
                 <div className="mt-2 flex flex-wrap items-center gap-2.5 text-xs text-slate-600">
@@ -370,7 +371,7 @@ const BuiltWithPage = async (props: BuiltWithPageProps) => {
                 <div className="grid gap-4 sm:grid-cols-3">
                   {tool.problemStatement && (
                     <div className="rounded-lg border border-dashed border-border bg-white p-4">
-                      <h3 className="text-xs font-bold uppercase text-slate-500">
+                      <h3 className="text-xs font-bold text-slate-500 uppercase">
                         Problem Solved
                       </h3>
                       <p className="mt-1.5 text-xs leading-relaxed text-slate-700">
@@ -380,7 +381,7 @@ const BuiltWithPage = async (props: BuiltWithPageProps) => {
                   )}
                   {tool.solution && (
                     <div className="rounded-lg border border-dashed border-border bg-white p-4">
-                      <h3 className="text-xs font-bold uppercase text-slate-500">
+                      <h3 className="text-xs font-bold text-slate-500 uppercase">
                         Core Solution
                       </h3>
                       <p className="mt-1.5 text-xs leading-relaxed text-slate-700">
@@ -390,7 +391,7 @@ const BuiltWithPage = async (props: BuiltWithPageProps) => {
                   )}
                   {tool.uniqueValue && (
                     <div className="rounded-lg border border-dashed border-border bg-white p-4">
-                      <h3 className="text-xs font-bold uppercase text-slate-500">
+                      <h3 className="text-xs font-bold text-slate-500 uppercase">
                         Key Differentiator
                       </h3>
                       <p className="mt-1.5 text-xs leading-relaxed text-slate-700">

@@ -30,11 +30,12 @@ import {
   safeJsonLd,
 } from "@/lib/seo/schema"
 import { SITE_CONFIG } from "@/constants/site"
+import { getAlternativesStaticParams } from "@/lib/catalog/static-params"
 import { ROUTES } from "@/constants/routes"
 
 export const revalidate = 86400
 
-export const generateStaticParams = async () => []
+export const generateStaticParams = getAlternativesStaticParams
 
 type AlternativesPageProps = {
   params: Promise<{ slug: string }>
@@ -46,7 +47,7 @@ const isToolOpenSource = (t: {
 }): boolean =>
   Boolean(
     t.githubUrl ||
-      t.tags?.some((tag) => tag.toLowerCase().includes("open source"))
+    t.tags?.some((tag) => tag.toLowerCase().includes("open source"))
   )
 
 export const generateMetadata = async (
@@ -263,8 +264,8 @@ const AlternativesPage = async (props: AlternativesPageProps) => {
               <strong className="font-semibold text-slate-800">
                 {tool.category ?? "Developer Tools"}
               </strong>{" "}
-              category, ranked by community upvotes and the products built
-              with them on LaunchNests.
+              category, ranked by community upvotes and the products built with
+              them on LaunchNests.
             </p>
 
             {/* Target Tool Anchor Card */}

@@ -9,9 +9,25 @@ interface CatalogChange {
   blogSlug?: string
 }
 
-// Only the listing caches and the changed entity's own pages are marked stale. Expiring the whole
-// route tree on every mutation would force a re-render (one database hit and one R2 write) of every
-// page on its next visit.
+// Hub pages that read the database directly instead of through a tagged cache. They are few and
+// fixed, so a catalog change or the weekly rollover expires them by path.
+const HUB_PATHS = [
+  ROUTES.BLOG,
+  ROUTES.MAKERS,
+  ROUTES.TRENDING,
+  ROUTES.PRICING,
+  ROUTES.PRODUCT_CATEGORIES,
+  ROUTES.TOOL_CATEGORIES,
+  ROUTES.DISCOVER_POPULAR_BUILDING_BLOCKS,
+  ROUTES.SITEMAP,
+] as const
+
+export const revalidateHubs = () =>
+  HUB_PATHS.forEach((path) => revalidatePath(path))
+
+// Only the listing caches, the hub pages and the changed entity's own pages are marked stale.
+// Expiring the whole route tree on every mutation would force a re-render (one database hit and
+// one R2 write) of every page on its next visit.
 export const revalidateCatalog = ({
   productSlug,
   toolSlug,
@@ -19,6 +35,7 @@ export const revalidateCatalog = ({
   blogSlug,
 }: CatalogChange = {}) => {
   Object.values(CACHE_TAGS).forEach((tag) => revalidateTag(tag, "max"))
+  revalidateHubs()
 
   const entityPaths = [
     productSlug && ROUTES.PRODUCT(productSlug),
@@ -44,9 +61,13 @@ export const revalidateVote = ({ productSlug, toolSlug }: VoteChange) => {
   try {
     revalidateTag(CACHE_TAGS.WEEKLY_LAUNCHES, "max")
 
-    if (productSlug) revalidatePath(ROUTES.PRODUCT(productSlug))
+    if (productSlug) {
+      revalidateTag(CACHE_TAGS.PRODUCTS_LIST, "max")
+      revalidatePath(ROUTES.PRODUCT(productSlug))
+    }
 
     if (toolSlug) {
+      revalidateTag(CACHE_TAGS.TOOLS_LIST, "max")
       revalidateTag(CACHE_TAGS.POPULAR_BUILDING_BLOCKS, "max")
       revalidatePath(ROUTES.TOOL(toolSlug))
     }

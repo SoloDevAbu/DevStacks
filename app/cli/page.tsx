@@ -1,15 +1,25 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 import { SITE_CONFIG } from "@/constants/site"
+import { buildSocialMetadata } from "@/utils/seo"
 import { AI_PROMPTS } from "@/lib/prompts"
 import { AskAiBar } from "@/components/shared/ask-ai-bar"
 
+const PAGE_TITLE = "Public REST API & cURL Reference"
+const PAGE_DESCRIPTION = `Official ${SITE_CONFIG.name} OpenAPI 3.1 REST API documentation and cURL reference for querying developer tools and tech stacks.`
+const PAGE_URL = `${SITE_CONFIG.url}/cli`
+
 export const metadata: Metadata = {
-  title: "Public REST API & cURL Reference",
-  description: `Official ${SITE_CONFIG.name} OpenAPI 3.1 REST API documentation and cURL reference for querying developer tools and tech stacks.`,
+  title: PAGE_TITLE,
+  description: PAGE_DESCRIPTION,
   alternates: {
-    canonical: `${SITE_CONFIG.url}/cli`,
+    canonical: PAGE_URL,
   },
+  ...buildSocialMetadata({
+    title: PAGE_TITLE,
+    description: PAGE_DESCRIPTION,
+    url: PAGE_URL,
+  }),
 }
 
 const CliPage = () => {

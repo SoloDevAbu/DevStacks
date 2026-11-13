@@ -13,7 +13,7 @@ export const DEVHUNT_COMPARISON: PlatformComparison = {
   targetKeyword: "DevHunt alternative",
   name: "DevHunt Alternative",
   comparedPlatformName: "DevHunt",
-  metaTitle: "DevHunt Alternative: LaunchNests vs DevHunt for Developer Tools",
+  metaTitle: "DevHunt Alternative: LaunchNests vs DevHunt",
   metaDescription:
     "DevHunt and LaunchNests both run weekly launches for developer tools. Compare free vs paid links ($49 on DevHunt, $15 on LaunchNests), audience and scope, with sources.",
   keywords: [

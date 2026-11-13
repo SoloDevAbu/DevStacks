@@ -26,14 +26,15 @@ import {
   safeJsonLd,
 } from "@/lib/seo/schema"
 import { SITE_CONFIG } from "@/constants/site"
+import { getToolCategoryStaticParams } from "@/lib/catalog/static-params"
 import { ROUTES } from "@/constants/routes"
 import { Badge } from "@/components/ui/badge"
 import { LEGACY_CATEGORY_REDIRECTS } from "@/constants/categories"
 import { indexingRobots, isCategoryIndexable } from "@/utils/indexing"
 
-export const revalidate = 21600
+export const revalidate = 86400
 
-export const generateStaticParams = async () => []
+export const generateStaticParams = getToolCategoryStaticParams
 
 type CategoryPageProps = {
   params: Promise<{ slug: string }>
