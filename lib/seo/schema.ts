@@ -69,14 +69,6 @@ export const websiteSchema = () => ({
     name: SITE_CONFIG.name,
     url: SITE_CONFIG.url,
   },
-  potentialAction: {
-    "@type": "SearchAction",
-    target: {
-      "@type": "EntryPoint",
-      urlTemplate: `${SITE_CONFIG.url}/products?q={search_term_string}`,
-    },
-    "query-input": "required name=search_term_string",
-  },
 })
 
 export const organizationSchema = () => ({

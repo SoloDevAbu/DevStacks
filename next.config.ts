@@ -32,6 +32,11 @@ const nextConfig: NextConfig = {
       permanent: true,
     },
     {
+      source: "/developer-tools-directory",
+      destination: "/tools",
+      permanent: true,
+    },
+    {
       source: "/discover/daily-launches",
       destination: "/",
       permanent: true,
