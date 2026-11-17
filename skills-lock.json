@@ -37,6 +37,12 @@
       "skillPath": "skills/nextjs-on-cloudflare/SKILL.md",
       "computedHash": "ded17196a46f36b3c2ac148da7dc3bad5be1edc80f8e9a00479bc9be01f1eba2"
     },
+    "programmatic-seo": {
+      "source": "coreyhaines31/marketingskills",
+      "sourceType": "github",
+      "skillPath": "skills/programmatic-seo/SKILL.md",
+      "computedHash": "2e8deb5f75edc80b0f114363f01c00e94333b4260f8adf660fb8f7698992dd99"
+    },
     "schema-markup": {
       "source": "kostja94/marketing-skills",
       "sourceType": "github",
