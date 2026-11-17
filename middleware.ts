@@ -125,6 +125,8 @@ export const middleware = (request: NextRequest) => {
         "Link",
         `<${request.nextUrl.origin}${aliasPath}>; rel="alternate"; type="text/markdown"`
       )
+      // The same URL answers with Markdown for `Accept: text/markdown`, so shared caches must key on it.
+      res.headers.append("Vary", "Accept")
     }
     return res
   }

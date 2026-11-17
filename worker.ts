@@ -7,6 +7,7 @@ import { CRON, ROLLOVER_MARKER_PREFIX } from "./constants/cron"
 import { ROUTES } from "./constants/routes"
 import { SITE_CONFIG } from "./constants/site"
 import { getCurrentWeek } from "./utils/iso-weeks"
+import { withEdgeHtmlCache } from "./lib/cache/edge-html-cache"
 
 interface MarkerBucket {
   head: (key: string) => Promise<unknown>
@@ -65,7 +66,7 @@ const runRollover = async (env: CronEnv, isRetry: boolean) => {
 }
 
 const worker = {
-  fetch: openNextHandler.fetch,
+  fetch: withEdgeHtmlCache(openNextHandler.fetch),
   scheduled: (event: ScheduledEvent, env: CronEnv, ctx: ScheduledContext) => {
     if (event.cron === CRON.BADGE_CHECK) {
       ctx.waitUntil(

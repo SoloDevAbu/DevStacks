@@ -3,6 +3,10 @@
   "name": "launchnests",
   "main": "worker.ts",
   "keep_vars": true,
+  // The site is served only on launchnests.com; the workers.dev copy was a crawlable duplicate.
+  // Preview URLs stay on so pull requests can still be checked before merge.
+  "workers_dev": false,
+  "preview_urls": true,
   "vars": {
     "NEXT_CACHE_DO_QUEUE_REVALIDATION_TIMEOUT_MS": "30000",
   },

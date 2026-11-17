@@ -1,6 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
-import { getProductComments } from "@/db/queries/comments/list"
+import { getProductCommentsBySlug } from "@/db/queries/comments/list"
 import { createProductComment } from "@/db/queries/comments/create"
 import { getProductBySlug } from "@/db/queries/products/get"
 import { createCommentSchema } from "@/lib/validation/comment"
@@ -11,13 +11,7 @@ export const GET = async (
 ) => {
   try {
     const { slug } = await params
-    const product = await getProductBySlug(slug)
-
-    if (!product) {
-      return NextResponse.json({ error: "Product not found" }, { status: 404 })
-    }
-
-    const commentList = await getProductComments(product.id)
+    const commentList = await getProductCommentsBySlug(slug)
     return NextResponse.json({ data: commentList }, { status: 200 })
   } catch {
     return NextResponse.json(

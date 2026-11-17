@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { getActiveAdsForCurrentWeek } from "@/db/queries/ads"
+import { getCachedActiveAdsForCurrentWeek } from "@/db/queries/ads"
 import { AD_PLACEMENT, type AdPlacement } from "@/constants/ads"
 import { TIER, type Tier } from "@/constants/plans"
 import { z } from "zod"
@@ -24,10 +24,10 @@ export const GET = async (req: NextRequest) => {
     }
 
     const { placement, limit } = parsed.data
-    const activeAds = await getActiveAdsForCurrentWeek({
-      placement: placement as AdPlacement,
-      limit,
-    })
+    const activeAds = await getCachedActiveAdsForCurrentWeek(
+      placement as AdPlacement,
+      limit
+    )
 
     const safeAds = activeAds.map((ad) => {
       const source = ad.tool ?? ad.product
