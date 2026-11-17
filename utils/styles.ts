@@ -44,6 +44,11 @@ export const directoryCard =
 export const directoryCardContent =
   "relative flex items-center gap-3 overflow-hidden px-3.5 py-3.5 sm:gap-4 sm:px-6 sm:py-4 md:gap-6 md:py-5"
 
+export const cardPricingBadge =
+  "rounded-none border-transparent px-2 py-0.5 text-[10px] sm:px-2.5 sm:py-1 sm:text-[11px]"
+export const cardLogo =
+  "size-12 shrink-0 overflow-hidden rounded-lg border border-slate-200 text-lg sm:size-14 sm:rounded-xl sm:text-xl"
+
 export const tagBadge =
   "inline-flex items-center rounded-md border border-slate-200/60 bg-slate-100/50 px-2 py-0.5 text-xs text-slate-600 hover:bg-slate-100 transition-colors"
 

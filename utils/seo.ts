@@ -16,7 +16,9 @@ export const cleanTitle = (title: string): string => {
 
 // The root layout appends " | <brand>" to every title, so the page's own part gets what is left of
 // the 60 characters a search result shows.
-const TITLE_MAX_CHARS = 60 - ` | ${SITE_CONFIG.name}`.length
+export const SERP_TITLE_MAX_CHARS = 60
+
+const TITLE_MAX_CHARS = SERP_TITLE_MAX_CHARS - ` | ${SITE_CONFIG.name}`.length
 
 const truncateTitle = (text: string, maxChars: number): string =>
   text.length <= maxChars ? text : `${text.slice(0, maxChars - 1).trim()}…`

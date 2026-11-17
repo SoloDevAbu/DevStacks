@@ -38,6 +38,8 @@ import {
   cardTagBadge,
   cardTagIcon,
   cardTagsGroup,
+  cardPricingBadge,
+  cardLogo,
 } from "@/utils/styles"
 import { getOutboundUrl, getLinkRel, getFaviconUrl } from "@/utils/urls"
 import { trackOutboundClick } from "@/lib/analytics/events"
@@ -170,7 +172,7 @@ export const ToolCard = ({
               imageUrl={logoUrl}
               websiteUrl={tool.websiteUrl}
               alt={tool.name}
-              className="size-12 shrink-0 overflow-hidden rounded-lg border border-slate-200 text-lg sm:size-14 sm:rounded-xl sm:text-xl"
+              className={cardLogo}
             />
           </a>
         ) : (
@@ -186,7 +188,7 @@ export const ToolCard = ({
               imageUrl={logoUrl}
               websiteUrl={tool.websiteUrl}
               alt={tool.name}
-              className="size-12 shrink-0 overflow-hidden rounded-lg border border-slate-200 text-lg sm:size-14 sm:rounded-xl sm:text-xl"
+              className={cardLogo}
             />
           </Link>
         )}
@@ -306,7 +308,7 @@ export const ToolCard = ({
           <Badge
             variant="outline"
             className={cn(
-              "rounded-none border-transparent px-2 py-0.5 text-[10px] sm:px-2.5 sm:py-1 sm:text-[11px]",
+              cardPricingBadge,
               pricingBadgeColor(pricing)
             )}
           >

@@ -53,3 +53,5 @@ export const DISCOVER_PAGE_LIMIT = 20
 
 // An alternatives page needs at least this many same-category tools to be worth indexing.
 export const ALTERNATIVES_MIN_SIBLINGS = 3
+
+export const ALTERNATIVES_SIBLINGS_LIMIT = 20

@@ -1,5 +1,5 @@
 import { INDEX_THRESHOLDS } from "@/constants/indexing"
-import { ALTERNATIVES_MIN_SIBLINGS } from "@/constants/rankings"
+import { getCuratedAlternatives } from "@/constants/alternatives"
 
 export const isCategoryIndexable = (itemCount: number): boolean =>
   itemCount >= INDEX_THRESHOLDS.CATEGORY_MIN_ITEMS
@@ -24,8 +24,9 @@ export const isMakerIndexable = ({
 export const isBuiltWithIndexable = (productCount: number): boolean =>
   productCount >= INDEX_THRESHOLDS.BUILT_WITH_MIN_PRODUCTS
 
-export const isAlternativesIndexable = (siblingCount: number): boolean =>
-  siblingCount >= ALTERNATIVES_MIN_SIBLINGS
+// Catalog siblings share one broad category, so only a hand-checked list makes the page useful.
+export const isAlternativesIndexable = (toolSlug: string): boolean =>
+  Boolean(getCuratedAlternatives(toolSlug))
 
 export const indexingRobots = (isIndexable: boolean) => ({
   index: isIndexable,

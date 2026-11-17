@@ -264,7 +264,7 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
     )
 
     dynamicRoutes.push(
-      ...filterToolsWithAlternatives(dbTools, toolCategories).map((tool) => ({
+      ...filterToolsWithAlternatives(dbTools).map((tool) => ({
         url: normalizeSitemapUrl(`/alternatives/${tool.slug}`),
         lastModified: tool.updatedAt ?? now,
         changeFrequency: "weekly" as const,

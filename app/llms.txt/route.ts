@@ -7,6 +7,7 @@ import {
   getProductCategories,
 } from "@/db/queries/categories/list"
 import { getAllComparisons } from "@/constants/comparisons"
+import { CURATED_ALTERNATIVES } from "@/constants/alternatives"
 import { ROUTES } from "@/constants/routes"
 import {
   AI_SURFACE_CACHE_CONTROL,
@@ -82,6 +83,17 @@ ${formatPreviousWeeksSection(launchWeeks, launchWeek, AI_SURFACE_ARCHIVE_WEEKS)}
 ## Launch Platform Comparisons & Alternatives
 ${getAllComparisons()
   .map((c) => `- [${c.name}](${c.canonicalUrl}): ${c.heroDescription}`)
+  .join("\n")}
+
+## Developer Tool Alternatives (hand-checked)
+${Object.values(CURATED_ALTERNATIVES)
+  .map(
+    ({ toolSlug, toolName, alternatives, factsCheckedOn }) =>
+      `- [${toolName} alternatives](${SITE_CONFIG.url}${ROUTES.ALTERNATIVES(toolSlug)}): ${alternatives.length} alternatives (${alternatives
+        .slice(0, 4)
+        .map(({ name }) => name)
+        .join(", ")} and more) with license, pricing and when to switch, checked ${factsCheckedOn} (markdown twin at /api/md/alternatives/${toolSlug})`
+  )
   .join("\n")}
 
 ## Markdown-addressable routes

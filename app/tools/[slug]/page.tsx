@@ -31,6 +31,7 @@ import { SITE_CONFIG } from "@/constants/site"
 import { LAUNCH_PROMO } from "@/constants/promo"
 import { ROUTES } from "@/constants/routes"
 import { ALTERNATIVES_MIN_SIBLINGS } from "@/constants/rankings"
+import { isAlternativesIndexable } from "@/utils/indexing"
 import { getSocialCardImage } from "@/lib/seo/social-image"
 import { formatGeoMetaTags } from "@/utils/country"
 import { AI_PROVIDERS } from "@/constants/ai-providers"
@@ -198,6 +199,10 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
       getToolFaqs(tool.id),
       getLiveBlogForItem("tool", tool.id),
     ])
+
+  const hasAlternativesPage =
+    isAlternativesIndexable(tool.slug) ||
+    relatedTools.length >= ALTERNATIVES_MIN_SIBLINGS
   const categoryPath = getCategoryPath("tool", tool.categorySlug)
   const outboundRel = getLinkRel(tool.tier, tool.badgeVerified)
 
@@ -432,7 +437,7 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
                       <span className="text-slate-300">•</span>
                     </>
                   )}
-                  {relatedTools.length >= ALTERNATIVES_MIN_SIBLINGS && (
+                  {hasAlternativesPage && (
                     <Link
                       href={ROUTES.ALTERNATIVES(tool.slug)}
                       className="inline-flex items-center gap-1 text-xs font-medium text-slate-600 hover:text-slate-900 hover:underline"
@@ -949,7 +954,7 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
           categoryName={tool.category}
         />
 
-        {relatedTools.length >= ALTERNATIVES_MIN_SIBLINGS && (
+        {hasAlternativesPage && (
           <div className="border-b border-dashed border-border bg-slate-50/50 px-6 py-3 text-center md:px-8">
             <Link
               href={ROUTES.ALTERNATIVES(tool.slug)}
