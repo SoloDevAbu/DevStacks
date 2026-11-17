@@ -9,10 +9,10 @@ import { AppLayoutShell } from "@/components/layout/app-layout-shell"
 import { LeftSidebar } from "@/components/layout/left-sidebar"
 import { RightSidebar } from "@/components/layout/right-sidebar"
 import { AgentFooter } from "@/components/layout/agent-footer"
-import { getCachedToolCategories } from "@/db/queries/categories/list"
+import { getCachedNavToolCategories } from "@/db/queries/categories/list"
 import { QUICK_STACK_COUNT } from "@/constants/navigation"
 import { LaunchPromoBanner } from "@/components/layout/launch-promo-banner"
-import { getCachedLaunchPromoStatus } from "@/lib/launches/promo-status"
+import { getCachedPromoBannerActive } from "@/lib/launches/promo-status"
 import { PromoBannerDismissScript } from "@/components/layout/promo-banner-dismiss-script"
 import { Providers } from "@/app/providers"
 import { SITE_CONFIG } from "@/constants/site"
@@ -120,7 +120,7 @@ const fontSans = Geist({
 const geistMono = Geist_Mono({ subsets: ["latin"], variable: "--font-mono" })
 
 const getQuickStacks = async () => {
-  const categories = await getCachedToolCategories().catch(() => [])
+  const categories = await getCachedNavToolCategories().catch(() => [])
   return [...categories]
     .sort((a, b) => b.count - a.count)
     .slice(0, QUICK_STACK_COUNT)
@@ -132,9 +132,9 @@ const RootLayout = async ({
 }: Readonly<{
   children: React.ReactNode
 }>) => {
-  const [quickStacks, promoStatus] = await Promise.all([
+  const [quickStacks, isPromoActive] = await Promise.all([
     getQuickStacks(),
-    getCachedLaunchPromoStatus().catch(() => null),
+    getCachedPromoBannerActive().catch(() => false),
   ])
   const orgSchema = organizationSchema()
   const webSchema = websiteSchema()
@@ -169,7 +169,7 @@ const RootLayout = async ({
         />
         <Providers>
           <div className="flex min-h-dvh flex-col bg-slate-50/30">
-            {promoStatus?.isPromoActive && <LaunchPromoBanner />}
+            {isPromoActive && <LaunchPromoBanner />}
             {/* --- TOP ROW (Navbar) --- */}
             <header className="sticky top-0 z-50 grid h-16 shrink-0 grid-cols-1 border-b border-dashed border-border bg-white lg:grid-cols-[320px_1fr] xl:grid-cols-[320px_1fr_380px]">
               {/* Top Left */}
