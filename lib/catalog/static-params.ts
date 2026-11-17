@@ -29,20 +29,9 @@ const safely = async <T>(load: () => Promise<T[]>): Promise<T[]> => {
 const toSlugParams = (items: ReadonlyArray<{ slug: string }>) =>
   items.map(({ slug }) => ({ slug }))
 
-// A tool's category count includes the tool itself.
 export const filterToolsWithAlternatives = (
-  tools: readonly DbTool[],
-  toolCategories: readonly DbCategoryItem[]
-): DbTool[] => {
-  const categoryCounts = new Map(
-    toolCategories.map(({ id, count }) => [id, count])
-  )
-  return tools.filter(
-    ({ categoryId }) =>
-      Boolean(categoryId) &&
-      isAlternativesIndexable((categoryCounts.get(categoryId!) ?? 0) - 1)
-  )
-}
+  tools: readonly DbTool[]
+): DbTool[] => tools.filter(({ slug }) => isAlternativesIndexable(slug))
 
 export const getProductStaticParams = () =>
   safely(async () =>
@@ -64,13 +53,13 @@ export const getBuiltWithStaticParams = () =>
   )
 
 export const getAlternativesStaticParams = () =>
-  safely(async () => {
-    const [tools, toolCategories] = await Promise.all([
-      getTools({ limit: STATIC_PARAMS_LIMIT }),
-      getToolCategories(),
-    ])
-    return toSlugParams(filterToolsWithAlternatives(tools, toolCategories))
-  })
+  safely(async () =>
+    toSlugParams(
+      filterToolsWithAlternatives(
+        await getTools({ limit: STATIC_PARAMS_LIMIT })
+      )
+    )
+  )
 
 const toIndexableCategoryParams = (categories: readonly DbCategoryItem[]) =>
   toSlugParams(categories.filter(({ count }) => isCategoryIndexable(count)))

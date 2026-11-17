@@ -65,6 +65,15 @@ export const getWeeklyPremiumLaunches = ({
     ),
   })
 
+export const getCachedWeeklyPremiumLaunches = unstable_cache(
+  async (year: number, week: number) => getWeeklyPremiumLaunches({ year, week }),
+  ["weekly-premium-launches"],
+  {
+    revalidate: CACHE_REVALIDATE_SECONDS.SIDEBAR,
+    tags: [CACHE_TAGS.WEEKLY_LAUNCHES],
+  }
+)
+
 export const getCachedWeeklyLaunches = unstable_cache(
   async (year: number, week: number, limit: number = 10) =>
     getWeeklyLaunches({ year, week, limit }),

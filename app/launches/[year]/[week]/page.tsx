@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import { buildSocialMetadata } from "@/utils/seo"
 import { notFound } from "next/navigation"
 import { cache } from "react"
 import { PageHeader } from "@/components/shared/page-header"
@@ -70,8 +71,7 @@ export const generateMetadata = async ({
         ),
       },
     },
-    openGraph: { title, description, url: canonical, type: "website" },
-    twitter: { card: "summary_large_image", title, description },
+    ...buildSocialMetadata({ title, description, url: canonical }),
   }
 }
 

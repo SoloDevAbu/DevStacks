@@ -20,7 +20,10 @@
     "db:seed": "tsx db/seed.ts",
     "db:migrate-data": "tsx migration.ts",
     "db:backup": "bun scripts/backup-db.ts",
-    "db:restore": "bun scripts/restore-db.ts"
+    "db:restore": "bun scripts/restore-db.ts",
+    "seo:cf": "tsx scripts/seo/cf-report.ts",
+    "seo:gsc": "tsx scripts/seo/gsc-report.ts",
+    "seo:report": "npm run seo:cf && npm run seo:gsc"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",

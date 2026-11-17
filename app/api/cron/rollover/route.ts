@@ -1,12 +1,13 @@
 import { type NextRequest, NextResponse, after } from "next/server"
 import { revalidatePath, revalidateTag } from "next/cache"
-import { CACHE_TAGS } from "@/constants/cache"
+import { CATALOG_CACHE_TAGS } from "@/constants/cache"
 import { ROUTES } from "@/constants/routes"
 import { HOMEPAGE_LIMITS } from "@/constants/rankings"
 import { getWeeklyLaunches } from "@/lib/launches/weekly-launches"
 import { getCurrentWeek } from "@/utils/iso-weeks"
 import { isCronAuthorized } from "@/lib/auth/cron"
 import { revalidateHubs } from "@/lib/cache/revalidate"
+import { refreshPromoBanner } from "@/lib/launches/promo-status"
 import { warmPaths } from "@/lib/cache/warm"
 import { submitToIndexNow } from "@/lib/seo/indexnow"
 import { getListingPath } from "@/utils/urls"
@@ -33,8 +34,9 @@ export const POST = async (req: NextRequest) => {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
 
-  Object.values(CACHE_TAGS).forEach((tag) => revalidateTag(tag, { expire: 0 }))
+  CATALOG_CACHE_TAGS.forEach((tag) => revalidateTag(tag, { expire: 0 }))
   revalidateHubs()
+  await refreshPromoBanner()
   // A launch going live adds a listing to its maker's profile, which no mutation signals either.
   revalidatePath(ROUTES.MAKER_PATTERN, "page")
 

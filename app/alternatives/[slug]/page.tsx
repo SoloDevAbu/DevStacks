@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
-import { indexingRobots, isAlternativesIndexable } from "@/utils/indexing"
+import { indexingRobots } from "@/utils/indexing"
 import Link from "next/link"
 import {
   ArrowLeft,
@@ -16,11 +16,24 @@ import {
   AlertCircle,
   Code2,
 } from "lucide-react"
-import { resolveTool } from "@/lib/tools/resolve-tool"
-import { getRelatedTools } from "@/db/queries/tools/get"
+import { getAlternativesPageData } from "@/lib/alternatives/page-data"
 import { ToolCard } from "@/components/shared/tool-card"
+import { CuratedAlternativeCard } from "@/components/alternatives/curated-alternative-card"
 import { ProductLogo } from "@/components/shared/product-logo"
-import { getCategoryPath, getFaviconUrl, toAbsoluteUrl } from "@/utils/urls"
+import {
+  NOFOLLOW_LINK_REL,
+  getCategoryPath,
+  getFaviconUrl,
+  getOutboundUrl,
+  toAbsoluteUrl,
+} from "@/utils/urls"
+import {
+  buildAlternativesTitle,
+  formatFactsCheckedOn,
+  isToolOpenSource,
+  toAbsoluteRowUrl,
+} from "@/utils/alternatives"
+import { buildSocialMetadata, formatMetaDescription } from "@/utils/seo"
 import { Badge } from "@/components/ui/badge"
 import { GaAlternativeViewTracker } from "@/components/shared/ga-alternative-view-tracker"
 import {
@@ -30,6 +43,10 @@ import {
   safeJsonLd,
 } from "@/lib/seo/schema"
 import { SITE_CONFIG } from "@/constants/site"
+import {
+  DEFAULT_STICK_WITH,
+  DEFAULT_SWITCH_WHEN,
+} from "@/constants/alternatives"
 import { getAlternativesStaticParams } from "@/lib/catalog/static-params"
 import { ROUTES } from "@/constants/routes"
 
@@ -41,22 +58,13 @@ type AlternativesPageProps = {
   params: Promise<{ slug: string }>
 }
 
-const isToolOpenSource = (t: {
-  githubUrl?: string | null
-  tags?: string[]
-}): boolean =>
-  Boolean(
-    t.githubUrl ||
-    t.tags?.some((tag) => tag.toLowerCase().includes("open source"))
-  )
-
 export const generateMetadata = async (
   props: AlternativesPageProps
 ): Promise<Metadata> => {
   const { slug } = await props.params
-  const tool = await resolveTool(slug)
+  const data = await getAlternativesPageData(slug)
 
-  if (!tool) {
+  if (!data) {
     return {
       title: "Alternatives Not Found",
       robots: {
@@ -66,20 +74,27 @@ export const generateMetadata = async (
     }
   }
 
+  const { tool, curated, rows } = data
   const currentYear = new Date().getFullYear()
-  const alternatives = tool.categoryId
-    ? await getRelatedTools(tool.categoryId, tool.id, 20)
-    : []
-
-  const isIndexable = isAlternativesIndexable(alternatives.length)
-
-  const baseTitle = `Top ${tool.name} Alternatives & Competitors (${currentYear})`
-  const title = baseTitle
-  const description = `Compare ${tool.name} alternatives in ${tool.category ?? "developer tools"} for ${currentYear}, ranked by community upvotes and the products built with them on ${SITE_CONFIG.name}.`
   const canonicalUrl = `${SITE_CONFIG.url}/alternatives/${tool.slug}`
 
+  const title = curated
+    ? buildAlternativesTitle(tool.name, rows, currentYear)
+    : `Top ${tool.name} Alternatives & Competitors (${currentYear})`
+  const description = curated
+    ? formatMetaDescription(
+        `Compare ${rows.length} ${tool.name} alternatives for ${currentYear}: ${rows
+          .slice(0, 4)
+          .map(({ name }) => name)
+          .join(
+            ", "
+          )} and more. License, pricing and when to switch, checked ${formatFactsCheckedOn(curated.factsCheckedOn)}.`
+      )
+    : `Compare ${tool.name} alternatives in ${tool.category ?? "developer tools"} for ${currentYear}, ranked by community upvotes and the products built with them on ${SITE_CONFIG.name}.`
+
   return {
-    title,
+    // Curated titles name the alternatives and need the whole result width, so the brand is left off.
+    title: curated ? { absolute: title } : title,
     description,
     keywords: [
       `${tool.name} alternatives`,
@@ -93,43 +108,24 @@ export const generateMetadata = async (
     alternates: {
       canonical: canonicalUrl,
     },
-    robots: indexingRobots(isIndexable),
-    openGraph: {
-      title: `${baseTitle} | ${SITE_CONFIG.name}`,
-      description,
-      url: canonicalUrl,
-      type: "website",
-      siteName: SITE_CONFIG.name,
-      images: [
-        {
-          url: SITE_CONFIG.ogImageUrl,
-          width: 1200,
-          height: 630,
-          alt: `${tool.name} Alternatives | ${SITE_CONFIG.name}`,
-        },
-      ],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: `${baseTitle} | ${SITE_CONFIG.name}`,
-      description,
-      images: [SITE_CONFIG.ogImageUrl],
-    },
+    // Catalog siblings share one broad category, so only hand-checked lists are worth indexing.
+    robots: indexingRobots(Boolean(curated)),
+    ...buildSocialMetadata({ title, description, url: canonicalUrl }),
   }
 }
 
 const AlternativesPage = async (props: AlternativesPageProps) => {
   const { slug } = await props.params
-  const tool = await resolveTool(slug)
+  const data = await getAlternativesPageData(slug)
 
-  if (!tool) {
+  if (!data) {
     notFound()
   }
 
-  const alternatives = tool.categoryId
-    ? await getRelatedTools(tool.categoryId, tool.id, 20)
-    : []
-
+  const { tool, curated, entries, rows } = data
+  const heading = curated
+    ? `${rows.length} ${tool.name} Alternatives & Competitors`
+    : `Top ${tool.name} Alternatives & Competitors`
   const currentYear = new Date().getFullYear()
   const pageUrl = `${SITE_CONFIG.url}/alternatives/${tool.slug}`
   const markdownTwinUrl = `${SITE_CONFIG.url}/api/md/alternatives/${tool.slug}`
@@ -151,13 +147,15 @@ const AlternativesPage = async (props: AlternativesPageProps) => {
   ])
 
   const collectionLd = collectionPageSchema({
-    name: `Best ${tool.name} Alternatives & Competitors (${currentYear})`,
-    description: `Verified developer tool alternatives to ${tool.name} ranked by production adoption and developer upvotes.`,
+    name: `${heading} (${currentYear})`,
+    description: curated
+      ? curated.intro
+      : `Developer tools listed alongside ${tool.name} on ${SITE_CONFIG.name}, ranked by production adoption and developer upvotes.`,
     url: pageUrl,
-    items: alternatives.map((alt) => ({
-      name: alt.name,
-      url: `${SITE_CONFIG.url}/tools/${alt.slug}`,
-      description: alt.tagline,
+    items: rows.map((row) => ({
+      name: row.name,
+      url: toAbsoluteRowUrl(row),
+      description: row.description,
     })),
   })
 
@@ -252,20 +250,29 @@ const AlternativesPage = async (props: AlternativesPageProps) => {
             </div>
 
             <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl md:text-4xl">
-              Top {tool.name} Alternatives & Competitors ({currentYear})
+              {heading} ({currentYear})
             </h1>
 
             <p className="max-w-3xl text-sm leading-relaxed font-normal text-slate-600 sm:text-base">
-              Looking for an alternative to{" "}
-              <strong className="font-semibold text-slate-800">
-                {tool.name}
-              </strong>
-              ? Compare tools and APIs in the{" "}
-              <strong className="font-semibold text-slate-800">
-                {tool.category ?? "Developer Tools"}
-              </strong>{" "}
-              category, ranked by community upvotes and the products built with
-              them on LaunchNests.
+              {curated ? (
+                <>
+                  {curated.intro} License, pricing and platform facts checked on{" "}
+                  {formatFactsCheckedOn(curated.factsCheckedOn)}.
+                </>
+              ) : (
+                <>
+                  Looking for an alternative to{" "}
+                  <strong className="font-semibold text-slate-800">
+                    {tool.name}
+                  </strong>
+                  ? Compare tools and APIs in the{" "}
+                  <strong className="font-semibold text-slate-800">
+                    {tool.category ?? "Developer Tools"}
+                  </strong>{" "}
+                  category, ranked by community upvotes and the products built
+                  with them on LaunchNests.
+                </>
+              )}
             </p>
 
             {/* Target Tool Anchor Card */}
@@ -368,7 +375,7 @@ const AlternativesPage = async (props: AlternativesPageProps) => {
         </header>
 
         {/* Comparative Overview Table */}
-        {alternatives.length > 0 && (
+        {rows.length > 0 && (
           <section className="border-b border-dashed border-border bg-slate-50/20 px-6 py-6 md:px-8">
             <h2 className="mb-3 text-sm font-bold tracking-tight text-slate-900 sm:text-base">
               Feature Comparison Matrix: {tool.name} vs Top Alternatives
@@ -429,50 +436,73 @@ const AlternativesPage = async (props: AlternativesPageProps) => {
                   </tr>
 
                   {/* Alternative Tools Rows */}
-                  {alternatives.map((alt) => {
-                    const altIsOpenSource = isToolOpenSource(alt)
-                    return (
-                      <tr key={alt.id} className="hover:bg-slate-50/50">
-                        <td className="px-4 py-3 font-semibold text-slate-900">
-                          <Link
-                            href={ROUTES.TOOL(alt.slug)}
+                  {rows.map((row) => (
+                    <tr key={row.key} className="hover:bg-slate-50/50">
+                      <td className="px-4 py-3 font-semibold text-slate-900">
+                        {row.isExternal ? (
+                          <a
+                            href={getOutboundUrl(row.href)}
+                            target="_blank"
+                            rel={NOFOLLOW_LINK_REL}
                             className="hover:text-blue-600 hover:underline"
                           >
-                            {alt.name}
-                          </Link>
-                        </td>
-                        <td className="px-4 py-3">
-                          {altIsOpenSource ? (
-                            <span className="inline-flex items-center gap-1 font-medium text-emerald-600">
-                              <CheckCircle2 className="size-3" /> Open Source
-                            </span>
-                          ) : (
-                            <span className="text-slate-500">Commercial</span>
-                          )}
-                        </td>
-                        <td className="px-4 py-3">
-                          <Badge variant="outline" className="text-xs">
-                            {alt.pricing}
-                          </Badge>
-                        </td>
-                        <td className="px-4 py-3 font-semibold text-slate-800">
-                          {alt.buildsCount} builds
-                        </td>
-                        <td className="px-4 py-3">{alt.upvotesCount}</td>
-                        <td className="px-4 py-3 text-xs text-slate-500">
-                          {(alt.platforms ?? []).join(", ") || "Web / Cloud"}
-                        </td>
-                        <td className="px-4 py-3 text-right">
+                            {row.name}
+                          </a>
+                        ) : (
                           <Link
-                            href={ROUTES.TOOL(alt.slug)}
+                            href={row.href}
+                            className="hover:text-blue-600 hover:underline"
+                          >
+                            {row.name}
+                          </Link>
+                        )}
+                      </td>
+                      <td className="px-4 py-3">
+                        {row.isOpenSource ? (
+                          <span className="inline-flex items-center gap-1 font-medium text-emerald-600">
+                            <CheckCircle2 className="size-3" /> Open Source
+                          </span>
+                        ) : (
+                          <span className="text-slate-500">
+                            {row.licenseLabel}
+                          </span>
+                        )}
+                      </td>
+                      <td className="px-4 py-3">
+                        <Badge variant="outline" className="text-xs">
+                          {row.pricing}
+                        </Badge>
+                      </td>
+                      <td className="px-4 py-3 font-semibold text-slate-800">
+                        {row.buildsCount === null
+                          ? "—"
+                          : `${row.buildsCount} builds`}
+                      </td>
+                      <td className="px-4 py-3">{row.upvotesCount ?? "—"}</td>
+                      <td className="px-4 py-3 text-xs text-slate-500">
+                        {row.platforms}
+                      </td>
+                      <td className="px-4 py-3 text-right">
+                        {row.isExternal ? (
+                          <a
+                            href={getOutboundUrl(row.href)}
+                            target="_blank"
+                            rel={NOFOLLOW_LINK_REL}
+                            className="text-xs font-semibold text-blue-600 hover:underline"
+                          >
+                            Website ↗
+                          </a>
+                        ) : (
+                          <Link
+                            href={row.href}
                             className="text-xs font-semibold text-blue-600 hover:underline"
                           >
                             Explore
                           </Link>
-                        </td>
-                      </tr>
-                    )
-                  })}
+                        )}
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>
@@ -547,18 +577,9 @@ const AlternativesPage = async (props: AlternativesPageProps) => {
                   <span>Stick with {tool.name} if:</span>
                 </div>
                 <ul className="space-y-1.5 text-xs text-slate-600">
-                  <li>
-                    • Your tech stack is already integrated with its APIs and
-                    SDKs.
-                  </li>
-                  <li>
-                    • Its feature roadmap aligns with your core delivery
-                    velocity.
-                  </li>
-                  <li>
-                    • You value its established community and verified
-                    production track record.
-                  </li>
+                  {(curated?.stickWith ?? DEFAULT_STICK_WITH).map((reason) => (
+                    <li key={reason}>• {reason}</li>
+                  ))}
                 </ul>
               </div>
 
@@ -568,17 +589,11 @@ const AlternativesPage = async (props: AlternativesPageProps) => {
                   <span>Consider switching to an alternative if:</span>
                 </div>
                 <ul className="space-y-1.5 text-xs text-slate-600">
-                  <li>
-                    • You require an open-source or self-hosted architecture.
-                  </li>
-                  <li>
-                    • Alternative pricing tiers provide a cheaper runway for
-                    early-stage validation.
-                  </li>
-                  <li>
-                    • A competitor provides specialized edge or regional
-                    infrastructure you need.
-                  </li>
+                  {(curated?.switchWhen ?? DEFAULT_SWITCH_WHEN).map(
+                    (reason) => (
+                      <li key={reason}>• {reason}</li>
+                    )
+                  )}
                 </ul>
               </div>
             </div>
@@ -589,21 +604,29 @@ const AlternativesPage = async (props: AlternativesPageProps) => {
         <div className="flex-1">
           <div className="border-b border-dashed border-border px-6 py-4 md:px-8">
             <h2 className="text-sm font-bold text-slate-900 sm:text-base">
-              Detailed Alternative Profiles ({alternatives.length})
+              Detailed Alternative Profiles ({entries.length})
             </h2>
           </div>
 
-          {alternatives.length > 0 ? (
+          {entries.length > 0 ? (
             <div className="flex flex-col">
-              {alternatives.map((alt, idx) => (
-                <ToolCard
-                  key={alt.id}
-                  tool={alt}
-                  index={idx}
-                  showMedals={false}
-                  showTrendingBadge={false}
-                />
-              ))}
+              {entries.map((entry, idx) =>
+                entry.kind === "catalog" ? (
+                  <ToolCard
+                    key={entry.tool.id}
+                    tool={entry.tool}
+                    index={idx}
+                    showMedals={false}
+                    showTrendingBadge={false}
+                  />
+                ) : (
+                  <CuratedAlternativeCard
+                    key={entry.curated.websiteUrl}
+                    alternative={entry.curated}
+                    index={idx}
+                  />
+                )
+              )}
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center px-6 py-16 text-center md:px-8">

@@ -8,7 +8,16 @@ export const CACHE_TAGS = {
   WEEKLY_LAUNCHES: "weekly-launches",
   POPULAR_BUILDING_BLOCKS: "popular-building-blocks",
   LAUNCH_PROMO: "launch-promo",
+  PROMO_BANNER: "promo-banner",
+  ADS: "ads",
 } as const
+
+// Next.js copies the tags of every unstable_cache read onto the page that rendered it, and the root
+// layout renders on every page. Only the banner tag reaches the layout, and it is expired only when
+// the promo actually opens or closes, so a catalog change never marks the whole site stale.
+export const CATALOG_CACHE_TAGS = Object.values(CACHE_TAGS).filter(
+  (tag) => tag !== CACHE_TAGS.PROMO_BANNER
+)
 
 // Machine-readable surfaces (llms.txt, /api/ai, feeds) are what AI answer engines quote, so
 // downstream caches may only hold them briefly.
@@ -27,6 +36,8 @@ export const AI_SURFACE_FRESHNESS_NOTE =
 export const CACHE_REVALIDATE_SECONDS = {
   LISTS: 86400,
   CATEGORIES: 86400,
+  // The sidebar ad and featured-launch widgets are fetched on every page view.
+  SIDEBAR: 300,
 } as const
 
 // Upper bound on the listing, maker, blog and category pages rendered during the build. Pages past

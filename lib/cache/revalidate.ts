@@ -1,5 +1,5 @@
 import { revalidatePath, revalidateTag } from "next/cache"
-import { CACHE_TAGS } from "@/constants/cache"
+import { CACHE_TAGS, CATALOG_CACHE_TAGS } from "@/constants/cache"
 import { ROUTES } from "@/constants/routes"
 
 interface CatalogChange {
@@ -34,7 +34,7 @@ export const revalidateCatalog = ({
   makerUsername,
   blogSlug,
 }: CatalogChange = {}) => {
-  Object.values(CACHE_TAGS).forEach((tag) => revalidateTag(tag, "max"))
+  CATALOG_CACHE_TAGS.forEach((tag) => revalidateTag(tag, "max"))
   revalidateHubs()
 
   const entityPaths = [
@@ -47,6 +47,13 @@ export const revalidateCatalog = ({
   ].filter((path): path is string => Boolean(path))
 
   entityPaths.forEach((path) => revalidatePath(path))
+}
+
+// A profile edit only changes the maker's own page and the makers hub; expiring the catalog here
+// would re-render every list page on each profile save.
+export const revalidateMaker = (makerUsername?: string) => {
+  revalidatePath(ROUTES.MAKERS)
+  if (makerUsername) revalidatePath(ROUTES.MAKER(makerUsername))
 }
 
 interface VoteChange {

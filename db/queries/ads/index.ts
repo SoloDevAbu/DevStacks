@@ -2,6 +2,8 @@ import { db } from "@/db"
 import { ads, adWeeks, tools, products } from "@/db/schema"
 import type { Ad, NewAd, AdWeek, NewAdWeek } from "@/db/schema"
 import { eq, and, lte, gte, desc, sql, inArray } from "drizzle-orm"
+import { unstable_cache } from "next/cache"
+import { CACHE_REVALIDATE_SECONDS, CACHE_TAGS } from "@/constants/cache"
 import {
   AD_HOLD_DURATION_MINUTES,
   type AdPlacement,
@@ -101,6 +103,14 @@ export const getActiveAdsForCurrentWeek = async ({
       product: r.product?.id ? r.product : null,
     }))
 }
+
+// Read on every page view by the sidebar; paid ads go live within the revalidate window.
+export const getCachedActiveAdsForCurrentWeek = unstable_cache(
+  async (placement: AdPlacement, limit: number) =>
+    getActiveAdsForCurrentWeek({ placement, limit }),
+  ["active-ads-current-week"],
+  { revalidate: CACHE_REVALIDATE_SECONDS.SIDEBAR, tags: [CACHE_TAGS.ADS] }
+)
 
 export const getAdById = async (id: string): Promise<Ad | null> => {
   const [ad] = await db.select().from(ads).where(eq(ads.id, id)).limit(1)

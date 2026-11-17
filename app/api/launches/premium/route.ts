@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import { getWeeklyPremiumLaunches } from "@/lib/launches/weekly-launches"
+import { getCachedWeeklyPremiumLaunches } from "@/lib/launches/weekly-launches"
 import { getCurrentWeek } from "@/utils/iso-weeks"
 
 export const GET = async (request: Request) => {
@@ -24,7 +24,7 @@ export const GET = async (request: Request) => {
   }
 
   try {
-    const launches = await getWeeklyPremiumLaunches({ year, week })
+    const launches = await getCachedWeeklyPremiumLaunches(year, week)
     return NextResponse.json(launches, {
       headers: {
         "Cache-Control": "public, s-maxage=60, stale-while-revalidate=120",

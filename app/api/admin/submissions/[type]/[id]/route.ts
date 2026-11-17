@@ -8,6 +8,7 @@ import { isBlogLive, isPubliclyVisible } from "@/lib/catalog/visibility"
 import { submitToIndexNow } from "@/lib/seo/indexnow"
 import { getListingPath } from "@/utils/urls"
 import { ROUTES } from "@/constants/routes"
+import { refreshPromoBanner } from "@/lib/launches/promo-status"
 
 const statusSchema = z.object({
   status: z.enum(["pending", "approved", "rejected"]),
@@ -61,6 +62,8 @@ export const PATCH = async (
       blogSlug: result.blogResult?.blog?.slug,
       makerUsername: makerUsername ?? undefined,
     })
+    // A rejection frees a promo slot, which can reopen the sitewide banner.
+    after(refreshPromoBanner)
 
     if (isPubliclyVisible(result.item)) {
       const blog = result.blogResult?.blog

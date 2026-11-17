@@ -7,6 +7,7 @@ import {
   getProductCategories,
 } from "@/db/queries/categories/list"
 import { getAllComparisons } from "@/constants/comparisons"
+import { CURATED_ALTERNATIVES } from "@/constants/alternatives"
 import { ROUTES } from "@/constants/routes"
 import {
   AI_SURFACE_CACHE_CONTROL,
@@ -82,6 +83,22 @@ ${formatPreviousWeeksSection(launchWeeks, launchWeek, AI_SURFACE_ARCHIVE_WEEKS)}
 ## Launch Platform Comparisons & Alternatives
 ${getAllComparisons()
   .map((c) => `- [${c.name}](${c.canonicalUrl}): ${c.heroDescription}`)
+  .join("\n")}
+
+## Launch Directory Research
+
+- [Launch directory database](${SITE_CONFIG.url}${ROUTES.DIRECTORIES}): Prices, review times and a weekly machine check of whether a real listing's link is dofollow or nofollow.
+- [Directory link check report](${SITE_CONFIG.url}${ROUTES.DIRECTORIES_LINK_CHECK_REPORT}): Which launch directories gave a real listing a dofollow link in the latest weekly check, by directory type, next to each directory's stated policy.
+
+## Developer Tool Alternatives (hand-checked)
+${Object.values(CURATED_ALTERNATIVES)
+  .map(
+    ({ toolSlug, toolName, alternatives, factsCheckedOn }) =>
+      `- [${toolName} alternatives](${SITE_CONFIG.url}${ROUTES.ALTERNATIVES(toolSlug)}): ${alternatives.length} alternatives (${alternatives
+        .slice(0, 4)
+        .map(({ name }) => name)
+        .join(", ")} and more) with license, pricing and when to switch, checked ${factsCheckedOn} (markdown twin at /api/md/alternatives/${toolSlug})`
+  )
   .join("\n")}
 
 ## Markdown-addressable routes

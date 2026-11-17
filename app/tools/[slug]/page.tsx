@@ -31,6 +31,10 @@ import { SITE_CONFIG } from "@/constants/site"
 import { LAUNCH_PROMO } from "@/constants/promo"
 import { ROUTES } from "@/constants/routes"
 import { ALTERNATIVES_MIN_SIBLINGS } from "@/constants/rankings"
+import { isAlternativesIndexable } from "@/utils/indexing"
+import { isToolOpenSource } from "@/utils/alternatives"
+import { buildDerivedToolFaqs } from "@/utils/tools/derived-faqs"
+import { getCuratedAlternatives } from "@/constants/alternatives"
 import { getSocialCardImage } from "@/lib/seo/social-image"
 import { formatGeoMetaTags } from "@/utils/country"
 import { AI_PROVIDERS } from "@/constants/ai-providers"
@@ -46,7 +50,12 @@ import {
   buildEntityGraph,
   safeJsonLd,
 } from "@/lib/seo/schema"
-import { firstText, formatTitle, formatMetaDescription } from "@/utils/seo"
+import {
+  firstText,
+  formatTitle,
+  formatToolTitle,
+  formatMetaDescription,
+} from "@/utils/seo"
 import { ProductLogo } from "@/components/shared/product-logo"
 import {
   getCategoryPath,
@@ -123,7 +132,7 @@ export const generateMetadata = async ({
 
   const title = tool.metaTitle
     ? formatTitle(tool.metaTitle)
-    : formatTitle(tool.name, tool.tagline)
+    : formatToolTitle(tool.name, tool.tagline)
   const description = formatMetaDescription(
     firstText(
       tool.metaDescription,
@@ -198,6 +207,10 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
       getToolFaqs(tool.id),
       getLiveBlogForItem("tool", tool.id),
     ])
+
+  const hasAlternativesPage =
+    isAlternativesIndexable(tool.slug) ||
+    relatedTools.length >= ALTERNATIVES_MIN_SIBLINGS
   const categoryPath = getCategoryPath("tool", tool.categorySlug)
   const outboundRel = getLinkRel(tool.tier, tool.badgeVerified)
 
@@ -256,11 +269,27 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
     { name: tool.name, url: toolUrl },
   ])
 
-  const toolFaqs = customFaqs.map((f) => ({
+  const makerFaqs = customFaqs.map((f) => ({
     id: f.id,
     question: f.question,
     answer: f.answer,
   }))
+  const toolFaqs = [
+    ...makerFaqs,
+    ...buildDerivedToolFaqs({
+      name: tool.name,
+      pricing: tool.pricing,
+      isOpenSource: isToolOpenSource(tool),
+      githubUrl: tool.githubUrl,
+      slug: tool.slug,
+      alternativeNames: (
+        getCuratedAlternatives(tool.slug)?.alternatives ?? relatedTools
+      ).map(({ name }) => name),
+      hasAlternativesPage,
+      builtWithNames: builtWithProducts.map(({ name }) => name),
+      existingQuestions: makerFaqs.map(({ question }) => question),
+    }),
+  ]
 
   const aiPrompt = AI_PROMPTS.tool(
     tool.name,
@@ -432,7 +461,7 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
                       <span className="text-slate-300">•</span>
                     </>
                   )}
-                  {relatedTools.length >= ALTERNATIVES_MIN_SIBLINGS && (
+                  {hasAlternativesPage && (
                     <Link
                       href={ROUTES.ALTERNATIVES(tool.slug)}
                       className="inline-flex items-center gap-1 text-xs font-medium text-slate-600 hover:text-slate-900 hover:underline"
@@ -949,7 +978,7 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
           categoryName={tool.category}
         />
 
-        {relatedTools.length >= ALTERNATIVES_MIN_SIBLINGS && (
+        {hasAlternativesPage && (
           <div className="border-b border-dashed border-border bg-slate-50/50 px-6 py-3 text-center md:px-8">
             <Link
               href={ROUTES.ALTERNATIVES(tool.slug)}

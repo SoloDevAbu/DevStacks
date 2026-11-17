@@ -241,6 +241,14 @@ export const getCachedToolCategories = unstable_cache(
   { revalidate: CACHE_REVALIDATE_SECONDS.CATEGORIES, tags: [CACHE_TAGS.TOOL_CATEGORIES] }
 )
 
+// Untagged on purpose: the root layout reads this on every page, so a tag here would let any category
+// change expire the whole site. The left sidebar's quick stacks can lag a day behind.
+export const getCachedNavToolCategories = unstable_cache(
+  async () => getToolCategories(),
+  ["nav-tool-categories"],
+  { revalidate: CACHE_REVALIDATE_SECONDS.CATEGORIES }
+)
+
 export const getCachedProductCategories = unstable_cache(
   async (query?: string) => getProductCategories(query),
   [CACHE_TAGS.PRODUCT_CATEGORIES],

@@ -1,6 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
-import { getToolComments } from "@/db/queries/comments/list"
+import { getToolCommentsBySlug } from "@/db/queries/comments/list"
 import { createToolComment } from "@/db/queries/comments/create"
 import { getToolBySlug } from "@/db/queries/tools/get"
 import { createCommentSchema } from "@/lib/validation/comment"
@@ -11,13 +11,7 @@ export const GET = async (
 ) => {
   try {
     const { slug } = await params
-    const tool = await getToolBySlug(slug)
-
-    if (!tool) {
-      return NextResponse.json({ error: "Tool not found" }, { status: 404 })
-    }
-
-    const commentList = await getToolComments(tool.id)
+    const commentList = await getToolCommentsBySlug(slug)
     return NextResponse.json({ data: commentList }, { status: 200 })
   } catch {
     return NextResponse.json(

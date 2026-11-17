@@ -36,6 +36,7 @@ export const ROUTES = {
   PRODUCT_LAUNCH_PLATFORM: "/product-launch-platform",
   GUIDE_SAAS_DIRECTORIES: "/guides/free-saas-directories-for-backlinks-2026",
   DIRECTORIES: "/directories",
+  DIRECTORIES_LINK_CHECK_REPORT: "/directories/link-check-report",
   DIRECTORY: (slug: string) => `/directories/${encodeURIComponent(slug)}`,
   GUIDE_LAUNCH_DEVTOOLS: "/guides/where-to-launch-developer-tools-2026",
   BLOG: "/blog",
