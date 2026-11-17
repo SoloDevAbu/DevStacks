@@ -2,6 +2,7 @@ import type { PlatformComparison } from "@/types/comparison"
 import { SITE_CONFIG } from "@/constants/site"
 import {
   COMPARISON_FACTS_CHECKED_ON,
+  COMPARISON_YEAR,
   LAUNCHNESTS_ANGLES,
   LAUNCHNESTS_FACTS,
   LAUNCHNESTS_PROFILE,
@@ -13,7 +14,7 @@ export const BETALIST_COMPARISON: PlatformComparison = {
   targetKeyword: "BetaList alternative",
   name: "BetaList Alternative",
   comparedPlatformName: "BetaList",
-  metaTitle: "BetaList Alternative: LaunchNests vs BetaList",
+  metaTitle: `BetaList Alternative ${COMPARISON_YEAR}: Launch for Free`,
   metaDescription:
     "Every BetaList submission is paid, with a refund if you aren't selected. How its curated features, links and audience compare with LaunchNests, using BetaList's own pages.",
   keywords: [

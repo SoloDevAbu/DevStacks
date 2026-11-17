@@ -28,6 +28,12 @@ export const LAUNCH_RESOURCE_LINKS: readonly ResourceLink[] = [
       "Prices, review times and a weekly machine check of each directory's link.",
   },
   {
+    href: ROUTES.DIRECTORIES_LINK_CHECK_REPORT,
+    title: "Directory link check report",
+    description:
+      "Which launch directories gave a real listing a dofollow link in the latest check.",
+  },
+  {
     href: ROUTES.PRODUCTHUNT_ALTERNATIVES,
     title: "Product Hunt alternatives",
     description:

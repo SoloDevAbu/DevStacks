@@ -1,10 +1,10 @@
 import type { Metadata } from "next"
 import { CheckMethodology } from "@/components/directories/check-methodology"
 import { DirectoryTable } from "@/components/directories/directory-table"
+import { DirectoryStatGrid } from "@/components/directories/stat-grid"
 import { PageBreadcrumb } from "@/components/shared/page-breadcrumb"
 import { RelatedResources } from "@/components/shared/related-resources"
 import {
-  DIRECTORY_CHECK_OUTCOME,
   DIRECTORY_FACTS_CHECKED_ON,
   DIRECTORY_KIND,
   DIRECTORY_KIND_PLURAL_LABELS,
@@ -12,15 +12,15 @@ import {
 import { LAUNCH_DIRECTORIES } from "@/constants/launch-directories"
 import { ROUTES } from "@/constants/routes"
 import { SITE_CONFIG } from "@/constants/site"
-import { getLatestDirectoryChecks } from "@/db/queries/directories"
+import { loadLatestDirectoryChecks } from "@/lib/directories/latest-checks"
 import {
   breadcrumbSchema,
   buildEntityGraph,
   collectionPageSchema,
   safeJsonLd,
 } from "@/lib/seo/schema"
-import type { DirectoryCheck } from "@/types/directory"
 import { formatLongDate } from "@/utils/date"
+import { summarizeDirectoryChecks } from "@/utils/directories/summary"
 import {
   comparisonCategoryPill,
   comparisonH1,
@@ -39,10 +39,16 @@ const PAGE_URL = `${SITE_CONFIG.url}${PAGE_PATH}`
 const PAGE_TITLE = "Launch Directories with Verified Link Checks"
 const PAGE_DESCRIPTION = `${LAUNCH_DIRECTORIES.length} launch platforms and software directories with prices, review times and a weekly machine check of whether a real listing's link is dofollow or nofollow.`
 
+// The H1 keeps the page's own name; the result title targets how founders search for the list.
+const SEARCH_TITLE = `Free Startup & SaaS Launch Directories (${new Date().getFullYear()})`
+
 export const metadata: Metadata = {
-  title: `${PAGE_TITLE} (${new Date().getFullYear()})`,
+  title: SEARCH_TITLE,
   description: PAGE_DESCRIPTION,
   keywords: [
+    "startup launch directories",
+    "free SaaS directories",
+    "free startup directories",
     "launch directories",
     "dofollow directories",
     "startup directories list",
@@ -52,7 +58,7 @@ export const metadata: Metadata = {
   ],
   alternates: { canonical: PAGE_URL },
   openGraph: {
-    title: `${PAGE_TITLE} | ${SITE_CONFIG.name}`,
+    title: `${SEARCH_TITLE} | ${SITE_CONFIG.name}`,
     description: PAGE_DESCRIPTION,
     url: PAGE_URL,
     type: "website",
@@ -62,13 +68,13 @@ export const metadata: Metadata = {
         url: SITE_CONFIG.ogImageUrl,
         width: 1200,
         height: 630,
-        alt: `${PAGE_TITLE} | ${SITE_CONFIG.name}`,
+        alt: `${SEARCH_TITLE} | ${SITE_CONFIG.name}`,
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: PAGE_TITLE,
+    title: SEARCH_TITLE,
     description: PAGE_DESCRIPTION,
     images: [SITE_CONFIG.ogImageUrl],
   },
@@ -80,35 +86,9 @@ const KIND_ORDER = [
   DIRECTORY_KIND.AI_DIRECTORY,
 ] as const
 
-// The table may not exist yet while a deploy prerenders this page, so a failed read
-// renders "not checked yet" instead of failing the build.
-const loadLatestChecks = () =>
-  getLatestDirectoryChecks().catch(() => new Map<string, DirectoryCheck>())
-
-const summarizeChecks = (checks: ReadonlyMap<string, DirectoryCheck>) => {
-  const results = [...checks.values()]
-  const count = (outcome: DirectoryCheck["outcome"]) =>
-    results.filter((check) => check.outcome === outcome).length
-  const lastCheckedAt = results.reduce<Date | null>(
-    (latest, { checkedAt }) =>
-      !latest || checkedAt > latest ? checkedAt : latest,
-    null
-  )
-
-  return {
-    dofollow: count(DIRECTORY_CHECK_OUTCOME.DOFOLLOW),
-    nofollow: count(DIRECTORY_CHECK_OUTCOME.NOFOLLOW),
-    unmeasured:
-      LAUNCH_DIRECTORIES.length -
-      count(DIRECTORY_CHECK_OUTCOME.DOFOLLOW) -
-      count(DIRECTORY_CHECK_OUTCOME.NOFOLLOW),
-    lastCheckedAt,
-  }
-}
-
 const DirectoriesPage = async () => {
-  const checks = await loadLatestChecks()
-  const summary = summarizeChecks(checks)
+  const checks = await loadLatestDirectoryChecks()
+  const summary = summarizeDirectoryChecks(LAUNCH_DIRECTORIES, checks)
   const stats = [
     { label: "Directories", value: LAUNCH_DIRECTORIES.length },
     { label: "Dofollow on a real listing", value: summary.dofollow },
@@ -182,19 +162,7 @@ const DirectoriesPage = async () => {
           </div>
         </header>
 
-        <dl className="grid grid-cols-2 gap-3 md:grid-cols-4">
-          {stats.map(({ label, value }) => (
-            <div
-              key={label}
-              className="rounded-xl border border-dashed border-border bg-white p-4 shadow-2xs"
-            >
-              <dt className="text-xs text-slate-500">{label}</dt>
-              <dd className="mt-1 text-2xl font-bold text-slate-900">
-                {value}
-              </dd>
-            </div>
-          ))}
-        </dl>
+        <DirectoryStatGrid stats={stats} />
 
         {KIND_ORDER.map((kind) => {
           const directories = LAUNCH_DIRECTORIES.filter(

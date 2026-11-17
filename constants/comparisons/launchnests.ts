@@ -6,6 +6,8 @@ import { BADGE_CHECK } from "@/constants/badges"
 
 export const COMPARISON_FACTS_CHECKED_ON = "2026-11-09"
 
+export const COMPARISON_YEAR = COMPARISON_FACTS_CHECKED_ON.slice(0, 4)
+
 const PREMIUM_PRICE = PLANS[TIER.PREMIUM].price
 const PREMIUM_PLUS_PRICE = PLANS[TIER.PREMIUM_PLUS].price
 

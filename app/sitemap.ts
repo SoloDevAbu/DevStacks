@@ -160,6 +160,12 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
       changeFrequency: "weekly",
       priority: 0.85,
     },
+    {
+      url: normalizeSitemapUrl(ROUTES.DIRECTORIES_LINK_CHECK_REPORT),
+      lastModified: new Date(DIRECTORY_FACTS_CHECKED_ON),
+      changeFrequency: "weekly",
+      priority: 0.8,
+    },
     ...LAUNCH_DIRECTORIES.map((directory) => ({
       url: normalizeSitemapUrl(ROUTES.DIRECTORY(directory.slug)),
       lastModified: new Date(DIRECTORY_FACTS_CHECKED_ON),

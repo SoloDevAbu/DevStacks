@@ -2,6 +2,7 @@ import type { PlatformComparison } from "@/types/comparison"
 import { SITE_CONFIG } from "@/constants/site"
 import {
   COMPARISON_FACTS_CHECKED_ON,
+  COMPARISON_YEAR,
   LAUNCHNESTS_ANGLES,
   LAUNCHNESTS_FACTS,
   LAUNCHNESTS_PROFILE,
@@ -14,7 +15,7 @@ export const UNEED_COMPARISON: PlatformComparison = {
   targetKeyword: "Uneed alternative",
   name: "Uneed Alternative",
   comparedPlatformName: "Uneed",
-  metaTitle: "Uneed Alternative: LaunchNests vs Uneed",
+  metaTitle: `Uneed Alternative ${COMPARISON_YEAR}: Pricing & Link Rules`,
   metaDescription:
     "Uneed's free line launches you at least 50 days out and needs an upvote score of 10 to stay published. How that compares with LaunchNests, with Uneed's own pages as sources.",
   keywords: [

@@ -2,6 +2,7 @@ import type { PlatformComparison } from "@/types/comparison"
 import { SITE_CONFIG } from "@/constants/site"
 import {
   COMPARISON_FACTS_CHECKED_ON,
+  COMPARISON_YEAR,
   LAUNCHNESTS_ANGLES,
   LAUNCHNESTS_FACTS,
   LAUNCHNESTS_PROFILE,
@@ -15,7 +16,7 @@ export const PRODUCT_HUNT_COMPARISON: PlatformComparison = {
   targetKeyword: "Product Hunt alternative",
   name: "Product Hunt Alternative",
   comparedPlatformName: "Product Hunt",
-  metaTitle: "Product Hunt Alternative: LaunchNests Compared",
+  metaTitle: `Product Hunt Alternative ${COMPARISON_YEAR}: Free & Weekly`,
   metaDescription:
     "Product Hunt is free, but its team picks which launches get featured and the leaderboard resets daily. How that compares with a weekly launch on LaunchNests, with sources.",
   keywords: [
