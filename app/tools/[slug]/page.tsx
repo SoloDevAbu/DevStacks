@@ -32,6 +32,9 @@ import { LAUNCH_PROMO } from "@/constants/promo"
 import { ROUTES } from "@/constants/routes"
 import { ALTERNATIVES_MIN_SIBLINGS } from "@/constants/rankings"
 import { isAlternativesIndexable } from "@/utils/indexing"
+import { isToolOpenSource } from "@/utils/alternatives"
+import { buildDerivedToolFaqs } from "@/utils/tools/derived-faqs"
+import { getCuratedAlternatives } from "@/constants/alternatives"
 import { getSocialCardImage } from "@/lib/seo/social-image"
 import { formatGeoMetaTags } from "@/utils/country"
 import { AI_PROVIDERS } from "@/constants/ai-providers"
@@ -47,7 +50,12 @@ import {
   buildEntityGraph,
   safeJsonLd,
 } from "@/lib/seo/schema"
-import { firstText, formatTitle, formatMetaDescription } from "@/utils/seo"
+import {
+  firstText,
+  formatTitle,
+  formatToolTitle,
+  formatMetaDescription,
+} from "@/utils/seo"
 import { ProductLogo } from "@/components/shared/product-logo"
 import {
   getCategoryPath,
@@ -124,7 +132,7 @@ export const generateMetadata = async ({
 
   const title = tool.metaTitle
     ? formatTitle(tool.metaTitle)
-    : formatTitle(tool.name, tool.tagline)
+    : formatToolTitle(tool.name, tool.tagline)
   const description = formatMetaDescription(
     firstText(
       tool.metaDescription,
@@ -261,11 +269,27 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
     { name: tool.name, url: toolUrl },
   ])
 
-  const toolFaqs = customFaqs.map((f) => ({
+  const makerFaqs = customFaqs.map((f) => ({
     id: f.id,
     question: f.question,
     answer: f.answer,
   }))
+  const toolFaqs = [
+    ...makerFaqs,
+    ...buildDerivedToolFaqs({
+      name: tool.name,
+      pricing: tool.pricing,
+      isOpenSource: isToolOpenSource(tool),
+      githubUrl: tool.githubUrl,
+      slug: tool.slug,
+      alternativeNames: (
+        getCuratedAlternatives(tool.slug)?.alternatives ?? relatedTools
+      ).map(({ name }) => name),
+      hasAlternativesPage,
+      builtWithNames: builtWithProducts.map(({ name }) => name),
+      existingQuestions: makerFaqs.map(({ question }) => question),
+    }),
+  ]
 
   const aiPrompt = AI_PROMPTS.tool(
     tool.name,

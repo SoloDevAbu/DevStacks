@@ -20,8 +20,14 @@ export const SERP_TITLE_MAX_CHARS = 60
 
 const TITLE_MAX_CHARS = SERP_TITLE_MAX_CHARS - ` | ${SITE_CONFIG.name}`.length
 
-const truncateTitle = (text: string, maxChars: number): string =>
-  text.length <= maxChars ? text : `${text.slice(0, maxChars - 1).trim()}…`
+// Cuts at the last whole word, so a result never shows a half word or an ellipsis.
+const truncateTitle = (text: string, maxChars: number): string => {
+  if (text.length <= maxChars) return text
+  const cut = text.slice(0, maxChars + 1)
+  const lastSpace = cut.lastIndexOf(" ")
+  const words = lastSpace > 0 ? cut.slice(0, lastSpace) : text.slice(0, maxChars)
+  return words.replace(/[\s,:;&|–—-]+$/, "")
+}
 
 export const formatTitle = (
   name: string,
@@ -36,7 +42,17 @@ export const formatTitle = (
   const availableTaglineLength = maxChars - sanitizedName.length - 2
   if (availableTaglineLength <= 10)
     return truncateTitle(sanitizedName, maxChars)
-  return `${sanitizedName}: ${cleanTagline.slice(0, availableTaglineLength).trim()}…`
+  return `${sanitizedName}: ${truncateTitle(cleanTagline, availableTaglineLength)}`
+}
+
+const TOOL_TITLE_SUFFIX = "Pricing, License & Alternatives"
+
+// Answers the questions people search a tool for ("is X free", "X alternatives"), falling back to
+// the tagline when the name is too long for it.
+export const formatToolTitle = (name: string, tagline?: string | null) => {
+  const sanitizedName = cleanTitle(name)
+  const title = `${sanitizedName} ${TOOL_TITLE_SUFFIX}`
+  return title.length <= TITLE_MAX_CHARS ? title : formatTitle(name, tagline)
 }
 
 export const firstText = (
