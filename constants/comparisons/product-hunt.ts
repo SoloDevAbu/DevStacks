@@ -12,6 +12,7 @@ const PH_HELP = "https://help.producthunt.com/en/articles"
 
 export const PRODUCT_HUNT_COMPARISON: PlatformComparison = {
   slug: "producthunt",
+  directorySlug: "product-hunt",
   routePath: "/producthunt-alternative",
   targetKeyword: "Product Hunt alternative",
   name: "Product Hunt Alternative",

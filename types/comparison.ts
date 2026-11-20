@@ -61,6 +61,8 @@ export interface ComparisonFaqItem {
 
 export interface PlatformComparison {
   slug: string
+  // Slug of the matching /directories profile when it differs from `slug`.
+  directorySlug?: string
   routePath: string
   targetKeyword: string
   name: string

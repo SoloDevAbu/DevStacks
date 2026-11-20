@@ -224,9 +224,11 @@ export const getActiveMakersForSitemap = async (limit = 5000) => {
       bio: users.bio,
       updatedAt: users.updatedAt,
       createdAt: users.createdAt,
+      // Counts only launches that are already live, the same way the profile page does, so a maker
+      // whose only listing is scheduled for a future week is not listed while the page is noindex.
       listingsCount: sql<number>`(
-        (SELECT count(*) FROM ${tools} WHERE ${tools.submitterId} = ${outerUserId} AND ${tools.status} = 'approved' AND ${tools.isDeleted} = false)
-        + (SELECT count(*) FROM ${products} WHERE ${products.submitterId} = ${outerUserId} AND ${products.status} = 'approved' AND ${products.isDeleted} = false)
+        (SELECT count(*) FROM ${tools} WHERE ${tools.submitterId} = ${outerUserId} AND ${tools.status} = 'approved' AND ${tools.isDeleted} = false AND ${launchedByNow(tools)})
+        + (SELECT count(*) FROM ${products} WHERE ${products.submitterId} = ${outerUserId} AND ${products.status} = 'approved' AND ${products.isDeleted} = false AND ${launchedByNow(products)})
       )::int`,
     })
     .from(users)

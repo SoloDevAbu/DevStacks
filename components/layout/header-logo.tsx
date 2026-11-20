@@ -25,7 +25,7 @@ export const HeaderLogo = ({
     >
       <div className="relative flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-lg shadow-xs transition-transform group-hover:scale-105">
         <Image
-          src="/favicon.png"
+          src="/logo.png"
           alt={`${SITE_CONFIG.name} logo`}
           width={32}
           height={32}

@@ -1,5 +1,5 @@
 import { revalidatePath, revalidateTag } from "next/cache"
-import { CACHE_TAGS, CATALOG_CACHE_TAGS } from "@/constants/cache"
+import { CATALOG_CACHE_TAGS } from "@/constants/cache"
 import { ROUTES } from "@/constants/routes"
 
 interface CatalogChange {
@@ -61,23 +61,14 @@ interface VoteChange {
   toolSlug?: string
 }
 
-// "max" keeps serving the cached page while it regenerates, so no visitor or crawler waits on a
-// render during a burst of votes. A cache failure is logged rather than thrown because the vote
-// is already committed by the time this runs.
+// Only the voted item's own page is refreshed. Ranked lists pick up vote counts on the
+// CACHE_REVALIDATE_SECONDS.RANKINGS timer, so a burst of votes no longer re-runs the ranking
+// queries once per vote. A cache failure is logged rather than thrown because the vote is already
+// committed by the time this runs.
 export const revalidateVote = ({ productSlug, toolSlug }: VoteChange) => {
   try {
-    revalidateTag(CACHE_TAGS.WEEKLY_LAUNCHES, "max")
-
-    if (productSlug) {
-      revalidateTag(CACHE_TAGS.PRODUCTS_LIST, "max")
-      revalidatePath(ROUTES.PRODUCT(productSlug))
-    }
-
-    if (toolSlug) {
-      revalidateTag(CACHE_TAGS.TOOLS_LIST, "max")
-      revalidateTag(CACHE_TAGS.POPULAR_BUILDING_BLOCKS, "max")
-      revalidatePath(ROUTES.TOOL(toolSlug))
-    }
+    if (productSlug) revalidatePath(ROUTES.PRODUCT(productSlug))
+    if (toolSlug) revalidatePath(ROUTES.TOOL(toolSlug))
   } catch (error) {
     console.error("[Cache] Vote revalidation failed:", error)
   }

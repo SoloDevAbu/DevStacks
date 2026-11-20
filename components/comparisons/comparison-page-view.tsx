@@ -81,7 +81,10 @@ import {
   comparisonScenarioColumn,
   comparisonStepNumber,
   comparisonCtaCard,
+  comparisonInlineLink,
 } from "@/utils/styles"
+import { getLaunchDirectory } from "@/constants/launch-directories"
+import { cn } from "@/lib/utils"
 
 interface ComparisonPageViewProps {
   comparison: PlatformComparison
@@ -99,6 +102,9 @@ export const ComparisonPageView = ({ comparison }: ComparisonPageViewProps) => {
   ])
 
   const competitorProfile = comparison.comparedPlatformProfile
+  const competitorDirectory = getLaunchDirectory(
+    comparison.directorySlug ?? comparison.slug
+  )
 
   const webPageJsonLd = {
     "@type": "WebPage",
@@ -402,7 +408,7 @@ export const ComparisonPageView = ({ comparison }: ComparisonPageViewProps) => {
                       href={competitorProfile.websiteUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 font-mono text-xs font-semibold text-slate-500 transition-colors hover:text-slate-900"
+                      className={comparisonInlineLink}
                     >
                       Visit
                       <ExternalLink className="size-3" />
@@ -412,6 +418,16 @@ export const ComparisonPageView = ({ comparison }: ComparisonPageViewProps) => {
                   <p className="mt-4 text-xs leading-relaxed text-slate-600 sm:text-sm">
                     {competitorProfile.primaryAudience}
                   </p>
+
+                  {competitorDirectory && (
+                    <Link
+                      href={ROUTES.DIRECTORY(competitorDirectory.slug)}
+                      className={cn(comparisonInlineLink, "mt-3")}
+                    >
+                      {competitorDirectory.name} listing requirements and stats
+                      <ChevronRight className="size-3" />
+                    </Link>
+                  )}
 
                   <div className="mt-6 flex flex-col gap-2.5">
                     <span className="font-mono text-xs font-bold tracking-wider text-slate-900 uppercase">

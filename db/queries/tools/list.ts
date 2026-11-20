@@ -164,7 +164,7 @@ export const getToolsStats = async () => {
 export const getCachedTools = unstable_cache(
   async (filters: ToolListFilters) => getTools(filters),
   [CACHE_TAGS.TOOLS_LIST],
-  { revalidate: CACHE_REVALIDATE_SECONDS.LISTS, tags: [CACHE_TAGS.TOOLS_LIST] }
+  { revalidate: CACHE_REVALIDATE_SECONDS.RANKINGS, tags: [CACHE_TAGS.TOOLS_LIST] }
 )
 
 export const getCachedToolsStats = unstable_cache(

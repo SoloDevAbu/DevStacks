@@ -1,6 +1,6 @@
 import { db } from "@/db"
 import { tools, products, categories, productTools } from "@/db/schema"
-import { and, eq, inArray, type SQL } from "drizzle-orm"
+import { and, desc, eq, inArray, type SQL } from "drizzle-orm"
 import { compareByCommunityVotes } from "@/lib/rankings/compare"
 import type { RankedItem, RankedProduct } from "@/lib/rankings/types"
 import type { ProductBuiltWith } from "@/types/entities"
@@ -50,39 +50,49 @@ const rankedProductColumns = {
 }
 
 // Tools and products are ranked together by their community votes (upvotes and likes), with
-// comment count as the tie-breaker.
+// comment count as the tie-breaker. With a limit, each table is sorted and cut in SQL first: the
+// top N of the merged list always comes from the top N of each side, so at most 2N rows are read.
 export const selectRankedLaunches = async ({
   toolFilter,
   productFilter,
+  limit,
 }: {
   toolFilter?: SQL
   productFilter?: SQL
+  limit?: number
 }): Promise<RankedItem[]> => {
+  const toolQuery = db
+    .select(rankedToolColumns)
+    .from(tools)
+    .leftJoin(categories, eq(tools.categoryId, categories.id))
+    .where(
+      and(
+        eq(tools.status, "approved"),
+        launchedByNow(tools),
+        eq(tools.isDeleted, false),
+        toolFilter
+      )
+    )
+    .orderBy(desc(tools.upvotesCount), desc(tools.commentsCount))
+    .$dynamic()
+  const productQuery = db
+    .select(rankedProductColumns)
+    .from(products)
+    .leftJoin(categories, eq(products.categoryId, categories.id))
+    .where(
+      and(
+        eq(products.status, "approved"),
+        launchedByNow(products),
+        eq(products.isDeleted, false),
+        productFilter
+      )
+    )
+    .orderBy(desc(products.likesCount), desc(products.commentsCount))
+    .$dynamic()
+
   const [toolRows, productRows] = await Promise.all([
-    db
-      .select(rankedToolColumns)
-      .from(tools)
-      .leftJoin(categories, eq(tools.categoryId, categories.id))
-      .where(
-        and(
-          eq(tools.status, "approved"),
-          launchedByNow(tools),
-          eq(tools.isDeleted, false),
-          toolFilter
-        )
-      ),
-    db
-      .select(rankedProductColumns)
-      .from(products)
-      .leftJoin(categories, eq(products.categoryId, categories.id))
-      .where(
-        and(
-          eq(products.status, "approved"),
-          launchedByNow(products),
-          eq(products.isDeleted, false),
-          productFilter
-        )
-      ),
+    limit ? toolQuery.limit(limit) : toolQuery,
+    limit ? productQuery.limit(limit) : productQuery,
   ])
 
   const combined: RankedItem[] = [
@@ -93,7 +103,8 @@ export const selectRankedLaunches = async ({
     })),
   ]
 
-  return combined.sort(compareByCommunityVotes)
+  const ranked = combined.sort(compareByCommunityVotes)
+  return limit ? ranked.slice(0, limit) : ranked
 }
 
 export const attachBuiltWithTools = async (
@@ -138,10 +149,10 @@ export const attachBuiltWithTools = async (
 }
 
 export const selectRankedLaunchPage = async (
-  filters: Parameters<typeof selectRankedLaunches>[0],
+  filters: Omit<Parameters<typeof selectRankedLaunches>[0], "limit">,
   limit: number
 ): Promise<RankedItem[]> => {
-  const pageItems = (await selectRankedLaunches(filters)).slice(0, limit)
+  const pageItems = await selectRankedLaunches({ ...filters, limit })
   await attachBuiltWithTools(pageItems)
   return pageItems
 }

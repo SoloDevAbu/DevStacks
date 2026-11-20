@@ -23,7 +23,8 @@
     "db:restore": "bun scripts/restore-db.ts",
     "seo:cf": "tsx scripts/seo/cf-report.ts",
     "seo:gsc": "tsx scripts/seo/gsc-report.ts",
-    "seo:report": "npm run seo:cf && npm run seo:gsc"
+    "seo:ga4": "tsx scripts/seo/ga4-report.ts",
+    "seo:report": "npm run seo:cf && npm run seo:gsc && npm run seo:ga4"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",
