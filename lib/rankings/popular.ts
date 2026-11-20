@@ -1,14 +1,20 @@
 import { db } from "@/db"
 import { tools, categories } from "@/db/schema"
-import { and, eq } from "drizzle-orm"
-import {
-  calculatePopularScore,
-  compareByPopularScore,
-} from "@/lib/rankings/compare"
+import { and, desc, eq, sql } from "drizzle-orm"
+import { calculatePopularScore } from "@/lib/rankings/compare"
 import { unstable_cache } from "next/cache"
 import { CACHE_TAGS, CACHE_REVALIDATE_SECONDS } from "@/constants/cache"
+import { POPULAR_BUILDING_BLOCKS_WEIGHTS } from "@/constants/rankings"
 import type { RankedTool, RankingOptions } from "./types"
 import { launchedByNow } from "@/lib/catalog/visibility"
+
+// The same formula and rounding as calculatePopularScore, evaluated in Postgres so only the
+// requested page of tools is read instead of every approved tool.
+const popularScoreSql = sql`round((
+  ${tools.buildsCount} * ${POPULAR_BUILDING_BLOCKS_WEIGHTS.buildsWeight}
+  + ${tools.upvotesCount} * ${POPULAR_BUILDING_BLOCKS_WEIGHTS.upvotesWeight}
+  + ${tools.viewsCount} * ${POPULAR_BUILDING_BLOCKS_WEIGHTS.viewsWeight}
+)::numeric, 1)`
 
 export const getPopularBuildingBlocks = async ({
   limit = 10,
@@ -72,20 +78,19 @@ export const getPopularBuildingBlocks = async ({
         eq(tools.isDeleted, false)
       )
     )
+    .orderBy(desc(popularScoreSql), desc(tools.createdAt))
+    .limit(safeLimit)
+    .offset(offset)
 
-  const scored: RankedTool[] = rows.map((t) => ({
+  return rows.map((t) => ({
     ...t,
     itemKind: "tool" as const,
     score: calculatePopularScore(t.buildsCount, t.upvotesCount, t.viewsCount),
   }))
-
-  scored.sort(compareByPopularScore)
-
-  return scored.slice(offset, offset + safeLimit)
 }
 
 export const getCachedPopularBuildingBlocks = unstable_cache(
   async (limit: number = 10) => getPopularBuildingBlocks({ limit }),
   [CACHE_TAGS.POPULAR_BUILDING_BLOCKS],
-  { revalidate: CACHE_REVALIDATE_SECONDS.LISTS, tags: [CACHE_TAGS.POPULAR_BUILDING_BLOCKS] }
+  { revalidate: CACHE_REVALIDATE_SECONDS.RANKINGS, tags: [CACHE_TAGS.POPULAR_BUILDING_BLOCKS] }
 )

@@ -1,6 +1,6 @@
 import { type NextRequest, NextResponse, after } from "next/server"
 import { revalidatePath, revalidateTag } from "next/cache"
-import { CATALOG_CACHE_TAGS } from "@/constants/cache"
+import { CATALOG_CACHE_TAGS, ROLLOVER_HARD_EXPIRE_TAGS } from "@/constants/cache"
 import { ROUTES } from "@/constants/routes"
 import { HOMEPAGE_LIMITS } from "@/constants/rankings"
 import { getWeeklyLaunches } from "@/lib/launches/weekly-launches"
@@ -34,7 +34,9 @@ export const POST = async (req: NextRequest) => {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
 
-  CATALOG_CACHE_TAGS.forEach((tag) => revalidateTag(tag, { expire: 0 }))
+  CATALOG_CACHE_TAGS.forEach((tag) =>
+    revalidateTag(tag, ROLLOVER_HARD_EXPIRE_TAGS.includes(tag) ? { expire: 0 } : "max")
+  )
   revalidateHubs()
   await refreshPromoBanner()
   // A launch going live adds a listing to its maker's profile, which no mutation signals either.

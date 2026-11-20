@@ -31,6 +31,12 @@ const nextConfig: NextConfig = {
       destination: "/tools",
       permanent: true,
     },
+    // HOL Guard was relisted as a tool; the old product URL still gets most of its traffic.
+    {
+      source: "/products/hol-guard",
+      destination: "/tools/hol-guard-42ee1f",
+      permanent: true,
+    },
     {
       source: "/developer-tools-directory",
       destination: "/tools",

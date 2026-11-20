@@ -79,7 +79,7 @@ export const getCachedWeeklyLaunches = unstable_cache(
     getWeeklyLaunches({ year, week, limit }),
   [CACHE_TAGS.WEEKLY_LAUNCHES],
   {
-    revalidate: CACHE_REVALIDATE_SECONDS.LISTS,
+    revalidate: CACHE_REVALIDATE_SECONDS.RANKINGS,
     tags: [CACHE_TAGS.WEEKLY_LAUNCHES],
   }
 )

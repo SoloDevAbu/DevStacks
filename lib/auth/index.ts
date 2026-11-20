@@ -3,6 +3,7 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle"
 import { db } from "@/db"
 import * as schema from "@/db/schema"
 import { SITE_CONFIG } from "@/constants/site"
+import { AUTH_SESSION_COOKIE_CACHE_SECONDS } from "@/constants/cache"
 
 import { randomBytes } from "crypto"
 import { eq } from "drizzle-orm"
@@ -23,6 +24,11 @@ export const auth = betterAuth({
       verifications: schema.verifications,
     },
   }),
+  // useSession() calls /api/auth/get-session on every page view. A signed cookie copy of the
+  // session answers those calls without a database read for AUTH_SESSION_COOKIE_CACHE_SECONDS.
+  session: {
+    cookieCache: { enabled: true, maxAge: AUTH_SESSION_COOKIE_CACHE_SECONDS },
+  },
   secret: process.env.BETTER_AUTH_SECRET,
   baseURL: process.env.BETTER_AUTH_URL || SITE_CONFIG.url,
   socialProviders: {

@@ -212,7 +212,7 @@ export const getProductsStats = async () => {
 export const getCachedProducts = unstable_cache(
   async (filters: ProductListFilters) => getProducts(filters),
   [CACHE_TAGS.PRODUCTS_LIST],
-  { revalidate: CACHE_REVALIDATE_SECONDS.LISTS, tags: [CACHE_TAGS.PRODUCTS_LIST] }
+  { revalidate: CACHE_REVALIDATE_SECONDS.RANKINGS, tags: [CACHE_TAGS.PRODUCTS_LIST] }
 )
 
 export const getCachedProductsStats = unstable_cache(

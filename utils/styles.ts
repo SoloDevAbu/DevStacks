@@ -935,6 +935,9 @@ export const comparisonScenarioColumn =
 export const comparisonStepNumber =
   "flex size-7 shrink-0 items-center justify-center rounded-full bg-slate-900 font-mono text-xs font-bold text-white shadow-2xs"
 
+export const comparisonInlineLink =
+  "inline-flex items-center gap-1 font-mono text-xs font-semibold text-slate-500 transition-colors hover:text-slate-900"
+
 export const comparisonCtaCard =
   "relative overflow-hidden rounded-2xl border border-dashed border-border bg-linear-to-b from-slate-50/80 via-white to-indigo-50/20 p-8 sm:p-12 text-center flex flex-col items-center gap-5 shadow-xs"
 
