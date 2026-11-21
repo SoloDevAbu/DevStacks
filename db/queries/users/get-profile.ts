@@ -259,21 +259,19 @@ export interface MakerDirectoryItem {
   productsCount: number
 }
 
+// The makers directory lists only people with at least one live launch: a maker with nothing
+// live yet would be a card leading to an empty, noindex profile.
+const hasLiveListing = or(
+  sql`EXISTS (SELECT 1 FROM ${tools} WHERE ${tools.submitterId} = ${users.id} AND ${tools.status} = 'approved' AND ${tools.isDeleted} = false AND ${launchedByNow(tools)})`,
+  sql`EXISTS (SELECT 1 FROM ${products} WHERE ${products.submitterId} = ${users.id} AND ${products.status} = 'approved' AND ${products.isDeleted} = false AND ${launchedByNow(products)})`
+)
+
 export const getMakersCount = async (): Promise<number> => {
   try {
     const [result] = await db
       .select({ count: sql<number>`count(*)::int` })
       .from(users)
-      .where(
-        and(
-          isNotNull(users.username),
-          or(
-            sql`EXISTS (SELECT 1 FROM ${tools} WHERE ${tools.submitterId} = ${users.id} AND ${tools.status} = 'approved' AND ${tools.isDeleted} = false)`,
-            sql`EXISTS (SELECT 1 FROM ${products} WHERE ${products.submitterId} = ${users.id} AND ${products.status} = 'approved' AND ${products.isDeleted} = false)`,
-            and(isNotNull(users.bio), sql`length(trim(${users.bio})) > 50`)
-          )
-        )
-      )
+      .where(and(isNotNull(users.username), hasLiveListing))
     return Number(result?.count ?? 0)
   } catch {
     return 0
@@ -309,11 +307,7 @@ export const getMakersDirectory = async (
     .where(
       and(
         isNotNull(users.username),
-        or(
-          sql`EXISTS (SELECT 1 FROM ${tools} WHERE ${tools.submitterId} = ${users.id} AND ${tools.status} = 'approved' AND ${tools.isDeleted} = false)`,
-          sql`EXISTS (SELECT 1 FROM ${products} WHERE ${products.submitterId} = ${users.id} AND ${products.status} = 'approved' AND ${products.isDeleted} = false)`,
-          and(isNotNull(users.bio), sql`length(trim(${users.bio})) > 50`)
-        )
+        hasLiveListing
       )
     )
     .orderBy(desc(users.createdAt))
