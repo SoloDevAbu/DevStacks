@@ -5,10 +5,8 @@ import { BookOpen } from "lucide-react"
 import { BlogRowItem } from "@/components/blog/blog-row-item"
 import type { BlogListItem } from "@/types/blog"
 import { useInfiniteBlogs } from "@/hooks/blogs/use-blogs"
-import {
-  LoadMoreButton,
-  buildPageHref,
-} from "@/components/shared/load-more-button"
+import { LoadMoreButton } from "@/components/shared/load-more-button"
+import { buildPageHref } from "@/utils/pagination"
 import { useScrollRestoration } from "@/hooks/shared/use-scroll-restoration"
 import { directoryTelemetryBar } from "@/utils/styles"
 import { ROUTES } from "@/constants/routes"
