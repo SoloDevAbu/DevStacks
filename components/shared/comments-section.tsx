@@ -9,6 +9,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { Spinner } from "@/components/ui/spinner"
 import { GoogleIcon } from "@/components/shared/google-icon"
 import { useSession } from "@/lib/auth/client"
+import { useHasMounted } from "@/hooks/shared/use-has-mounted"
 import { useAuthModal } from "@/components/auth/auth-modal-provider"
 import {
   useItemComments,
@@ -48,7 +49,9 @@ export const CommentsSection = ({
   slug,
   entityName,
 }: CommentsSectionProps) => {
-  const { data: session } = useSession()
+  const { data: cachedSession } = useSession()
+  // The server renders signed out; a cached session applies only after hydration to avoid a mismatch.
+  const session = useHasMounted() ? cachedSession : null
   const { openAuthModal } = useAuthModal()
   const [commentText, setCommentText] = useState("")
   const [visibleCount, setVisibleCount] = useState(INITIAL_COMMENTS_LIMIT)
