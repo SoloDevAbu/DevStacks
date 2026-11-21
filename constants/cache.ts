@@ -7,23 +7,15 @@ export const CACHE_TAGS = {
   TOOL_CATEGORIES: "tool-categories",
   WEEKLY_LAUNCHES: "weekly-launches",
   POPULAR_BUILDING_BLOCKS: "popular-building-blocks",
-  LAUNCH_PROMO: "launch-promo",
-  PROMO_BANNER: "promo-banner",
   ADS: "ads",
 } as const
 
-// Next.js copies the tags of every unstable_cache read onto the page that rendered it, and the root
-// layout renders on every page. Only the banner tag reaches the layout, and it is expired only when
-// the promo actually opens or closes, so a catalog change never marks the whole site stale.
-export const CATALOG_CACHE_TAGS = Object.values(CACHE_TAGS).filter(
-  (tag) => tag !== CACHE_TAGS.PROMO_BANNER
-)
+export const CATALOG_CACHE_TAGS = Object.values(CACHE_TAGS)
 
 // At the weekly rollover only these must flip the instant the new week starts; every other catalog
 // tag is marked stale so visitors keep getting the cached page while it regenerates.
 export const ROLLOVER_HARD_EXPIRE_TAGS: readonly string[] = [
   CACHE_TAGS.WEEKLY_LAUNCHES,
-  CACHE_TAGS.LAUNCH_PROMO,
 ]
 
 // Machine-readable surfaces (llms.txt, /api/ai, feeds) are what AI answer engines quote, so

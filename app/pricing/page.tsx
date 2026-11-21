@@ -1,20 +1,16 @@
 import type { Metadata } from "next"
 import Link from "next/link"
-import { ArrowLeft, ChevronRight, Sparkles } from "lucide-react"
+import { ArrowLeft, ChevronRight } from "lucide-react"
 import { PageHeader } from "@/components/shared/page-header"
-import { Button } from "@/components/ui/button"
 import { SITE_CONFIG } from "@/constants/site"
 import { ROUTES } from "@/constants/routes"
-import { LAUNCH_PROMO } from "@/constants/promo"
 import {
   pricingPageWrapper,
   pricingPageContainer,
   pricingBreadcrumbNav,
-  launchPromoFullWidthSection,
 } from "@/utils/styles"
 import { breadcrumbSchema, safeJsonLd } from "@/lib/seo/schema"
 import { AI_PROMPTS } from "@/lib/prompts"
-import { getLaunchPromoStatus } from "@/db/queries/launches/availability"
 import { PricingTiersSection } from "@/components/pricing/pricing-tiers-section"
 import { PricingSponsorshipSection } from "@/components/pricing/pricing-sponsorship-section"
 
@@ -60,9 +56,7 @@ export const metadata: Metadata = {
   },
 }
 
-const PricingPage = async () => {
-  const promoStatus = await getLaunchPromoStatus()
-
+const PricingPage = () => {
   const breadcrumbs = breadcrumbSchema([
     { name: "Home", url: SITE_CONFIG.url },
     { name: "Pricing", url: `${SITE_CONFIG.url}/pricing` },
@@ -112,42 +106,8 @@ const PricingPage = async () => {
             variant="pricing"
           />
 
-          {/* Launch Promo Full Width Banner */}
-          {promoStatus.isPromoActive && (
-            <section className={launchPromoFullWidthSection}>
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <div className="flex items-start gap-3 sm:items-center">
-                  <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-amber-500/20 text-amber-700">
-                    <Sparkles className="size-4" />
-                  </span>
-                  <div>
-                    <h3 className="text-sm font-bold text-slate-900 sm:text-base">
-                      {LAUNCH_PROMO.PROMO_TITLE}
-                    </h3>
-                    <p className="mt-0.5 text-xs text-slate-600">
-                      First {LAUNCH_PROMO.MAX_LAUNCHES} launches get a 100% free
-                      Lifetime Premium Listing ({LAUNCH_PROMO.VALUE_GIFTED}{" "}
-                      value) with permanent Do-Follow SEO backlink and AI launch
-                      spotlight. Only {promoStatus.promoRemaining} spots
-                      remaining!
-                    </p>
-                  </div>
-                </div>
-                <Button
-                  size="sm"
-                  className="w-full shrink-0 cursor-pointer rounded-none bg-amber-600 text-xs font-semibold text-white shadow-xs hover:bg-amber-700 sm:w-auto"
-                  nativeButton={false}
-                  render={<Link href={ROUTES.SUBMIT} />}
-                >
-                  <Sparkles className="mr-1.5 size-3.5" />
-                  Claim Free Premium Listing
-                </Button>
-              </div>
-            </section>
-          )}
-
           {/* 1. Directory Listing & Promotion Tiers (Placed ABOVE ad slot pricing) */}
-          <PricingTiersSection promo={promoStatus} />
+          <PricingTiersSection />
 
           {/* 2. Sponsorship & Ad Slots (Sidebar & Feed Placements) */}
           <PricingSponsorshipSection />

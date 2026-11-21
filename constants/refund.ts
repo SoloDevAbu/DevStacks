@@ -17,7 +17,7 @@ export interface RefundCategory {
   items: RefundItem[]
 }
 
-export const REFUND_LAST_UPDATED = "September 19, 2026"
+export const REFUND_LAST_UPDATED = "November 20, 2026"
 
 export const REFUND_CATEGORIES: RefundCategory[] = [
   {
@@ -37,7 +37,7 @@ export const REFUND_CATEGORIES: RefundCategory[] = [
         id: "free-directory-listings",
         number: 2,
         title: "Directory Listings & Temporary Launch Offer",
-        content: `Standard directory listings on ${SITE_CONFIG.name} are 100% free. There is nothing to charge and nothing to refund for standard directory submissions.\n\nAs a temporary, limited-time launch offer, the First 50 approved launches receive a complimentary Lifetime Premium listing upgrade (including verified badge, priority placement, and Do-Follow backlinks) at no cost. Once the first 50 launch slots are filled, standard directory submissions will remain free, while optional Premium and Premium+ listing verification tiers will return to their regular paid pricing. Because the launch tier upgrade is gifted at $0 during this promotional period, no refund is applicable. In the event that paid listing upgrades are purchased after the promotional period, if a submission is rejected during editorial review before publication, the listing fee is refunded in full.`,
+        content: `Standard directory listings on ${SITE_CONFIG.name} are 100% free. There is nothing to charge and nothing to refund for standard directory submissions.\n\nThe First 50 launch promotion, which gifted a complimentary Lifetime Premium upgrade to the earliest approved launches, ended on November 20, 2026. Those gifted upgrades were provided at $0, so no refund applies to them. Optional Premium and Premium+ listing tiers are now paid; if a paid submission is rejected during editorial review before publication, the listing fee is refunded in full.`,
       },
     ],
   },

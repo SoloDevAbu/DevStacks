@@ -4,7 +4,6 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import {
-  Sparkles,
   Package,
   Wrench,
   CheckCircle2,
@@ -13,7 +12,6 @@ import {
 } from "lucide-react"
 import { SITE_CONFIG } from "@/constants/site"
 import { AI_PROMPTS } from "@/lib/prompts"
-import { LAUNCH_PROMO } from "@/constants/promo"
 import {
   SUBMISSION_BENEFITS,
   LAUNCH_TRACKS,
@@ -21,10 +19,6 @@ import {
   SUBMISSION_FAQS,
 } from "@/constants/submit"
 import {
-  launchPromoCard,
-  launchPromoCardList,
-  launchPromoCardItem,
-  launchPromoBadge,
   crawlerTrackCard,
   crawlerTrackHeader,
   crawlerTrackPerkItem,
@@ -32,12 +26,10 @@ import {
 
 interface SubmitCrawlerViewProps {
   initialUrl?: string
-  isPromoActive?: boolean
 }
 
 export const SubmitCrawlerView = ({
   initialUrl = "",
-  isPromoActive = false,
 }: SubmitCrawlerViewProps) => {
   const productTrack = LAUNCH_TRACKS.product
   const toolTrack = LAUNCH_TRACKS.tool
@@ -58,39 +50,6 @@ export const SubmitCrawlerView = ({
       />
 
       <div className="flex flex-col gap-8 p-6 md:p-8">
-        {isPromoActive && (
-          <div className={launchPromoCard}>
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <div className="flex items-center gap-2.5">
-                <span className="flex size-7 items-center justify-center rounded-lg bg-amber-500/20 text-amber-700">
-                  <Sparkles className="size-4" />
-                </span>
-                <div>
-                  <h3 className="text-sm font-bold text-slate-900">
-                    {LAUNCH_PROMO.PROMO_TITLE}
-                  </h3>
-                  <p className="text-xs text-slate-600">
-                    Submit your product or developer tool today and receive an
-                    automatic upgrade to Verified Premium status (
-                    {LAUNCH_PROMO.VALUE_GIFTED} value) upon approval.
-                  </p>
-                </div>
-              </div>
-              <Badge variant="outline" className={launchPromoBadge}>
-                {LAUNCH_PROMO.BADGE_LABEL}
-              </Badge>
-            </div>
-            <div className={launchPromoCardList}>
-              {LAUNCH_PROMO.PERKS.map((perk, i) => (
-                <div key={i} className={launchPromoCardItem}>
-                  <CheckCircle2 className="size-3.5 shrink-0 text-emerald-600" />
-                  <span>{perk}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
         <section className="flex flex-col gap-4">
           <div className="flex flex-col gap-1">
             <div className="flex items-center gap-2">
@@ -402,8 +361,8 @@ export const SubmitCrawlerView = ({
             </h3>
             <p className="max-w-xl text-xs leading-relaxed text-slate-600">
               Join thousands of developers, founders, and creators. List your
-              product or developer tool today to earn permanent
-              backlinks and generative AI discovery.
+              product or developer tool today to earn permanent backlinks and
+              generative AI discovery.
             </p>
           </div>
           <div className="flex shrink-0 flex-wrap items-center justify-center gap-3">

@@ -53,7 +53,7 @@ export const FAQ_CATEGORIES: FaqCategory[] = [
       },
       {
         question: `Is listing on ${SITE_CONFIG.name} free?`,
-        answer: `Yes, listing on ${SITE_CONFIG.name} is 100% free for open-source projects, indie hackers, and developer tool companies. Every approved tool or product receives full directory indexing, structured schema markup, and inclusion in AI crawler feeds. As part of our launch promotion, new submissions also receive free lifetime Verified Premium upgrades with Do-Follow backlinks.`,
+        answer: `Yes, listing on ${SITE_CONFIG.name} is 100% free for open-source projects, indie hackers, and developer tool companies. Every approved tool or product receives full directory indexing, structured schema markup, and inclusion in AI crawler feeds. Free listings earn a Do-Follow backlink by embedding our badge, and optional Premium tiers include one permanently.`,
       },
       {
         question: `How does the community ranking and voting system work?`,
