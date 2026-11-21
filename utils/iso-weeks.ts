@@ -341,3 +341,10 @@ export const getLaunchNavWeeks = ({
 
   return { items, previous, next }
 }
+
+// Free launches take the first week with an open slot; paid tiers skip the cap and take the earliest week.
+export const getDefaultLaunchWeek = <W extends { isFreeFull: boolean }>(
+  weeks: readonly W[],
+  isPaid: boolean
+): W | undefined =>
+  isPaid ? weeks[0] : (weeks.find((w) => !w.isFreeFull) ?? weeks[0])

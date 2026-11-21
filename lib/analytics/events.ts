@@ -242,3 +242,16 @@ export const trackPurchase = ({
 
   markPurchaseTracked(transactionId)
 }
+
+export type LaunchFunnelEvent =
+  | "tier_selected"
+  | "schedule_dialog_open"
+  | "launch_free"
+  | "launch_paid_click"
+  | "launch_payment_retry"
+
+export const trackLaunchFunnel = (
+  event: LaunchFunnelEvent,
+  params: { itemType: "product" | "tool"; tier?: string }
+) =>
+  dispatchGAEvent(event, { item_type: params.itemType, tier: params.tier })

@@ -24,29 +24,29 @@ import {
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { ROUTES } from "@/constants/routes"
+import { ROUTES, SUBMIT_LAUNCH_PARAMS } from "@/constants/routes"
 import { SITE_CONFIG } from "@/constants/site"
+import { getCheckoutReturnStatus } from "@/utils/checkout-status"
 
 const CheckoutStatusDialogInner = () => {
   const searchParams = useSearchParams()
   const router = useRouter()
   const pathname = usePathname()
 
-  const rawStatus = searchParams.get("status")
-  const status = rawStatus?.toLowerCase()
   const paymentId =
     searchParams.get("payment_id") || searchParams.get("subscription_id")
   const email = searchParams.get("email")
   const customMessage = searchParams.get("message") || searchParams.get("error")
 
-  const isFailed =
-    status === "failed" ||
-    status === "failure" ||
-    Boolean(searchParams.get("error"))
-  const isCancelled = status === "cancelled" || status === "canceled"
-  const isSucceeded = status === "succeeded" || status === "success"
+  const status = getCheckoutReturnStatus(searchParams)
+  const isFailed = status === "failed"
+  const isCancelled = status === "cancelled"
+  const isSucceeded = status === "succeeded"
 
-  const isOpen = isSucceeded || isFailed || isCancelled
+  // A checkout started from the submit flow returns to /submit, which shows its own launch result.
+  const isSubmitLaunchReturn = searchParams.has(SUBMIT_LAUNCH_PARAMS.ID)
+  const isOpen =
+    !isSubmitLaunchReturn && (isSucceeded || isFailed || isCancelled)
 
   useEffect(() => {
     if (isSucceeded && paymentId) {

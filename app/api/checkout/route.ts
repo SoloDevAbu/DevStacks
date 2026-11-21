@@ -14,6 +14,7 @@ import {
 } from "@/constants/ads"
 import { PLANS, TIER, type Tier, getPlanDodoProductId } from "@/constants/plans"
 import { SITE_CONFIG } from "@/constants/site"
+import { ROUTES } from "@/constants/routes"
 import {
   createAd,
   createAdWeeks,
@@ -592,9 +593,10 @@ export const POST = async (req: NextRequest) => {
       }
 
       const origin = req.nextUrl.origin || SITE_CONFIG.url
-      const returnUrl =
-        returnToSubmit || !itemId
-          ? `${origin}/submit?unlocked=true&payment_id=${payment.id}&tier=${tier}`
+      const returnUrl = !itemId
+        ? `${origin}/submit?unlocked=true&payment_id=${payment.id}&tier=${tier}`
+        : returnToSubmit && itemType
+          ? `${origin}${ROUTES.SUBMIT_LAUNCH_RESULT(itemId, itemType, tier)}`
           : `${origin}/dashboard/${itemType === "tool" ? "tools" : "products"}?upgraded=true&id=${itemId}`
 
       const dodoSession = await createDodoCheckoutSession({

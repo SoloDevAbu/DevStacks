@@ -27,7 +27,7 @@ import { Button, buttonVariants } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Spinner } from "@/components/ui/spinner"
 import { toast } from "@/components/ui/toast"
-import { PLANS, TIER, type Tier } from "@/constants/plans"
+import { PLANS, isPaidTier, type Tier } from "@/constants/plans"
 import {
   useAdminSubmissions,
   useUpdateSubmissionStatus,
@@ -205,8 +205,7 @@ export const AdminReviewTable = () => {
             <TableBody>
               {submissions.map((sub) => {
                 const isWorking = activeItemId === sub.id
-                const isPaidTier =
-                  sub.tier === TIER.PREMIUM || sub.tier === TIER.PREMIUM_PLUS
+                const isPaid = isPaidTier(sub.tier)
                 const launchDateString = sub.launchDate
                   ? new Date(sub.launchDate).toLocaleDateString("en-US", {
                       month: "short",
@@ -302,7 +301,7 @@ export const AdminReviewTable = () => {
 
                     {/* AI Blog Status */}
                     <TableCell>
-                      {!isPaidTier ? (
+                      {!isPaid ? (
                         <span className="text-xs text-slate-400 italic">
                           Community ($0) - No Blog
                         </span>
@@ -376,7 +375,7 @@ export const AdminReviewTable = () => {
                         )}
 
                         {/* Retry Blog Generation button if failed */}
-                        {isPaidTier &&
+                        {isPaid &&
                           sub.status === "approved" &&
                           sub.blog?.generationStatus === "failed" && (
                             <Button
@@ -411,7 +410,7 @@ export const AdminReviewTable = () => {
                               ) : (
                                 <CheckCircle2 className="size-3 mr-1" />
                               )}
-                              {isPaidTier ? "Approve & Generate Blog" : "Approve"}
+                              {isPaid ? "Approve & Generate Blog" : "Approve"}
                             </Button>
                             <Button
                               size="sm"

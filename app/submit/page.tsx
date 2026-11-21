@@ -5,7 +5,6 @@ import { auth } from "@/lib/auth"
 import { SubmitContent } from "@/components/submit/submit-content"
 import { SubmitCrawlerView } from "@/components/submit/submit-crawler-view"
 import { SITE_CONFIG } from "@/constants/site"
-import { getCachedLaunchPromoStatus } from "@/lib/launches/promo-status"
 import { breadcrumbSchema, faqSchema, safeJsonLd } from "@/lib/seo/schema"
 import { getToolBySlugOrName } from "@/db/queries/tools/get"
 import type { BuiltWithToolItem } from "@/components/shared/built-with-tools-input"
@@ -102,8 +101,6 @@ const SubmitPage = async (props: SubmitPageProps) => {
     }
   }
 
-  const promoStatus = await getCachedLaunchPromoStatus().catch(() => null)
-
   const breadcrumbs = breadcrumbSchema([
     { name: "Home", url: SITE_CONFIG.url },
     { name: "New Launch", url: `${SITE_CONFIG.url}/submit` },
@@ -137,10 +134,7 @@ const SubmitPage = async (props: SubmitPageProps) => {
           />
         </Suspense>
       ) : (
-        <SubmitCrawlerView
-          initialUrl={initialUrl}
-          isPromoActive={promoStatus?.isPromoActive}
-        />
+        <SubmitCrawlerView initialUrl={initialUrl} />
       )}
     </>
   )
