@@ -155,3 +155,12 @@ export const getPlanDodoProductId = (tier: Tier): string | undefined => {
         : undefined)
   )
 }
+
+export type PaidTier = Exclude<Tier, typeof TIER.FREE>
+
+export const PAID_TIERS: readonly PaidTier[] = [TIER.PREMIUM, TIER.PREMIUM_PLUS]
+
+export const isPaidTier = (tier?: string | null): tier is PaidTier =>
+  PAID_TIERS.includes(tier as PaidTier)
+
+export const TIER_ORDER: readonly Tier[] = [TIER.FREE, TIER.PREMIUM, TIER.PREMIUM_PLUS]

@@ -41,7 +41,7 @@ import {
   cardPricingBadge,
   cardLogo,
 } from "@/utils/styles"
-import { getOutboundUrl, getLinkRel, getFaviconUrl } from "@/utils/urls"
+import { getOutboundUrl, getFaviconUrl, NOFOLLOW_LINK_REL } from "@/utils/urls"
 import { trackOutboundClick } from "@/lib/analytics/events"
 import { useUpvoteTool } from "@/hooks/tools/use-upvote-tool"
 import { useUserInteractions } from "@/hooks/users/use-user-interactions"
@@ -82,7 +82,6 @@ export const ToolCard = ({
   const isUpvoted = isToolUpvoted(tool.slug)
 
   const outboundUrl = getOutboundUrl(tool.websiteUrl ?? "", "launchnests")
-  const linkRel = getLinkRel(tool.tier, tool.badgeVerified)
 
   const handleOutboundClick = (e: React.MouseEvent) => {
     e.stopPropagation()
@@ -160,7 +159,7 @@ export const ToolCard = ({
           <a
             href={outboundUrl}
             target="_blank"
-            rel={linkRel}
+            rel={NOFOLLOW_LINK_REL}
             onClick={handleOutboundClick}
             className="shrink-0 transition-opacity hover:opacity-80"
             title={`Visit ${tool.name} website`}
@@ -212,7 +211,7 @@ export const ToolCard = ({
                 <a
                   href={outboundUrl}
                   target="_blank"
-                  rel={linkRel}
+                  rel={NOFOLLOW_LINK_REL}
                   onClick={handleOutboundClick}
                   className="ml-1.5 inline-flex items-center text-slate-400 transition-colors hover:text-indigo-600"
                   title={`Visit ${tool.name} website`}

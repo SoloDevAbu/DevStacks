@@ -1,14 +1,14 @@
 import Link from "next/link"
 import Image from "next/image"
-import { Award, Blocks, Bot, Sparkles, Terminal } from "lucide-react"
+import { Bot, Sparkles } from "lucide-react"
 import { HeaderLogo } from "@/components/layout/header-logo"
 import { HoverOutline } from "@/components/shared/hover-outline"
 import { AI_PROVIDERS } from "@/constants/ai-providers"
 import { AI_PROMPTS } from "@/lib/prompts"
 import { ROUTES } from "@/constants/routes"
 import { FOOTER_COLUMNS } from "@/constants/navigation"
+import { NOFOLLOW_LINK_REL } from "@/utils/urls"
 import { SITE_CONFIG } from "@/constants/site"
-import { FEATURED_BADGES } from "@/constants/featured-badges"
 import {
   siteFooterWrapper,
   siteFooterBrandSection,
@@ -20,14 +20,6 @@ import {
   footerAiTrayLabel,
   footerAiButton,
   footerSocialIconButton,
-  footerFeaturedSection,
-  footerFeaturedLabel,
-  footerFeaturedMarqueeWrapper,
-  footerFeaturedMarqueeTrack,
-  footerFeaturedMarqueeFadeLeft,
-  footerFeaturedMarqueeFadeRight,
-  footerFeaturedBadgeLink,
-  footerFeaturedBadgeImage,
   agentProtocolTray,
   agentFooterLabel,
   agentFooterBadge,
@@ -65,7 +57,7 @@ export const AgentFooter = () => (
               <a
                 href={`${ai.url}${encodeURIComponent(AI_PROMPTS.home)}`}
                 target="_blank"
-                rel="noopener noreferrer"
+                rel={NOFOLLOW_LINK_REL}
                 className={footerAiButton}
                 title={`Ask ${ai.name} about ${SITE_CONFIG.name}`}
               >
@@ -100,7 +92,7 @@ export const AgentFooter = () => (
             <a
               href={SITE_CONFIG.socials.x}
               target="_blank"
-              rel="noopener noreferrer"
+              rel="me noopener noreferrer"
               className={footerSocialIconButton}
               title="X / Twitter"
               aria-label="Follow LaunchNests on X (Twitter)"
@@ -120,7 +112,7 @@ export const AgentFooter = () => (
             <a
               href={SITE_CONFIG.socials.linkedin}
               target="_blank"
-              rel="noopener noreferrer"
+              rel="me noopener noreferrer"
               className={footerSocialIconButton}
               title="LinkedIn"
               aria-label="Follow LaunchNests on LinkedIn"
@@ -166,67 +158,27 @@ export const AgentFooter = () => (
         </div>
       </div>
 
-      {/* --- Featured On Section --- */}
-      <div className={footerFeaturedSection}>
-        <div className="flex shrink-0 items-center gap-2">
-          <Award className="size-3.5 text-amber-600" />
-          <span className={footerFeaturedLabel}>FEATURED ON</span>
-        </div>
-
-        <div className={footerFeaturedMarqueeWrapper}>
-          <div className={footerFeaturedMarqueeFadeLeft} />
-          <div className={footerFeaturedMarqueeFadeRight} />
-
-          {[0, 1].map((copyIndex) => (
-            <div
-              key={copyIndex}
-              aria-hidden={copyIndex > 0 ? "true" : undefined}
-              className={footerFeaturedMarqueeTrack}
-            >
-              {FEATURED_BADGES.map((badge) => (
-                <a
-                  key={`${copyIndex}-${badge.id}`}
-                  href={badge.href}
-                  target={badge.target}
-                  {...(badge.rel ? { rel: badge.rel } : {})}
-                  {...(badge.title ? { title: badge.title } : {})}
-                  tabIndex={copyIndex > 0 ? -1 : undefined}
-                  className={footerFeaturedBadgeLink}
-                >
-                  <img
-                    src={badge.src}
-                    alt={badge.alt}
-                    width={badge.width}
-                    loading="lazy"
-                    decoding="async"
-                    {...(badge.height !== undefined
-                      ? { height: badge.height }
-                      : {})}
-                    className={footerFeaturedBadgeImage}
-                  />
-                </a>
-              ))}
-            </div>
-          ))}
-        </div>
-      </div>
-
       {/* Navigation Columns Grid */}
       <nav aria-label="Site" className={siteFooterNavGrid}>
-        {FOOTER_COLUMNS.map((column) => (
-          <div key={column.heading} className="flex flex-col gap-3">
-            <h2 className={siteFooterColHeading}>{column.heading}</h2>
-            <ul className="flex flex-col gap-2">
-              {column.links.map((link) => (
-                <li key={link.href}>
-                  <Link href={link.href} className={siteFooterLink}>
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
+        {FOOTER_COLUMNS.map((column, index) => {
+          const headingId = `footer-col-${index}`
+          return (
+            <div key={column.heading} className="flex flex-col gap-3">
+              <p id={headingId} className={siteFooterColHeading}>
+                {column.heading}
+              </p>
+              <ul aria-labelledby={headingId} className="flex flex-col gap-2">
+                {column.links.map((link) => (
+                  <li key={link.href}>
+                    <Link href={link.href} className={siteFooterLink}>
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )
+        })}
       </nav>
     </div>
 

@@ -1,4 +1,4 @@
-import { TIER, type Tier } from "@/constants/plans"
+import { isPaidTier, type Tier } from "@/constants/plans"
 import { SITE_CONFIG } from "@/constants/site"
 import { ROUTES } from "@/constants/routes"
 
@@ -31,12 +31,10 @@ export const getOutboundUrl = (
 export const isDoFollow = (
   tier?: string | Tier | null,
   badgeVerified?: boolean
-): boolean => {
-  return (
-    tier === TIER.PREMIUM || tier === TIER.PREMIUM_PLUS || Boolean(badgeVerified)
-  )
-}
+): boolean => isPaidTier(tier) || Boolean(badgeVerified)
 
+// One dofollow link per listing: only the detail-page Visit/Website links use this. Cards, feeds
+// and secondary links stay nofollow so equity concentrates on the canonical listing page.
 export const getLinkRel = (
   tier?: string | Tier | null,
   badgeVerified?: boolean

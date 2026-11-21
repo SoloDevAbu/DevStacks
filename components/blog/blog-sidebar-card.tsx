@@ -13,7 +13,7 @@ import {
   sidebarLogoWrapper,
 } from "@/utils/blog/styles"
 import type { Tool, Product, User } from "@/db/schema"
-import { getLinkRel, getOutboundUrl } from "@/utils/urls"
+import { getOutboundUrl, NOFOLLOW_LINK_REL } from "@/utils/urls"
 
 export interface BlogSidebarCardProps {
   itemType: "tool" | "product"
@@ -112,7 +112,7 @@ export const BlogSidebarCard = ({
         <a
           href={getOutboundUrl(item.websiteUrl)}
           target="_blank"
-          rel={getLinkRel(item.tier, item.badgeVerified)}
+          rel={NOFOLLOW_LINK_REL}
           title={`Visit ${item.name} Official Website`}
           className={cn(
             buttonVariants({ size: "default" }),
@@ -140,7 +140,7 @@ export const BlogSidebarCard = ({
           <a
             href={item.githubUrl}
             target="_blank"
-            rel={getLinkRel(item.tier, item.badgeVerified)}
+            rel={NOFOLLOW_LINK_REL}
             className={cn(
               buttonVariants({ variant: "ghost", size: "sm" }),
               "w-full text-xs text-slate-500 hover:text-slate-900 gap-1.5"

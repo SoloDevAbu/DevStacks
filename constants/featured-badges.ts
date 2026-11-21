@@ -2,7 +2,7 @@ export interface FeaturedBadge {
   id: string
   href: string
   target: string
-  rel?: string
+  rel: string
   title?: string
   src: string
   alt: string
@@ -35,6 +35,7 @@ export const FEATURED_BADGES: readonly FeaturedBadge[] = [
     id: "startup-fast",
     href: "https://startupfa.st",
     target: "_blank",
+    rel: "noopener",
     title: "Powered by Startup Fast",
     src: "/badges/startup-fast.svg",
     alt: "Powered by Startup Fast",
@@ -45,6 +46,7 @@ export const FEATURED_BADGES: readonly FeaturedBadge[] = [
     id: "startup-fame",
     href: "https://startupfa.me/s/launchnests?utm_source=www.launchnests.com",
     target: "_blank",
+    rel: "noopener",
     src: "/badges/startup-fame.webp",
     alt: "LaunchNests - Featured on Startup Fame",
     width: 171,
@@ -83,6 +85,7 @@ export const FEATURED_BADGES: readonly FeaturedBadge[] = [
     id: "submit-ai-tools",
     href: "https://submitaitools.org",
     target: "_blank",
+    rel: "noopener",
     src: "/badges/submit-ai-tools.png",
     alt: "Submit AI Tools",
     width: 200,
@@ -103,6 +106,7 @@ export const FEATURED_BADGES: readonly FeaturedBadge[] = [
     id: "dofollow-tools",
     href: "https://dofollow.tools",
     target: "_blank",
+    rel: "noopener",
     src: "/badges/dofollow-tools.svg",
     alt: "Featured on Dofollow.Tools",
     width: 200,
