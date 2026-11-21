@@ -2,16 +2,15 @@ import { NextRequest, NextResponse } from "next/server"
 import { getTools } from "@/db/queries/tools/list"
 import { getProducts } from "@/db/queries/products/list"
 import { SITE_CONFIG } from "@/constants/site"
+import { V1_SEARCH_LIMIT } from "@/constants/api"
+import { parseBoundedInt } from "@/utils/api-params"
 
 export const revalidate = 3600
 
 export const GET = async (request: NextRequest) => {
   const { searchParams } = new URL(request.url)
   const q = searchParams.get("q")?.trim()
-  const limit = Math.min(
-    30,
-    Math.max(1, parseInt(searchParams.get("limit") ?? "10", 10))
-  )
+  const limit = parseBoundedInt(searchParams.get("limit"), V1_SEARCH_LIMIT)
 
   if (!q || q.length < 2) {
     return NextResponse.json(

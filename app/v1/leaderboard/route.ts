@@ -2,14 +2,16 @@ import { NextRequest, NextResponse } from "next/server"
 import { getTools } from "@/db/queries/tools/list"
 import { getTrending } from "@/lib/rankings/trending"
 import { SITE_CONFIG } from "@/constants/site"
+import { V1_LEADERBOARD_LIMIT } from "@/constants/api"
+import { parseBoundedInt } from "@/utils/api-params"
 
 export const revalidate = 3600
 
 export const GET = async (request: NextRequest) => {
   const { searchParams } = new URL(request.url)
-  const limit = Math.min(
-    50,
-    Math.max(1, parseInt(searchParams.get("limit") ?? "20", 10))
+  const limit = parseBoundedInt(
+    searchParams.get("limit"),
+    V1_LEADERBOARD_LIMIT
   )
 
   try {
