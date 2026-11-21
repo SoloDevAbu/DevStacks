@@ -61,7 +61,10 @@ const Page = async () => {
     getCurrentLaunchWeekSnapshot(),
     getCachedPopularBuildingBlocks(
       HOMEPAGE_LIMITS.POPULAR_BUILDING_BLOCKS
-    ).catch(() => []),
+    ).catch((error) => {
+      console.error("[home] popular building blocks failed", error)
+      return []
+    }),
   ])
   const weeklyLaunches = launchWeek.items as FeedItem[]
   const launchListItems = weeklyLaunches.map((item) => ({
