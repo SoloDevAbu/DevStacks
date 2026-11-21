@@ -28,7 +28,6 @@ import { getToolFaqs } from "@/db/queries/faqs/get-faqs"
 import { MakerDetailSection } from "@/components/shared/maker-detail-section"
 import { RelatedToolsSection } from "@/components/tools/related-tools-section"
 import { SITE_CONFIG } from "@/constants/site"
-import { LAUNCH_PROMO } from "@/constants/promo"
 import { ROUTES } from "@/constants/routes"
 import { ALTERNATIVES_MIN_SIBLINGS } from "@/constants/rankings"
 import { isAlternativesIndexable } from "@/utils/indexing"
@@ -150,8 +149,6 @@ export const generateMetadata = async ({
         ...(tool.tags ?? []),
         "developer tool",
         "verified developer launch",
-        LAUNCH_PROMO.BADGE_LABEL,
-        "First 50 Launches",
         "API",
         "infrastructure",
         SITE_CONFIG.name,
@@ -427,6 +424,7 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
                   <LaunchBadge
                     submitterId={tool.submitterId}
                     tier={tool.tier}
+                    createdAt={tool.createdAt}
                   />
                   <Badge
                     variant="outline"
@@ -879,7 +877,7 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
                     <a
                       href={tool.githubUrl}
                       target="_blank"
-                      rel={outboundRel}
+                      rel={NOFOLLOW_LINK_REL}
                       className="font-medium text-slate-700 hover:text-slate-900 hover:underline"
                     >
                       GitHub Repository ↗

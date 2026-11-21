@@ -7,7 +7,7 @@ import { getWeeklyLaunches } from "@/lib/launches/weekly-launches"
 import { getCurrentWeek } from "@/utils/iso-weeks"
 import { isCronAuthorized } from "@/lib/auth/cron"
 import { revalidateHubs } from "@/lib/cache/revalidate"
-import { refreshPromoBanner } from "@/lib/launches/promo-status"
+import { advanceLaunchStatuses } from "@/db/queries/launches/advance-status"
 import { warmPaths } from "@/lib/cache/warm"
 import { submitToIndexNow } from "@/lib/seo/indexnow"
 import { getListingPath } from "@/utils/urls"
@@ -38,16 +38,18 @@ export const POST = async (req: NextRequest) => {
     revalidateTag(tag, ROLLOVER_HARD_EXPIRE_TAGS.includes(tag) ? { expire: 0 } : "max")
   )
   revalidateHubs()
-  await refreshPromoBanner()
   // A launch going live adds a listing to its maker's profile, which no mutation signals either.
   revalidatePath(ROUTES.MAKER_PATTERN, "page")
 
   const { year, week } = getCurrentWeek()
-  const launches = await getWeeklyLaunches({
-    year,
-    week,
-    limit: HOMEPAGE_LIMITS.WEEKLY_LAUNCHES_MAX,
-  })
+  const [launches, launchStatuses] = await Promise.all([
+    getWeeklyLaunches({
+      year,
+      week,
+      limit: HOMEPAGE_LIMITS.WEEKLY_LAUNCHES_MAX,
+    }),
+    advanceLaunchStatuses({ year, week }),
+  ])
   const launchPaths = launches.map(getListingPath)
   launchPaths.forEach((path) => revalidatePath(path))
   const weekPath = ROUTES.LAUNCH_WEEK(year, week)
@@ -75,6 +77,7 @@ export const POST = async (req: NextRequest) => {
     week,
     launches: launchPaths.length,
     blogs: blogPaths.length,
+    launchStatuses,
     indexNow,
   })
 }

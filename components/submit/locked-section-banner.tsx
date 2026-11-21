@@ -28,26 +28,30 @@ export const LockedSectionBanner = ({
       <div className="flex size-10 items-center justify-center rounded-full bg-amber-100 text-amber-700">
         <Lock className="size-5" />
       </div>
-      <div className="flex flex-col gap-1 max-w-md">
-        <div className="flex items-center justify-center gap-1.5 flex-wrap">
+      <div className="flex max-w-md flex-col gap-1">
+        <div className="flex flex-wrap items-center justify-center gap-1.5">
           <span className="text-sm font-bold text-slate-900">{title}</span>
-          <Badge variant="outline" className="border-amber-300 bg-amber-50 text-[10px] text-amber-800">
+          <Badge
+            variant="outline"
+            className="border-amber-300 bg-amber-50 text-[10px] text-amber-800"
+          >
             {plan.name} Tier
           </Badge>
         </div>
-        <p className="text-xs text-slate-600 leading-relaxed">{description}</p>
+        <p className="text-xs leading-relaxed text-slate-600">{description}</p>
       </div>
       <Button
         type="button"
         size="sm"
         onClick={onUnlock}
         disabled={isUnlocking}
-        className="mt-1 h-8 gap-1.5 bg-blue-600 hover:bg-blue-700 text-xs font-semibold text-white shadow-xs cursor-pointer"
+        className="mt-1 h-8 cursor-pointer gap-1.5 bg-blue-600 text-xs font-semibold text-white shadow-xs hover:bg-blue-700"
       >
         <Sparkles className="size-3.5" />
-        <span>Unlock with {plan.name} ({plan.price})</span>
+        <span>
+          Unlock with {plan.name} ({plan.price})
+        </span>
       </Button>
     </div>
   )
 }
-

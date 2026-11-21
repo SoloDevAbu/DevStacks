@@ -1,21 +1,21 @@
 import { NextRequest, NextResponse } from "next/server"
 import { getProducts } from "@/db/queries/products/list"
 import { SITE_CONFIG } from "@/constants/site"
+import { V1_LIMIT, V1_PAGE } from "@/constants/api"
+import { parseBoundedInt, pickOption } from "@/utils/api-params"
 
 export const revalidate = 3600
 
+const PRODUCT_SORTS = ["likes", "recent", "views"] as const
+
 export const GET = async (request: NextRequest) => {
   const { searchParams } = new URL(request.url)
-  const page = Math.max(1, parseInt(searchParams.get("page") ?? "1", 10))
-  const limit = Math.min(
-    60,
-    Math.max(1, parseInt(searchParams.get("limit") ?? "20", 10))
-  )
+  const page = parseBoundedInt(searchParams.get("page"), V1_PAGE)
+  const limit = parseBoundedInt(searchParams.get("limit"), V1_LIMIT)
   const q = searchParams.get("q") ?? undefined
   const category = searchParams.get("category") ?? undefined
   const pricing = searchParams.get("pricing") ?? undefined
-  const sort =
-    (searchParams.get("sort") as "likes" | "recent" | "views") ?? "likes"
+  const sort = pickOption(searchParams.get("sort"), PRODUCT_SORTS, "likes")
 
   try {
     const data = await getProducts({
@@ -32,6 +32,7 @@ export const GET = async (request: NextRequest) => {
         page,
         limit,
         count: data.length,
+        hasMore: data.length === limit,
         data,
       },
       {

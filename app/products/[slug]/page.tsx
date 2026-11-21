@@ -21,7 +21,6 @@ import {
 import { resolveProduct } from "@/lib/products/resolve-product"
 import { resolveTool } from "@/lib/tools/resolve-tool"
 import { SITE_CONFIG } from "@/constants/site"
-import { LAUNCH_PROMO } from "@/constants/promo"
 import { ROUTES } from "@/constants/routes"
 import { getSocialCardImage } from "@/lib/seo/social-image"
 import { formatGeoMetaTags } from "@/utils/country"
@@ -55,7 +54,6 @@ import { LaunchWeekSpecRow } from "@/components/shared/launch-week-spec-row"
 import { VerifiedBadge } from "@/components/shared/verified-badge"
 import { LaunchBadge } from "@/components/shared/launch-badge"
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
 import { ProductActionButtons } from "@/components/products/product-action-buttons"
 import { HoverOutline } from "@/components/shared/hover-outline"
 import { DetailSectionHeader } from "@/components/shared/detail-section-header"
@@ -136,8 +134,6 @@ export const generateMetadata = async ({
         ...(product.tags ?? []),
         "developer product",
         "verified developer launch",
-        LAUNCH_PROMO.BADGE_LABEL,
-        "First 50 Launches",
         "software",
         SITE_CONFIG.name,
       ]
@@ -395,6 +391,7 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
                   <LaunchBadge
                     submitterId={product.submitterId}
                     tier={product.tier}
+                    createdAt={product.createdAt}
                   />
                   <Badge
                     variant="outline"
@@ -859,7 +856,7 @@ const ProductDetailPage = async ({ params }: ProductPageProps) => {
                     <a
                       href={product.githubUrl}
                       target="_blank"
-                      rel={outboundRel}
+                      rel={NOFOLLOW_LINK_REL}
                       className="font-medium text-slate-700 hover:text-slate-900 hover:underline"
                     >
                       GitHub Repository ↗

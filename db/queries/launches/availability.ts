@@ -1,18 +1,11 @@
 import { db } from "@/db"
-import { launches, tools, products } from "@/db/schema"
-import { and, eq, ne, isNotNull, sql } from "drizzle-orm"
+import { launches } from "@/db/schema"
+import { and, eq, ne, sql } from "drizzle-orm"
 import { MAX_FREE_LAUNCHES_PER_WEEK } from "@/constants/launches"
-import { LAUNCH_PROMO } from "@/constants/promo"
 import {
   getUpcomingLaunchWeeks,
   formatLaunchWeekDisplay,
 } from "@/utils/iso-weeks"
-
-export interface LaunchPromoStatus {
-  isPromoActive: boolean
-  promoClaimed: number
-  promoRemaining: number
-}
 
 export interface LaunchWeekAvailability {
   isoYear: number
@@ -24,56 +17,15 @@ export interface LaunchWeekAvailability {
   freeSlotsUsed: number
   freeSlotsRemaining: number
   isFreeFull: boolean
-  isPromoActive: boolean
-}
-
-export const getLaunchPromoStatus = async (): Promise<LaunchPromoStatus> => {
-  const [toolsRow, productsRow] = await Promise.all([
-    db
-      .select({ count: sql<number>`count(*)::int` })
-      .from(tools)
-      .where(
-        and(
-          ne(tools.status, "rejected"),
-          eq(tools.isDeleted, false),
-          isNotNull(tools.submitterId)
-        )
-      ),
-    db
-      .select({ count: sql<number>`count(*)::int` })
-      .from(products)
-      .where(
-        and(
-          ne(products.status, "rejected"),
-          eq(products.isDeleted, false),
-          isNotNull(products.submitterId)
-        )
-      ),
-  ])
-
-  const promoClaimed = (toolsRow[0]?.count ?? 0) + (productsRow[0]?.count ?? 0)
-  const maxPromo = LAUNCH_PROMO.MAX_LAUNCHES
-  const isPromoActive = LAUNCH_PROMO.IS_ACTIVE && promoClaimed < maxPromo
-  const promoRemaining = Math.max(0, maxPromo - promoClaimed)
-
-  return {
-    isPromoActive,
-    promoClaimed,
-    promoRemaining,
-  }
 }
 
 export const getLaunchWeekAvailability = async (): Promise<{
   weeks: LaunchWeekAvailability[]
-  promo: LaunchPromoStatus
 }> => {
-  const [upcomingWeeks, promo] = await Promise.all([
-    Promise.resolve(getUpcomingLaunchWeeks()),
-    getLaunchPromoStatus(),
-  ])
+  const upcomingWeeks = getUpcomingLaunchWeeks()
 
   if (upcomingWeeks.length === 0) {
-    return { weeks: [], promo }
+    return { weeks: [] }
   }
 
   // Count free listings booked in launches table where status is not rejected
@@ -113,9 +65,8 @@ export const getLaunchWeekAvailability = async (): Promise<{
       freeSlotsUsed,
       freeSlotsRemaining,
       isFreeFull: freeSlotsRemaining === 0,
-      isPromoActive: promo.isPromoActive,
     }
   })
 
-  return { weeks, promo }
+  return { weeks }
 }

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import Image from "next/image"
 import { PageHeader } from "@/components/shared/page-header"
 import { AI_PROMPTS } from "@/lib/prompts"
@@ -27,13 +27,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { useSearchParams } from "next/navigation"
-import { useLaunchAvailability } from "@/hooks/launches/use-launch-availability"
+import { useRouter, useSearchParams } from "next/navigation"
 import { useUserListingCredit } from "@/hooks/users/use-user-listing-credit"
 import { useCheckout } from "@/hooks/payments/use-checkout"
 import { TierSelector } from "./tier-selector"
 import { LockedSectionBanner } from "./locked-section-banner"
-import { PRICING, TIER, type Tier } from "@/constants/plans"
+import { PLANS, PRICING, TIER, isPaidTier, type Tier } from "@/constants/plans"
+import { ROUTES } from "@/constants/routes"
+import { FREE_IMAGE_LIMIT, PREMIUM_IMAGE_LIMIT } from "@/constants/submit"
 import { PLATFORMS } from "@/constants/platforms"
 import { OFFICIAL_CATEGORIES } from "@/constants/categories"
 import { useSubmitTool } from "@/hooks/tools/use-submit-tool"
@@ -51,7 +52,6 @@ import {
   primaryActionButton,
 } from "@/utils/styles"
 import { cn } from "@/lib/utils"
-import { LAUNCH_PROMO } from "@/constants/promo"
 import {
   BuiltWithToolsInput,
   type BuiltWithToolItem,
@@ -63,12 +63,20 @@ import {
 import { toast } from "@/components/ui/toast"
 import { getFaviconUrl } from "@/utils/urls"
 import { LaunchWeekPicker } from "@/components/shared/launch-week-picker"
-import { ScheduleConfirmDialog } from "./schedule-confirm-dialog"
+import {
+  ScheduleLaunchDialog,
+  type LaunchChoice,
+} from "./schedule-launch-dialog"
+import { LaunchResultDialog } from "./launch-result-dialog"
+import {
+  savePendingLaunch,
+  type PendingLaunch,
+} from "@/utils/submit/pending-launch"
 import { EmbedBadgeDialog } from "@/components/shared/embed-badge-dialog"
 import { LogoUploader } from "@/components/shared/logo-uploader"
 import { ScreenshotsUploader } from "@/components/shared/screenshots-uploader"
 import type { DbProduct, DbTool } from "@/types/entities"
-import { trackSubmitProduct } from "@/lib/analytics/events"
+import { trackLaunchFunnel, trackSubmitProduct } from "@/lib/analytics/events"
 
 const emptyForm = {
   name: "",
@@ -176,98 +184,38 @@ export const SubmitContent = ({
     builtWithTools: initialTool ? [initialTool] : [],
   }))
   const [errors, setErrors] = useState<Record<string, string[]>>({})
-  const [isScheduleConfirmOpen, setIsScheduleConfirmOpen] = useState(false)
+  const [isScheduleDialogOpen, setIsScheduleDialogOpen] = useState(false)
+  const [pendingChoice, setPendingChoice] = useState<LaunchChoice | null>(null)
+  const [pickedTier, setPickedTier] = useState<Tier | null>(null)
   const [isBadgeDialogOpen, setIsBadgeDialogOpen] = useState(false)
-  const [scheduledEntity, setScheduledEntity] = useState<{
-    name: string
-    slug: string
-    type: "product" | "tool"
-    websiteUrl: string
-  } | null>(null)
+  const [scheduledEntity, setScheduledEntity] = useState<Pick<
+    PendingLaunch,
+    "name" | "slug" | "type" | "websiteUrl"
+  > | null>(null)
   const [autofillUrl, setAutofillUrl] = useState(initialUrl || "")
   const [undoSnapshot, setUndoSnapshot] = useState<typeof emptyForm | null>(
     null
   )
 
-
   const searchParams = useSearchParams()
   const { data: session, isPending: isSessionPending } = useSession()
   const currentUserId = session?.user?.id
 
-  const { data: launchAvailability } = useLaunchAvailability()
-  const promoStatus = launchAvailability?.promo
-  const isPromoActive = promoStatus?.isPromoActive ?? LAUNCH_PROMO.IS_ACTIVE
-  const promoRemaining = promoStatus?.promoRemaining ?? 0
-
+  const router = useRouter()
   const { data: userCredit } = useUserListingCredit(Boolean(currentUserId))
-  const hasPaidCredit = Boolean(userCredit?.id)
-  const isUnlockedFromUrl = searchParams.get("unlocked") === "true"
+  const creditTier = userCredit?.id ? userCredit.tier : undefined
+  const urlTier = searchParams.get("tier")
 
-  const urlTierParam = searchParams.get("tier") as Tier | null
-  const validUrlTier =
-    urlTierParam === TIER.PREMIUM || urlTierParam === TIER.PREMIUM_PLUS
-      ? urlTierParam
-      : null
-
-  const [selectedTier, setSelectedTier] = useState<Tier>(() => {
-    if (isPromoActive) return TIER.PREMIUM
-    if (validUrlTier) return validUrlTier
-    if (hasPaidCredit && userCredit?.tier) return userCredit.tier
-    return TIER.FREE
-  })
+  // Untouched, the tier follows a prepaid credit, then a ?tier= link, then Free.
+  const selectedTier: Tier =
+    pickedTier ?? creditTier ?? (isPaidTier(urlTier) ? urlTier : TIER.FREE)
+  const hasActiveAccess = isPaidTier(selectedTier) || Boolean(creditTier)
 
   const checkoutMutation = useCheckout()
 
-  // Sync selectedTier when credit or tier param changes
-  useEffect(() => {
-    if (validUrlTier) {
-      setSelectedTier(validUrlTier)
-    } else if (hasPaidCredit && userCredit?.tier) {
-      setSelectedTier(userCredit.tier)
-    }
-  }, [validUrlTier, hasPaidCredit, userCredit?.tier])
-
-  // Restore draft from localStorage on mount
-  useEffect(() => {
-    try {
-      const savedDraft = localStorage.getItem("launchnests_submit_draft")
-      const savedType = localStorage.getItem("launchnests_submit_active_type")
-      if (savedType === "product" || savedType === "tool") {
-        setActiveType(savedType)
-      }
-      if (savedDraft) {
-        const parsed = JSON.parse(savedDraft)
-        setForm((prev) => ({ ...prev, ...parsed }))
-        if (isUnlockedFromUrl) {
-          toast.success(
-            "Premium Unlocked!",
-            "Your draft has been restored with all premium features unlocked."
-          )
-        }
-      }
-    } catch (e) {
-      console.error("Failed to restore submit draft:", e)
-    }
-  }, [isUnlockedFromUrl])
-
-  const hasActiveAccess =
-    selectedTier !== TIER.FREE &&
-    (isPromoActive || hasPaidCredit || isUnlockedFromUrl)
-
-  const handleUnlockClick = (targetTier: Tier) => {
-    if (!currentUserId) {
-      toast.error("Sign in required", "Please sign in before unlocking premium features.")
-      return
-    }
-    try {
-      localStorage.setItem("launchnests_submit_draft", JSON.stringify(form))
-      localStorage.setItem("launchnests_submit_active_type", activeType)
-    } catch {}
-    checkoutMutation.mutate({
-      paymentType: "listing",
-      tier: targetTier as typeof TIER.PREMIUM | typeof TIER.PREMIUM_PLUS,
-      returnToSubmit: true,
-    })
+  const handleSelectTier = (tier: Tier) => {
+    setPickedTier(tier)
+    trackLaunchFunnel("tier_selected", { itemType: activeType, tier })
   }
   const {
     mutateAsync: submitToolMutation,
@@ -285,7 +233,8 @@ export const SubmitContent = ({
   const currentAutofillCandidate = autofillUrl.trim() || form.websiteUrl.trim()
   const isAutofillUrlValid = isValidHttpsUrl(currentAutofillCandidate)
 
-  const isSubmitting = isToolSubmitting || isProductSubmitting
+  const isSubmitting =
+    isToolSubmitting || isProductSubmitting || pendingChoice !== null
   const submissionError = activeType === "product" ? productError : toolError
 
   if (isSessionPending || !session?.user) {
@@ -421,7 +370,7 @@ export const SubmitContent = ({
     }))
   }
 
-  const validateForm = (userId: string) => {
+  const validateForm = (userId: string, includePremium: boolean) => {
     const nonBlankFaqs = form.faqs
       .map((f) => ({
         id: f.id,
@@ -442,14 +391,27 @@ export const SubmitContent = ({
     const faviconUrl = getFaviconUrl(form.websiteUrl)
     const resolvedLogoUrl = form.logoUrl?.trim() || faviconUrl || ""
 
-    const effectiveFaqs = hasActiveAccess ? nonBlankFaqs : []
-    const effectiveImages = hasActiveAccess ? form.images.slice(0, 3) : form.images.slice(0, 1)
-    const effectiveMetaTitle = hasActiveAccess ? form.metaTitle : ""
-    const effectiveMetaDescription = hasActiveAccess ? form.metaDescription : ""
-    const effectiveAiContext = hasActiveAccess ? form.aiContext : ""
-    const effectiveGeoTarget = hasActiveAccess ? form.geoTarget : ""
-    const effectiveAsoCategory = hasActiveAccess ? form.asoCategory : ""
-    const effectiveKeywords = hasActiveAccess ? form.keywords : ""
+    const premiumFields = {
+      faqs: nonBlankFaqs,
+      images: form.images.slice(0, PREMIUM_IMAGE_LIMIT),
+      metaTitle: form.metaTitle,
+      metaDescription: form.metaDescription,
+      aiContext: form.aiContext,
+      geoTarget: form.geoTarget,
+      asoCategory: form.asoCategory,
+      keywords: form.keywords,
+    }
+    const effectiveFaqs = includePremium ? nonBlankFaqs : []
+    const effectiveImages = form.images.slice(
+      0,
+      includePremium ? PREMIUM_IMAGE_LIMIT : FREE_IMAGE_LIMIT
+    )
+    const effectiveMetaTitle = includePremium ? form.metaTitle : ""
+    const effectiveMetaDescription = includePremium ? form.metaDescription : ""
+    const effectiveAiContext = includePremium ? form.aiContext : ""
+    const effectiveGeoTarget = includePremium ? form.geoTarget : ""
+    const effectiveAsoCategory = includePremium ? form.asoCategory : ""
+    const effectiveKeywords = includePremium ? form.keywords : ""
 
     if (activeType === "product") {
       const payload = {
@@ -482,7 +444,7 @@ export const SubmitContent = ({
         return null
       }
 
-      return { type: "product" as const, data: parsed.data }
+      return { type: "product" as const, data: parsed.data, premiumFields }
     } else {
       const payload = {
         ...form,
@@ -510,107 +472,143 @@ export const SubmitContent = ({
         return null
       }
 
-      return { type: "tool" as const, data: parsed.data }
+      return { type: "tool" as const, data: parsed.data, premiumFields }
     }
   }
+
+  const handleSelectWeek = (year: number, week: number) =>
+    setForm((prev) => ({ ...prev, launchYear: year, launchWeek: week }))
+
+  const hasPremiumOnlyFields = Boolean(
+    form.faqs.some((faq) => faq.question.trim() || faq.answer.trim()) ||
+    form.images.length > FREE_IMAGE_LIMIT ||
+    form.metaTitle ||
+    form.metaDescription ||
+    form.aiContext ||
+    form.geoTarget ||
+    form.asoCategory ||
+    form.keywords
+  )
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    if (!user?.id) return
-    const valid = validateForm(user.id)
-    if (valid) {
-      setIsScheduleConfirmOpen(true)
-    }
+    if (!user?.id || !validateForm(user.id, hasActiveAccess)) return
+    setIsScheduleDialogOpen(true)
+    trackLaunchFunnel("schedule_dialog_open", {
+      itemType: activeType,
+      tier: selectedTier,
+    })
   }
 
-  const handleConfirmSchedule = async () => {
+  const submitListing = async (
+    valid: NonNullable<ReturnType<typeof validateForm>>,
+    paymentId?: string
+  ): Promise<DbProduct | DbTool> => {
+    // The API sets submitterId from the session, so the client value is ignored.
+    if (valid.type === "product") {
+      return (await submitProductMutation({
+        ...valid.data,
+        paymentId,
+      })) as DbProduct
+    }
+    return (await submitToolMutation({ ...valid.data, paymentId })) as DbTool
+  }
+
+  const resetAfterLaunch = () => {
+    setIsScheduleDialogOpen(false)
+    setPendingChoice(null)
+    setPickedTier(null)
+    setForm(emptyForm)
+    setErrors({})
+  }
+
+  const handleLaunch = async (choice: LaunchChoice) => {
     if (!user?.id) return
-    const valid = validateForm(user.id)
+    const valid = validateForm(user.id, choice !== "free")
     if (!valid) {
-      setIsScheduleConfirmOpen(false)
+      setIsScheduleDialogOpen(false)
       return
     }
 
+    setPendingChoice(choice)
+    let created: DbProduct | DbTool
     try {
-      const paymentId = userCredit?.id || searchParams.get("payment_id") || undefined
-      if (valid.type === "product") {
-        const clientPayload = { ...valid.data, paymentId }
-        delete (clientPayload as { submitterId?: string }).submitterId
-        const res = (await submitProductMutation(clientPayload)) as DbProduct
-        trackSubmitProduct({
-          itemId: res.id,
-          itemName: form.name,
-          itemSlug: res.slug,
-          itemType: "product",
-          category: form.category,
-          pricing: form.pricing,
+      created = await submitListing(
+        valid,
+        choice === "credit" ? userCredit?.id : undefined
+      )
+    } catch (err: unknown) {
+      setPendingChoice(null)
+      toast.error(
+        "Scheduling Failed",
+        err instanceof Error ? err.message : "Failed to schedule launch"
+      )
+      return
+    }
+
+    trackSubmitProduct({
+      itemId: created.id,
+      itemName: form.name,
+      itemSlug: created.slug,
+      itemType: valid.type,
+      category: form.category,
+      pricing: form.pricing,
+    })
+    const entity = {
+      name: form.name,
+      slug: created.slug,
+      type: valid.type,
+      websiteUrl: form.websiteUrl,
+    }
+
+    if (choice === "pay" && isPaidTier(selectedTier)) {
+      const tier = selectedTier
+      savePendingLaunch({
+        ...entity,
+        id: created.id,
+        tier,
+        premiumFields: valid.premiumFields,
+      })
+      trackLaunchFunnel("launch_paid_click", { itemType: valid.type, tier })
+      try {
+        await checkoutMutation.mutateAsync({
+          paymentType: "listing",
+          tier,
+          itemType: valid.type,
+          itemId: created.id,
+          returnToSubmit: true,
         })
-        setIsScheduleConfirmOpen(false)
-        setScheduledEntity({
-          name: form.name,
-          slug: res.slug,
-          type: "product",
-          websiteUrl: form.websiteUrl,
-        })
-        setIsBadgeDialogOpen(true)
-        setForm(emptyForm)
-        setErrors({})
-        try {
-          localStorage.removeItem("launchnests_submit_draft")
-          localStorage.removeItem("launchnests_submit_active_type")
-          if (typeof window !== "undefined") {
-            const cleanUrl = new URL(window.location.href)
-            cleanUrl.searchParams.delete("unlocked")
-            cleanUrl.searchParams.delete("payment_id")
-            cleanUrl.searchParams.delete("tier")
-            window.history.replaceState(null, "", cleanUrl.pathname + (cleanUrl.search ? cleanUrl.search : ""))
-          }
-        } catch {}
-        toast.success(
-          "Product Scheduled!",
-          "Your product has been scheduled for launch."
-        )
-      } else {
-        const res = (await submitToolMutation({ ...valid.data, paymentId })) as DbTool
-        trackSubmitProduct({
-          itemId: res.id,
-          itemName: form.name,
-          itemSlug: res.slug,
-          itemType: "tool",
-          category: form.category,
-          pricing: form.pricing,
-        })
-        setIsScheduleConfirmOpen(false)
-        setScheduledEntity({
-          name: form.name,
-          slug: res.slug,
-          type: "tool",
-          websiteUrl: form.websiteUrl,
-        })
-        setIsBadgeDialogOpen(true)
-        setForm(emptyForm)
-        setErrors({})
-        try {
-          localStorage.removeItem("launchnests_submit_draft")
-          localStorage.removeItem("launchnests_submit_active_type")
-          if (typeof window !== "undefined") {
-            const cleanUrl = new URL(window.location.href)
-            cleanUrl.searchParams.delete("unlocked")
-            cleanUrl.searchParams.delete("payment_id")
-            cleanUrl.searchParams.delete("tier")
-            window.history.replaceState(null, "", cleanUrl.pathname + (cleanUrl.search ? cleanUrl.search : ""))
-          }
-        } catch {}
-        toast.success(
-          "Developer Tool Scheduled!",
-          "Your developer tool has been scheduled for launch."
+      } catch {
+        // The listing is saved as a Free launch; the result dialog offers to retry payment.
+        resetAfterLaunch()
+        router.replace(
+          ROUTES.SUBMIT_LAUNCH_RESULT(created.id, valid.type, tier) +
+            "&status=failed"
         )
       }
-    } catch (err: unknown) {
-      const msg =
-        err instanceof Error ? err.message : "Failed to schedule launch"
-      toast.error("Scheduling Failed", msg)
+      return
     }
+
+    resetAfterLaunch()
+    if (created.tier === TIER.FREE) {
+      trackLaunchFunnel("launch_free", { itemType: valid.type })
+      setScheduledEntity(entity)
+      setIsBadgeDialogOpen(true)
+      toast.success(
+        "Launch Scheduled!",
+        entity.name + " is scheduled for launch."
+      )
+    } else {
+      toast.success(
+        "Launch Scheduled!",
+        entity.name + " is scheduled with " + PLANS[created.tier].name + "."
+      )
+    }
+  }
+
+  const showBadgeFor = (launch: PendingLaunch) => {
+    setScheduledEntity(launch)
+    setIsBadgeDialogOpen(true)
   }
 
   const typeLabel = activeType === "product" ? "Product" : "Tool"
@@ -642,35 +640,6 @@ export const SubmitContent = ({
           </span>
         </div>
       </div>
-
-      {/* Launch Promo Ribbon - Compact & Sleek */}
-      {isPromoActive && (
-        <div className="flex items-center justify-between border-b border-dashed border-amber-200/80 bg-linear-to-r from-amber-500/10 via-yellow-500/5 to-amber-500/10 px-4 py-2.5 text-xs text-amber-950 sm:px-6 md:px-8">
-          <div className="flex items-center gap-2">
-            <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-amber-500/20 text-amber-700">
-              <Sparkles className="size-3" />
-            </span>
-            <p className="font-medium text-amber-950">
-              <strong className="font-semibold text-amber-900">
-                Launch Special Active:
-              </strong>{" "}
-              First {LAUNCH_PROMO.MAX_LAUNCHES} launches receive a{" "}
-              <span className="font-semibold text-amber-900">
-                FREE Lifetime Premium Listing ({LAUNCH_PROMO.VALUE_GIFTED}{" "}
-                value)
-              </span>{" "}
-              with permanent Do-Follow SEO backlink.
-            </p>
-          </div>
-          <Badge
-            variant="outline"
-            className="hidden shrink-0 border-amber-300/80 bg-amber-100/60 font-mono text-[10px] font-semibold text-amber-900 sm:inline-flex"
-          >
-            {LAUNCH_PROMO.BADGE_LABEL}
-          </Badge>
-        </div>
-      )}
-
 
       {/* Top Type Selector Tabs - Compact, Full-Width with Corner Outline Style */}
       <div className="w-full border-b border-dashed border-border bg-white px-4 py-3 sm:px-6 md:px-8">
@@ -754,14 +723,8 @@ export const SubmitContent = ({
               <LaunchWeekPicker
                 selectedYear={form.launchYear}
                 selectedWeek={form.launchWeek}
-                compact={true}
-                onSelectWeek={(year, week) =>
-                  setForm((prev) => ({
-                    ...prev,
-                    launchYear: year,
-                    launchWeek: week,
-                  }))
-                }
+                currentTier={creditTier ?? TIER.FREE}
+                onSelectWeek={handleSelectWeek}
               />
               {errors.launchWeek && (
                 <p className="text-xs text-red-500">{errors.launchWeek[0]}</p>
@@ -985,7 +948,9 @@ export const SubmitContent = ({
                   </div>
 
                   <div className="grid gap-2">
-                    <Label htmlFor="category">Primary Category <span className="text-rose-500">*</span></Label>
+                    <Label htmlFor="category">
+                      Primary Category <span className="text-rose-500">*</span>
+                    </Label>
                     <Select
                       value={form.category}
                       onValueChange={(val) =>
@@ -995,7 +960,10 @@ export const SubmitContent = ({
                         }))
                       }
                     >
-                      <SelectTrigger id="category" aria-invalid={Boolean(errors.category)}>
+                      <SelectTrigger
+                        id="category"
+                        aria-invalid={Boolean(errors.category)}
+                      >
                         <SelectValue placeholder="Select a canonical category" />
                       </SelectTrigger>
                       <SelectContent className="max-h-72">
@@ -1007,7 +975,9 @@ export const SubmitContent = ({
                       </SelectContent>
                     </Select>
                     {errors.category && (
-                      <p className="text-xs text-red-500">{errors.category[0]}</p>
+                      <p className="text-xs text-red-500">
+                        {errors.category[0]}
+                      </p>
                     )}
                   </div>
                 </div>
@@ -1199,10 +1169,15 @@ export const SubmitContent = ({
 
               <div className="flex flex-col gap-5">
                 <div className="grid gap-2">
-                  <Label>{typeLabel} Screenshots (Max {hasActiveAccess ? 3 : 1})</Label>
+                  <Label>
+                    {typeLabel} Screenshots (Max{" "}
+                    {hasActiveAccess ? PREMIUM_IMAGE_LIMIT : FREE_IMAGE_LIMIT})
+                  </Label>
                   <ScreenshotsUploader
                     value={form.images}
-                    maxCount={hasActiveAccess ? 3 : 1}
+                    maxCount={
+                      hasActiveAccess ? PREMIUM_IMAGE_LIMIT : FREE_IMAGE_LIMIT
+                    }
                     onChange={(images) =>
                       setForm((prev) => ({ ...prev, images }))
                     }
@@ -1485,8 +1460,7 @@ export const SubmitContent = ({
                   title="Interactive FAQs"
                   description="Address builder questions directly with expandable FAQ accordions."
                   tierRequired={TIER.PREMIUM}
-                  onUnlock={() => handleUnlockClick(TIER.PREMIUM)}
-                  isUnlocking={checkoutMutation.isPending}
+                  onUnlock={() => handleSelectTier(TIER.PREMIUM)}
                 />
               ) : (
                 <FaqBuilder
@@ -1531,101 +1505,102 @@ export const SubmitContent = ({
                   title="SEO, GEO & ASO Discoverability"
                   description="Target global search keywords, meta titles, descriptions, and regional GEO target tags for search engines."
                   tierRequired={TIER.PREMIUM}
-                  onUnlock={() => handleUnlockClick(TIER.PREMIUM)}
-                  isUnlocking={checkoutMutation.isPending}
+                  onUnlock={() => handleSelectTier(TIER.PREMIUM)}
                 />
               </div>
             ) : (
               <>
                 <div className="flex flex-col gap-5 border-b border-dashed border-border px-6 py-6 md:px-8 md:py-8">
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-                <div className="grid gap-2">
-                  <Label htmlFor="audience">Target Audience</Label>
-                  <Input
-                    id="audience"
-                    value={form.targetAudience}
-                    onChange={set("targetAudience")}
-                    placeholder="e.g. Frontend Developers, SaaS Founders"
-                  />
-                  <span className="text-[11px] text-slate-400">
-                    Primary user persona.
-                  </span>
-                </div>
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                    <div className="grid gap-2">
+                      <Label htmlFor="audience">Target Audience</Label>
+                      <Input
+                        id="audience"
+                        value={form.targetAudience}
+                        onChange={set("targetAudience")}
+                        placeholder="e.g. Frontend Developers, SaaS Founders"
+                      />
+                      <span className="text-[11px] text-slate-400">
+                        Primary user persona.
+                      </span>
+                    </div>
 
-                <div className="grid gap-2">
-                  <Label htmlFor="geoTarget">Geographical Target (GEO)</Label>
-                  <Input
-                    id="geoTarget"
-                    value={form.geoTarget}
-                    onChange={set("geoTarget")}
-                    placeholder="e.g. Global, US Only, EU Compliant"
-                  />
-                  <span className="text-[11px] text-slate-400">
-                    Localized queries and compliance.
-                  </span>
-                </div>
+                    <div className="grid gap-2">
+                      <Label htmlFor="geoTarget">
+                        Geographical Target (GEO)
+                      </Label>
+                      <Input
+                        id="geoTarget"
+                        value={form.geoTarget}
+                        onChange={set("geoTarget")}
+                        placeholder="e.g. Global, US Only, EU Compliant"
+                      />
+                      <span className="text-[11px] text-slate-400">
+                        Localized queries and compliance.
+                      </span>
+                    </div>
 
-                <div className="grid gap-2">
-                  <Label htmlFor="asoCategory">
-                    Directory / App Category (ASO)
-                  </Label>
-                  <Input
-                    id="asoCategory"
-                    value={form.asoCategory}
-                    onChange={set("asoCategory")}
-                    placeholder="e.g. Developer Tools, Productivity"
-                  />
-                  <span className="text-[11px] text-slate-400">
-                    External taxonomy classification.
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* Search Metadata (SEO) */}
-            <div className="flex flex-col gap-5 border-b border-dashed border-border px-6 py-6 md:px-8 md:py-8">
-              <div className="flex flex-col gap-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="keywords">
-                    Target Search Keywords (SEO / ASO)
-                  </Label>
-                  <Input
-                    id="keywords"
-                    value={form.keywords}
-                    onChange={set("keywords")}
-                    placeholder="e.g. react state, open source database, edge hosting (comma separated)"
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                  <div className="grid gap-2">
-                    <Label htmlFor="metaTitle">Meta Title (SEO)</Label>
-                    <Input
-                      id="metaTitle"
-                      value={form.metaTitle}
-                      onChange={set("metaTitle")}
-                      placeholder="Title used by search engines (max 60 chars)"
-                      maxLength={60}
-                    />
-                  </div>
-
-                  <div className="grid gap-2">
-                    <Label htmlFor="metaDescription">
-                      Meta Description (SEO)
-                    </Label>
-                    <Textarea
-                      id="metaDescription"
-                      value={form.metaDescription}
-                      onChange={set("metaDescription")}
-                      placeholder="Description snippet used by search engines (max 160 chars)"
-                      rows={2}
-                      maxLength={160}
-                    />
+                    <div className="grid gap-2">
+                      <Label htmlFor="asoCategory">
+                        Directory / App Category (ASO)
+                      </Label>
+                      <Input
+                        id="asoCategory"
+                        value={form.asoCategory}
+                        onChange={set("asoCategory")}
+                        placeholder="e.g. Developer Tools, Productivity"
+                      />
+                      <span className="text-[11px] text-slate-400">
+                        External taxonomy classification.
+                      </span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </div>
-            </>
+
+                {/* Search Metadata (SEO) */}
+                <div className="flex flex-col gap-5 border-b border-dashed border-border px-6 py-6 md:px-8 md:py-8">
+                  <div className="flex flex-col gap-4">
+                    <div className="grid gap-2">
+                      <Label htmlFor="keywords">
+                        Target Search Keywords (SEO / ASO)
+                      </Label>
+                      <Input
+                        id="keywords"
+                        value={form.keywords}
+                        onChange={set("keywords")}
+                        placeholder="e.g. react state, open source database, edge hosting (comma separated)"
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                      <div className="grid gap-2">
+                        <Label htmlFor="metaTitle">Meta Title (SEO)</Label>
+                        <Input
+                          id="metaTitle"
+                          value={form.metaTitle}
+                          onChange={set("metaTitle")}
+                          placeholder="Title used by search engines (max 60 chars)"
+                          maxLength={60}
+                        />
+                      </div>
+
+                      <div className="grid gap-2">
+                        <Label htmlFor="metaDescription">
+                          Meta Description (SEO)
+                        </Label>
+                        <Textarea
+                          id="metaDescription"
+                          value={form.metaDescription}
+                          onChange={set("metaDescription")}
+                          placeholder="Description snippet used by search engines (max 160 chars)"
+                          rows={2}
+                          maxLength={160}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </>
             )}
 
             {/* AI Assistant Context (AEO) */}
@@ -1644,8 +1619,7 @@ export const SubmitContent = ({
                   title="AI Assistant Prompt Context (AEO)"
                   description="Provide direct instructions and architecture context for ChatGPT, Claude, Perplexity, and Gemini citations."
                   tierRequired={TIER.PREMIUM}
-                  onUnlock={() => handleUnlockClick(TIER.PREMIUM)}
-                  isUnlocking={checkoutMutation.isPending}
+                  onUnlock={() => handleSelectTier(TIER.PREMIUM)}
                 />
               ) : (
                 <div className="grid gap-2">
@@ -1670,13 +1644,8 @@ export const SubmitContent = ({
           {/* Launch Tier Selector - Positioned just above schedule button */}
           <TierSelector
             selectedTier={selectedTier}
-            onSelectTier={(tier) => setSelectedTier(tier)}
-            isPromoActive={isPromoActive}
-            promoRemaining={promoRemaining}
-            hasPaidCredit={hasPaidCredit}
-            paidCreditTier={userCredit?.tier}
-            onUnlockClick={handleUnlockClick}
-            isUnlocking={checkoutMutation.isPending}
+            onSelectTier={handleSelectTier}
+            creditTier={creditTier}
           />
 
           {/* Form Actions */}
@@ -1715,18 +1684,23 @@ export const SubmitContent = ({
         </form>
       </div>
 
-      <ScheduleConfirmDialog
-        isOpen={isScheduleConfirmOpen}
-        onClose={() => setIsScheduleConfirmOpen(false)}
-        onConfirm={handleConfirmSchedule}
-        isSubmitting={isSubmitting}
+      <ScheduleLaunchDialog
+        isOpen={isScheduleDialogOpen}
+        onClose={() => setIsScheduleDialogOpen(false)}
         type={activeType}
         name={form.name}
-        tier={selectedTier}
-        isPromoActive={isPromoActive && selectedTier === TIER.PREMIUM}
         launchYear={form.launchYear}
         launchWeek={form.launchWeek}
+        onSelectWeek={handleSelectWeek}
+        tier={selectedTier}
+        onSelectTier={handleSelectTier}
+        creditTier={creditTier}
+        hasPremiumOnlyFields={hasPremiumOnlyFields}
+        pendingChoice={pendingChoice}
+        onLaunch={handleLaunch}
       />
+
+      <LaunchResultDialog onShowBadge={showBadgeFor} />
 
       {scheduledEntity && (
         <EmbedBadgeDialog

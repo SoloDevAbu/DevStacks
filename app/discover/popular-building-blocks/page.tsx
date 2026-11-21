@@ -62,10 +62,11 @@ const PopularBuildingBlocksPage = async () => {
     },
   ])
 
+  // Not caught on purpose: a failed query keeps the last good page instead of caching an empty one.
   const initialItems = await getPopularBuildingBlocks({
     limit: DISCOVER_PAGE_LIMIT,
     page: 1,
-  }).catch(() => [])
+  })
 
   const collectionJsonLd = collectionPageSchema({
     name: "Popular Developer Building Blocks",

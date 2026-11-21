@@ -1,6 +1,5 @@
-import { type NextRequest, NextResponse, after } from "next/server"
+import { type NextRequest, NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
-import { refreshPromoBanner } from "@/lib/launches/promo-status"
 import { getTools } from "@/db/queries/tools/list"
 import { createTool } from "@/db/queries/tools/create"
 import { submitToolSchema } from "@/lib/validation/tool"
@@ -78,9 +77,6 @@ export const POST = async (req: NextRequest) => {
       tags: parsed.data.tags ?? [],
       platforms: (parsed.data.platforms ?? []) as any,
     })
-
-    // Every submission counts toward the launch promo, so it may close the sitewide banner.
-    after(refreshPromoBanner)
 
     return NextResponse.json({ data: tool }, { status: 201 })
   } catch (err: unknown) {

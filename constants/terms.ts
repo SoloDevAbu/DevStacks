@@ -17,7 +17,7 @@ export interface TermCategory {
   items: TermItem[]
 }
 
-export const TERMS_LAST_UPDATED = "September 19, 2026"
+export const TERMS_LAST_UPDATED = "November 20, 2026"
 
 export const TERMS_CATEGORIES: TermCategory[] = [
   {
@@ -126,7 +126,7 @@ export const TERMS_CATEGORIES: TermCategory[] = [
         title: "Backlinks & SEO Infrastructure",
         content: `Every approved listing on ${SITE_CONFIG.name} receives a canonical public directory page (${SITE_CONFIG.url}/tools/[slug] or ${SITE_CONFIG.url}/products/[slug]) indexed by search engines with Server-Side Rendered (SSR) HTML and structured JSON-LD schema.`,
         bulletPoints: [
-          "Standard directory indexing: Free listings receive permanent search indexation. As part of our active launch promotion, approved submissions receive complimentary lifetime Verified status including permanent Do-Follow backlinks.",
+          "Standard directory indexing: Free listings receive permanent search indexation. Outbound links on free listings are No-Follow unless the maker displays the LaunchNests badge on their site. Listings upgraded during the First 50 launch promotion (which ended on November 20, 2026) keep their complimentary lifetime Verified status.",
           "Sponsorship backlinks: Paid sponsorships receive persistent, sitewide Do-Follow backlinks for the duration of the placement.",
           "No performance guarantee: We do not guarantee specific Domain Authority (DA/DR) increases, search engine rankings, indexing latency, or referral traffic volumes.",
           "Comment links prohibited: Community comments may not be used to acquire backlinks (see Section 7).",

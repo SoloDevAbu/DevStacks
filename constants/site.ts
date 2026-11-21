@@ -20,7 +20,15 @@ const siteUrl = getSiteUrl()
 export const SITE_CONFIG = {
   name: "LaunchNests",
   shortName: "LaunchNests",
+  // Spellings people type into search and AI assistants, so all resolve to the same entity.
   alternateNames: [
+    "Launch Nests",
+    "launchnests",
+    "Launchnests",
+    "LAUNCHNESTS",
+    "LaunchNest",
+    "Launch Nest",
+    "launchnests.com",
     "LaunchNests Directory",
     "LaunchNests Ecosystem",
     "LaunchNests Platform",
@@ -32,6 +40,8 @@ export const SITE_CONFIG = {
   domain: "www.launchnests.com",
   ogImage: "/og-image.png",
   ogImageUrl: `${siteUrl}/og-image.png`,
+  logoUrl: `${siteUrl}/icon.png`,
+  logoSize: 512,
   supportEmail: "support@launchnests.com",
   creator: "Abu Bakkar Siddique",
   publisher: "LaunchNests",

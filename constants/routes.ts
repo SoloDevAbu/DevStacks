@@ -1,3 +1,10 @@
+// Query params on /submit after an in-flow listing checkout returns from the payment provider.
+export const SUBMIT_LAUNCH_PARAMS = {
+  ID: "launched",
+  TYPE: "launchedType",
+  TIER: "launchedTier",
+} as const
+
 export const ROUTES = {
   HOME: "/",
   DISCOVER_POPULAR_BUILDING_BLOCKS: "/discover/popular-building-blocks",
@@ -6,9 +13,20 @@ export const ROUTES = {
     `/api/md/launches/${year}/week-${week}`,
   TRENDING: "/trending",
   PRICING: "/pricing",
+  ABOUT: "/about",
   SUBMIT: "/submit",
   SUBMIT_PRODUCT: "/submit?type=product",
   SUBMIT_TOOL: "/submit?type=tool",
+  SUBMIT_LAUNCH_RESULT: (
+    itemId: string,
+    itemType: "product" | "tool",
+    tier: string
+  ) =>
+    `/submit?${new URLSearchParams({
+      [SUBMIT_LAUNCH_PARAMS.ID]: itemId,
+      [SUBMIT_LAUNCH_PARAMS.TYPE]: itemType,
+      [SUBMIT_LAUNCH_PARAMS.TIER]: tier,
+    })}`,
   SUBMIT_PRODUCT_WITH_TOOL: (toolSlug: string) =>
     `/submit?type=product&tool=${encodeURIComponent(toolSlug)}`,
   SHOWCASE: "/submit?type=product",

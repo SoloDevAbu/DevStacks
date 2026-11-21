@@ -119,6 +119,12 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
       priority: 0.5,
     },
     {
+      url: normalizeSitemapUrl(ROUTES.ABOUT),
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.6,
+    },
+    {
       url: normalizeSitemapUrl(ROUTES.FAQ),
       lastModified: now,
       changeFrequency: "daily",
@@ -322,6 +328,7 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
       ROUTES.TERMS,
       ROUTES.REFUND,
       ROUTES.PRICING,
+      ROUTES.ABOUT,
       ROUTES.FAQ,
       ROUTES.SUBMIT,
       ROUTES.MCP,

@@ -1,7 +1,7 @@
-import { TIER, type Tier } from "@/constants/plans"
+import { isPaidTier, type Tier } from "@/constants/plans"
 import { db } from "@/db"
-import { tools, products, categories, users, launches, blogs } from "@/db/schema"
-import { eq, or, ilike, and, desc, sql } from "drizzle-orm"
+import { tools, products, users, launches, blogs } from "@/db/schema"
+import { eq, or, ilike, and, desc } from "drizzle-orm"
 import { generateAndSaveLaunchBlog } from "@/lib/ai/launch-blog-service"
 
 export type AdminSubmissionItem = {
@@ -208,7 +208,7 @@ export const updateSubmissionStatusAndTriggerBlog = async ({
   let blogResult = null
   if (
     status === "approved" &&
-    (updated.tier === TIER.PREMIUM || updated.tier === TIER.PREMIUM_PLUS)
+    isPaidTier(updated.tier)
   ) {
     blogResult = await generateAndSaveLaunchBlog({
       itemType,

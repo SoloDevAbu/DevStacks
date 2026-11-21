@@ -14,6 +14,8 @@ import type { FeedItem } from "@/components/shared/feed-card"
 import type { LaunchWeekSnapshot } from "@/lib/launches/launch-week"
 import { formatWeekTitle } from "@/utils/iso-weeks"
 import { RotatingHeadline } from "@/components/home/rotating-headline"
+import { HomeAboutSection } from "@/components/home/home-about-section"
+import { FeaturedOnStrip } from "@/components/home/featured-on-strip"
 
 interface MainContentProps {
   launchWeek: LaunchWeekSnapshot
@@ -61,6 +63,8 @@ export const MainContent = ({
           weekTitle={weekTitle}
         />
         <PopularBuildingBlocksSection items={popularBuildingBlocks} />
+        <HomeAboutSection />
+        <FeaturedOnStrip />
       </div>
     </div>
   )

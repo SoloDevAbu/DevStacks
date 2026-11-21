@@ -3,6 +3,7 @@ import { Sparkles } from "lucide-react"
 import { AI_PROVIDERS } from "@/constants/ai-providers"
 import { HoverOutline } from "@/components/shared/hover-outline"
 import { cn } from "@/lib/utils"
+import { NOFOLLOW_LINK_REL } from "@/utils/urls"
 
 interface AskAiBarProps {
   prompt: string
@@ -57,7 +58,7 @@ export const AskAiBar = ({
             <a
               href={`${ai.url}${encodeURIComponent(prompt)}`}
               target="_blank"
-              rel="noopener noreferrer"
+              rel={NOFOLLOW_LINK_REL}
               className={cn(
                 "relative z-10 flex items-center justify-center gap-1.5 rounded-md border border-slate-200/80 bg-white/95 text-slate-700 transition-all hover:bg-slate-50 hover:shadow-2xs",
                 compact

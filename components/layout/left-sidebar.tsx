@@ -60,8 +60,11 @@ export const LeftSidebar = ({ quickStacks }: LeftSidebarProps) => {
       <div className={sidebarNavGroup}>
         {SIDEBAR_NAV.map((section) => (
           <div key={section.label} className={sidebarNavSection}>
-            <h3 className={sidebarHeading}>{section.label}</h3>
-            <nav className="flex flex-col gap-0.5 xl:gap-1">
+            <p className={sidebarHeading}>{section.label}</p>
+            <nav
+              aria-label={section.label}
+              className="flex flex-col gap-0.5 xl:gap-1"
+            >
               {section.items.map((item) => {
                 const isActive =
                   pathname === item.href ||
@@ -97,7 +100,7 @@ export const LeftSidebar = ({ quickStacks }: LeftSidebarProps) => {
 
         {/* Popular Stacks Quick-Filter */}
         <div className="flex flex-col gap-1.5 xl:gap-2">
-          <h3 className={sidebarHeading}>Popular Stacks</h3>
+          <p className={sidebarHeading}>Popular Stacks</p>
           <div className="flex flex-wrap gap-1 xl:gap-1.5">
             {quickStacks.map((stack) => {
               const stackHref = ROUTES.TOOL_CATEGORY(stack.slug)

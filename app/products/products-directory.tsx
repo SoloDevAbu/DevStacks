@@ -20,7 +20,6 @@ import { ProductsDirectoryContent } from "./products-content"
 import type { ProductSortOption } from "@/components/products/products-filter-bar"
 import { resolveCategoryHubPath } from "@/lib/catalog/category-url"
 import { getCategoryPath, toAbsoluteUrl } from "@/utils/urls"
-import { CrawlablePagination } from "@/components/shared/crawlable-pagination"
 import { notFound, permanentRedirect } from "next/navigation"
 
 export type ProductsSearchParams = {
@@ -233,16 +232,6 @@ export const ProductsDirectory = async ({
           totalPages={totalPages}
           initialProducts={initialProducts as DbProduct[]}
           totalCount={effectiveTotalCount}
-        />
-        <CrawlablePagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          basePath={ROUTES.PRODUCTS}
-          params={{
-            category,
-            pricing,
-            sortBy: sortBy === "upvotes" ? undefined : sortBy,
-          }}
         />
       </div>
     </>

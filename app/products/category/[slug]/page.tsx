@@ -4,7 +4,6 @@ import Link from "next/link"
 import {
   ArrowLeft,
   ChevronRight,
-  Layers,
   Sparkles,
   FolderGit2,
   Hammer,
@@ -36,6 +35,9 @@ export const revalidate = 86400
 
 export const generateStaticParams = getProductCategoryStaticParams
 
+const getCategoryHeading = (categoryName: string) =>
+  `${categoryName} Products & Software`
+
 type ProductCategoryPageProps = {
   params: Promise<{ slug: string }>
 }
@@ -64,7 +66,7 @@ export const generateMetadata = async (
   const stats = await getCategoryStats(category.id)
   const isIndexable = isCategoryIndexable(stats.productCount)
 
-  const baseTitle = `${category.name} Products & Software`
+  const baseTitle = getCategoryHeading(category.name)
   const title = baseTitle
   const description = `Explore ${stats.productCount} ${category.name} products launched on ${SITE_CONFIG.name}, ranked by community likes, with the tech stack each one is built on.`
   const canonicalUrl = `${SITE_CONFIG.url}/products/category/${category.slug}`
@@ -140,8 +142,8 @@ const CategoryProductsPage = async (props: ProductCategoryPageProps) => {
   ])
 
   const collectionLd = collectionPageSchema({
-    name: `${category.name} Developer Products & Software`,
-    description: `Directory of verified developer products, tools, and SaaS platforms in the ${category.name} ecosystem.`,
+    name: getCategoryHeading(category.name),
+    description: `Directory of products and SaaS platforms in the ${category.name} category, with the tech stack each one is built on.`,
     url: categoryUrl,
     items: productsList.map((p) => ({
       name: p.name,
@@ -215,7 +217,7 @@ const CategoryProductsPage = async (props: ProductCategoryPageProps) => {
         <header className="border-b border-dashed border-border bg-white px-6 py-8 md:px-8 md:py-10">
           <div className="flex flex-col gap-4">
             <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl md:text-4xl">
-              {category.name} Developer Products & Software
+              {getCategoryHeading(category.name)}
             </h1>
 
             <p className="max-w-3xl text-sm leading-relaxed font-normal text-slate-600 sm:text-base">

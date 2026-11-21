@@ -6,10 +6,8 @@ import { Sparkles } from "lucide-react"
 import { ToolList } from "@/components/shared/tool-list"
 import type { DbTool } from "@/types/entities"
 import { useInfiniteTools } from "@/hooks/tools/use-tools"
-import {
-  LoadMoreButton,
-  buildPageHref,
-} from "@/components/shared/load-more-button"
+import { LoadMoreButton } from "@/components/shared/load-more-button"
+import { buildPageHref } from "@/utils/pagination"
 import {
   ToolsFilterBar,
   type SortOption,

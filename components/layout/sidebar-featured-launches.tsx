@@ -25,7 +25,7 @@ export const SidebarFeaturedLaunches = () => {
   return (
     <div className="flex flex-col gap-2.5">
       <div className="flex items-center justify-between px-1">
-        <h3 className={sidebarHeading}>Featured This Week</h3>
+        <p className={sidebarHeading}>Featured This Week</p>
         <span className="font-mono text-[10px] font-medium text-slate-400">
           PRO
         </span>

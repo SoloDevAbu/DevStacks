@@ -22,18 +22,10 @@ export interface LaunchWeekSlot {
   freeSlotsUsed: number
   freeSlotsRemaining: number
   isFreeFull: boolean
-  isPromoActive: boolean
-}
-
-export interface LaunchPromoInfo {
-  isPromoActive: boolean
-  promoClaimed: number
-  promoRemaining: number
 }
 
 export interface LaunchAvailabilityResponse {
   weeks: LaunchWeekSlot[]
-  promo: LaunchPromoInfo
 }
 
 export const fetchLaunchAvailability =

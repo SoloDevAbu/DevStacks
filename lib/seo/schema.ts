@@ -1,7 +1,7 @@
-import { SITE_CONFIG } from "@/constants/site"
+import { SITE_CONFIG, CREATOR_SOCIALS } from "@/constants/site"
+import { ROUTES } from "@/constants/routes"
 import { countryCodeToName } from "@/utils/country"
-import { LAUNCH_PROMO } from "@/constants/promo"
-import { PRICING, TIER } from "@/constants/plans"
+import { PRICING } from "@/constants/plans"
 import { PLATFORMS } from "@/constants/platforms"
 
 export type ProductSchemaInput = {
@@ -69,6 +69,26 @@ export const websiteSchema = () => ({
     name: SITE_CONFIG.name,
     url: SITE_CONFIG.url,
   },
+  potentialAction: {
+    "@type": "SearchAction",
+    target: {
+      "@type": "EntryPoint",
+      urlTemplate: `${SITE_CONFIG.url}${ROUTES.PRODUCTS}?q={search_term_string}`,
+    },
+    "query-input": "required name=search_term_string",
+  },
+})
+
+const LOGO_ID = `${SITE_CONFIG.url}/#logo`
+
+export const founderSchema = () => ({
+  "@type": "Person",
+  "@id": `${SITE_CONFIG.url}/#founder`,
+  name: CREATOR_SOCIALS.name,
+  url: `${SITE_CONFIG.url}${ROUTES.ABOUT}`,
+  jobTitle: `Founder of ${SITE_CONFIG.name}`,
+  worksFor: { "@id": `${SITE_CONFIG.url}/#organization` },
+  sameAs: [CREATOR_SOCIALS.x, CREATOR_SOCIALS.linkedin],
 })
 
 export const organizationSchema = () => ({
@@ -76,10 +96,29 @@ export const organizationSchema = () => ({
   "@type": "Organization",
   "@id": `${SITE_CONFIG.url}/#organization`,
   name: SITE_CONFIG.name,
+  legalName: SITE_CONFIG.name,
   alternateName: [...SITE_CONFIG.alternateNames],
   url: SITE_CONFIG.url,
-  logo: SITE_CONFIG.ogImageUrl,
+  logo: {
+    "@type": "ImageObject",
+    "@id": LOGO_ID,
+    url: SITE_CONFIG.logoUrl,
+    contentUrl: SITE_CONFIG.logoUrl,
+    width: SITE_CONFIG.logoSize,
+    height: SITE_CONFIG.logoSize,
+    caption: SITE_CONFIG.name,
+  },
+  image: { "@id": LOGO_ID },
   description: SITE_CONFIG.description,
+  slogan: SITE_CONFIG.tagline,
+  founder: founderSchema(),
+  brand: {
+    "@type": "Brand",
+    name: SITE_CONFIG.name,
+    alternateName: [...SITE_CONFIG.alternateNames],
+    url: SITE_CONFIG.url,
+    logo: SITE_CONFIG.logoUrl,
+  },
   disambiguatingDescription:
     "The premier developer tools discovery directory, APIs database, and tech-stack ecosystem platform.",
   foundingDate: "2026",
@@ -88,7 +127,8 @@ export const organizationSchema = () => ({
   contactPoint: {
     "@type": "ContactPoint",
     email: SITE_CONFIG.supportEmail,
-    contactType: "technical support",
+    contactType: "customer support",
+    availableLanguage: ["English"],
     url: `${SITE_CONFIG.url}/submit`,
   },
   knowsAbout: [
@@ -321,6 +361,30 @@ export const profilePageSchema = ({
   name,
   url,
   mainEntity: personSchema(person),
+})
+
+export const aboutPageSchema = ({
+  name,
+  url,
+  description,
+  founderBio,
+}: {
+  name: string
+  url: string
+  description: string
+  founderBio: string
+}) => ({
+  "@context": "https://schema.org",
+  "@type": "AboutPage",
+  name,
+  url,
+  description,
+  about: { "@id": `${SITE_CONFIG.url}/#organization` },
+  mainEntity: {
+    "@type": "Organization",
+    "@id": `${SITE_CONFIG.url}/#organization`,
+    founder: { ...founderSchema(), description: founderBio },
+  },
 })
 
 export const breadcrumbSchema = (

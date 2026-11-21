@@ -424,28 +424,38 @@ export const footerAiButton =
 export const footerSocialIconButton =
   "relative z-10 flex size-8 items-center justify-center rounded-md border border-slate-200/80 bg-white transition-all hover:bg-slate-50 hover:shadow-2xs"
 
-export const footerFeaturedSection =
-  "flex flex-col gap-3.5 border-b border-dashed border-border bg-white px-6 py-5 md:px-8 md:py-6 overflow-hidden"
+export const featuredOnSection =
+  "flex flex-col gap-3.5 overflow-hidden border-t border-dashed border-border bg-white px-6 py-5 md:px-8 md:py-6"
 
-export const footerFeaturedLabel =
+export const featuredOnLabel =
   "font-mono text-xs font-bold tracking-wider text-slate-700 uppercase"
 
-export const footerFeaturedMarqueeWrapper =
+export const homeAboutSection =
+  "flex flex-col gap-3 border-b border-dashed border-border bg-white px-6 py-6 md:px-8"
+
+export const proseParagraph = "max-w-3xl text-sm leading-relaxed text-slate-600"
+
+export const aboutSectionBlock =
+  "flex flex-col gap-2 border-b border-dashed border-border bg-white px-6 py-6 md:px-8"
+
+export const aboutSectionTitle = "text-base font-bold text-slate-900"
+
+export const featuredOnMarqueeWrapper =
   "group relative flex w-full items-center overflow-hidden"
 
-export const footerFeaturedMarqueeTrack =
+export const featuredOnMarqueeTrack =
   "flex shrink-0 items-center gap-6 pr-6 animate-marquee"
 
-export const footerFeaturedMarqueeFadeLeft =
+export const featuredOnMarqueeFadeLeft =
   "pointer-events-none absolute inset-y-0 left-0 z-10 w-12 bg-linear-to-r from-white to-transparent"
 
-export const footerFeaturedMarqueeFadeRight =
+export const featuredOnMarqueeFadeRight =
   "pointer-events-none absolute inset-y-0 right-0 z-10 w-12 bg-linear-to-l from-white to-transparent"
 
-export const footerFeaturedBadgeLink =
+export const featuredOnBadgeLink =
   "relative inline-flex shrink-0 items-center transition-opacity hover:opacity-90"
 
-export const footerFeaturedBadgeImage =
+export const featuredOnBadgeImage =
   "h-9 sm:h-10 w-auto max-w-none object-contain transition-transform duration-200 hover:scale-[1.03]"
 
 export const makerBadge =
@@ -512,28 +522,11 @@ export const submissionStatusBadge = (status?: string) => {
 
 export * from "@/utils/dashboard/styles"
 
-export const launchPromoBannerWrapper =
-  "relative z-50 hidden md:flex w-full items-center justify-between border-b border-amber-200/80 bg-linear-to-r from-amber-500/10 via-yellow-500/10 to-amber-500/10 px-4 py-2 text-xs text-amber-950 transition-colors"
-
 export const launchPromoBadge =
   "inline-flex items-center gap-1 rounded-md border border-amber-300/80 bg-amber-100/60 px-2 py-0.5 text-[11px] font-semibold text-amber-900 shadow-2xs"
 
 export const addedByLaunchNestsBadge =
   "inline-flex items-center gap-1 rounded-md border border-slate-200 bg-slate-100/70 px-2 py-0.5 text-[11px] font-semibold text-slate-700 shadow-2xs"
-
-export const launchPromoCard =
-  "relative overflow-hidden rounded-xl border border-dashed border-amber-300/80 bg-linear-to-br from-amber-50/70 via-white to-yellow-50/50 p-5 shadow-xs"
-
-export const launchPromoFullWidthSection =
-  "border-b border-dashed border-border bg-linear-to-r from-amber-50/50 via-amber-50/20 to-white px-4 py-5 sm:px-6 sm:py-6 md:px-8"
-
-export const launchPromoFullWidthPerksGrid =
-  "mt-5 grid grid-cols-1 gap-2.5 border-t border-dashed border-amber-200/80 pt-4 sm:grid-cols-2 lg:grid-cols-4"
-
-export const launchPromoCardList = "mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2"
-
-export const launchPromoCardItem =
-  "flex items-center gap-2 text-xs font-medium text-slate-700"
 
 export const crawlerTrackCard =
   "relative flex flex-col justify-between overflow-hidden rounded-xl border border-dashed border-border bg-white p-6 transition-all hover:border-slate-400/80 shadow-2xs"
@@ -660,12 +653,6 @@ export const launchWeekCard = (
 
 export const launchWeekGrid =
   "grid grid-cols-1 gap-2.5 sm:grid-cols-2 md:grid-cols-4"
-
-export const launchWeekUpsellCallout =
-  "flex flex-col gap-2 rounded-xl border border-amber-200 bg-linear-to-r from-amber-50 to-orange-50/50 p-4 text-xs text-amber-900"
-
-export const launchPromoCelebrationCallout =
-  "flex items-start gap-3 rounded-xl border border-emerald-200/80 bg-linear-to-r from-emerald-50/80 via-teal-50/50 to-blue-50/40 p-4 text-xs text-emerald-950"
 
 export const noSubmissionsCard =
   "flex flex-col items-center gap-3 rounded-xl border border-dashed border-amber-300 bg-amber-50/50 p-6 text-center"
@@ -794,7 +781,7 @@ export const commentAuthButton =
   "mt-2 cursor-pointer gap-2 text-xs font-semibold"
 
 export const scheduleModalContainer =
-  "w-[92vw] max-w-md sm:max-w-md overflow-hidden border border-slate-200/90 shadow-2xl rounded-2xl p-6 font-sans"
+  "w-[92vw] max-w-lg sm:max-w-lg max-h-[90dvh] overflow-y-auto border border-slate-200/90 shadow-2xl rounded-2xl p-6 font-sans"
 
 export const embedModalContainer =
   "w-[94vw] max-w-[560px] sm:max-w-[560px] p-0 overflow-hidden border border-slate-200/90 shadow-2xl rounded-2xl bg-white font-sans flex flex-col max-h-[88vh]"
@@ -807,9 +794,6 @@ export const badgeShieldIconBox =
 
 export const scheduleEntitySummaryBox =
   "flex items-center gap-3.5 rounded-xl border border-slate-200/80 bg-slate-50/60 p-3.5"
-
-export const schedulePromoBox =
-  "flex flex-col gap-2.5 rounded-xl border border-slate-200/90 bg-white p-4 shadow-2xs"
 
 export const badgePreviewContainer =
   "flex items-center justify-center rounded-2xl border border-slate-200/80 bg-slate-50/70 py-6 px-4 w-full overflow-hidden"
@@ -993,17 +977,49 @@ export const submitSectionHeaderTier =
   "flex flex-col gap-3 border-b border-dashed border-border bg-linear-to-r from-blue-100/60 via-indigo-50/40 to-white px-6 py-6 sm:flex-row sm:items-center sm:justify-between md:px-8"
 
 export const submitTierFullWidthGrid =
-  "relative grid grid-cols-1 divide-y divide-dashed divide-border bg-white md:grid-cols-2 md:divide-y-0 md:divide-x border-b border-dashed border-border"
+  "relative grid grid-cols-1 gap-0 divide-y divide-dashed divide-border bg-white md:grid-cols-3 md:divide-y-0 md:divide-x border-b border-dashed border-border"
+
+export const submitTierDialogGrid = "grid grid-cols-1 gap-2.5"
+
+const TIER_SELECTED_SURFACE: Record<Tier, string> = {
+  [TIER.FREE]: "bg-linear-to-b from-slate-100/70 via-slate-50/40 to-white",
+  [TIER.PREMIUM]: "bg-linear-to-b from-blue-50/50 via-blue-50/20 to-white",
+  [TIER.PREMIUM_PLUS]: "bg-linear-to-b from-amber-50/50 via-amber-50/20 to-white",
+}
+
+const TIER_SELECTED_BORDER: Record<Tier, string> = {
+  [TIER.FREE]: "border-slate-400 ring-2 ring-slate-300/40",
+  [TIER.PREMIUM]: "border-blue-500 ring-2 ring-blue-500/20",
+  [TIER.PREMIUM_PLUS]: "border-amber-500 ring-2 ring-amber-500/20",
+}
 
 export const submitTierFullWidthColumn = (isSelected: boolean, tier: Tier) =>
   cn(
     "group relative flex cursor-pointer flex-col justify-between p-6 transition-colors md:p-8",
     isSelected
-      ? tier === TIER.PREMIUM_PLUS
-        ? "bg-linear-to-b from-amber-50/50 via-amber-50/20 to-white"
-        : "bg-linear-to-b from-blue-50/50 via-blue-50/20 to-white"
+      ? TIER_SELECTED_SURFACE[tier]
       : "bg-white hover:bg-slate-50/50"
   )
+
+export const submitTierDialogCard = (isSelected: boolean, tier: Tier) =>
+  cn(
+    "relative flex cursor-pointer flex-col gap-2 rounded-xl border p-3.5 text-left transition-colors",
+    isSelected
+      ? cn(TIER_SELECTED_SURFACE[tier], TIER_SELECTED_BORDER[tier])
+      : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/60"
+  )
+
+export const tierAccentText: Record<Tier, string> = {
+  [TIER.FREE]: "text-slate-900",
+  [TIER.PREMIUM]: "text-blue-950",
+  [TIER.PREMIUM_PLUS]: "text-amber-950",
+}
+
+export const tierCheckIcon: Record<Tier, string> = {
+  [TIER.FREE]: "text-slate-500",
+  [TIER.PREMIUM]: "text-blue-600",
+  [TIER.PREMIUM_PLUS]: "text-amber-600",
+}
 
 export const submitTierGrid = "grid grid-cols-1 gap-3 sm:grid-cols-3"
 

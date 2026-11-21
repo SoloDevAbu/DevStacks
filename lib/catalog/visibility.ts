@@ -52,10 +52,12 @@ export const blogIsLive = (now: Date = new Date()) =>
     )
   )
 
+// SQL twin of hasLaunched: a listing missing either half of its booking counts as launched.
 export const launchedByNow = (table: typeof tools | typeof products) => {
   const { year, week } = getCurrentWeek()
   return or(
     isNull(table.launchYear),
+    isNull(table.launchWeek),
     lt(table.launchYear, year),
     and(eq(table.launchYear, year), lte(table.launchWeek, week))
   )

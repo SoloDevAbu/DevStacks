@@ -9,10 +9,8 @@ import {
   MessageSquare,
   TrendingUp,
   ExternalLink,
-  Users,
   Calendar,
   ShieldAlert,
-  Sparkles,
   ArrowLeft,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -97,9 +95,9 @@ export const SingleItemAnalytics = ({ data }: SingleItemAnalyticsProps) => {
             />
             <div className="flex flex-col gap-1">
               <div className="flex flex-wrap items-center gap-2">
-                <h2 className="text-xl font-bold tracking-tight text-slate-900">
+                <h1 className="text-xl font-bold tracking-tight text-slate-900">
                   {item.name}
-                </h2>
+                </h1>
                 <Badge variant="outline" className={upgradeBadge(item.tier)}>
                   {item.tier}
                 </Badge>

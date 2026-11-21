@@ -10,11 +10,13 @@ import { launchedByNow } from "@/lib/catalog/visibility"
 
 // The same formula and rounding as calculatePopularScore, evaluated in Postgres so only the
 // requested page of tools is read instead of every approved tool.
+// Weights are bound untyped, so Postgres would read 1.5 as an integer next to an integer column;
+// the ::numeric casts keep the decimal weights.
 const popularScoreSql = sql`round((
-  ${tools.buildsCount} * ${POPULAR_BUILDING_BLOCKS_WEIGHTS.buildsWeight}
-  + ${tools.upvotesCount} * ${POPULAR_BUILDING_BLOCKS_WEIGHTS.upvotesWeight}
-  + ${tools.viewsCount} * ${POPULAR_BUILDING_BLOCKS_WEIGHTS.viewsWeight}
-)::numeric, 1)`
+  ${tools.buildsCount} * ${POPULAR_BUILDING_BLOCKS_WEIGHTS.buildsWeight}::numeric
+  + ${tools.upvotesCount} * ${POPULAR_BUILDING_BLOCKS_WEIGHTS.upvotesWeight}::numeric
+  + ${tools.viewsCount} * ${POPULAR_BUILDING_BLOCKS_WEIGHTS.viewsWeight}::numeric
+), 1)`
 
 export const getPopularBuildingBlocks = async ({
   limit = 10,

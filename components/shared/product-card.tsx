@@ -37,7 +37,7 @@ import {
   cardPricingBadge,
   cardLogo,
 } from "@/utils/styles"
-import { getOutboundUrl, getLinkRel, getFaviconUrl } from "@/utils/urls"
+import { getOutboundUrl, getFaviconUrl, NOFOLLOW_LINK_REL } from "@/utils/urls"
 import { trackOutboundClick } from "@/lib/analytics/events"
 import { useLikeProduct } from "@/hooks/products/use-like-product"
 import { useUserInteractions } from "@/hooks/users/use-user-interactions"
@@ -79,7 +79,6 @@ export const ProductCard = ({
   const isLiked = isProductLiked(product.slug)
 
   const outboundUrl = getOutboundUrl(product.websiteUrl ?? "", "launchnests")
-  const linkRel = getLinkRel(product.tier, product.badgeVerified)
 
   const handleOutboundClick = (e: React.MouseEvent) => {
     e.stopPropagation()
@@ -157,7 +156,7 @@ export const ProductCard = ({
           <a
             href={outboundUrl}
             target="_blank"
-            rel={linkRel}
+            rel={NOFOLLOW_LINK_REL}
             onClick={handleOutboundClick}
             className="shrink-0 transition-opacity hover:opacity-80"
             title={`Visit ${product.name} website`}
@@ -209,7 +208,7 @@ export const ProductCard = ({
                 <a
                   href={outboundUrl}
                   target="_blank"
-                  rel={linkRel}
+                  rel={NOFOLLOW_LINK_REL}
                   onClick={handleOutboundClick}
                   className="ml-1.5 inline-flex items-center text-slate-400 transition-colors hover:text-indigo-600"
                   title={`Visit ${product.name} website`}

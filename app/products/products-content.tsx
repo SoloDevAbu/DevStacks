@@ -5,10 +5,8 @@ import { useRouter } from "next/navigation"
 import { ProductList } from "@/components/shared/product-list"
 import type { DbProduct } from "@/types/entities"
 import { useInfiniteProducts } from "@/hooks/products/use-products"
-import {
-  LoadMoreButton,
-  buildPageHref,
-} from "@/components/shared/load-more-button"
+import { LoadMoreButton } from "@/components/shared/load-more-button"
+import { buildPageHref } from "@/utils/pagination"
 import {
   ProductsFilterBar,
   type ProductSortOption,

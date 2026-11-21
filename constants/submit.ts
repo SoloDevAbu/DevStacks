@@ -191,10 +191,15 @@ export const SUBMISSION_FAQS: SubmissionFaq[] = [
   },
   {
     question: `Is listing on ${SITE_CONFIG.name} free?`,
-    answer: `Yes, listing on ${SITE_CONFIG.name} is 100% free for open-source projects, indie hackers, and software companies. Every approved listing receives permanent indexing, rich snippets, and inclusion in AI crawler feeds. As part of our launch promotion, new submissions also receive an automatic upgrade to Verified Premium status upon approval.`,
+    answer: `Yes, listing on ${SITE_CONFIG.name} is 100% free for open-source projects, indie hackers, and software companies. Every approved listing receives permanent indexing, rich snippets, and inclusion in AI crawler feeds. Free listings earn a Do-Follow backlink by embedding our badge, and optional Premium tiers include one permanently.`,
   },
   {
     question: `How do launch weeks and community voting work?`,
     answer: `When submitting, you pick an upcoming launch week (or the next available week). During that week, your launch is prominently featured on the homepage in "This Week's Launches", where community members vote and comment. Listings are ranked fairly by genuine community votes, giving your launch organic reach and feedback.`,
   },
 ]
+
+export const PENDING_PREMIUM_STORAGE_PREFIX = "launchnests_pending_premium_v1:"
+
+export const FREE_IMAGE_LIMIT = 1
+export const PREMIUM_IMAGE_LIMIT = 3

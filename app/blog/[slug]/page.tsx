@@ -22,7 +22,6 @@ import { BLOG_ARTICLE_LABEL } from "@/constants/blog"
 import { SITE_CONFIG } from "@/constants/site"
 import { getBlogStaticParams } from "@/lib/catalog/static-params"
 import { ROUTES } from "@/constants/routes"
-import { PLANS, type Tier } from "@/constants/plans"
 import { BlogPreviewBanner } from "@/components/blog/blog-preview-banner"
 import { BlogVerdictBox } from "@/components/blog/blog-verdict-box"
 import { BlogMarkdownContent } from "@/components/blog/blog-markdown-content"
@@ -34,7 +33,6 @@ import { extractHeadingsFromMarkdown, type BlogTocItem } from "@/lib/blog/headin
 import { AskAiBar } from "@/components/shared/ask-ai-bar"
 import { Button } from "@/components/ui/button"
 import {
-  comparisonHeroWrapper,
   comparisonCategoryPill,
   comparisonH1,
   comparisonLeadParagraph,
@@ -194,7 +192,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   }
 
   // Multi-entity JSON-LD Schema
-  const schemas: any[] = [
+  const schemas: Parameters<typeof buildEntityGraph>[0] = [
     breadcrumbSchema([
       { name: "Home", url: SITE_CONFIG.url },
       { name: "Launch Stories", url: `${SITE_CONFIG.url}/blog` },

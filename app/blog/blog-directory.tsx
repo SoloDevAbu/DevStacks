@@ -14,8 +14,6 @@ import {
   collectionPageSchema,
   buildEntityGraph,
 } from "@/lib/seo/schema"
-import { CrawlablePagination } from "@/components/shared/crawlable-pagination"
-import { ROUTES } from "@/constants/routes"
 
 
 export type BlogSearchParams = {
@@ -123,11 +121,6 @@ export const BlogDirectory = async ({
           totalPages={totalPages}
           initialBlogs={items}
           totalCount={totalCount}
-        />
-        <CrawlablePagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          basePath={ROUTES.BLOG}
         />
       </div>
     </>

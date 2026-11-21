@@ -20,7 +20,6 @@ import { ToolsDirectoryContent } from "./tools-content"
 import type { SortOption } from "@/components/tools/tools-filter-bar"
 import { resolveCategoryHubPath } from "@/lib/catalog/category-url"
 import { getCategoryPath, toAbsoluteUrl } from "@/utils/urls"
-import { CrawlablePagination } from "@/components/shared/crawlable-pagination"
 import { notFound, permanentRedirect } from "next/navigation"
 
 export type ToolsSearchParams = {
@@ -235,16 +234,6 @@ export const ToolsDirectory = async ({
           initialTools={toolsList}
           totalCount={effectiveTotalCount}
           totalBuilds={stats.totalBuilds}
-        />
-        <CrawlablePagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          basePath={ROUTES.TOOLS}
-          params={{
-            category,
-            pricing,
-            sortBy: sortBy === "upvotes" ? undefined : sortBy,
-          }}
         />
       </div>
     </>

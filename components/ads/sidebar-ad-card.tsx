@@ -91,9 +91,9 @@ const ActiveAdItem = ({ ad }: { ad: ActiveAdDto }) => {
 
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-1.5">
-            <h4 className="truncate text-xs font-bold text-slate-900">
+            <p className="truncate text-xs font-bold text-slate-900">
               {ad.name}
-            </h4>
+            </p>
             <VerifiedBadge tier={tier} />
           </div>
           <p className="mt-1 line-clamp-2 text-[11px] leading-relaxed text-slate-600">
@@ -177,9 +177,9 @@ export const SidebarAdCard = () => {
             </div>
 
             <div className="relative z-10">
-              <h4 className="mt-2 text-xs font-bold text-slate-900">
+              <p className="mt-2 text-xs font-bold text-slate-900">
                 Reach Active Builders
-              </h4>
+              </p>
               <p className="mt-1 text-[11px] leading-relaxed text-slate-600">
                 Feature your developer tool, API, or infrastructure directly in
                 our ecosystem.

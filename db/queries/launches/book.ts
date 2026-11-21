@@ -2,9 +2,8 @@ import { db } from "@/db"
 import { launches } from "@/db/schema"
 import { and, eq, ne, sql } from "drizzle-orm"
 import { MAX_FREE_LAUNCHES_PER_WEEK } from "@/constants/launches"
-import { getLaunchPromoStatus } from "./availability"
 import { getISOWeekRange, getUpcomingLaunchWeeks } from "@/utils/iso-weeks"
-import type { Tier } from "@/constants/plans"
+import { TIER, type Tier } from "@/constants/plans"
 
 export interface LaunchSlotResolution {
   launchYear: number
@@ -34,20 +33,10 @@ export const resolveAndValidateLaunchSlot = async ({
 
   const { startDate, endDate } = getISOWeekRange(targetYear, targetWeek)
 
-  // Check promo status: first 50 submissions receive gifted Premium (unlimited slots)
-  const promo = await getLaunchPromoStatus()
-  let assignedTier: Tier = "free"
+  // Paid tiers come only from a verified payment; everything else launches free.
+  const assignedTier: Tier = tier ?? TIER.FREE
 
-  if (tier && tier !== "free") {
-    assignedTier = tier
-  } else if (promo.isPromoActive) {
-    assignedTier = "premium"
-  } else {
-    assignedTier = "free"
-  }
-
-  // If free tier, enforce 25-slot weekly limit
-  if (assignedTier === "free") {
+  if (assignedTier === TIER.FREE) {
     const [booked] = await db
       .select({ count: sql<number>`count(${launches.id})::int` })
       .from(launches)
@@ -63,7 +52,7 @@ export const resolveAndValidateLaunchSlot = async ({
     const bookedCount = booked?.count ?? 0
     if (bookedCount >= MAX_FREE_LAUNCHES_PER_WEEK) {
       throw new Error(
-        `Free launch slots for Week ${targetWeek} are full (25/25 taken). Please select a later week or upgrade to Premium.`
+        `Free launch slots for Week ${targetWeek} are full (${MAX_FREE_LAUNCHES_PER_WEEK}/${MAX_FREE_LAUNCHES_PER_WEEK} taken). Please select a later week or upgrade to Premium.`
       )
     }
   }
