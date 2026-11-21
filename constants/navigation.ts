@@ -5,7 +5,6 @@ import {
   TrendingUp,
   Users,
   BookOpen,
-  CalendarDays,
   LayoutGrid,
   type LucideIcon,
 } from "lucide-react"
@@ -174,6 +173,7 @@ export const FOOTER_COLUMNS: readonly FooterColumn[] = [
         label: "Product Hunt Alternatives",
         href: ROUTES.PRODUCTHUNT_ALTERNATIVES,
       },
+      { label: "About", href: ROUTES.ABOUT },
       { label: "FAQ", href: ROUTES.FAQ },
     ],
   },

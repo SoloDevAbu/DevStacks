@@ -31,6 +31,7 @@ import {
   buildAlternativesTitle,
   formatFactsCheckedOn,
   isToolOpenSource,
+  shortAlternativeName,
   toAbsoluteRowUrl,
 } from "@/utils/alternatives"
 import { buildSocialMetadata, formatMetaDescription } from "@/utils/seo"
@@ -83,12 +84,12 @@ export const generateMetadata = async (
     : `Top ${tool.name} Alternatives & Competitors (${currentYear})`
   const description = curated
     ? formatMetaDescription(
-        `Compare ${rows.length} ${tool.name} alternatives for ${currentYear}: ${rows
+        `Alternatives to ${tool.name} in ${currentYear}: ${rows
           .slice(0, 4)
-          .map(({ name }) => name)
+          .map(({ name }) => shortAlternativeName(name))
           .join(
             ", "
-          )} and more. License, pricing and when to switch, checked ${formatFactsCheckedOn(curated.factsCheckedOn)}.`
+          )} ${rows.length > 4 ? `and ${rows.length - 4} more, ` : ""}compared on license, pricing and when to switch.`
       )
     : `Compare ${tool.name} alternatives in ${tool.category ?? "developer tools"} for ${currentYear}, ranked by community upvotes and the products built with them on ${SITE_CONFIG.name}.`
 

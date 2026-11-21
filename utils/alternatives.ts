@@ -101,7 +101,7 @@ export const buildAlternativeEntries = (
   })
 }
 
-const shortName = (name: string) => name.replace(/\s*\(.*\)\s*$/, "")
+export const shortAlternativeName = (name: string) => name.replace(/\s*\(.*\)\s*$/, "")
 
 // Names as many alternatives as fit in a search result title, e.g.
 // "8 Docker Alternatives (2026): Podman, OrbStack, Colima".
@@ -113,9 +113,9 @@ export const buildAlternativesTitle = (
   const base = `${rows.length} ${toolName} Alternatives (${year})`
   const names: string[] = []
   for (const row of rows) {
-    const candidate = [...names, shortName(row.name)]
+    const candidate = [...names, shortAlternativeName(row.name)]
     if (`${base}: ${candidate.join(", ")}`.length <= SERP_TITLE_MAX_CHARS) {
-      names.push(shortName(row.name))
+      names.push(shortAlternativeName(row.name))
     }
   }
   return names.length > 0 ? `${base}: ${names.join(", ")}` : base
