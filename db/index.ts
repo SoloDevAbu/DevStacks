@@ -42,13 +42,18 @@ const getWorkersDb = () => {
 
 const globalForDb = globalThis as unknown as { db: Database | undefined }
 
+// Builds prerender many pages in parallel workers, so each keeps a single connection to stay
+// under the pooler limit. `next dev` serves concurrent requests from one process; with a single
+// connection every query queues behind the others and requests take seconds against a remote DB.
+const NODE_POOL_MAX = process.env.NODE_ENV === "development" ? 10 : 1
+
 const getNodeDb = () => {
   if (globalForDb.db) return globalForDb.db
 
   // Node tries each resolved address for only 250ms by default. When the database is farther
   // than that (or IPv6 is unroutable), every address fails with an ETIMEDOUT AggregateError.
   setDefaultAutoSelectFamilyAttemptTimeout(2000)
-  globalForDb.db = createDb(process.env.DATABASE_URL!, 1)
+  globalForDb.db = createDb(process.env.DATABASE_URL!, NODE_POOL_MAX)
   return globalForDb.db
 }
 
