@@ -1,5 +1,6 @@
 import { DOMAIN_RATING_API, DOMAIN_RATING_ERRORS } from "@/constants/free-tools"
 import type { DomainRatingResult } from "@/types/free-tools"
+import { mapInBatches } from "@/utils/async"
 
 const DOMAIN_PATTERN =
   /^(?=.{4,253}$)([a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,63}$/
@@ -63,17 +64,7 @@ const lookupOne = async (
 export const lookupDomainRatings = async (
   domains: readonly string[],
   apiKey: string
-): Promise<DomainRatingResult[]> => {
-  const results: DomainRatingResult[] = []
-  for (
-    let start = 0;
-    start < domains.length;
-    start += DOMAIN_RATING_API.CONCURRENCY
-  ) {
-    const batch = domains.slice(start, start + DOMAIN_RATING_API.CONCURRENCY)
-    results.push(
-      ...(await Promise.all(batch.map((domain) => lookupOne(domain, apiKey))))
-    )
-  }
-  return results
-}
+): Promise<DomainRatingResult[]> =>
+  mapInBatches(domains, DOMAIN_RATING_API.CONCURRENCY, (domain) =>
+    lookupOne(domain, apiKey)
+  )

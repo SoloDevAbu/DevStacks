@@ -4,38 +4,23 @@ import {
   AI_READINESS_CHECKS,
   AI_READINESS_THRESHOLDS,
   ENTITY_SCHEMA_TYPES,
+  LLMS_TXT_ACCEPT,
+  SITEMAP_ACCEPT,
   type AiReadinessCheckId,
 } from "@/constants/free-tools"
 import {
   fetchPublicResource,
-  type PublicResource,
+  isTextResource,
 } from "@/lib/free-tools/safe-fetch"
-import { isPathAllowedForAgent } from "@/lib/free-tools/robots"
+import { createCheckBuilder } from "@/lib/free-tools/checks"
+import { getSitemapUrls, isPathAllowedForAgent } from "@/lib/free-tools/robots"
 import type {
   AiCrawlerAccess,
-  AiReadinessCheckResult,
   AiReadinessReport,
-  AiReadinessStatus,
+  FreeToolCheckResult,
 } from "@/types/free-tools"
 
-const check = (
-  id: AiReadinessCheckId,
-  status: AiReadinessStatus,
-  detail: string
-): AiReadinessCheckResult => ({
-  id,
-  label: AI_READINESS_CHECKS[id].label,
-  status,
-  detail,
-})
-
-const isOkText = (
-  resource: PublicResource | null
-): resource is PublicResource =>
-  resource !== null &&
-  resource.status === 200 &&
-  !resource.contentType.includes("text/html") &&
-  resource.body.trim().length > 0
+const check = createCheckBuilder(AI_READINESS_CHECKS)
 
 const collectSchemaTypes = ($: cheerio.CheerioAPI) => {
   const types = new Set<string>()
@@ -137,7 +122,7 @@ const crawlerCheck = (crawlers: AiCrawlerAccess[]) => {
   )
 }
 
-const scoreChecks = (checks: AiReadinessCheckResult[]) =>
+const scoreChecks = (checks: FreeToolCheckResult[]) =>
   Math.round(
     checks.reduce(
       (total, result) =>
@@ -156,18 +141,18 @@ export const runAiReadinessCheck = async (
   const [homepage, robots, llms, llmsFull, sitemap] = await Promise.all([
     fetchPublicResource(siteUrl.toString()),
     fetchPublicResource(`${origin}/robots.txt`, "text/plain"),
-    fetchPublicResource(`${origin}/llms.txt`, "text/markdown,text/plain"),
-    fetchPublicResource(`${origin}/llms-full.txt`, "text/markdown,text/plain"),
-    fetchPublicResource(`${origin}/sitemap.xml`, "application/xml,text/xml"),
+    fetchPublicResource(`${origin}/llms.txt`, LLMS_TXT_ACCEPT),
+    fetchPublicResource(`${origin}/llms-full.txt`, LLMS_TXT_ACCEPT),
+    fetchPublicResource(`${origin}/sitemap.xml`, SITEMAP_ACCEPT),
   ])
 
   if (!homepage || homepage.status >= 500) return null
 
   const homepageOk =
     homepage.status === 200 && homepage.contentType.includes("html")
-  const robotsTxt = isOkText(robots) ? robots.body : ""
+  const robotsTxt = isTextResource(robots) ? robots.body : ""
   const crawlers = checkCrawlers(robotsTxt)
-  const sitemapInRobots = /^\s*sitemap\s*:/im.test(robotsTxt)
+  const sitemapInRobots = getSitemapUrls(robotsTxt).length > 0
   const sitemapOk = sitemap?.status === 200 && sitemap.body.includes("<")
 
   const checks = [
@@ -210,7 +195,7 @@ export const runAiReadinessCheck = async (
           "warn",
           "No sitemap at /sitemap.xml or in robots.txt."
         ),
-    isOkText(llms)
+    isTextResource(llms)
       ? check(
           "LLMS_TXT",
           llms.body.trimStart().startsWith("#") ? "pass" : "warn",
@@ -223,7 +208,7 @@ export const runAiReadinessCheck = async (
           "fail",
           "No /llms.txt. Add a short Markdown summary of the site with links to key pages."
         ),
-    isOkText(llmsFull)
+    isTextResource(llmsFull)
       ? check("LLMS_FULL_TXT", "pass", "Found /llms-full.txt.")
       : check(
           "LLMS_FULL_TXT",

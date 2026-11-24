@@ -1184,3 +1184,19 @@ export const quickAnswerBlock =
   "mt-2 flex max-w-2xl flex-col gap-1 border-l-2 border-dashed border-slate-300 pl-3"
 
 export const quickAnswerText = "text-sm leading-relaxed text-slate-700"
+
+export const freeToolReport = "flex max-w-2xl flex-col gap-4"
+
+export const freeToolCheckTitle = "text-sm font-bold text-slate-900"
+
+export const freeToolCheckDetail =
+  "text-xs break-words text-slate-600 sm:text-sm"
+
+export const freeToolPanelHeader =
+  "flex flex-wrap items-center justify-between gap-2 px-5 py-3 sm:px-6"
+
+export const freeToolCodeBlock =
+  "max-h-112 overflow-auto border border-dashed border-border bg-slate-50/60 p-4 font-mono text-xs leading-relaxed whitespace-pre text-slate-800"
+
+export const freeToolCtaRow =
+  "flex flex-col gap-3 p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6"

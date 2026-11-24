@@ -27,6 +27,10 @@ export const AI_SEARCH_TERMS: readonly GlossaryTerm[] = [
     ],
     relatedLinks: [
       {
+        label: "Free llms.txt generator & validator",
+        href: ROUTES.FREE_TOOL("llms-txt-generator"),
+      },
+      {
         label: "Free AI readiness checker",
         href: ROUTES.FREE_TOOL("ai-readiness-checker"),
       },

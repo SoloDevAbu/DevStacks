@@ -1,5 +1,8 @@
 import { DOMAIN_RATING_BANDS } from "@/constants/free-tools"
-import type { AiReadinessStatus, DomainRatingResult } from "@/types/free-tools"
+import type {
+  DomainRatingResult,
+  FreeToolCheckStatus,
+} from "@/types/free-tools"
 
 export const getDomainRatingBand = (rating: number) =>
   DOMAIN_RATING_BANDS.find(({ min }) => rating >= min)?.label ?? ""
@@ -33,8 +36,21 @@ export const buildDomainRatingCsv = (results: readonly DomainRatingResult[]) =>
     ),
   ].join("\n")
 
-export const AI_READINESS_STATUS_LABEL: Record<AiReadinessStatus, string> = {
+export const CHECK_STATUS_LABEL: Record<FreeToolCheckStatus, string> = {
   pass: "Pass",
   warn: "Warning",
   fail: "Fail",
+}
+
+export const downloadTextFile = (
+  content: string,
+  fileName: string,
+  mimeType: string
+) => {
+  const url = URL.createObjectURL(new Blob([content], { type: mimeType }))
+  const link = document.createElement("a")
+  link.href = url
+  link.download = fileName
+  link.click()
+  URL.revokeObjectURL(url)
 }

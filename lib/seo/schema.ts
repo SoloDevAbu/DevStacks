@@ -689,7 +689,7 @@ export const webApplicationSchema = ({
   url: string
 }) => ({
   "@context": "https://schema.org",
-  "@type": "WebApplication",
+  "@type": ["SoftwareApplication", "WebApplication"],
   "@id": `${url}#app`,
   name,
   description,

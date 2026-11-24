@@ -6,6 +6,7 @@ import { CategoryFaqSection } from "@/components/shared/category-faqs"
 import { AiReadinessChecker } from "@/components/free-tools/ai-readiness-checker"
 import { BulkDomainRatingChecker } from "@/components/free-tools/bulk-domain-rating-checker"
 import { DomainRatingChecker } from "@/components/free-tools/domain-rating-checker"
+import { LlmsTxtGenerator } from "@/components/free-tools/llms-txt-generator"
 import { FREE_TOOLS } from "@/constants/free-tools"
 import { ROUTES } from "@/constants/routes"
 import type { FreeTool, FreeToolSlug } from "@/types/free-tools"
@@ -23,6 +24,7 @@ const TOOL_WIDGETS: Record<FreeToolSlug, ComponentType> = {
   "domain-rating-checker": DomainRatingChecker,
   "bulk-domain-rating-checker": BulkDomainRatingChecker,
   "ai-readiness-checker": AiReadinessChecker,
+  "llms-txt-generator": LlmsTxtGenerator,
 }
 
 const NEXT_STEP_LINKS = [

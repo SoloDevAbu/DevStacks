@@ -18,6 +18,7 @@ import { DOMAIN_RATING_API } from "@/constants/free-tools"
 import { useDomainRatingCheck } from "@/hooks/free-tools/use-free-tools"
 import {
   buildDomainRatingCsv,
+  downloadTextFile,
   formatDomainRating,
   getDomainRatingBand,
   parseDomainList,
@@ -27,16 +28,7 @@ import { freeToolError, mutedText } from "@/utils/styles"
 
 const CSV_FILE_NAME = "domain-ratings.csv"
 
-const downloadCsv = (csv: string) => {
-  const url = URL.createObjectURL(
-    new Blob([csv], { type: "text/csv;charset=utf-8" })
-  )
-  const link = document.createElement("a")
-  link.href = url
-  link.download = CSV_FILE_NAME
-  link.click()
-  URL.revokeObjectURL(url)
-}
+const CSV_MIME_TYPE = "text/csv;charset=utf-8"
 
 export const BulkDomainRatingChecker = () => {
   const [input, setInput] = useState("")
@@ -127,7 +119,13 @@ export const BulkDomainRatingChecker = () => {
             <Button
               type="button"
               variant="outline"
-              onClick={() => downloadCsv(buildDomainRatingCsv(results))}
+              onClick={() =>
+                downloadTextFile(
+                  buildDomainRatingCsv(results),
+                  CSV_FILE_NAME,
+                  CSV_MIME_TYPE
+                )
+              }
             >
               Download CSV
             </Button>

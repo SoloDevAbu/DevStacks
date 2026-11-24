@@ -1,5 +1,8 @@
 import { SITE_CONFIG } from "@/constants/site"
-import { DOMAIN_RATING_API } from "@/constants/free-tools/config"
+import {
+  DOMAIN_RATING_API,
+  LLMS_TXT_GENERATOR,
+} from "@/constants/free-tools/config"
 import type { FreeTool, FreeToolSlug } from "@/types/free-tools"
 
 const DR_ATTRIBUTION_NOTE = `Domain Rating data comes from Ahrefs' free Domain Rating API and is shown with the credit "Domain Rating by Ahrefs", as Ahrefs' licence requires. ${SITE_CONFIG.name} is not affiliated with Ahrefs.`
@@ -199,6 +202,81 @@ export const FREE_TOOLS: readonly FreeTool[] = [
       },
     ],
   },
+  {
+    slug: "llms-txt-generator",
+    name: "llms.txt Generator & Validator",
+    metaTitle: "llms.txt Generator & Validator (Free)",
+    metaDescription:
+      "Generate an llms.txt file for your website from its sitemap, or validate the llms.txt file you already have against the llmstxt.org format. Free, no sign-up.",
+    tagline:
+      "Validate your llms.txt file against the llmstxt.org format, or generate a ready-to-copy one from your sitemap.",
+    cardDescription:
+      "Check an existing llms.txt file or draft one from your sitemap and page titles.",
+    howTo: [
+      {
+        name: "Enter your domain",
+        text: "Type your domain, such as example.com.",
+      },
+      {
+        name: "Run the check",
+        text: "The tool fetches /llms.txt, your sitemap (from robots.txt or /sitemap.xml) and the title and description of your homepage and top pages.",
+      },
+      {
+        name: "Fix or publish",
+        text: "If you already have an llms.txt, fix the issues it lists. Otherwise copy or download the generated file, review it, and upload it to the root of your site as /llms.txt.",
+      },
+    ],
+    guide: [
+      {
+        heading: "What is llms.txt?",
+        paragraphs: [
+          "llms.txt is a plain Markdown file at the root of a website, such as example.com/llms.txt, that tells AI assistants and agents what the site is and which pages matter most. It was proposed in 2024 as an easy, curated alternative to making AI tools crawl and parse every HTML page.",
+          "It is a proposal, not an official web standard. Some AI tools and agents read it, many do not yet, and it has no effect on Google rankings.",
+        ],
+      },
+      {
+        heading: "What a valid llms.txt file looks like",
+        paragraphs: [
+          "The llmstxt.org format is short. The file starts with an H1 holding the site or project name, which is the only required part. A blockquote (a line starting with >) follows with a one-sentence summary.",
+          "After that come ## sections, such as ## Docs or ## Products. Each section lists links in the form - [Page name](https://example.com/page): a short description. A section called ## Optional marks links an AI tool can skip when it is short on context.",
+        ],
+      },
+      {
+        heading: "How the generator builds your draft",
+        paragraphs: [
+          `It reads the sitemap listed in robots.txt, or /sitemap.xml, and falls back to links on your homepage. URLs are grouped by their first path segment, so /blog/... pages become a ## Blog section. Up to ${LLMS_TXT_GENERATOR.MAX_SECTIONS} sections with ${LLMS_TXT_GENERATOR.MAX_LINKS_PER_SECTION} links each are kept, shallow pages first.`,
+          "Each link uses the page's own title and meta description. Review the draft before you publish it: reorder sections, drop pages that do not help, and rewrite descriptions so they say what each page answers.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        question: "What is llms.txt?",
+        answer:
+          "llms.txt is a Markdown file at the root of a website that summarises the site for AI tools and links to its most useful pages, each with a short description. The format is described at llmstxt.org.",
+      },
+      {
+        question: "Should I create an llms.txt file?",
+        answer:
+          "If you want AI assistants and agents to find your key pages, yes. It is one small file and takes minutes with this generator. Not every AI tool reads it yet and it does not change Google rankings, so treat it as an extra, not a replacement for server-rendered pages, a sitemap and robots.txt rules that allow AI crawlers.",
+      },
+      {
+        question: "Where do I put my llms.txt file?",
+        answer:
+          "At the root of your domain, so it loads at https://yourdomain.com/llms.txt. Serve it as text/plain or text/markdown, not as an HTML page.",
+      },
+      {
+        question: "What is the difference between llms.txt and llms-full.txt?",
+        answer:
+          "llms.txt is a short index of links. llms-full.txt is an optional companion that holds the full text of your key pages in one file, so an AI tool can read everything with a single request.",
+      },
+      {
+        question: "Is this llms.txt generator free?",
+        answer:
+          "Yes. It is free with no sign-up. The tool only reads public pages on the domain you enter and does not store the result.",
+      },
+    ],
+  },
 ]
 
 const TOOLS_BY_SLUG = new Map(FREE_TOOLS.map((tool) => [tool.slug, tool]))
@@ -209,5 +287,5 @@ export const getFreeTool = (slug: string) =>
 export const FREE_TOOLS_HUB = {
   title: "Free SEO & AI Search Tools for Makers",
   heading: "Free Tools",
-  description: `Free tools from ${SITE_CONFIG.name} for checking Domain Rating and AI search readiness before and after a launch. No sign-up needed.`,
+  description: `Free tools from ${SITE_CONFIG.name} for checking Domain Rating, AI search readiness and llms.txt files before and after a launch. No sign-up needed.`,
 } as const

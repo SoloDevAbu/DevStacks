@@ -74,8 +74,38 @@ export const ENTITY_SCHEMA_TYPES = [
   "LocalBusiness",
 ] as const
 
-export const AI_READINESS_ERRORS = {
+export const SITE_CHECK_ERRORS = {
   INVALID_URL: "Enter a public https:// website address.",
   UNREACHABLE:
     "We could not reach that website. Check the address and try again.",
 } as const
+
+export const LLMS_TXT_CHECKS = {
+  FILE: { label: "llms.txt file" },
+  H1: { label: "H1 title" },
+  SUMMARY: { label: "Blockquote summary" },
+  SECTIONS: { label: "## sections" },
+  LINKS: { label: "Link lists" },
+  DESCRIPTIONS: { label: "Link descriptions" },
+} as const
+
+// Page fetches are capped so one run stays well inside the Workers subrequest limit.
+export const LLMS_TXT_GENERATOR = {
+  MAX_SECTIONS: 6,
+  MAX_LINKS_PER_SECTION: 4,
+  MAX_CHILD_SITEMAPS: 3,
+  MAX_CANDIDATE_URLS: 500,
+  PAGE_CONCURRENCY: 8,
+  PAGE_MAX_BYTES: 120_000,
+  DESCRIPTION_MAX_LENGTH: 180,
+  DESCRIBED_LINK_PASS_SHARE: 0.8,
+  TOP_LEVEL_SECTION: "Pages",
+  FILE_NAME: "llms.txt",
+  MIME_TYPE: "text/markdown;charset=utf-8",
+  SPEC_URL: "https://llmstxt.org/",
+  SUMMARY_PLACEHOLDER:
+    "Replace this line with one sentence on what the site offers and who it is for.",
+} as const
+
+export const LLMS_TXT_ACCEPT = "text/markdown,text/plain"
+export const SITEMAP_ACCEPT = "application/xml,text/xml"
