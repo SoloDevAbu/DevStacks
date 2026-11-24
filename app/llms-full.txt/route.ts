@@ -11,6 +11,12 @@ import {
 import { getAllComparisons } from "@/constants/comparisons"
 import { ROUTES } from "@/constants/routes"
 import {
+  getAllToolComparisons,
+  getComparisonTitle,
+} from "@/utils/tool-comparisons"
+import { GLOSSARY_HUB, GLOSSARY_TERMS } from "@/constants/glossary"
+import { FREE_TOOLS, FREE_TOOLS_HUB } from "@/constants/free-tools"
+import {
   AI_SURFACE_CACHE_CONTROL,
   AI_SURFACE_ARCHIVE_WEEKS,
   AI_SURFACE_FRESHNESS_NOTE,
@@ -211,6 +217,37 @@ ${c.quickComparisonDimensions
   .join("\n")}`
   )
   .join("\n\n")}
+
+## 12. Developer Tool Comparisons (hand-checked)
+Head-to-head comparisons of popular developer tools, each with license, pricing, platforms and when to choose each side. Hub: ${SITE_CONFIG.url}${ROUTES.COMPARE_HUB}
+
+${getAllToolComparisons()
+  .map(
+    (comparison) => `### ${getComparisonTitle(comparison)}
+- Canonical URL: ${SITE_CONFIG.url}${ROUTES.COMPARE(comparison.slug)}
+- Verdict: ${comparison.verdict}
+- License: ${comparison.a.name} = "${comparison.a.license}" | ${comparison.b.name} = "${comparison.b.license}"
+- Facts checked: ${comparison.factsCheckedOn}`
+  )
+  .join("\n\n")}
+
+## 13. Free Tools
+${FREE_TOOLS_HUB.description} Hub: ${SITE_CONFIG.url}${ROUTES.FREE_TOOLS}
+
+${FREE_TOOLS.map(
+  (tool) => `### ${tool.name}
+- Canonical URL: ${SITE_CONFIG.url}${ROUTES.FREE_TOOL(tool.slug)}
+- What it does: ${tool.metaDescription}`
+).join("\n\n")}
+
+## 14. Glossary
+${GLOSSARY_HUB.description} Hub: ${SITE_CONFIG.url}${ROUTES.GLOSSARY}
+
+${GLOSSARY_TERMS.map(
+  (term) => `### ${term.term}
+- Canonical URL: ${SITE_CONFIG.url}${ROUTES.GLOSSARY_TERM(term.slug)}
+- Definition: ${term.shortDefinition}`
+).join("\n\n")}
 `
 
   return new NextResponse(content, {

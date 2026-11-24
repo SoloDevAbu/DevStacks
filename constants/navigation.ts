@@ -169,6 +169,8 @@ export const FOOTER_COLUMNS: readonly FooterColumn[] = [
       },
       { label: "Free SaaS Directories", href: ROUTES.GUIDE_SAAS_DIRECTORIES },
       { label: "Launch Directory Database", href: ROUTES.DIRECTORIES },
+      { label: "Launch & SEO Glossary", href: ROUTES.GLOSSARY },
+      { label: "Free SEO Tools", href: ROUTES.FREE_TOOLS },
       {
         label: "Product Hunt Alternatives",
         href: ROUTES.PRODUCTHUNT_ALTERNATIVES,
@@ -180,6 +182,8 @@ export const FOOTER_COLUMNS: readonly FooterColumn[] = [
   {
     heading: "Compare",
     links: [
+      { label: "Dev Tool Comparisons", href: ROUTES.COMPARE_HUB },
+      { label: "Dev Tool Alternatives", href: ROUTES.ALTERNATIVES_HUB },
       {
         label: "LaunchNests vs Product Hunt",
         href: ROUTES.PRODUCTHUNT_ALTERNATIVE,
