@@ -20,6 +20,16 @@ export const SERP_TITLE_MAX_CHARS = 60
 
 const TITLE_MAX_CHARS = SERP_TITLE_MAX_CHARS - ` | ${SITE_CONFIG.name}`.length
 
+// Appends the longest suffix that still fits a search result title, or returns the base alone.
+export const fitTitleSuffix = (
+  base: string,
+  suffixes: readonly string[],
+  maxChars = SERP_TITLE_MAX_CHARS
+) => {
+  const suffix = suffixes.find((candidate) => `${base}${candidate}`.length <= maxChars)
+  return suffix ? `${base}${suffix}` : base
+}
+
 // Cuts at the last whole word, so a result never shows a half word or an ellipsis.
 const truncateTitle = (text: string, maxChars: number): string => {
   if (text.length <= maxChars) return text

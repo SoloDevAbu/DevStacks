@@ -626,3 +626,94 @@ export const techArticleSchema = (input: TechArticleSchemaInput) => ({
     ? { keywords: input.keywords.join(", ") }
     : {}),
 })
+
+interface DefinedTermInput {
+  name: string
+  description: string
+  url: string
+}
+
+const definedTermNode = ({ name, description, url }: DefinedTermInput) => ({
+  "@type": "DefinedTerm",
+  "@id": `${url}#term`,
+  name,
+  description,
+  url,
+})
+
+export const definedTermSetSchema = ({
+  name,
+  description,
+  url,
+  terms,
+}: DefinedTermInput & { terms: readonly DefinedTermInput[] }) => ({
+  "@context": "https://schema.org",
+  "@type": "DefinedTermSet",
+  "@id": `${url}#termset`,
+  name,
+  description,
+  url,
+  hasDefinedTerm: terms.map(definedTermNode),
+})
+
+export const definedTermSchema = ({
+  alternateName,
+  termSet,
+  ...term
+}: DefinedTermInput & {
+  alternateName: readonly string[]
+  termSet: { name: string; url: string }
+}) => ({
+  "@context": "https://schema.org",
+  ...definedTermNode(term),
+  ...(alternateName.length > 0 ? { alternateName } : {}),
+  inDefinedTermSet: {
+    "@type": "DefinedTermSet",
+    "@id": `${termSet.url}#termset`,
+    name: termSet.name,
+    url: termSet.url,
+  },
+})
+
+export const webApplicationSchema = ({
+  name,
+  description,
+  url,
+}: {
+  name: string
+  description: string
+  url: string
+}) => ({
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "@id": `${url}#app`,
+  name,
+  description,
+  url,
+  applicationCategory: "BusinessApplication",
+  operatingSystem: "Web",
+  isAccessibleForFree: true,
+  offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+  provider: { "@id": `${SITE_CONFIG.url}/#organization` },
+})
+
+export const howToSchema = ({
+  name,
+  url,
+  steps,
+}: {
+  name: string
+  url: string
+  steps: ReadonlyArray<{ readonly name: string; readonly text: string }>
+}) => ({
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  "@id": `${url}#howto`,
+  name,
+  step: steps.map((step, index) => ({
+    "@type": "HowToStep",
+    position: index + 1,
+    name: step.name,
+    text: step.text,
+  })),
+})

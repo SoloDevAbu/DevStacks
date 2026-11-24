@@ -42,6 +42,7 @@ export const ROUTES = {
   TOOL_CATEGORIES: "/tools/categories",
   TOOL_CATEGORY: (slug: string) =>
     `/tools/category/${encodeURIComponent(slug)}`,
+  ALTERNATIVES_HUB: "/alternatives",
   ALTERNATIVES: (slug: string) => `/alternatives/${encodeURIComponent(slug)}`,
   PRODUCTHUNT_ALTERNATIVE: "/producthunt-alternative",
   PRODUCTHUNT_ALTERNATIVES: "/producthunt-alternatives",
@@ -62,6 +63,11 @@ export const ROUTES = {
   BLOG_PREVIEW: (slug: string) =>
     `/api/blog-preview?slug=${encodeURIComponent(slug)}`,
   ADMIN: "/admin",
+  COMPARE_HUB: "/compare",
+  GLOSSARY: "/glossary",
+  FREE_TOOLS: "/free-tools",
+  FREE_TOOL: (slug: string) => `/free-tools/${encodeURIComponent(slug)}`,
+  GLOSSARY_TERM: (slug: string) => `/glossary/${encodeURIComponent(slug)}`,
   COMPARE: (slug: string) => `/compare/${encodeURIComponent(slug)}`,
   BUILT_WITH: (slug: string) => `/built-with/${encodeURIComponent(slug)}`,
   PRIVACY: "/privacy",

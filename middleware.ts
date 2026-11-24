@@ -76,6 +76,8 @@ const getListBrowsePath = (request: NextRequest): string | null => {
 const getRateLimit = (method: string, pathname: string) => {
   const isCatalogEndpoint =
     pathname === "/api/tools" || pathname === "/api/products"
+  // Free tools fan out to third-party sites and APIs on every call, so they get the tightest budget.
+  if (pathname.startsWith("/api/free-tools/")) return 10
   if (method === "POST") return isCatalogEndpoint ? 10 : 30
   if (
     isCatalogEndpoint ||
@@ -217,6 +219,7 @@ export const config = {
     "/trending/:path*",
     "/browse/:path*",
     "/compare/:path*",
+    "/glossary/:path*",
     "/producthunt-alternative",
     "/producthunt-alternative.md",
     "/uneed-alternative",
