@@ -4,6 +4,14 @@ import type { CuratedAlternatives } from "@/types/alternatives"
 export const STRIPE_ALTERNATIVES: CuratedAlternatives = {
   toolSlug: "stripe",
   toolName: "Stripe",
+  profile: {
+    websiteUrl: "https://stripe.com",
+    bestFor:
+      "A payments platform for cards, wallets, subscriptions, invoicing and Connect marketplaces, billed per transaction.",
+    license: "Commercial",
+    pricing: PRICING.PAID,
+    platforms: "Cloud",
+  },
   intro:
     "Stripe is a payments platform with APIs for checkout, subscriptions, invoicing and payouts. The main split among alternatives is merchant of record versus payment processor: a merchant of record (Paddle, Lemon Squeezy, Polar, Dodo Payments) sells on your behalf and handles global sales tax, while processors (Adyen, Braintree, Square) leave tax and compliance with you.",
   stickWith: [

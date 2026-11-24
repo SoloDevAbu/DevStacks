@@ -4,6 +4,14 @@ import type { CuratedAlternatives } from "@/types/alternatives"
 export const POSTMAN_ALTERNATIVES: CuratedAlternatives = {
   toolSlug: "postman",
   toolName: "Postman",
+  profile: {
+    websiteUrl: "https://www.postman.com",
+    bestFor:
+      "An API platform for sending requests, writing tests, sharing collections and mocking and monitoring APIs.",
+    license: "Commercial",
+    pricing: PRICING.FREEMIUM,
+    platforms: "Windows, macOS, Linux, Web",
+  },
   intro:
     "Postman is an API platform for designing, testing, documenting and monitoring APIs, with cloud workspaces for teams. Developers usually switch for an offline, git-friendly client (Bruno), an open-source web client (Hoppscotch), a lighter desktop app (Insomnia) or tooling that lives in the editor or terminal (Thunder Client, HTTPie, curl).",
   stickWith: [

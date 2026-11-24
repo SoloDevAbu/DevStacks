@@ -4,6 +4,14 @@ import type { CuratedAlternatives } from "@/types/alternatives"
 export const DOCKER_ALTERNATIVES: CuratedAlternatives = {
   toolSlug: "docker",
   toolName: "Docker",
+  profile: {
+    websiteUrl: "https://www.docker.com",
+    bestFor:
+      "The standard toolchain for building, shipping and running OCI containers, with Docker Engine, Compose and Docker Desktop.",
+    license: "Open Source",
+    pricing: PRICING.FREEMIUM,
+    platforms: "Linux, macOS, Windows",
+  },
   intro:
     "Docker bundles an image builder, a daemon, a container runtime and a desktop app, so most alternatives replace one of those layers rather than all of them. Podman is the closest drop-in for the CLI, containerd and CRI-O are the runtimes Kubernetes uses directly, and OrbStack, Colima and Rancher Desktop replace Docker Desktop on a laptop.",
   stickWith: [

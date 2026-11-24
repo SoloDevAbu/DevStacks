@@ -4,6 +4,14 @@ import type { CuratedAlternatives } from "@/types/alternatives"
 export const PLAYWRIGHT_ALTERNATIVES: CuratedAlternatives = {
   toolSlug: "playwright",
   toolName: "Playwright",
+  profile: {
+    websiteUrl: "https://playwright.dev",
+    bestFor:
+      "Microsoft's end-to-end testing framework that drives Chromium, Firefox and WebKit from one API, with auto-waiting and parallel runs.",
+    license: "Open Source",
+    pricing: PRICING.OPEN_SOURCE,
+    platforms: "Windows, macOS, Linux",
+  },
   intro:
     "Playwright is a free, open-source browser automation and end-to-end testing framework from Microsoft that drives Chromium, Firefox and WebKit. Teams usually look elsewhere for a different developer experience (Cypress), the widest language and grid support (Selenium), or plain Chrome scripting rather than testing (Puppeteer).",
   stickWith: [

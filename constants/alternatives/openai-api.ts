@@ -4,6 +4,14 @@ import type { CuratedAlternatives } from "@/types/alternatives"
 export const OPENAI_API_ALTERNATIVES: CuratedAlternatives = {
   toolSlug: "openai-api",
   toolName: "OpenAI API",
+  profile: {
+    websiteUrl: "https://platform.openai.com",
+    bestFor:
+      "OpenAI's API for GPT models, embeddings, image, audio and realtime endpoints, billed per token.",
+    license: "Commercial",
+    pricing: PRICING.PAID,
+    platforms: "Cloud",
+  },
   intro:
     "The OpenAI API gives developers access to GPT models for text, vision, audio and embeddings. Alternatives offer other frontier models (Anthropic Claude, Google Gemini, Mistral AI), fast or cheap inference of open-weight models (Groq, Together AI), one API in front of many providers (OpenRouter), or models that run locally (Ollama).",
   stickWith: [

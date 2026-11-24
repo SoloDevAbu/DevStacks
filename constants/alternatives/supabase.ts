@@ -4,6 +4,14 @@ import type { CuratedAlternatives } from "@/types/alternatives"
 export const SUPABASE_ALTERNATIVES: CuratedAlternatives = {
   toolSlug: "supabase",
   toolName: "Supabase",
+  profile: {
+    websiteUrl: "https://supabase.com",
+    bestFor:
+      "An open-source Postgres backend with auth, storage, realtime, edge functions and auto-generated APIs.",
+    license: "Open Source",
+    pricing: PRICING.FREEMIUM,
+    platforms: "Cloud, Self-hosted",
+  },
   intro:
     "Supabase is an open-source backend built on Postgres, with auth, storage, realtime, edge functions and auto-generated APIs. Alternatives either keep Postgres but drop the platform (Neon, Nhost), swap in a document model (Firebase, Appwrite) or shrink the backend to a single binary (PocketBase).",
   stickWith: [

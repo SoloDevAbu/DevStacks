@@ -42,6 +42,13 @@ export const getCuratedAlternatives = (toolSlug: string) =>
 
 export const CURATED_ALTERNATIVES_SLUGS = Object.keys(CURATED_ALTERNATIVES)
 
+export const ALTERNATIVES_HUB = {
+  title: "Developer Tool Alternatives",
+  heading: "Developer Tool Alternatives",
+  description:
+    "Hand-checked alternatives to popular developer tools, compared on license, pricing, platforms and when to switch.",
+} as const
+
 // Shown on alternatives pages that have no curated list yet.
 export const DEFAULT_STICK_WITH = [
   "Your tech stack is already integrated with its APIs and SDKs.",

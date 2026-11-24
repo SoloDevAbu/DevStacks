@@ -4,6 +4,14 @@ import type { CuratedAlternatives } from "@/types/alternatives"
 export const POSTGRESQL_ALTERNATIVES: CuratedAlternatives = {
   toolSlug: "postgresql",
   toolName: "PostgreSQL",
+  profile: {
+    websiteUrl: "https://www.postgresql.org",
+    bestFor:
+      "The open-source relational database known for standards compliance, extensions such as PostGIS and pgvector, and strong consistency.",
+    license: "Open Source",
+    pricing: PRICING.OPEN_SOURCE,
+    platforms: "Linux, macOS, Windows, Cloud",
+  },
   intro:
     "PostgreSQL is open source, released under the permissive PostgreSQL License, and is free to use, modify and distribute. Teams look at alternatives for simpler operations (MySQL, MariaDB), an embedded database with no server (SQLite), or horizontal scale-out while keeping Postgres compatibility (YugabyteDB, CockroachDB).",
   stickWith: [
