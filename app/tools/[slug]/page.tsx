@@ -34,6 +34,7 @@ import { isAlternativesIndexable } from "@/utils/indexing"
 import { isToolOpenSource } from "@/utils/alternatives"
 import { buildDerivedToolFaqs } from "@/utils/tools/derived-faqs"
 import { getCuratedAlternatives } from "@/constants/alternatives"
+import { ToolComparisonLinks } from "@/components/shared/tool-comparison-links"
 import { getSocialCardImage } from "@/lib/seo/social-image"
 import { formatGeoMetaTags } from "@/utils/country"
 import { AI_PROVIDERS } from "@/constants/ai-providers"
@@ -986,6 +987,8 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
             </Link>
           </div>
         )}
+
+        <ToolComparisonLinks toolSlug={tool.slug} toolName={tool.name} />
 
         {/* Section 7: Ecosystem Callout */}
         <section className="border-b border-dashed border-border bg-slate-50/70 px-6 py-10 md:px-8 md:py-12">

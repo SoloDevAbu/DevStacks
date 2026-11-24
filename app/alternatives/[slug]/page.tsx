@@ -2,22 +2,12 @@ import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import { indexingRobots } from "@/utils/indexing"
 import Link from "next/link"
-import {
-  ArrowLeft,
-  ChevronRight,
-  Scale,
-  Sparkles,
-  DollarSign,
-  Hammer,
-  ThumbsUp,
-  Globe,
-  Layers,
-  CheckCircle2,
-  AlertCircle,
-  Code2,
-} from "lucide-react"
+import { ArrowLeft, ChevronRight, Scale, CheckCircle2 } from "lucide-react"
 import { getAlternativesPageData } from "@/lib/alternatives/page-data"
+import { CornerBrackets } from "@/components/shared/corner-brackets"
+import { FramedGrid } from "@/components/shared/framed-grid"
 import { ToolCard } from "@/components/shared/tool-card"
+import { ToolComparisonLinks } from "@/components/shared/tool-comparison-links"
 import { CuratedAlternativeCard } from "@/components/alternatives/curated-alternative-card"
 import { ProductLogo } from "@/components/shared/product-logo"
 import {
@@ -50,6 +40,16 @@ import {
 } from "@/constants/alternatives"
 import { getAlternativesStaticParams } from "@/lib/catalog/static-params"
 import { ROUTES } from "@/constants/routes"
+import {
+  bulletDot,
+  bulletItem,
+  bulletList,
+  dashedCellTitle,
+  dashedGrid2,
+  dashedGrid3,
+  dashedGridCell,
+  monoLabel,
+} from "@/utils/styles"
 
 export const revalidate = 86400
 
@@ -277,7 +277,8 @@ const AlternativesPage = async (props: AlternativesPageProps) => {
             </p>
 
             {/* Target Tool Anchor Card */}
-            <div className="mt-4 flex flex-col gap-4 rounded-xl border border-dashed border-border bg-slate-50/70 p-5 sm:flex-row sm:items-center sm:justify-between">
+            <div className="relative mt-4 flex flex-col gap-4 border border-dashed border-border bg-white p-5 sm:flex-row sm:items-center sm:justify-between">
+              <CornerBrackets />
               <div className="flex items-center gap-4">
                 <ProductLogo
                   text={tool.name.slice(0, 2).toUpperCase()}
@@ -318,15 +319,11 @@ const AlternativesPage = async (props: AlternativesPageProps) => {
               </div>
 
               <div className="flex items-center gap-3 text-xs font-semibold text-slate-700">
-                <span className="inline-flex items-center gap-1">
-                  <Hammer className="size-3.5 text-blue-600" />
-                  {tool.buildsCount} builds
+                <span>{tool.buildsCount} builds</span>
+                <span className="text-slate-300" aria-hidden="true">
+                  ·
                 </span>
-                <span className="text-slate-300">•</span>
-                <span className="inline-flex items-center gap-1">
-                  <ThumbsUp className="size-3.5 text-emerald-600" />
-                  {tool.upvotesCount} upvotes
-                </span>
+                <span>{tool.upvotesCount} upvotes</span>
                 <Link
                   href={ROUTES.TOOL(tool.slug)}
                   className="ml-2 inline-flex items-center gap-1 font-semibold text-blue-600 hover:underline"
@@ -337,9 +334,8 @@ const AlternativesPage = async (props: AlternativesPageProps) => {
             </div>
 
             {/* Contextual Architecture Cross-Link Banner */}
-            <div className="mt-2 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-dashed border-slate-200 bg-slate-50/50 px-4 py-3 text-xs">
+            <div className="mt-2 flex flex-wrap items-center justify-between gap-3 border-y border-dashed border-border py-3 text-xs">
               <div className="flex items-center gap-2 text-slate-700">
-                <Layers className="size-4 text-blue-600" />
                 <span>
                   Want to inspect real projects using this stack? See live tech
                   stacks in the{" "}
@@ -363,7 +359,6 @@ const AlternativesPage = async (props: AlternativesPageProps) => {
 
             {/* Machine/Agent Discovery bar */}
             <div className="mt-1 flex items-center gap-2 text-xs text-slate-500">
-              <Globe className="size-3 text-slate-400" />
               <span>Machine representation:</span>
               <a
                 href={markdownTwinUrl}
@@ -510,14 +505,13 @@ const AlternativesPage = async (props: AlternativesPageProps) => {
           </section>
         )}
 
+        <ToolComparisonLinks toolSlug={tool.slug} toolName={tool.name} />
+
         {/* Evaluation & Decision Framework */}
         <section className="border-b border-dashed border-border bg-white px-6 py-8 md:px-8">
           <div className="flex flex-col gap-6">
             <div>
-              <div className="flex items-center gap-2 text-xs font-bold tracking-wider text-slate-500 uppercase">
-                <Code2 className="size-4 text-slate-600" />
-                <span>Buyer & Developer Guide</span>
-              </div>
+              <span className={monoLabel}>Buyer & Developer Guide</span>
               <h2 className="mt-1 text-lg font-bold tracking-tight text-slate-900 sm:text-xl">
                 How to Choose Between {tool.name} and Competitors
               </h2>
@@ -528,13 +522,10 @@ const AlternativesPage = async (props: AlternativesPageProps) => {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-              <div className="rounded-xl border border-dashed border-border bg-slate-50/50 p-4">
-                <div className="flex items-center gap-2 text-xs font-bold text-slate-900">
-                  <Hammer className="size-4 text-blue-600" />
-                  <span>1. Production Adoption</span>
-                </div>
-                <p className="mt-2 text-xs leading-relaxed text-slate-600">
+            <FramedGrid className={dashedGrid3}>
+              <div className={dashedGridCell}>
+                <h3 className={dashedCellTitle}>1. Production Adoption</h3>
+                <p className="text-xs leading-relaxed text-slate-600">
                   {tool.name} has {tool.buildsCount} verified indie and SaaS
                   deployments recorded in {SITE_CONFIG.name}. Tools with higher
                   adoption typically offer better SDK stability and community
@@ -542,12 +533,9 @@ const AlternativesPage = async (props: AlternativesPageProps) => {
                 </p>
               </div>
 
-              <div className="rounded-xl border border-dashed border-border bg-slate-50/50 p-4">
-                <div className="flex items-center gap-2 text-xs font-bold text-slate-900">
-                  <DollarSign className="size-4 text-emerald-600" />
-                  <span>2. Total Cost of Ownership</span>
-                </div>
-                <p className="mt-2 text-xs leading-relaxed text-slate-600">
+              <div className={dashedGridCell}>
+                <h3 className={dashedCellTitle}>2. Total Cost of Ownership</h3>
+                <p className="text-xs leading-relaxed text-slate-600">
                   Current pricing model:{" "}
                   <strong className="font-semibold text-slate-800">
                     {tool.pricing}
@@ -557,47 +545,41 @@ const AlternativesPage = async (props: AlternativesPageProps) => {
                 </p>
               </div>
 
-              <div className="rounded-xl border border-dashed border-border bg-slate-50/50 p-4">
-                <div className="flex items-center gap-2 text-xs font-bold text-slate-900">
-                  <Sparkles className="size-4 text-indigo-600" />
-                  <span>3. Deployment & Licensing</span>
-                </div>
-                <p className="mt-2 text-xs leading-relaxed text-slate-600">
+              <div className={dashedGridCell}>
+                <h3 className={dashedCellTitle}>3. Deployment & Licensing</h3>
+                <p className="text-xs leading-relaxed text-slate-600">
                   {targetIsOpenSource
                     ? `${tool.name} is open source, allowing self-hosting and maximum code sovereignty.`
                     : `${tool.name} is proprietary/managed SaaS. Check alternatives if self-hosting or data privacy compliance is non-negotiable.`}
                 </p>
               </div>
-            </div>
+            </FramedGrid>
 
             {/* Quick Decision Box */}
-            <div className="grid grid-cols-1 gap-4 rounded-xl border border-slate-200 bg-slate-50 p-5 md:grid-cols-2">
-              <div className="flex flex-col gap-2">
-                <div className="flex items-center gap-2 text-xs font-bold text-emerald-800">
-                  <CheckCircle2 className="size-4 text-emerald-600" />
-                  <span>Stick with {tool.name} if:</span>
+            <FramedGrid className={dashedGrid2}>
+              {[
+                {
+                  title: `Stick with ${tool.name} if`,
+                  reasons: curated?.stickWith ?? DEFAULT_STICK_WITH,
+                },
+                {
+                  title: "Consider switching to an alternative if",
+                  reasons: curated?.switchWhen ?? DEFAULT_SWITCH_WHEN,
+                },
+              ].map(({ title, reasons }) => (
+                <div key={title} className={dashedGridCell}>
+                  <h3 className={dashedCellTitle}>{title}</h3>
+                  <ul className={bulletList}>
+                    {reasons.map((reason) => (
+                      <li key={reason} className={bulletItem}>
+                        <span className={bulletDot} aria-hidden="true" />
+                        <span>{reason}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-                <ul className="space-y-1.5 text-xs text-slate-600">
-                  {(curated?.stickWith ?? DEFAULT_STICK_WITH).map((reason) => (
-                    <li key={reason}>• {reason}</li>
-                  ))}
-                </ul>
-              </div>
-
-              <div className="flex flex-col gap-2">
-                <div className="flex items-center gap-2 text-xs font-bold text-amber-800">
-                  <AlertCircle className="size-4 text-amber-600" />
-                  <span>Consider switching to an alternative if:</span>
-                </div>
-                <ul className="space-y-1.5 text-xs text-slate-600">
-                  {(curated?.switchWhen ?? DEFAULT_SWITCH_WHEN).map(
-                    (reason) => (
-                      <li key={reason}>• {reason}</li>
-                    )
-                  )}
-                </ul>
-              </div>
-            </div>
+              ))}
+            </FramedGrid>
           </div>
         </section>
 

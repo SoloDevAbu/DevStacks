@@ -984,7 +984,8 @@ export const submitTierDialogGrid = "grid grid-cols-1 gap-2.5"
 const TIER_SELECTED_SURFACE: Record<Tier, string> = {
   [TIER.FREE]: "bg-linear-to-b from-slate-100/70 via-slate-50/40 to-white",
   [TIER.PREMIUM]: "bg-linear-to-b from-blue-50/50 via-blue-50/20 to-white",
-  [TIER.PREMIUM_PLUS]: "bg-linear-to-b from-amber-50/50 via-amber-50/20 to-white",
+  [TIER.PREMIUM_PLUS]:
+    "bg-linear-to-b from-amber-50/50 via-amber-50/20 to-white",
 }
 
 const TIER_SELECTED_BORDER: Record<Tier, string> = {
@@ -996,9 +997,7 @@ const TIER_SELECTED_BORDER: Record<Tier, string> = {
 export const submitTierFullWidthColumn = (isSelected: boolean, tier: Tier) =>
   cn(
     "group relative flex cursor-pointer flex-col justify-between p-6 transition-colors md:p-8",
-    isSelected
-      ? TIER_SELECTED_SURFACE[tier]
-      : "bg-white hover:bg-slate-50/50"
+    isSelected ? TIER_SELECTED_SURFACE[tier] : "bg-white hover:bg-slate-50/50"
   )
 
 export const submitTierDialogCard = (isSelected: boolean, tier: Tier) =>
@@ -1090,3 +1089,83 @@ export const launchWeekArrowDisabledLeft =
 
 export const launchWeekArrowDisabledRight =
   "flex h-full w-9 shrink-0 cursor-not-allowed items-center justify-center rounded-none border-l border-border bg-slate-50/50 p-0 text-slate-300 select-none pointer-events-none sm:w-10"
+
+// Dashed layout system: sections and grids are separated by dashed rules, not cards. Wrap a framed
+// grid in <CornerBrackets /> where it is the focal block of a section.
+export const dashedGrid2 =
+  "relative grid grid-cols-1 divide-y divide-dashed divide-border border border-dashed border-border bg-white md:grid-cols-2 md:divide-x md:divide-y-0"
+
+export const dashedGrid3 =
+  "relative grid grid-cols-1 divide-y divide-dashed divide-border border border-dashed border-border bg-white md:grid-cols-3 md:divide-x md:divide-y-0"
+
+export const dashedGridCell = "relative flex flex-col gap-3 p-5 md:p-6"
+
+export const dashedCellTitle =
+  "border-b border-dashed border-border pb-3 text-sm font-bold text-slate-900"
+
+export const dashedFrame =
+  "relative flex flex-col divide-y divide-dashed divide-border border border-dashed border-border bg-white"
+
+export const dashedFrameRow = "flex flex-col gap-1.5 p-5 sm:p-6"
+
+export const monoLabel =
+  "font-mono text-[11px] font-bold tracking-wider text-slate-500 uppercase"
+
+export const bulletList =
+  "flex flex-col gap-2 text-xs leading-relaxed text-slate-600 sm:text-sm"
+
+export const bulletItem = "flex items-start gap-2.5"
+
+export const bulletDot = "mt-1.5 size-1.5 shrink-0 rounded-full bg-slate-900"
+
+// Link grid for full-width pages: every cell draws its right and bottom rule, the frame the top and left.
+export const dashedLinkGrid =
+  "relative grid grid-cols-1 border-t border-l border-dashed border-border bg-white sm:grid-cols-2"
+
+export const dashedLinkGridItem =
+  "group flex h-full flex-col gap-1.5 border-r border-b border-dashed border-border p-5 transition-colors hover:bg-slate-50/60"
+
+// Link rows for pages inside the sidebar layout, which already frames the content column.
+export const dashedRowGrid = "grid grid-cols-1 md:grid-cols-2"
+
+export const dashedRowCell = "border-dashed border-border md:odd:border-r"
+
+export const dashedRowItem =
+  "group flex h-full flex-col gap-1 border-b border-dashed border-border px-6 py-4 transition-colors hover:bg-slate-50/60 md:px-8"
+
+export const dashedLinkTitle =
+  "text-sm font-bold text-slate-900 transition-colors group-hover:text-indigo-600"
+
+export const dashedLinkMeta =
+  "line-clamp-2 text-xs leading-relaxed text-slate-500"
+
+export const compareLinkList = "flex flex-wrap gap-2"
+
+export const compareLinkPill =
+  "border border-dashed border-border bg-white px-2.5 py-1 text-xs font-medium text-slate-700 transition-colors hover:border-slate-400 hover:text-slate-900"
+
+export const inlineTextLink = "font-semibold text-indigo-600 hover:underline"
+
+export const freeToolWidget =
+  "flex flex-col gap-4 border-b border-dashed border-border bg-slate-50/40 px-6 py-6 md:px-8"
+
+export const freeToolForm =
+  "flex max-w-2xl flex-col gap-2 sm:flex-row sm:items-center"
+
+export const freeToolResult =
+  "relative flex max-w-2xl flex-col gap-1 border border-dashed border-border bg-white p-5"
+
+export const freeToolScore = "text-4xl font-black tracking-tight text-slate-900"
+
+export const mutedText = "text-xs text-slate-500"
+
+export const freeToolStatusBadge = {
+  pass: "border-emerald-200 bg-emerald-50 text-emerald-700",
+  warn: "border-amber-200 bg-amber-50 text-amber-700",
+  fail: "border-rose-200 bg-rose-50 text-rose-700",
+} as const
+
+export const freeToolStepList =
+  "flex max-w-3xl list-decimal flex-col gap-2 pl-5 text-sm leading-relaxed text-slate-600"
+
+export const freeToolError = "text-sm font-medium text-rose-600"

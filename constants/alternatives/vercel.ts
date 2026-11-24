@@ -4,6 +4,14 @@ import type { CuratedAlternatives } from "@/types/alternatives"
 export const VERCEL_ALTERNATIVES: CuratedAlternatives = {
   toolSlug: "vercel",
   toolName: "Vercel",
+  profile: {
+    websiteUrl: "https://vercel.com",
+    bestFor:
+      "A frontend cloud for deploying Next.js and other frameworks with preview deployments, edge and serverless functions.",
+    license: "Commercial",
+    pricing: PRICING.FREEMIUM,
+    platforms: "Cloud",
+  },
   intro:
     "Vercel is a frontend cloud built by the Next.js team, with git-based deploys, preview URLs and serverless and edge functions. Alternatives are usually chosen for cost at scale (Cloudflare, Render, Fly.io), long-running servers and databases next to the app (Railway, Render), or self-hosting (Coolify, OpenNext).",
   stickWith: [

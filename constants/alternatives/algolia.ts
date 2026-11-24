@@ -4,6 +4,14 @@ import type { CuratedAlternatives } from "@/types/alternatives"
 export const ALGOLIA_ALTERNATIVES: CuratedAlternatives = {
   toolSlug: "algolia",
   toolName: "Algolia",
+  profile: {
+    websiteUrl: "https://www.algolia.com",
+    bestFor:
+      "A hosted search and discovery API with typo tolerance, faceting and AI ranking, used for site and e-commerce search.",
+    license: "Commercial",
+    pricing: PRICING.FREEMIUM,
+    platforms: "Cloud",
+  },
   intro:
     "Algolia is a hosted search and discovery API known for fast, typo-tolerant search and merchandising tools. Most alternatives are open-source engines you can self-host or use as a managed cloud (Meilisearch, Typesense, OpenSearch, Elasticsearch, Vespa), or an in-browser engine for small datasets (Orama).",
   stickWith: [

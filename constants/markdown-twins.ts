@@ -25,7 +25,7 @@ export const MARKDOWN_TWIN_ROUTES: readonly MarkdownTwinRoute[] = [
     twin: ([, section, slug]) => `/api/md/${section}/${slug}`,
   },
   {
-    pattern: /^\/(tools|products|blog|makers)\/(?!categories$)([^/.]+)$/,
+    pattern: /^\/(tools|products|blog|makers|glossary)\/(?!categories$)([^/.]+)$/,
     twin: ([, section, slug]) => `/api/md/${section}/${slug}`,
     alias: ([, section, slug]) => `/${section}/${slug}.md`,
   },
@@ -49,7 +49,7 @@ export const MARKDOWN_SUFFIX_ROUTES: readonly MarkdownTwinRoute[] = [
     twin: () => ROUTES.MARKDOWN_HOME,
   },
   {
-    pattern: /^\/(tools|products|blog|makers)\/([^/]+)\.md$/,
+    pattern: /^\/(tools|products|blog|makers|glossary)\/([^/]+)\.md$/,
     twin: ([, section, slug]) => `/api/md/${section}/${slug}`,
   },
   {

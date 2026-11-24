@@ -10,6 +10,12 @@ import { getAllComparisons } from "@/constants/comparisons"
 import { CURATED_ALTERNATIVES } from "@/constants/alternatives"
 import { ROUTES } from "@/constants/routes"
 import {
+  getAllToolComparisons,
+  getComparisonTitle,
+} from "@/utils/tool-comparisons"
+import { GLOSSARY_HUB, GLOSSARY_TERMS } from "@/constants/glossary"
+import { FREE_TOOLS, FREE_TOOLS_HUB } from "@/constants/free-tools"
+import {
   AI_SURFACE_CACHE_CONTROL,
   AI_SURFACE_ARCHIVE_WEEKS,
   AI_SURFACE_FRESHNESS_NOTE,
@@ -100,6 +106,29 @@ ${Object.values(CURATED_ALTERNATIVES)
         .join(", ")} and more) with license, pricing and when to switch, checked ${factsCheckedOn} (markdown twin at /api/md/alternatives/${toolSlug})`
   )
   .join("\n")}
+
+## Developer Tool Comparisons (hand-checked)
+- [All developer tool alternatives](${SITE_CONFIG.url}${ROUTES.ALTERNATIVES_HUB}): Hub of every hand-checked alternatives list.
+- [All developer tool comparisons](${SITE_CONFIG.url}${ROUTES.COMPARE_HUB}): Hub of every head-to-head tool comparison.
+${getAllToolComparisons()
+  .map(
+    (comparison) =>
+      `- [${getComparisonTitle(comparison)}](${SITE_CONFIG.url}${ROUTES.COMPARE(comparison.slug)}): ${comparison.verdict} (markdown twin at /api/md/compare/${comparison.slug})`
+  )
+  .join("\n")}
+
+## Free Tools
+- [${FREE_TOOLS_HUB.title}](${SITE_CONFIG.url}${ROUTES.FREE_TOOLS}): ${FREE_TOOLS_HUB.description}
+${FREE_TOOLS.map(
+  (tool) => `- [${tool.name}](${SITE_CONFIG.url}${ROUTES.FREE_TOOL(tool.slug)}): ${tool.metaDescription}`
+).join("\n")}
+
+## Glossary
+- [${GLOSSARY_HUB.title}](${SITE_CONFIG.url}${ROUTES.GLOSSARY}): ${GLOSSARY_HUB.description}
+${GLOSSARY_TERMS.map(
+  (term) =>
+    `- [${term.term}](${SITE_CONFIG.url}${ROUTES.GLOSSARY_TERM(term.slug)}): ${term.shortDefinition} (markdown at ${ROUTES.GLOSSARY_TERM(term.slug)}.md)`
+).join("\n")}
 
 ## Markdown-addressable routes
 

@@ -10,6 +10,9 @@ import { listPublishedBlogs } from "@/db/queries/blogs"
 import { ROUTES } from "@/constants/routes"
 import { normalizeSitemapUrl } from "@/utils/urls"
 import { getAllComparisons } from "@/constants/comparisons"
+import { getAllToolComparisons } from "@/utils/tool-comparisons"
+import { GLOSSARY_TERMS, GLOSSARY_UPDATED_ON } from "@/constants/glossary"
+import { FREE_TOOLS } from "@/constants/free-tools"
 import { DIRECTORY_FACTS_CHECKED_ON } from "@/constants/directories"
 import { LAUNCH_DIRECTORIES } from "@/constants/launch-directories"
 import { isBuiltWithIndexable, isCategoryIndexable } from "@/utils/indexing"
@@ -284,6 +287,39 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
       }))
     )
   }
+
+  dynamicRoutes.push(
+    ...[ROUTES.ALTERNATIVES_HUB, ROUTES.COMPARE_HUB].map((path) => ({
+      url: normalizeSitemapUrl(path),
+      lastModified: now,
+      changeFrequency: "weekly" as const,
+      priority: 0.7,
+    })),
+    ...getAllToolComparisons().map((comparison) => ({
+      url: normalizeSitemapUrl(ROUTES.COMPARE(comparison.slug)),
+      lastModified: new Date(comparison.factsCheckedOn),
+      changeFrequency: "monthly" as const,
+      priority: 0.7,
+    })),
+    ...[
+      ROUTES.GLOSSARY,
+      ...GLOSSARY_TERMS.map(({ slug }) => ROUTES.GLOSSARY_TERM(slug)),
+    ].map((path) => ({
+      url: normalizeSitemapUrl(path),
+      lastModified: new Date(GLOSSARY_UPDATED_ON),
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
+    })),
+    ...[
+      ROUTES.FREE_TOOLS,
+      ...FREE_TOOLS.map(({ slug }) => ROUTES.FREE_TOOL(slug)),
+    ].map((path) => ({
+      url: normalizeSitemapUrl(path),
+      lastModified: now,
+      changeFrequency: "monthly" as const,
+      priority: 0.8,
+    }))
+  )
 
   if (dbMakers && dbMakers.length > 0) {
     dynamicRoutes.push(

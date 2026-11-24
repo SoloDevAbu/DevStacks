@@ -4,6 +4,14 @@ import type { CuratedAlternatives } from "@/types/alternatives"
 export const REDIS_ALTERNATIVES: CuratedAlternatives = {
   toolSlug: "redis",
   toolName: "Redis",
+  profile: {
+    websiteUrl: "https://redis.io",
+    bestFor:
+      "The in-memory data store behind most caching, session, queue and pub/sub setups, now offered under source-available licences and AGPLv3.",
+    license: "Open Source",
+    pricing: PRICING.FREEMIUM,
+    platforms: "Linux, macOS, Docker, Cloud",
+  },
   intro:
     "Redis is an in-memory data store used for caching, queues, sessions and pub/sub. Redis moved to source-available licences in 2024 and added an AGPLv3 option with Redis 8, which led many teams to evaluate Valkey, the Linux Foundation fork. Other options trade compatibility for multithreaded performance (Dragonfly, KeyDB, Garnet) or remove servers entirely (Upstash).",
   stickWith: [

@@ -4,6 +4,14 @@ import type { CuratedAlternatives } from "@/types/alternatives"
 export const CLOUDFLARE_ALTERNATIVES: CuratedAlternatives = {
   toolSlug: "cloudflare",
   toolName: "Cloudflare",
+  profile: {
+    websiteUrl: "https://www.cloudflare.com",
+    bestFor:
+      "A global edge network for CDN, DNS, DDoS protection, Zero Trust access and Workers serverless compute.",
+    license: "Commercial",
+    pricing: PRICING.FREEMIUM,
+    platforms: "Global edge network",
+  },
   intro:
     "Cloudflare combines a CDN, DDoS protection, DNS, Zero Trust access and the Workers edge platform behind one account, with a generous free plan. Most alternatives cover one of those jobs: CDN and edge compute (Fastly, Akamai, CloudFront, Bunny.net), frontend hosting (Vercel, Netlify, Deno Deploy) or private networking (Tailscale).",
   stickWith: [

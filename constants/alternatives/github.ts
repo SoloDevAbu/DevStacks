@@ -4,6 +4,14 @@ import type { CuratedAlternatives } from "@/types/alternatives"
 export const GITHUB_ALTERNATIVES: CuratedAlternatives = {
   toolSlug: "github",
   toolName: "GitHub",
+  profile: {
+    websiteUrl: "https://github.com",
+    bestFor:
+      "The largest Git hosting platform, with pull requests, Actions CI/CD, Packages, Codespaces and Copilot.",
+    license: "Commercial",
+    pricing: PRICING.FREEMIUM,
+    platforms: "Web, Cloud, Enterprise Server",
+  },
   intro:
     "GitHub is the largest Git hosting platform, with pull requests, Actions CI, Packages and Copilot. Alternatives either offer a full DevSecOps suite you can self-host (GitLab), integrate with Atlassian tools (Bitbucket), or give you a lightweight, community-run forge (Gitea, Forgejo, Codeberg).",
   stickWith: [

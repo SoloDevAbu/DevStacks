@@ -4,6 +4,14 @@ import type { CuratedAlternatives } from "@/types/alternatives"
 export const NEXTJS_ALTERNATIVES: CuratedAlternatives = {
   toolSlug: "nextjs",
   toolName: "Next.js",
+  profile: {
+    websiteUrl: "https://nextjs.org",
+    bestFor:
+      "Vercel's full-stack React framework with server components, file-based routing and built-in rendering and caching strategies.",
+    license: "Open Source",
+    pricing: PRICING.OPEN_SOURCE,
+    platforms: "Node.js, Edge, any host",
+  },
   intro:
     "Next.js is the open-source React framework from Vercel with Server Components, file-based routing and built-in rendering modes. Alternatives fall into two groups: other React frameworks with a different data model (React Router, TanStack Start) and meta-frameworks for other UI libraries or content-heavy sites (Astro, Nuxt, SvelteKit).",
   stickWith: [

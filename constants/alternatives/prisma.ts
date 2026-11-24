@@ -4,6 +4,14 @@ import type { CuratedAlternatives } from "@/types/alternatives"
 export const PRISMA_ALTERNATIVES: CuratedAlternatives = {
   toolSlug: "prisma",
   toolName: "Prisma",
+  profile: {
+    websiteUrl: "https://www.prisma.io",
+    bestFor:
+      "A TypeScript ORM that generates a typed client from a schema file, with migrations and Prisma Studio.",
+    license: "Open Source",
+    pricing: PRICING.OPEN_SOURCE,
+    platforms: "Node.js, Bun, Deno, Edge",
+  },
   intro:
     "Prisma ORM is an open-source TypeScript ORM built around a schema file, generated client and migrations. Alternatives either stay closer to SQL with full type safety (Drizzle ORM, Kysely), follow the classic decorator or model-based ORM style (TypeORM, MikroORM, Sequelize), or drop the ORM for a query builder (Knex.js).",
   stickWith: [
