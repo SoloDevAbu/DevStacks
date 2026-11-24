@@ -48,6 +48,7 @@ export const focusRing = " "
 
 ## UI & Components
 
+- Always read the `launchnests-design` skill before building or restyling UI (dashed separation, no cards, no decorative icons, corner brackets on focal blocks).
 - Use **shadcn/ui** for every UI element — buttons, inputs, badges, dialogs, cards, selects, tooltips, etc.
 - Before building any UI element, check if a shadcn component covers it.
   - If it exists and is **installed** → use it.
