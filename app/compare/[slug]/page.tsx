@@ -14,6 +14,7 @@ import {
 import {
   SERP_TITLE_MAX_CHARS,
   buildSocialMetadata,
+  canonicalWithMarkdown,
   formatMetaDescription,
 } from "@/utils/seo"
 import { toAbsoluteUrl } from "@/utils/urls"
@@ -63,7 +64,7 @@ export const generateMetadata = async ({
   return {
     title: { absolute: title },
     description,
-    alternates: { canonical: canonicalUrl },
+    alternates: canonicalWithMarkdown(canonicalUrl),
     ...buildSocialMetadata({ title, description, url: canonicalUrl }),
   }
 }

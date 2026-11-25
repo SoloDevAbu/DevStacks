@@ -37,6 +37,7 @@ import { getDirectoryCheckHistory } from "@/db/queries/directories"
 import { breadcrumbSchema, safeJsonLd } from "@/lib/seo/schema"
 import type { DirectoryCheck, LaunchDirectory } from "@/types/directory"
 import { formatLongDate } from "@/utils/date"
+import { buildDirectoryReviewTitle, canonicalWithMarkdown } from "@/utils/seo"
 import {
   comparisonCategoryPill,
   comparisonH1,
@@ -85,14 +86,14 @@ export const generateMetadata = async ({
   const directory = getLaunchDirectory((await params).slug)
   if (!directory) return {}
 
-  const title = `${directory.name}: Pricing, Review Time and Link Check`
+  const title = buildDirectoryReviewTitle(directory.name)
   const description = describeDirectory(directory)
   const url = pageUrl(directory.slug)
 
   return {
-    title,
+    title: { absolute: title },
     description,
-    alternates: { canonical: url },
+    alternates: canonicalWithMarkdown(url),
     openGraph: {
       title: `${title} | ${SITE_CONFIG.name}`,
       description,
@@ -254,7 +255,7 @@ const DirectoryPage = async ({ params }: DirectoryPageProps) => {
           </div>
 
           <h1 className={comparisonH1}>
-            {directory.name}: pricing, review time and link check
+            {directory.name} review: pricing, dofollow link and review time
           </h1>
 
           <p className={comparisonLeadParagraph}>{directory.summary}</p>
