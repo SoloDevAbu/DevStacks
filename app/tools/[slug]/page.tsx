@@ -32,7 +32,10 @@ import { ROUTES } from "@/constants/routes"
 import { ALTERNATIVES_MIN_SIBLINGS } from "@/constants/rankings"
 import { isAlternativesIndexable } from "@/utils/indexing"
 import { isToolOpenSource } from "@/utils/alternatives"
-import { buildDerivedToolFaqs } from "@/utils/tools/derived-faqs"
+import {
+  buildDerivedToolFaqs,
+  buildToolQuickAnswer,
+} from "@/utils/tools/derived-faqs"
 import { getCuratedAlternatives } from "@/constants/alternatives"
 import { ToolComparisonLinks } from "@/components/shared/tool-comparison-links"
 import { getSocialCardImage } from "@/lib/seo/social-image"
@@ -51,11 +54,14 @@ import {
   safeJsonLd,
 } from "@/lib/seo/schema"
 import {
+  canonicalWithMarkdown,
   firstText,
+  formatIsFreeToolTitle,
   formatTitle,
   formatToolTitle,
   formatMetaDescription,
 } from "@/utils/seo"
+import { IS_FREE_TITLE_TOOL_SLUGS } from "@/constants/seo"
 import { ProductLogo } from "@/components/shared/product-logo"
 import {
   getCategoryPath,
@@ -102,6 +108,9 @@ import {
   faqAnswerText,
   footerAiButton,
   detailSectionText,
+  monoLabel,
+  quickAnswerBlock,
+  quickAnswerText,
 } from "@/utils/styles"
 import type { Tier, Pricing } from "@/constants/plans"
 
@@ -130,9 +139,12 @@ export const generateMetadata = async ({
     }
   }
 
-  const title = tool.metaTitle
-    ? formatTitle(tool.metaTitle)
-    : formatToolTitle(tool.name, tool.tagline)
+  const usesIsFreeTitle = IS_FREE_TITLE_TOOL_SLUGS.has(tool.slug)
+  const title = usesIsFreeTitle
+    ? formatIsFreeToolTitle(tool.name)
+    : tool.metaTitle
+      ? formatTitle(tool.metaTitle)
+      : formatToolTitle(tool.name, tool.tagline)
   const description = formatMetaDescription(
     firstText(
       tool.metaDescription,
@@ -159,12 +171,10 @@ export const generateMetadata = async ({
   const geoTags = formatGeoMetaTags(tool.submitterCountry, tool.submitterState)
 
   return {
-    title,
+    title: usesIsFreeTitle ? { absolute: title } : title,
     description,
     keywords,
-    alternates: {
-      canonical: canonicalUrl,
-    },
+    alternates: canonicalWithMarkdown(canonicalUrl),
     ...(Object.keys(geoTags).length > 0 ? { other: geoTags } : {}),
     openGraph: {
       title: `${title} | ${SITE_CONFIG.name}`,
@@ -267,6 +277,15 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
     { name: tool.name, url: toolUrl },
   ])
 
+  const alternativeNames = (
+    getCuratedAlternatives(tool.slug)?.alternatives ?? relatedTools
+  ).map(({ name }) => name)
+  const quickAnswer = buildToolQuickAnswer({
+    name: tool.name,
+    pricing: tool.pricing,
+    alternativeNames,
+  })
+
   const makerFaqs = customFaqs.map((f) => ({
     id: f.id,
     question: f.question,
@@ -280,9 +299,7 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
       isOpenSource: isToolOpenSource(tool),
       githubUrl: tool.githubUrl,
       slug: tool.slug,
-      alternativeNames: (
-        getCuratedAlternatives(tool.slug)?.alternatives ?? relatedTools
-      ).map(({ name }) => name),
+      alternativeNames,
       hasAlternativesPage,
       builtWithNames: builtWithProducts.map(({ name }) => name),
       existingQuestions: makerFaqs.map(({ question }) => question),
@@ -437,6 +454,10 @@ const ToolDetailPage = async ({ params }: ToolPageProps) => {
                 <p className="text-sm font-medium text-slate-600 md:text-base">
                   {tool.tagline}
                 </p>
+                <div className={quickAnswerBlock}>
+                  <span className={monoLabel}>Is {tool.name} free?</span>
+                  <p className={quickAnswerText}>{quickAnswer}</p>
+                </div>
                 <div className="mt-1 flex flex-wrap items-center gap-2">
                   {(tool.tags ?? []).map((tag) => (
                     <Badge

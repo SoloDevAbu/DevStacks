@@ -20,6 +20,7 @@ import {
 import {
   buildAlternativesTitle,
   formatFactsCheckedOn,
+  getAlternativesSubject,
   isToolOpenSource,
   shortAlternativeName,
   toAbsoluteRowUrl,
@@ -49,9 +50,12 @@ import {
   dashedGrid3,
   dashedGridCell,
   monoLabel,
+  quickAnswerBlock,
 } from "@/utils/styles"
 
 export const revalidate = 86400
+
+const QUICK_ANSWER_PICKS = 3
 
 export const generateStaticParams = getAlternativesStaticParams
 
@@ -79,12 +83,13 @@ export const generateMetadata = async (
   const currentYear = new Date().getFullYear()
   const canonicalUrl = `${SITE_CONFIG.url}/alternatives/${tool.slug}`
 
+  const subject = getAlternativesSubject(tool.name, curated)
   const title = curated
-    ? buildAlternativesTitle(tool.name, rows, currentYear)
-    : `Top ${tool.name} Alternatives & Competitors (${currentYear})`
+    ? buildAlternativesTitle(subject, rows, currentYear)
+    : `Top ${subject} Alternatives & Competitors (${currentYear})`
   const description = curated
     ? formatMetaDescription(
-        `Alternatives to ${tool.name} in ${currentYear}: ${rows
+        `Alternatives to ${subject} in ${currentYear}: ${rows
           .slice(0, 4)
           .map(({ name }) => shortAlternativeName(name))
           .join(
@@ -98,17 +103,15 @@ export const generateMetadata = async (
     title: curated ? { absolute: title } : title,
     description,
     keywords: [
-      `${tool.name} alternatives`,
-      `tools like ${tool.name}`,
-      `best ${tool.name} alternatives`,
-      `open source ${tool.name} alternative`,
-      `${tool.name} competitors`,
+      `${subject} alternatives`,
+      `tools like ${subject}`,
+      `best ${subject} alternatives`,
+      `open source ${subject} alternative`,
+      `${subject} competitors`,
       ...(tool.category ? [`${tool.category} tools`] : []),
       ...SITE_CONFIG.keywords,
     ],
-    alternates: {
-      canonical: canonicalUrl,
-    },
+    alternates: { canonical: canonicalUrl },
     // Catalog siblings share one broad category, so only hand-checked lists are worth indexing.
     robots: indexingRobots(Boolean(curated)),
     ...buildSocialMetadata({ title, description, url: canonicalUrl }),
@@ -124,9 +127,10 @@ const AlternativesPage = async (props: AlternativesPageProps) => {
   }
 
   const { tool, curated, entries, rows } = data
+  const subject = getAlternativesSubject(tool.name, curated)
   const heading = curated
-    ? `${rows.length} ${tool.name} Alternatives & Competitors`
-    : `Top ${tool.name} Alternatives & Competitors`
+    ? `${rows.length} ${subject} Alternatives & Competitors`
+    : `Top ${subject} Alternatives & Competitors`
   const currentYear = new Date().getFullYear()
   const pageUrl = `${SITE_CONFIG.url}/alternatives/${tool.slug}`
   const markdownTwinUrl = `${SITE_CONFIG.url}/api/md/alternatives/${tool.slug}`
@@ -153,6 +157,7 @@ const AlternativesPage = async (props: AlternativesPageProps) => {
       ? curated.intro
       : `Developer tools listed alongside ${tool.name} on ${SITE_CONFIG.name}, ranked by production adoption and developer upvotes.`,
     url: pageUrl,
+    dateModified: curated ? new Date(curated.factsCheckedOn) : undefined,
     items: rows.map((row) => ({
       name: row.name,
       url: toAbsoluteRowUrl(row),
@@ -275,6 +280,29 @@ const AlternativesPage = async (props: AlternativesPageProps) => {
                 </>
               )}
             </p>
+
+            {curated && (
+              <div className={quickAnswerBlock}>
+                <span className={monoLabel}>
+                  Best {subject} alternatives at a glance
+                </span>
+                <ul className={bulletList}>
+                  {curated.alternatives
+                    .slice(0, QUICK_ANSWER_PICKS)
+                    .map(({ name, bestFor }) => (
+                      <li key={name} className={bulletItem}>
+                        <span className={bulletDot} aria-hidden="true" />
+                        <span>
+                          <strong className="font-semibold text-slate-900">
+                            {shortAlternativeName(name)}
+                          </strong>
+                          : {bestFor}
+                        </span>
+                      </li>
+                    ))}
+                </ul>
+              </div>
+            )}
 
             {/* Target Tool Anchor Card */}
             <div className="relative mt-4 flex flex-col gap-4 border border-dashed border-border bg-white p-5 sm:flex-row sm:items-center sm:justify-between">

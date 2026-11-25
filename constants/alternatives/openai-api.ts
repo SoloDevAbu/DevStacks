@@ -4,6 +4,7 @@ import type { CuratedAlternatives } from "@/types/alternatives"
 export const OPENAI_API_ALTERNATIVES: CuratedAlternatives = {
   toolSlug: "openai-api",
   toolName: "OpenAI API",
+  searchName: "OpenAI",
   profile: {
     websiteUrl: "https://platform.openai.com",
     bestFor:

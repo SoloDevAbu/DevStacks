@@ -2,7 +2,10 @@ import { ROUTES } from "@/constants/routes"
 import { PRICING, type Pricing } from "@/constants/plans"
 import { SERP_TITLE_MAX_CHARS } from "@/utils/seo"
 import { toAbsoluteUrl } from "@/utils/urls"
-import type { CuratedAlternative } from "@/types/alternatives"
+import type {
+  CuratedAlternative,
+  CuratedAlternatives,
+} from "@/types/alternatives"
 import type { DbTool } from "@/types/entities"
 
 export type AlternativeEntry =
@@ -120,6 +123,11 @@ export const buildAlternativesTitle = (
   }
   return names.length > 0 ? `${base}: ${names.join(", ")}` : base
 }
+
+export const getAlternativesSubject = (
+  toolName: string,
+  curated: Pick<CuratedAlternatives, "searchName"> | null | undefined
+) => curated?.searchName ?? toolName
 
 export const formatFactsCheckedOn = (isoDate: string) =>
   new Date(`${isoDate}T00:00:00Z`).toLocaleDateString("en-US", {
