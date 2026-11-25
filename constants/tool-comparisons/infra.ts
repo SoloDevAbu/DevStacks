@@ -254,3 +254,57 @@ export const GITHUB_PAIRS: ToolPairNotes = {
     ],
   },
 }
+
+export const TERRAFORM_PAIRS: ToolPairNotes = {
+  opentofu: {
+    verdict:
+      "OpenTofu is the community fork of Terraform created after HashiCorp moved Terraform to the Business Source License in 2023. It is MPL-2.0 licensed under the Linux Foundation, reads the same HCL and works with the same providers and modules, and has added features such as state encryption.",
+    chooseTool: [
+      "You use HCP Terraform, Terraform Enterprise or Sentinel policies.",
+      "You want the vendor-supported tool from HashiCorp, now part of IBM.",
+    ],
+    chooseAlternative: [
+      "You need an OSI open-source licence or build a product on top of the tool.",
+      "You want community governance and features such as built-in state encryption.",
+    ],
+  },
+  pulumi: {
+    verdict:
+      "Terraform describes infrastructure in declarative HCL. Pulumi uses TypeScript, Python, Go, C# or Java, so you get loops, functions, packages and unit tests from a real language, with an Apache-2.0 engine and the hosted Pulumi Cloud.",
+    chooseTool: [
+      "Your team prefers a declarative configuration language that operations staff can read.",
+      "You rely on the Terraform Registry's modules and the largest provider ecosystem.",
+    ],
+    chooseAlternative: [
+      "Your developers want to define infrastructure in the language they already use.",
+      "You want to unit test infrastructure code and share it as normal packages.",
+    ],
+  },
+}
+
+export const DATADOG_PAIRS: ToolPairNotes = {
+  grafana: {
+    verdict:
+      "Datadog is a single commercial SaaS that collects and stores metrics, traces and logs, priced per host and per GB. Grafana is AGPL-licensed dashboards plus the Loki, Tempo and Mimir backends, which you can self-host or use on Grafana Cloud with a free tier.",
+    chooseTool: [
+      "You want one vendor for infrastructure, APM, logs, RUM and security with little setup.",
+      "Your team values ready-made integrations and dashboards over running its own stack.",
+    ],
+    chooseAlternative: [
+      "You want open-source, OpenTelemetry-based observability you can self-host.",
+      "You need to control costs for high volumes of metrics and logs.",
+    ],
+  },
+  "new-relic": {
+    verdict:
+      "Datadog and New Relic are both full observability platforms. Datadog charges per host and per product, while New Relic charges for data ingested and full platform users, with a free tier of 100 GB a month and one full user.",
+    chooseTool: [
+      "You want the broadest catalogue of integrations and security products.",
+      "Your infrastructure has few hosts but many products in use.",
+    ],
+    chooseAlternative: [
+      "You want pricing based on data and users rather than hosts.",
+      "You want a free tier that covers a small production app.",
+    ],
+  },
+}
