@@ -585,6 +585,8 @@ export type TechArticleSchemaInput = {
   updatedAt?: Date | null
   coverImageUrl?: string | null
   keywords?: string[]
+  // Editorial guides are written by the founder; generated launch posts stay attributed to the site.
+  byFounder?: boolean
 }
 
 const latestDate = (...dates: ReadonlyArray<Date | null | undefined>) =>
@@ -605,12 +607,14 @@ export const techArticleSchema = (input: TechArticleSchemaInput) => ({
   datePublished: input.publishedAt?.toISOString(),
   dateModified: latestDate(input.publishedAt, input.updatedAt)?.toISOString(),
   inLanguage: "en-US",
-  author: {
-    "@type": "Organization",
-    "@id": `${SITE_CONFIG.url}/#organization`,
-    name: SITE_CONFIG.name,
-    url: SITE_CONFIG.url,
-  },
+  author: input.byFounder
+    ? founderSchema()
+    : {
+        "@type": "Organization",
+        "@id": `${SITE_CONFIG.url}/#organization`,
+        name: SITE_CONFIG.name,
+        url: SITE_CONFIG.url,
+      },
   publisher: {
     "@type": "Organization",
     "@id": `${SITE_CONFIG.url}/#organization`,

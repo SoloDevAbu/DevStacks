@@ -12,6 +12,8 @@ import { normalizeSitemapUrl } from "@/utils/urls"
 import { getAllComparisons } from "@/constants/comparisons"
 import { getAllToolComparisons } from "@/utils/tool-comparisons"
 import { GLOSSARY_TERMS, GLOSSARY_UPDATED_ON } from "@/constants/glossary"
+import { GUIDES, GUIDES_UPDATED_ON } from "@/constants/guides"
+import { getCuratedAlternatives } from "@/constants/alternatives"
 import { FREE_TOOLS } from "@/constants/free-tools"
 import { DIRECTORY_FACTS_CHECKED_ON } from "@/constants/directories"
 import { LAUNCH_DIRECTORIES } from "@/constants/launch-directories"
@@ -281,7 +283,11 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
     dynamicRoutes.push(
       ...filterToolsWithAlternatives(dbTools).map((tool) => ({
         url: normalizeSitemapUrl(`/alternatives/${tool.slug}`),
-        lastModified: tool.updatedAt ?? now,
+        lastModified: new Date(
+          getCuratedAlternatives(tool.slug)?.factsCheckedOn ??
+            tool.updatedAt ??
+            now
+        ),
         changeFrequency: "weekly" as const,
         priority: 0.75,
       }))
@@ -309,6 +315,18 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
       lastModified: new Date(GLOSSARY_UPDATED_ON),
       changeFrequency: "monthly" as const,
       priority: 0.6,
+    })),
+    {
+      url: normalizeSitemapUrl(ROUTES.GUIDES),
+      lastModified: new Date(GUIDES_UPDATED_ON),
+      changeFrequency: "weekly" as const,
+      priority: 0.7,
+    },
+    ...GUIDES.map(({ slug, updatedOn }) => ({
+      url: normalizeSitemapUrl(ROUTES.GUIDE(slug)),
+      lastModified: new Date(updatedOn),
+      changeFrequency: "monthly" as const,
+      priority: 0.7,
     })),
     ...[
       ROUTES.FREE_TOOLS,

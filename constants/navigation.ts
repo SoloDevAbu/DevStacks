@@ -163,6 +163,7 @@ export const FOOTER_COLUMNS: readonly FooterColumn[] = [
     heading: "Resources",
     links: [
       { label: "Launch Stories", href: ROUTES.BLOG },
+      { label: "Launch & AI Visibility Guides", href: ROUTES.GUIDES },
       {
         label: "Where to Launch Dev Tools",
         href: ROUTES.GUIDE_LAUNCH_DEVTOOLS,

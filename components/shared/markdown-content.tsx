@@ -1,19 +1,28 @@
 import { marked } from "marked"
 import { slugify } from "@/utils/slug"
+import {
+  markdownArticle,
+  markdownHeading,
+  markdownHeadingAnchor,
+} from "@/utils/styles"
 
-export const BlogMarkdownContent = ({ markdown }: { markdown: string }) => {
+interface MarkdownContentProps {
+  markdown: string
+  // Depth of the page's own heading above the content; markdown `#` renders one level below it.
+  headingOffset?: number
+}
+
+export const MarkdownContent = ({
+  markdown,
+  headingOffset = 1,
+}: MarkdownContentProps) => {
   const seenIds = new Set<string>()
-
   const renderer = new marked.Renderer()
 
   renderer.heading = function (token) {
-    const text = token.text
-    // The page title is the only <h1>, so markdown headings start at <h2>.
-    const depth = Math.min(token.depth + 1, 6)
+    const depth = Math.min(token.depth + headingOffset, 6)
     const inlineContent = this.parser.parseInline(token.tokens)
-
-    const cleanText = text.replace(/<[^>]+>/g, "").trim()
-    let baseId = slugify(cleanText, "section")
+    const baseId = slugify(token.text.replace(/<[^>]+>/g, "").trim(), "section")
     let id = baseId
     let counter = 1
     while (seenIds.has(id)) {
@@ -22,14 +31,14 @@ export const BlogMarkdownContent = ({ markdown }: { markdown: string }) => {
     }
     seenIds.add(id)
 
-    return `<h${depth} id="${id}" class="scroll-mt-24 group flex items-center justify-between text-slate-900 font-bold border-b border-dashed border-border/60 pb-2 mt-8 mb-4"><span>${inlineContent}</span><a href="#${id}" class="opacity-0 group-hover:opacity-100 text-slate-300 hover:text-slate-500 ml-2 transition-opacity text-sm font-normal" aria-label="Link to section">#</a></h${depth}>`
+    return `<h${depth} id="${id}" class="${markdownHeading}"><span>${inlineContent}</span><a href="#${id}" class="${markdownHeadingAnchor}" aria-label="Link to section">#</a></h${depth}>`
   }
 
   const htmlContent = marked.parse(markdown, { renderer, async: false }) as string
 
   return (
     <article
-      className="prose prose-slate max-w-none text-slate-700 leading-relaxed text-sm sm:text-base space-y-5 [&_p]:leading-7 [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:space-y-1.5 [&_ol]:list-decimal [&_ol]:pl-5 [&_ol]:space-y-1.5 [&_blockquote]:border-l-4 [&_blockquote]:border-indigo-500 [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:text-slate-600 [&_pre]:bg-slate-900 [&_pre]:text-slate-100 [&_pre]:p-4 [&_pre]:rounded-xl [&_pre]:overflow-x-auto [&_code]:font-mono [&_code]:text-xs sm:[&_code]:text-sm [&_a]:text-indigo-600 [&_a]:font-medium [&_a]:underline hover:[&_a]:text-indigo-800"
+      className={markdownArticle}
       dangerouslySetInnerHTML={{ __html: htmlContent }}
     />
   )

@@ -14,6 +14,7 @@ import {
   getComparisonTitle,
 } from "@/utils/tool-comparisons"
 import { GLOSSARY_HUB, GLOSSARY_TERMS } from "@/constants/glossary"
+import { GUIDES, GUIDES_HUB } from "@/constants/guides"
 import { FREE_TOOLS, FREE_TOOLS_HUB } from "@/constants/free-tools"
 import {
   AI_SURFACE_CACHE_CONTROL,
@@ -123,6 +124,13 @@ ${FREE_TOOLS.map(
   (tool) => `- [${tool.name}](${SITE_CONFIG.url}${ROUTES.FREE_TOOL(tool.slug)}): ${tool.metaDescription}`
 ).join("\n")}
 
+## Guides
+- [${GUIDES_HUB.title}](${SITE_CONFIG.url}${ROUTES.GUIDES}): ${GUIDES_HUB.description} (markdown at ${ROUTES.GUIDES}.md)
+${GUIDES.map(
+  (guide) =>
+    `- [${guide.title}](${SITE_CONFIG.url}${ROUTES.GUIDE(guide.slug)}): ${guide.description} (markdown at ${ROUTES.GUIDE(guide.slug)}.md)`
+).join("\n")}
+
 ## Glossary
 - [${GLOSSARY_HUB.title}](${SITE_CONFIG.url}${ROUTES.GLOSSARY}): ${GLOSSARY_HUB.description}
 ${GLOSSARY_TERMS.map(
@@ -141,6 +149,11 @@ ${GLOSSARY_TERMS.map(
 - [/products/{slug}](${SITE_CONFIG.url}/products/<param>): Single product detail (problem, solution, unique value, tech stack)
 - [/makers](${SITE_CONFIG.url}/makers): Makers and developers directory
 - [/makers/{username}](${SITE_CONFIG.url}/makers/<param>): Maker & developer profile (bio, country, maker FAQs, submitted tools & products)
+- [/alternatives/{slug}](${SITE_CONFIG.url}/alternatives/<param>): Curated alternatives to a developer tool, with pricing and when to switch (markdown twin via Accept: text/markdown)
+- [/compare/{a}-vs-{b}](${SITE_CONFIG.url}/compare/<param>): Head-to-head developer tool comparison (markdown twin at /compare/{slug}.md)
+- [/glossary/{slug}](${SITE_CONFIG.url}/glossary/<param>): Launch, SEO and dev-tool term definition (markdown twin at /glossary/{slug}.md)
+- [/guides](${SITE_CONFIG.url}/guides): Launch and AI visibility guides (markdown twin at /guides.md and /guides/{slug}.md)
+- [/directories](${SITE_CONFIG.url}/directories): Launch directory database with weekly dofollow link checks (markdown twin at /directories.md and /directories/{slug}.md)
 - [/trending](${SITE_CONFIG.url}/trending): Trending rankings leaderboard
 - [/discover/popular-building-blocks](${SITE_CONFIG.url}/discover/popular-building-blocks): Most-used developer APIs and infrastructure tools
 - [/producthunt-alternative](${SITE_CONFIG.url}/producthunt-alternative): Product Hunt vs LaunchNests editorial comparison

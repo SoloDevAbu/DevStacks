@@ -1169,3 +1169,18 @@ export const freeToolStepList =
   "flex max-w-3xl list-decimal flex-col gap-2 pl-5 text-sm leading-relaxed text-slate-600"
 
 export const freeToolError = "text-sm font-medium text-rose-600"
+
+// Rendered markdown (blog posts, guides). No typography plugin, so element styles are spelled out here.
+export const markdownArticle =
+  "prose prose-slate max-w-none space-y-5 text-sm leading-relaxed text-slate-700 sm:text-base [&_a]:font-medium [&_a]:text-indigo-600 [&_a]:underline hover:[&_a]:text-indigo-800 [&_blockquote]:border-l-4 [&_blockquote]:border-indigo-500 [&_blockquote]:pl-4 [&_blockquote]:text-slate-600 [&_blockquote]:italic [&_code]:font-mono [&_code]:text-xs sm:[&_code]:text-sm [&_ol]:list-decimal [&_ol]:space-y-1.5 [&_ol]:pl-5 [&_p]:leading-7 [&_pre]:overflow-x-auto [&_pre]:bg-slate-900 [&_pre]:p-4 [&_pre]:text-slate-100 [&_table]:w-full [&_table]:border-collapse [&_table]:text-sm [&_td]:border [&_td]:border-dashed [&_td]:border-border [&_td]:px-3 [&_td]:py-2 [&_th]:border [&_th]:border-dashed [&_th]:border-border [&_th]:bg-slate-50 [&_th]:px-3 [&_th]:py-2 [&_th]:text-left [&_ul]:list-disc [&_ul]:space-y-1.5 [&_ul]:pl-5"
+
+export const markdownHeading =
+  "group mt-8 mb-4 flex scroll-mt-24 items-center justify-between border-b border-dashed border-border/60 pb-2 font-bold text-slate-900"
+
+export const markdownHeadingAnchor =
+  "ml-2 text-sm font-normal text-slate-300 opacity-0 transition-opacity group-hover:opacity-100 hover:text-slate-500"
+
+export const quickAnswerBlock =
+  "mt-2 flex max-w-2xl flex-col gap-1 border-l-2 border-dashed border-slate-300 pl-3"
+
+export const quickAnswerText = "text-sm leading-relaxed text-slate-700"
