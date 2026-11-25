@@ -19,6 +19,7 @@ import type { DbTool } from "@/types/entities"
 import { ToolsDirectoryContent } from "./tools-content"
 import type { SortOption } from "@/components/tools/tools-filter-bar"
 import { resolveCategoryHubPath } from "@/lib/catalog/category-url"
+import { indexingRobots, isListViewIndexable } from "@/utils/indexing"
 import { getCategoryPath, toAbsoluteUrl } from "@/utils/urls"
 import { notFound, permanentRedirect } from "next/navigation"
 
@@ -66,7 +67,6 @@ export const getToolsMetadata = async (
     : `Browse developer tools, APIs, SDKs and infrastructure listed on ${SITE_CONFIG.name}, ranked by community upvotes, with the products built on each one.`
 
   const cleanCategory = category?.trim()
-  const hasSearchQuery = Boolean(q && q.trim())
 
   let canonicalUrl = `${SITE_CONFIG.url}/tools`
   if (cleanCategory) {
@@ -93,12 +93,9 @@ export const getToolsMetadata = async (
     alternates: {
       canonical: canonicalUrl,
     },
-    robots: hasSearchQuery
-      ? {
-          index: false,
-          follow: true,
-        }
-      : undefined,
+    robots: isListViewIndexable({ q, category, pricing, sortBy })
+      ? undefined
+      : indexingRobots(false),
     openGraph: {
       title: `${baseTitle} | ${SITE_CONFIG.name}`,
       description,

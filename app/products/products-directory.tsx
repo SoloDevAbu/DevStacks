@@ -19,6 +19,7 @@ import type { DbProduct } from "@/types/entities"
 import { ProductsDirectoryContent } from "./products-content"
 import type { ProductSortOption } from "@/components/products/products-filter-bar"
 import { resolveCategoryHubPath } from "@/lib/catalog/category-url"
+import { indexingRobots, isListViewIndexable } from "@/utils/indexing"
 import { getCategoryPath, toAbsoluteUrl } from "@/utils/urls"
 import { notFound, permanentRedirect } from "next/navigation"
 
@@ -66,7 +67,6 @@ export const getProductsMetadata = async (
     : `Browse software products, SaaS and AI apps launched on ${SITE_CONFIG.name}, ranked by community likes, with the tech stack each one is built on.`
 
   const cleanCategory = category?.trim()
-  const hasSearchQuery = Boolean(q && q.trim())
 
   let canonicalUrl = `${SITE_CONFIG.url}/products`
   if (cleanCategory) {
@@ -93,12 +93,9 @@ export const getProductsMetadata = async (
     alternates: {
       canonical: canonicalUrl,
     },
-    robots: hasSearchQuery
-      ? {
-          index: false,
-          follow: true,
-        }
-      : undefined,
+    robots: isListViewIndexable({ q, category, pricing, sortBy })
+      ? undefined
+      : indexingRobots(false),
     openGraph: {
       title: `${baseTitle} | ${SITE_CONFIG.name}`,
       description,

@@ -32,3 +32,20 @@ export const indexingRobots = (isIndexable: boolean) => ({
   index: isIndexable,
   follow: true,
 })
+
+// Search, category, pricing and sort views duplicate a hub page; only plain pagination stays indexable.
+export const isListViewIndexable = ({
+  q,
+  category,
+  pricing,
+  sortBy,
+}: {
+  q?: string
+  category?: string
+  pricing?: string
+  sortBy?: string
+}): boolean =>
+  !q?.trim() &&
+  !category?.trim() &&
+  (!pricing || pricing.toLowerCase() === "all") &&
+  !sortBy
