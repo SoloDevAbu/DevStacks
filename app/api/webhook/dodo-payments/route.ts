@@ -16,6 +16,43 @@ import {
 } from "@/db/queries/ads"
 import type { Tier } from "@/constants/plans"
 import { revalidateCatalog } from "@/lib/cache/revalidate"
+import { getUserContact } from "@/db/queries/users/get-profile"
+import { sendSubmissionReceivedEmail } from "@/lib/email/submission"
+import { SUBMISSION_STATUS } from "@/constants/moderation"
+import type { LaunchItemType } from "@/constants/launches"
+
+const listingEmailColumns = (table: typeof tools | typeof products) => ({
+  id: table.id,
+  slug: table.slug,
+  status: table.status,
+  name: table.name,
+  tier: table.tier,
+  launchYear: table.launchYear,
+  launchWeek: table.launchWeek,
+})
+
+type PaidListing = {
+  id: string
+  slug: string
+  status: string
+  name: string
+  tier: string
+  launchYear: number | null
+  launchWeek: number | null
+}
+
+// A paid launch is created as a free listing before checkout, so its "we got your submission"
+// email waits for the payment to land. Upgrades of already-reviewed listings send nothing.
+const confirmPaidSubmission = async (
+  userId: string | null,
+  itemType: LaunchItemType,
+  listing: PaidListing
+) => {
+  if (!userId || listing.status !== SUBMISSION_STATUS.PENDING) return
+  const contact = await getUserContact(userId)
+  if (!contact?.email) return
+  await sendSubmissionReceivedEmail({ to: contact.email, listing: { ...listing, itemType } })
+}
 
 interface DodoWebhookData {
   payment_id?: string
@@ -146,7 +183,7 @@ export const POST = Webhooks({
             .update(tools)
             .set({ tier: payment.tier, updatedAt: new Date() })
             .where(eq(tools.id, payment.toolId))
-            .returning({ id: tools.id, slug: tools.slug, status: tools.status })
+            .returning(listingEmailColumns(tools))
 
           await db
             .update(launches)
@@ -154,6 +191,7 @@ export const POST = Webhooks({
             .where(eq(launches.toolId, payment.toolId))
 
           upgradedSlugs.toolSlug = updatedTool?.slug
+          if (updatedTool) await confirmPaidSubmission(payment.userId, "tool", updatedTool)
 
           // Auto-generate AI blog immediately ONLY if already approved by admin
           if (updatedTool?.status === "approved") {
@@ -173,11 +211,7 @@ export const POST = Webhooks({
             .update(products)
             .set({ tier: payment.tier, updatedAt: new Date() })
             .where(eq(products.id, payment.productId))
-            .returning({
-              id: products.id,
-              slug: products.slug,
-              status: products.status,
-            })
+            .returning(listingEmailColumns(products))
 
           await db
             .update(launches)
@@ -185,6 +219,9 @@ export const POST = Webhooks({
             .where(eq(launches.productId, payment.productId))
 
           upgradedSlugs.productSlug = updatedProduct?.slug
+          if (updatedProduct) {
+            await confirmPaidSubmission(payment.userId, "product", updatedProduct)
+          }
 
           // Auto-generate AI blog immediately ONLY if already approved by admin
           if (updatedProduct?.status === "approved") {

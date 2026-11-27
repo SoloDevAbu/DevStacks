@@ -22,6 +22,8 @@ export const platformEnumSchema = z.enum([
 export const submitProductSchema = z.object({
   submitterId: z.string().min(1, "User ID required"),
   paymentId: z.string().uuid().optional(),
+  // The client sets this when a checkout follows; the payment webhook then sends the confirmation.
+  checkoutPending: z.boolean().optional(),
 
   // General
   name: z.string().min(2, "Name must be at least 2 characters").max(100),
@@ -110,7 +112,13 @@ export type SubmitProductInput = z.input<typeof submitProductSchema>
 export type SubmitProductData = z.output<typeof submitProductSchema>
 
 export const updateProductSchema = submitProductSchema
-  .omit({ submitterId: true, paymentId: true, launchYear: true, launchWeek: true })
+  .omit({
+    submitterId: true,
+    paymentId: true,
+    checkoutPending: true,
+    launchYear: true,
+    launchWeek: true,
+  })
   .partial()
 
 export type UpdateProductInput = z.input<typeof updateProductSchema>

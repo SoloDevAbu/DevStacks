@@ -1,8 +1,9 @@
-import { type NextRequest, NextResponse } from "next/server"
+import { type NextRequest, NextResponse, after } from "next/server"
 import { auth } from "@/lib/auth"
 import { getTools } from "@/db/queries/tools/list"
 import { createTool } from "@/db/queries/tools/create"
 import { submitToolSchema } from "@/lib/validation/tool"
+import { sendSubmissionReceivedEmail } from "@/lib/email/submission"
 import { z } from "zod"
 
 const PRICING_OPTIONS = ["Free", "Freemium", "Paid", "Open Source"] as const
@@ -71,12 +72,22 @@ export const POST = async (req: NextRequest) => {
       )
     }
 
+    const { checkoutPending, ...data } = parsed.data
     const tool = await createTool({
-      ...parsed.data,
+      ...data,
       submitterId: session.user.id,
-      tags: parsed.data.tags ?? [],
-      platforms: (parsed.data.platforms ?? []) as any,
+      tags: data.tags ?? [],
+      platforms: (data.platforms ?? []) as any,
     })
+
+    if (tool && !checkoutPending) {
+      after(() =>
+        sendSubmissionReceivedEmail({
+          to: session.user.email,
+          listing: { ...tool, itemType: "tool" },
+        })
+      )
+    }
 
     return NextResponse.json({ data: tool }, { status: 201 })
   } catch (err: unknown) {

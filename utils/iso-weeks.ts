@@ -348,3 +348,16 @@ export const getDefaultLaunchWeek = <W extends { isFreeFull: boolean }>(
   isPaid: boolean
 ): W | undefined =>
   isPaid ? weeks[0] : (weeks.find((w) => !w.isFreeFull) ?? weeks[0])
+
+// Listings go live at the start of their ISO week, e.g. "Monday, December 7, 2026 at 00:00 UTC".
+export const formatLaunchStart = (isoYear: number, isoWeek: number): string => {
+  const { startDate } = getISOWeekRange(isoYear, isoWeek)
+  const day = new Intl.DateTimeFormat("en-US", {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(startDate)
+  return `${day} at 00:00 UTC`
+}

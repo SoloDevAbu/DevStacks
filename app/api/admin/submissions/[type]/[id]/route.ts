@@ -79,7 +79,13 @@ export const PATCH = withAdmin<{ type: string; id: string }>(
           to: maker.email,
           kind: EMAIL_KIND_BY_STATUS[status],
           eventId: `${item.id}/${item.reviewedAt?.getTime() ?? Date.now()}`,
-          listing: { itemType: itemType.data, name: item.name, slug: item.slug },
+          listing: {
+            itemType: itemType.data,
+            name: item.name,
+            slug: item.slug,
+            launchYear: item.launchYear,
+            launchWeek: item.launchWeek,
+          },
           reviewNote,
         })
       }

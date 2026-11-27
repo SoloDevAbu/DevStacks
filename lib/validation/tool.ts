@@ -7,6 +7,8 @@ const urlSchema = z.string().url("Must be a valid URL").or(z.literal(""))
 
 export const submitToolSchema = z.object({
   paymentId: z.string().uuid().optional(),
+  // The client sets this when a checkout follows; the payment webhook then sends the confirmation.
+  checkoutPending: z.boolean().optional(),
   name: z.string().min(2, "Name must be at least 2 characters").max(100),
   tagline: z.string().min(10, "Tagline too short").max(200),
   description: z.string().min(20, "Description too short").max(3000),
@@ -69,7 +71,7 @@ export const submitToolSchema = z.object({
 export type SubmitToolInput = z.infer<typeof submitToolSchema>
 
 export const updateToolSchema = submitToolSchema
-  .omit({ paymentId: true, launchYear: true, launchWeek: true })
+  .omit({ paymentId: true, checkoutPending: true, launchYear: true, launchWeek: true })
   .partial()
 
 export type UpdateToolInput = z.infer<typeof updateToolSchema>

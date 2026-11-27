@@ -1,5 +1,18 @@
 export const RESEND_API_URL = "https://api.resend.com/emails"
 
+// Aliases of the published Resend templates. Subject and body copy live in Resend; edit them there.
+export const EMAIL_TEMPLATE = {
+  SUBMISSION_RECEIVED: "submission-received",
+  SUBMISSION_RECEIVED_FREE: "submission-received-free",
+  SUBMISSION_APPROVED_LIVE: "submission-approved",
+  SUBMISSION_APPROVED_SCHEDULED: "submission-approved-scheduled",
+  SUBMISSION_REJECTED: "submission-rejected",
+  EDIT_APPROVED: "edit-approved",
+  EDIT_REJECTED: "edit-rejected",
+} as const
+
+export type EmailTemplate = (typeof EMAIL_TEMPLATE)[keyof typeof EMAIL_TEMPLATE]
+
 export const MODERATION_EMAIL_KIND = {
   SUBMISSION_APPROVED: "submission_approved",
   SUBMISSION_REJECTED: "submission_rejected",
@@ -10,16 +23,8 @@ export const MODERATION_EMAIL_KIND = {
 export type ModerationEmailKind =
   (typeof MODERATION_EMAIL_KIND)[keyof typeof MODERATION_EMAIL_KIND]
 
-interface ModerationEmailTemplate {
-  alias: string
-  showsReason: boolean
-  linksToListing: boolean
-}
-
-// Subject and body copy live in the published Resend templates; edit them in the Resend dashboard.
-export const MODERATION_EMAIL_TEMPLATE: Record<ModerationEmailKind, ModerationEmailTemplate> = {
-  submission_approved: { alias: "submission-approved", showsReason: false, linksToListing: true },
-  submission_rejected: { alias: "submission-rejected", showsReason: true, linksToListing: false },
-  edit_approved: { alias: "edit-approved", showsReason: false, linksToListing: true },
-  edit_rejected: { alias: "edit-rejected", showsReason: true, linksToListing: false },
-}
+export const EMAIL_FALLBACK = {
+  REVIEW_NOTE: "No details were given.",
+  LAUNCH_WEEK: "Not scheduled yet",
+  FREE_PLAN_SUFFIX: " (free)",
+} as const

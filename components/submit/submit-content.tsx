@@ -502,16 +502,18 @@ export const SubmitContent = ({
 
   const submitListing = async (
     valid: NonNullable<ReturnType<typeof validateForm>>,
-    paymentId?: string
+    paymentId?: string,
+    checkoutPending?: boolean
   ): Promise<DbProduct | DbTool> => {
     // The API sets submitterId from the session, so the client value is ignored.
     if (valid.type === "product") {
       return (await submitProductMutation({
         ...valid.data,
         paymentId,
+        checkoutPending,
       })) as DbProduct
     }
-    return (await submitToolMutation({ ...valid.data, paymentId })) as DbTool
+    return (await submitToolMutation({ ...valid.data, paymentId, checkoutPending })) as DbTool
   }
 
   const resetAfterLaunch = () => {
@@ -535,7 +537,8 @@ export const SubmitContent = ({
     try {
       created = await submitListing(
         valid,
-        choice === "credit" ? userCredit?.id : undefined
+        choice === "credit" ? userCredit?.id : undefined,
+        choice === "pay" && isPaidTier(selectedTier)
       )
     } catch (err: unknown) {
       setPendingChoice(null)
