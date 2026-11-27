@@ -49,6 +49,9 @@ const patternMatches = (pattern: string, path: string) => {
   return new RegExp(`^${body}${anchored ? "$" : ""}`).test(path)
 }
 
+export const getSitemapUrls = (robotsTxt: string) =>
+  [...robotsTxt.matchAll(/^\s*sitemap\s*:\s*(\S+)/gim)].map(([, url]) => url)
+
 // RFC 9309: the most specific matching group wins, then the longest matching rule (Allow on a tie).
 export const isPathAllowedForAgent = (
   robotsTxt: string,

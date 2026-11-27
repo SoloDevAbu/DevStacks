@@ -33,9 +33,9 @@ Never write these class strings inline.
 | Link lists | `dashedRowGrid` / `dashedRowCell` / `dashedRowItem` (sidebar pages), `dashedLinkGrid` / `dashedLinkGridItem` (full width), `dashedLinkTitle`, `dashedLinkMeta`, `compareLinkList` / `compareLinkPill` (inline chips) |
 | Bullets | `bulletList`, `bulletItem`, `bulletDot` |
 | Inline links | `comparisonInlineLink`, `inlineTextLink` |
-| Free-tool widgets | `freeToolWidget`, `freeToolForm`, `freeToolResult`, `freeToolScore`, `freeToolStatusBadge` |
+| Free-tool widgets | `freeToolWidget`, `freeToolForm`, `freeToolResult`, `freeToolScore`, `freeToolStatusBadge`, `freeToolReport`, `freeToolPanelHeader`, `freeToolCodeBlock`, `freeToolCtaRow`, `freeToolCheckTitle`, `freeToolCheckDetail` |
 
-Shared building blocks: `FramedGrid`, `ComparisonLinkGrid`, `CornerBrackets`, `PageBreadcrumb`, `PageHeader`, `AskAiBar`.
+Shared building blocks: `FramedGrid`, `ComparisonLinkGrid`, `CornerBrackets`, `PageBreadcrumb`, `PageHeader`, `AskAiBar`, `SiteUrlForm` and `FreeToolCheckList` / `CheckStatusBadge` (free-tool inputs and pass/warn/fail lists).
 
 If a pattern you need isn't here, add a named constant to `utils/styles.ts` and update this table. Don't inline it.
 

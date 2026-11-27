@@ -27,6 +27,9 @@ export const metadata: Metadata = {
     "new product launches this week",
     "new developer tools",
     "launch your SaaS",
+    "submit your startup",
+    "submit ai tool",
+    "launch for AI visibility",
   ],
   alternates: {
     canonical: SITE_CONFIG.url,

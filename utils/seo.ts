@@ -116,3 +116,37 @@ export const buildSocialMetadata = ({
     },
   }
 }
+
+const DIRECTORY_REVIEW_TITLE_SUFFIXES = [
+  ": Pricing, Dofollow Link & Approval Time",
+  ": Pricing, Dofollow Link & Review Time",
+  ": Pricing & Dofollow Link",
+  ": Pricing & Link Check",
+]
+
+// Targets "<directory> review" searches, the query launchers type before paying a directory.
+export const buildDirectoryReviewTitle = (name: string) =>
+  fitTitleSuffix(
+    `${name} Review (${new Date().getFullYear()})`,
+    DIRECTORY_REVIEW_TITLE_SUFFIXES
+  )
+
+// Canonical plus the `.md` twin, so agents reading the HTML head find the markdown version.
+export const canonicalWithMarkdown = (url: string): Metadata["alternates"] => ({
+  canonical: url,
+  types: { "text/markdown": `${url}.md` },
+})
+
+const isFreeTitleSuffixes = (year: number) => [
+  ` Pricing, License & Alternatives (${year})`,
+  " Pricing, License & Alternatives",
+  ` Pricing & Alternatives (${year})`,
+  " Pricing & Alternatives",
+]
+
+// Absolute title: the question matches the query word for word, so it gets the full 60 characters.
+export const formatIsFreeToolTitle = (name: string) =>
+  fitTitleSuffix(
+    `Is ${cleanTitle(name)} Free?`,
+    isFreeTitleSuffixes(new Date().getFullYear())
+  )

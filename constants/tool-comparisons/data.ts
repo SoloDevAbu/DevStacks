@@ -254,3 +254,84 @@ export const STRIPE_PAIRS: ToolPairNotes = {
     ],
   },
 }
+
+export const CLERK_PAIRS: ToolPairNotes = {
+  auth0: {
+    verdict:
+      "Auth0, now part of Okta, is a mature identity platform with universal login, enterprise connections and extensibility, free up to 25,000 monthly active users. Clerk focuses on modern React and Next.js apps with drop-in components, and is free up to 50,000 monthly retained users per app.",
+    chooseTool: [
+      "You build with React or Next.js and want sign-in and profile UI that works out of the box.",
+      "You want organisations, roles and subscription billing alongside auth.",
+    ],
+    chooseAlternative: [
+      "You need deep enterprise identity features, custom flows and Okta integration.",
+      "You support many frameworks and legacy apps beyond the JavaScript stack.",
+    ],
+  },
+  "better-auth": {
+    verdict:
+      "Clerk is a hosted service: users live in Clerk and you pay per retained user above the free tier. Better Auth is an MIT-licensed TypeScript library that stores users in your own database, with plugins for organisations, two-factor auth and passkeys, and it now maintains Auth.js.",
+    chooseTool: [
+      "You want hosted auth with prebuilt UI and no auth tables to manage.",
+      "You want bot protection, session management and a user dashboard handled for you.",
+    ],
+    chooseAlternative: [
+      "You want user data in your own Postgres, MySQL or SQLite database.",
+      "You want no per-user fees and full control of the auth code.",
+    ],
+  },
+}
+
+export const MONGODB_PAIRS: ToolPairNotes = {
+  postgresql: {
+    verdict:
+      "MongoDB is a document database with flexible schemas, an aggregation pipeline and the managed Atlas service, licensed under the source-available SSPL. PostgreSQL is an open-source relational database whose JSONB columns handle many document workloads while keeping joins, constraints and SQL.",
+    chooseTool: [
+      "Your data is naturally nested documents with varying shapes.",
+      "You want Atlas features such as vector search, full-text search and global clusters in one service.",
+    ],
+    chooseAlternative: [
+      "Your data is relational and you need joins, foreign keys and transactions across tables.",
+      "You want a fully open-source database with many managed hosts to choose from.",
+    ],
+  },
+  ferretdb: {
+    verdict:
+      "FerretDB speaks the MongoDB wire protocol but stores data in PostgreSQL through Microsoft's DocumentDB extension, under the Apache-2.0 licence. MongoDB is the original engine with the full feature set, drivers and tooling.",
+    chooseTool: [
+      "You need every MongoDB feature, including change streams and Atlas services.",
+      "You want the official engine with vendor support.",
+    ],
+    chooseAlternative: [
+      "You want a MongoDB-compatible API under an OSI open-source licence.",
+      "You already run Postgres and want document workloads on the same infrastructure.",
+    ],
+  },
+}
+
+export const FIREBASE_PAIRS: ToolPairNotes = {
+  appwrite: {
+    verdict:
+      "Firebase is Google's managed app platform with Firestore, auth, hosting, push messaging and analytics. Appwrite offers similar building blocks under the BSD-3-Clause licence, so you can use Appwrite Cloud or self-host the same stack.",
+    chooseTool: [
+      "You build mobile apps that need push notifications, Crashlytics and analytics.",
+      "You want a managed service with no servers to run, on Google Cloud.",
+    ],
+    chooseAlternative: [
+      "You want to self-host your backend or avoid lock-in to Google Cloud.",
+      "You prefer an open-source project you can inspect and extend.",
+    ],
+  },
+  convex: {
+    verdict:
+      "Firebase pairs a NoSQL document store with a broad set of mobile services. Convex is a reactive backend where queries, mutations and actions are TypeScript functions, clients update in realtime and data is fully typed end to end.",
+    chooseTool: [
+      "You need mobile services such as push messaging, Crashlytics and Remote Config.",
+      "You support Android, iOS, Flutter and Unity apps.",
+    ],
+    chooseAlternative: [
+      "You build a TypeScript web app and want typed, reactive queries without writing sync logic.",
+      "You prefer transactional server functions over client-side security rules.",
+    ],
+  },
+}

@@ -4,6 +4,7 @@ export type FreeToolSlug =
   | "domain-rating-checker"
   | "bulk-domain-rating-checker"
   | "ai-readiness-checker"
+  | "llms-txt-generator"
 
 export interface FreeToolGuideSection {
   heading: string
@@ -32,12 +33,12 @@ export interface DomainRatingResponse {
   results: DomainRatingResult[]
 }
 
-export type AiReadinessStatus = "pass" | "warn" | "fail"
+export type FreeToolCheckStatus = "pass" | "warn" | "fail"
 
-export interface AiReadinessCheckResult {
+export interface FreeToolCheckResult {
   id: string
   label: string
-  status: AiReadinessStatus
+  status: FreeToolCheckStatus
   detail: string
 }
 
@@ -50,7 +51,18 @@ export interface AiCrawlerAccess {
 export interface AiReadinessReport {
   url: string
   score: number
-  checks: AiReadinessCheckResult[]
+  checks: FreeToolCheckResult[]
   crawlers: AiCrawlerAccess[]
+  checkedAt: string
+}
+
+export interface LlmsTxtReport {
+  url: string
+  llmsTxtUrl: string
+  hasLlmsTxt: boolean
+  checks: FreeToolCheckResult[]
+  generated: string
+  linkCount: number
+  linkSource: string | null
   checkedAt: string
 }

@@ -1,3 +1,4 @@
+import { GUIDE_SLUGS } from "@/constants/guides/slugs"
 import { ROUTES } from "@/constants/routes"
 
 export interface MarkdownTwinRoute {
@@ -7,6 +8,8 @@ export interface MarkdownTwinRoute {
   // Public URL advertised in the `Link: rel=alternate` header (defaults to the twin).
   alias?: (match: RegExpMatchArray) => string
 }
+
+const GUIDE_SLUG_PATTERN = Object.values(GUIDE_SLUGS).join("|")
 
 // Every HTML route with a markdown representation, shared by `Accept: text/markdown` negotiation
 // and the `Link` header so the two can never disagree.
@@ -37,6 +40,21 @@ export const MARKDOWN_TWIN_ROUTES: readonly MarkdownTwinRoute[] = [
       `${ROUTES.LAUNCH_WEEK(Number(year), Number(week))}.md`,
   },
   {
+    pattern: /^\/(guides|directories)$/,
+    twin: ([, section]) => `/api/md/${section}`,
+    alias: ([, section]) => `/${section}.md`,
+  },
+  {
+    pattern: new RegExp(`^/guides/(${GUIDE_SLUG_PATTERN})$`),
+    twin: ([, slug]) => `/api/md/guides/${slug}`,
+    alias: ([, slug]) => `${ROUTES.GUIDE(slug)}.md`,
+  },
+  {
+    pattern: /^\/(directories|compare)\/(?!link-check-report$)([^/.]+)$/,
+    twin: ([, section, slug]) => `/api/md/${section}/${slug}`,
+    alias: ([, section, slug]) => `/${section}/${slug}.md`,
+  },
+  {
     pattern: /^\/(pricing|faq|terms|privacy|refund)$/,
     twin: ([, page]) => `/${page}.md`,
   },
@@ -50,6 +68,18 @@ export const MARKDOWN_SUFFIX_ROUTES: readonly MarkdownTwinRoute[] = [
   },
   {
     pattern: /^\/(tools|products|blog|makers|glossary)\/([^/]+)\.md$/,
+    twin: ([, section, slug]) => `/api/md/${section}/${slug}`,
+  },
+  {
+    pattern: /^\/(guides|directories)\.md$/,
+    twin: ([, section]) => `/api/md/${section}`,
+  },
+  {
+    pattern: new RegExp(`^/guides/(${GUIDE_SLUG_PATTERN})\\.md$`),
+    twin: ([, slug]) => `/api/md/guides/${slug}`,
+  },
+  {
+    pattern: /^\/(directories|compare)\/([^/]+)\.md$/,
     twin: ([, section, slug]) => `/api/md/${section}/${slug}`,
   },
   {

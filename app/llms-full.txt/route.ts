@@ -15,6 +15,7 @@ import {
   getComparisonTitle,
 } from "@/utils/tool-comparisons"
 import { GLOSSARY_HUB, GLOSSARY_TERMS } from "@/constants/glossary"
+import { GUIDES, GUIDES_HUB } from "@/constants/guides"
 import { FREE_TOOLS, FREE_TOOLS_HUB } from "@/constants/free-tools"
 import {
   AI_SURFACE_CACHE_CONTROL,
@@ -247,6 +248,17 @@ ${GLOSSARY_TERMS.map(
   (term) => `### ${term.term}
 - Canonical URL: ${SITE_CONFIG.url}${ROUTES.GLOSSARY_TERM(term.slug)}
 - Definition: ${term.shortDefinition}`
+).join("\n\n")}
+
+## 15. Guides
+${GUIDES_HUB.description} Hub: ${SITE_CONFIG.url}${ROUTES.GUIDES}
+
+${GUIDES.map(
+  (guide) => `### ${guide.title}
+- Canonical URL: ${SITE_CONFIG.url}${ROUTES.GUIDE(guide.slug)}
+- Markdown: ${SITE_CONFIG.url}${ROUTES.GUIDE(guide.slug)}.md
+- Summary: ${guide.description}
+${guide.keyTakeaways.map((takeaway) => `- ${takeaway}`).join("\n")}`
 ).join("\n\n")}
 `
 

@@ -108,3 +108,18 @@ export const buildDerivedToolFaqs = ({
     faq && !isAnswered(topic) ? [faq] : []
   )
 }
+
+// The 40 to 60 word answer shown above the fold, so readers and answer engines get the pricing
+// question settled before the details.
+export const buildToolQuickAnswer = ({
+  name,
+  pricing,
+  alternativeNames,
+}: Pick<DerivedFaqInput, "name" | "pricing" | "alternativeNames">) =>
+  [
+    pricingAnswer(name, pricing),
+    alternativeNames.length > 0 &&
+      `Popular alternatives include ${listNames(alternativeNames)}.`,
+  ]
+    .filter(Boolean)
+    .join(" ")

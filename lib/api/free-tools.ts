@@ -3,6 +3,7 @@ import { FREE_TOOL_FETCH } from "@/constants/free-tools"
 import type {
   AiReadinessReport,
   DomainRatingResponse,
+  LlmsTxtReport,
 } from "@/types/free-tools"
 
 export const checkDomainRatings = async (domains: string[]) => {
@@ -17,6 +18,15 @@ export const checkDomainRatings = async (domains: string[]) => {
 export const checkAiReadiness = async (url: string) => {
   const { data } = await apiClient.post<AiReadinessReport>(
     "/free-tools/ai-readiness",
+    { url },
+    { timeout: FREE_TOOL_FETCH.CLIENT_TIMEOUT_MS }
+  )
+  return data
+}
+
+export const checkLlmsTxt = async (url: string) => {
+  const { data } = await apiClient.post<LlmsTxtReport>(
+    "/free-tools/llms-txt",
     { url },
     { timeout: FREE_TOOL_FETCH.CLIENT_TIMEOUT_MS }
   )

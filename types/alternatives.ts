@@ -22,6 +22,8 @@ export interface CuratedAlternative extends ToolFacts {
 export interface CuratedAlternatives {
   toolSlug: string
   toolName: string
+  // The name people search with, when it differs from the product name ("OpenAI" for the OpenAI API).
+  searchName?: string
   profile: ToolFacts
   intro: string
   stickWith: string[]

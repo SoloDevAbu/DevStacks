@@ -2,6 +2,7 @@ import "dotenv/config"
 import postgres from "postgres"
 import fs from "fs"
 import path from "path"
+import { generateSqlRestore } from "./backup-db"
 
 // Parse CLI arguments
 const args = process.argv.slice(2)
@@ -124,7 +125,20 @@ const runRestore = async () => {
 
     // 3. Execution: Run SQL
     console.log(`\n🚀 Executing SQL restore script (${(fs.statSync(backupFilePath).size / 1024).toFixed(2)} KB)...`)
-    const sqlContent = fs.readFileSync(backupFilePath, "utf8")
+    const rawContent = fs.readFileSync(backupFilePath, "utf8")
+    const sqlContent = backupFilePath.endsWith(".json")
+      ? (() => {
+          const parsed = JSON.parse(rawContent) as {
+            metadata?: { environment?: string }
+            tables: Record<string, any[]>
+          }
+          return generateSqlRestore(
+            parsed.tables,
+            Object.keys(parsed.tables),
+            parsed.metadata?.environment || "PROD"
+          )
+        })()
+      : rawContent
 
     await sql.unsafe(sqlContent)
 

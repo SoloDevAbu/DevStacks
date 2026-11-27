@@ -30,7 +30,8 @@ const readCapped = async (response: Response, maxBytes: number) => {
 // into a private or loopback address.
 export const fetchPublicResource = async (
   url: string,
-  accept = "text/html,*/*;q=0.8"
+  accept = "text/html,*/*;q=0.8",
+  maxBytes: number = FREE_TOOL_FETCH.MAX_BYTES
 ): Promise<PublicResource | null> => {
   let current = url
 
@@ -61,7 +62,7 @@ export const fetchPublicResource = async (
       return {
         status: response.status,
         contentType: response.headers.get("content-type") ?? "",
-        body: await readCapped(response, FREE_TOOL_FETCH.MAX_BYTES),
+        body: await readCapped(response, maxBytes),
         finalUrl: current,
       }
     } catch {
@@ -73,3 +74,12 @@ export const fetchPublicResource = async (
 
   return null
 }
+
+// A 200 text file, not the HTML fallback page many hosts serve for unknown paths.
+export const isTextResource = (
+  resource: PublicResource | null
+): resource is PublicResource =>
+  resource !== null &&
+  resource.status === 200 &&
+  !resource.contentType.includes("text/html") &&
+  resource.body.trim().length > 0

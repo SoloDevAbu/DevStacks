@@ -20,6 +20,7 @@ import {
   safeJsonLd,
 } from "@/lib/seo/schema"
 import { formatLongDate } from "@/utils/date"
+import { canonicalWithMarkdown } from "@/utils/seo"
 import { summarizeDirectoryChecks } from "@/utils/directories/summary"
 import {
   comparisonCategoryPill,
@@ -56,7 +57,7 @@ export const metadata: Metadata = {
     "where to launch a startup",
     "AI tool directories",
   ],
-  alternates: { canonical: PAGE_URL },
+  alternates: canonicalWithMarkdown(PAGE_URL),
   openGraph: {
     title: `${SEARCH_TITLE} | ${SITE_CONFIG.name}`,
     description: PAGE_DESCRIPTION,

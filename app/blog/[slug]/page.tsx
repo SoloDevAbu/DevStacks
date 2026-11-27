@@ -24,7 +24,7 @@ import { getBlogStaticParams } from "@/lib/catalog/static-params"
 import { ROUTES } from "@/constants/routes"
 import { BlogPreviewBanner } from "@/components/blog/blog-preview-banner"
 import { BlogVerdictBox } from "@/components/blog/blog-verdict-box"
-import { BlogMarkdownContent } from "@/components/blog/blog-markdown-content"
+import { MarkdownContent } from "@/components/shared/markdown-content"
 import { BlogSidebarCard } from "@/components/blog/blog-sidebar-card"
 import { BlogTableOfContents } from "@/components/blog/blog-table-of-contents"
 import { BlogMobileToc } from "@/components/blog/blog-mobile-toc"
@@ -393,7 +393,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
             {/* Main Markdown Body */}
             <div className="p-6 sm:p-8 md:p-10">
-              <BlogMarkdownContent markdown={blog.content} />
+              <MarkdownContent markdown={blog.content} />
             </div>
 
             {/* Technical FAQs (matches producthunt-alternative) */}

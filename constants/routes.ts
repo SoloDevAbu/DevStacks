@@ -58,6 +58,8 @@ export const ROUTES = {
   DIRECTORIES_LINK_CHECK_REPORT: "/directories/link-check-report",
   DIRECTORY: (slug: string) => `/directories/${encodeURIComponent(slug)}`,
   GUIDE_LAUNCH_DEVTOOLS: "/guides/where-to-launch-developer-tools-2026",
+  GUIDES: "/guides",
+  GUIDE: (slug: string) => `/guides/${encodeURIComponent(slug)}`,
   BLOG: "/blog",
   BLOG_POST: (slug: string) => `/blog/${encodeURIComponent(slug)}`,
   BLOG_PREVIEW: (slug: string) =>

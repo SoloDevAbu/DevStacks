@@ -25,7 +25,7 @@ interface SeedFaq {
   answer: string
 }
 
-interface SeedToolDefinition {
+export interface SeedToolDefinition {
   name: string
   slug: string
   tagline: string
@@ -79,7 +79,7 @@ const getFaviconUrl = (websiteUrl?: string | null): string => {
   return `https://www.google.com/s2/favicons?domain=${domain}&sz=128`
 }
 
-const getISOWeekDetails = (date: Date) => {
+export const getISOWeekDetails = (date: Date) => {
   const d = new Date(
     Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())
   )
@@ -107,7 +107,7 @@ const getISOWeekDetails = (date: Date) => {
   return { year, week, startDate, endDate }
 }
 
-const seedToolsData: SeedToolDefinition[] = [
+export const seedToolsData: SeedToolDefinition[] = [
   {
     name: "Next.js",
     slug: "nextjs",
@@ -1606,6 +1606,554 @@ const seedToolsData: SeedToolDefinition[] = [
       },
     ],
   },
+  {
+    name: "Claude Code",
+    slug: "claude-code",
+    tagline: "Anthropic's Agentic Coding Tool for the Terminal, IDE and Web",
+    description:
+      "Claude Code is Anthropic's agentic coding tool. It reads your codebase, plans changes, edits files across the repository and runs commands and tests from the terminal, IDE extensions, a desktop app or the web.",
+    problemStatement:
+      "Multi-file changes, refactors and bug hunts take hours of context gathering before any code is written, and chat assistants cannot run the commands needed to verify their own work.",
+    solution:
+      "An agent that explores the repository, edits files, runs the test suite and iterates until the task is done, with permissions that keep the developer in control.",
+    uniqueValue:
+      "Built by the makers of the Claude models, with hooks, subagents, skills and MCP servers for extending how the agent works, included in paid Claude plans.",
+    websiteUrl: "https://www.claude.com/product/claude-code",
+    githubUrl: "https://github.com/anthropics/claude-code",
+    twitterUrl: "https://twitter.com/claudeai",
+    linkedinUrl: "https://linkedin.com/company/anthropicresearch",
+    useCases:
+      "Multi-file refactors, bug fixing from failing tests, codebase onboarding, code review, and automating routine engineering tasks in CI.",
+    keywords:
+      "claude code, anthropic, ai coding agent, terminal agent, agentic coding, claude, cli",
+    targetAudience:
+      "Software engineers, engineering teams, and technical founders who want an autonomous coding agent.",
+    metaTitle: "Claude Code - Anthropic's Agentic Coding Tool | LaunchNests",
+    metaDescription:
+      "Claude Code is Anthropic's coding agent that edits files, runs commands and ships changes from the terminal, IDE, desktop and web.",
+    aiContext:
+      "Claude Code is a commercial agentic coding tool from Anthropic, included in paid Claude plans (Pro, Max, Team, Enterprise) or billed through the Claude API. It runs in the terminal, VS Code and JetBrains, a desktop app and the web.",
+    categoryName: "AI & Machine Learning",
+    categorySlug: "ai-machine-learning",
+    tags: ["ai", "coding-agent", "cli", "anthropic", "developer-tools"],
+    platforms: ["CLI", "macOS", "Linux", "Windows", "Web", "Plugin"],
+    pricing: "Paid",
+    tier: "premium+",
+    faqs: [
+      {
+        question: "Is Claude Code free?",
+        answer:
+          "No. Claude Code is included in paid Claude plans such as Pro, Max, Team and Enterprise, or can be billed per token through the Claude API.",
+      },
+      {
+        question: "Where can I use Claude Code?",
+        answer:
+          "Claude Code runs in the terminal on macOS, Linux and Windows, in VS Code and JetBrains IDEs, in a desktop app and on the web.",
+      },
+    ],
+  },
+  {
+    name: "Cursor",
+    slug: "cursor",
+    tagline: "The AI Code Editor",
+    description:
+      "Cursor is an AI-first code editor forked from VS Code, with tab completion, inline edits, an agent that works across the codebase and a choice of frontier models.",
+    problemStatement:
+      "Bolting AI onto a traditional editor leaves completions, chat and refactoring tools disconnected from the code you are editing.",
+    solution:
+      "An editor where codebase-aware completions, inline edits and an autonomous agent are built into every part of the workflow.",
+    uniqueValue:
+      "Fast tab completion, background agents, shared team rules and models from Anthropic, OpenAI and Google in a familiar VS Code interface.",
+    websiteUrl: "https://cursor.com",
+    twitterUrl: "https://twitter.com/cursor_ai",
+    linkedinUrl: "https://linkedin.com/company/cursorai",
+    useCases:
+      "Day-to-day coding with AI completions, multi-file edits, codebase Q&A, refactoring and agent-driven feature work.",
+    keywords:
+      "cursor, ai code editor, vs code fork, ai coding, agent mode, tab completion",
+    targetAudience:
+      "Software engineers and teams who want AI built into their editor.",
+    metaTitle: "Cursor - The AI Code Editor | LaunchNests",
+    metaDescription:
+      "Cursor is an AI-first code editor with tab completion, inline edits and an agent, built on VS Code.",
+    aiContext:
+      "Cursor is a commercial AI code editor from Anysphere, forked from VS Code, with a free Hobby plan and paid Pro, Pro+, Ultra and Teams plans.",
+    categoryName: "AI & Machine Learning",
+    categorySlug: "ai-machine-learning",
+    tags: ["ai", "code-editor", "vscode", "coding-agent", "developer-tools"],
+    platforms: ["macOS", "Windows", "Linux"],
+    pricing: "Freemium",
+    tier: "premium+",
+    faqs: [
+      {
+        question: "Is Cursor free?",
+        answer:
+          "Cursor has a free Hobby plan with limited agent requests and completions. Paid plans add a monthly usage allowance.",
+      },
+      {
+        question: "Can I use my VS Code extensions in Cursor?",
+        answer:
+          "Yes. Cursor is a fork of VS Code, so most extensions, themes and keybindings carry over.",
+      },
+    ],
+  },
+  {
+    name: "n8n",
+    slug: "n8n",
+    tagline: "Fair-Code Workflow Automation with AI Agents",
+    description:
+      "n8n is a visual workflow automation tool with hundreds of integrations, code nodes and AI agent building blocks, free to self-host under its Sustainable Use License and available as n8n Cloud.",
+    problemStatement:
+      "Hosted automation tools charge per task and keep data on their servers, which gets expensive and hard to approve for internal workflows.",
+    solution:
+      "A self-hostable canvas that mixes visual nodes with JavaScript or Python and runs unlimited workflows on your own infrastructure.",
+    uniqueValue:
+      "Free self-hosting for internal use, code at any step and native AI agent nodes in the same workflow builder.",
+    websiteUrl: "https://n8n.io",
+    githubUrl: "https://github.com/n8n-io/n8n",
+    twitterUrl: "https://twitter.com/n8n_io",
+    linkedinUrl: "https://linkedin.com/company/n8n",
+    discordUrl: "https://discord.gg/n8n",
+    useCases:
+      "Internal tooling automation, AI agents, data syncing between SaaS apps, lead routing and ops workflows.",
+    keywords:
+      "n8n, workflow automation, zapier alternative, self-hosted automation, ai agents, fair-code",
+    targetAudience:
+      "Technical teams, operations engineers and founders who automate internal processes.",
+    metaTitle: "n8n - Fair-Code Workflow Automation | LaunchNests",
+    metaDescription:
+      "n8n is a self-hostable workflow automation tool with code nodes and AI agents.",
+    aiContext:
+      "n8n is a fair-code workflow automation platform licensed under the Sustainable Use License, which is source-available rather than OSI open source. The Community Edition is free to self-host for internal use; n8n Cloud is paid.",
+    categoryName: "Developer Productivity",
+    categorySlug: "developer-productivity",
+    tags: ["automation", "workflows", "self-hosted", "ai-agents", "integrations"],
+    platforms: ["Cloud", "Self-Hosted", "Web"],
+    pricing: "Freemium",
+    tier: "premium",
+    faqs: [
+      {
+        question: "Is n8n open source?",
+        answer:
+          "n8n is fair-code under the Sustainable Use License. The source is available and free to self-host for internal use, but the licence is not OSI-approved and restricts offering n8n as a hosted service.",
+      },
+      {
+        question: "Can I self-host n8n for free?",
+        answer:
+          "Yes. The Community Edition is free to self-host with no execution limits when workflows are used within your own organisation.",
+      },
+    ],
+  },
+  {
+    name: "Zapier",
+    slug: "zapier",
+    tagline: "No-Code Automation Across Thousands of Apps",
+    description:
+      "Zapier connects thousands of apps with no-code automations called Zaps, plus Tables, Forms, chatbots and AI agents.",
+    problemStatement:
+      "Teams copy data between SaaS tools by hand because building integrations needs developers.",
+    solution:
+      "Trigger-and-action automations that anyone can build from a browser, with the largest catalogue of app integrations.",
+    uniqueValue:
+      "The widest app coverage of any automation platform and an interface non-technical teams can use on day one.",
+    websiteUrl: "https://zapier.com",
+    twitterUrl: "https://twitter.com/zapier",
+    linkedinUrl: "https://linkedin.com/company/zapier",
+    useCases:
+      "Lead capture, CRM syncing, notifications, data entry automation and AI-assisted business workflows.",
+    keywords:
+      "zapier, no-code automation, integrations, workflow automation, zaps, ai agents",
+    targetAudience:
+      "Operations, marketing and sales teams, founders and non-technical builders.",
+    metaTitle: "Zapier - No-Code Automation | LaunchNests",
+    metaDescription:
+      "Zapier connects thousands of apps with no-code automations, Tables, Forms and AI agents.",
+    aiContext:
+      "Zapier is a commercial no-code automation platform with a free plan of 100 tasks per month and paid plans priced by task volume.",
+    categoryName: "Developer Productivity",
+    categorySlug: "developer-productivity",
+    tags: ["automation", "no-code", "integrations", "workflows", "saas"],
+    platforms: ["Web", "Cloud"],
+    pricing: "Freemium",
+    tier: "premium",
+    faqs: [
+      {
+        question: "Does Zapier have a free plan?",
+        answer:
+          "Yes. The free plan includes Zaps, Tables and Forms with 100 tasks per month.",
+      },
+      {
+        question: "What counts as a task in Zapier?",
+        answer:
+          "A task is each successful action a Zap performs. Triggers and filtered steps do not count.",
+      },
+    ],
+  },
+  {
+    name: "GitHub Copilot",
+    slug: "github-copilot",
+    tagline: "GitHub's AI Pair Programmer and Coding Agent",
+    description:
+      "GitHub Copilot provides AI completions, chat, agent mode and code review in popular IDEs, plus a cloud coding agent that works from GitHub issues and opens pull requests.",
+    problemStatement:
+      "Developers lose time on boilerplate, unfamiliar APIs and small tasks that pile up in the backlog.",
+    solution:
+      "An assistant inside the editor and on github.com that completes code, answers questions and can take on issues autonomously.",
+    uniqueValue:
+      "Deep integration with GitHub repositories, issues and pull requests, available across VS Code, JetBrains, Visual Studio and Xcode.",
+    websiteUrl: "https://github.com/features/copilot",
+    twitterUrl: "https://twitter.com/github",
+    linkedinUrl: "https://linkedin.com/company/github",
+    useCases:
+      "Code completion, chat about the codebase, assigning issues to an agent, pull request reviews and CLI help.",
+    keywords:
+      "github copilot, ai pair programmer, code completion, coding agent, copilot chat",
+    targetAudience:
+      "Developers and engineering organisations that build on GitHub.",
+    metaTitle: "GitHub Copilot - AI Pair Programmer | LaunchNests",
+    metaDescription:
+      "GitHub Copilot brings AI completions, chat, agent mode and a cloud coding agent to your IDE and GitHub.",
+    aiContext:
+      "GitHub Copilot is a commercial AI coding assistant from GitHub with a free plan and usage-based paid plans for individuals and organisations.",
+    categoryName: "AI & Machine Learning",
+    categorySlug: "ai-machine-learning",
+    tags: ["ai", "code-completion", "coding-agent", "github", "developer-tools"],
+    platforms: ["Plugin", "CLI", "Web"],
+    pricing: "Freemium",
+    tier: "premium+",
+    faqs: [
+      {
+        question: "Is GitHub Copilot free?",
+        answer:
+          "GitHub Copilot Free gives limited completions and chat at no cost. Paid plans add more usage, more models and the coding agent.",
+      },
+      {
+        question: "Which editors does GitHub Copilot support?",
+        answer:
+          "VS Code, Visual Studio, JetBrains IDEs, Xcode, Neovim and others, plus the GitHub CLI and github.com.",
+      },
+    ],
+  },
+  {
+    name: "Lovable",
+    slug: "lovable",
+    tagline: "Build Full-Stack Apps by Chatting with AI",
+    description:
+      "Lovable is an AI app builder that turns prompts into full-stack React web apps with a built-in backend, auth, hosting and GitHub sync.",
+    problemStatement:
+      "Founders and designers with an idea need a developer to turn it into a working app.",
+    solution:
+      "Describe the app in plain language and Lovable writes, runs and hosts the code, with visual editing for changes.",
+    uniqueValue:
+      "Complete apps with data and auth from a chat, plus code you own and can sync to GitHub.",
+    websiteUrl: "https://lovable.dev",
+    twitterUrl: "https://twitter.com/lovable_dev",
+    linkedinUrl: "https://linkedin.com/company/lovable-dev",
+    discordUrl: "https://discord.gg/lovable-dev",
+    useCases:
+      "MVPs, internal tools, landing pages with backends, prototypes and client projects.",
+    keywords:
+      "lovable, ai app builder, vibe coding, prompt to app, no-code, react",
+    targetAudience:
+      "Founders, designers, product managers and non-technical builders.",
+    metaTitle: "Lovable - AI App Builder | LaunchNests",
+    metaDescription:
+      "Lovable turns prompts into full-stack React apps with a built-in backend, hosting and GitHub sync.",
+    aiContext:
+      "Lovable is a commercial AI app builder with a free plan of daily credits and paid plans with monthly credits.",
+    categoryName: "AI & Machine Learning",
+    categorySlug: "ai-machine-learning",
+    tags: ["ai", "app-builder", "no-code", "react", "vibe-coding"],
+    platforms: ["Web"],
+    pricing: "Freemium",
+    tier: "premium",
+    faqs: [
+      {
+        question: "Is Lovable free?",
+        answer:
+          "Lovable has a free plan with a small daily credit allowance. Paid plans add monthly credits and team features.",
+      },
+      {
+        question: "Can I export my Lovable code?",
+        answer:
+          "Yes. Lovable syncs the generated code to a GitHub repository you own.",
+      },
+    ],
+  },
+  {
+    name: "MongoDB",
+    slug: "mongodb",
+    tagline: "The Document Database for Modern Applications",
+    description:
+      "MongoDB is a document database that stores JSON-like documents with flexible schemas, available as the self-managed Community Server or the managed MongoDB Atlas service.",
+    problemStatement:
+      "Rigid relational schemas slow teams down when data is nested and its shape changes often.",
+    solution:
+      "Flexible documents, a rich query language and an aggregation pipeline, with Atlas adding search, vector search and global clusters.",
+    uniqueValue:
+      "The most widely used document database, with drivers for every major language and a free Atlas cluster for development.",
+    websiteUrl: "https://www.mongodb.com",
+    githubUrl: "https://github.com/mongodb/mongo",
+    twitterUrl: "https://twitter.com/MongoDB",
+    linkedinUrl: "https://linkedin.com/company/mongodbinc",
+    useCases:
+      "Content and catalog data, user profiles, event data, mobile backends and AI apps with vector search.",
+    keywords:
+      "mongodb, document database, nosql, atlas, json database, vector search",
+    targetAudience:
+      "Backend developers, full-stack engineers and data teams.",
+    metaTitle: "MongoDB - Document Database | LaunchNests",
+    metaDescription:
+      "MongoDB is the popular document database, self-managed or as the managed MongoDB Atlas service.",
+    aiContext:
+      "MongoDB is a document database licensed under the Server Side Public License (SSPL), which is source-available rather than OSI open source. MongoDB Atlas is the managed cloud service with a free cluster tier.",
+    categoryName: "Databases",
+    categorySlug: "databases",
+    tags: ["database", "nosql", "document-database", "atlas", "json"],
+    platforms: ["Cloud", "Self-Hosted", "Linux", "macOS", "Windows"],
+    pricing: "Freemium",
+    tier: "premium",
+    faqs: [
+      {
+        question: "Is MongoDB open source?",
+        answer:
+          "MongoDB Community Server is source-available under the SSPL, which is not an OSI-approved open-source licence.",
+      },
+      {
+        question: "Does MongoDB Atlas have a free tier?",
+        answer:
+          "Yes. Atlas offers a free cluster with 512 MB of storage for development and small projects.",
+      },
+    ],
+  },
+  {
+    name: "Firebase",
+    slug: "firebase",
+    tagline: "Google's App Development Platform",
+    description:
+      "Firebase is Google's platform for building web and mobile apps, with Cloud Firestore, authentication, hosting, cloud functions, push messaging, Crashlytics and analytics.",
+    problemStatement:
+      "Mobile and web teams spend weeks building backends, auth and push infrastructure before shipping features.",
+    solution:
+      "Managed backend services with client SDKs for every platform, realtime sync and a free Spark plan.",
+    uniqueValue:
+      "The broadest set of mobile services in one place, with offline sync and deep Google Cloud integration.",
+    websiteUrl: "https://firebase.google.com",
+    githubUrl: "https://github.com/firebase",
+    twitterUrl: "https://twitter.com/Firebase",
+    useCases:
+      "Mobile app backends, realtime apps, push notifications, crash reporting and A/B testing.",
+    keywords:
+      "firebase, firestore, google, backend as a service, mobile backend, auth, realtime database",
+    targetAudience:
+      "Mobile developers, web developers and startups building on Google Cloud.",
+    metaTitle: "Firebase - Google's App Development Platform | LaunchNests",
+    metaDescription:
+      "Firebase gives web and mobile apps Firestore, auth, hosting, functions and messaging from Google.",
+    aiContext:
+      "Firebase is a commercial backend platform from Google with a no-cost Spark plan and the pay-as-you-go Blaze plan.",
+    categoryName: "Databases",
+    categorySlug: "databases",
+    tags: ["baas", "database", "firestore", "auth", "mobile", "google"],
+    platforms: ["Web", "iOS", "Android", "Cloud"],
+    pricing: "Freemium",
+    tier: "premium",
+    faqs: [
+      {
+        question: "Is Firebase free?",
+        answer:
+          "The Spark plan is free with daily quotas. The Blaze plan is pay-as-you-go and keeps the same no-cost quotas.",
+      },
+      {
+        question: "Is Firestore SQL or NoSQL?",
+        answer:
+          "Cloud Firestore is a NoSQL document database with realtime listeners and offline support.",
+      },
+    ],
+  },
+  {
+    name: "Jira",
+    slug: "jira",
+    tagline: "Issue and Project Tracking for Software Teams",
+    description:
+      "Jira is Atlassian's issue and project tracker, with Scrum and Kanban boards, custom workflows, automation and reporting for software teams.",
+    problemStatement:
+      "Growing engineering organisations lose track of work across teams, sprints and releases.",
+    solution:
+      "Configurable issues, workflows and boards with reporting that scales from one team to an enterprise.",
+    uniqueValue:
+      "Deep configurability and the Atlassian ecosystem, including Confluence and thousands of Marketplace apps.",
+    websiteUrl: "https://www.atlassian.com/software/jira",
+    twitterUrl: "https://twitter.com/Atlassian",
+    linkedinUrl: "https://linkedin.com/company/atlassian",
+    useCases:
+      "Sprint planning, bug tracking, release management, cross-team roadmaps and service workflows.",
+    keywords:
+      "jira, atlassian, issue tracker, project management, scrum, kanban, agile",
+    targetAudience:
+      "Software teams, engineering managers and large organisations.",
+    metaTitle: "Jira - Issue & Project Tracking | LaunchNests",
+    metaDescription:
+      "Jira is Atlassian's issue and project tracker for software teams, free for up to 10 users.",
+    aiContext:
+      "Jira is a commercial issue and project tracker from Atlassian, free for up to 10 users with paid Standard, Premium and Enterprise plans.",
+    categoryName: "Developer Productivity",
+    categorySlug: "developer-productivity",
+    tags: ["project-management", "issue-tracking", "agile", "scrum", "atlassian"],
+    platforms: ["Web", "macOS", "Windows", "iOS", "Android"],
+    pricing: "Freemium",
+    tier: "premium",
+    faqs: [
+      {
+        question: "Is Jira free?",
+        answer:
+          "Jira's Free plan covers up to 10 users. Larger teams need a paid plan.",
+      },
+      {
+        question: "Does Jira support Scrum and Kanban?",
+        answer:
+          "Yes. Jira includes Scrum boards with sprints and backlogs, and Kanban boards with WIP limits.",
+      },
+    ],
+  },
+  {
+    name: "Replit",
+    slug: "replit",
+    tagline: "Build and Deploy Apps with an AI Agent in the Browser",
+    description:
+      "Replit is a cloud development platform with an AI agent, a browser IDE, databases and hosting, so you can build and deploy apps from any device.",
+    problemStatement:
+      "Setting up local environments, databases and hosting slows down prototyping and learning to code.",
+    solution:
+      "A cloud workspace where Replit Agent builds the app, and the same platform runs and deploys it.",
+    uniqueValue:
+      "Idea to deployed app in many languages without installing anything, including from mobile apps.",
+    websiteUrl: "https://replit.com",
+    githubUrl: "https://github.com/replit",
+    twitterUrl: "https://twitter.com/Replit",
+    linkedinUrl: "https://linkedin.com/company/repl-it",
+    useCases:
+      "Prototypes, internal tools, education, hackathons and small production apps.",
+    keywords:
+      "replit, cloud ide, replit agent, ai app builder, online ide, deploy",
+    targetAudience:
+      "Founders, students, educators and developers who want zero setup.",
+    metaTitle: "Replit - Build Apps with AI in the Browser | LaunchNests",
+    metaDescription:
+      "Replit is a cloud IDE with an AI agent, databases and hosting to build and deploy apps from anywhere.",
+    aiContext:
+      "Replit is a commercial cloud development platform with a free Starter plan and paid Core and Pro plans that include usage credits.",
+    categoryName: "AI & Machine Learning",
+    categorySlug: "ai-machine-learning",
+    tags: ["ai", "cloud-ide", "app-builder", "hosting", "education"],
+    platforms: ["Web", "iOS", "Android", "macOS", "Windows"],
+    pricing: "Freemium",
+    tier: "premium",
+    faqs: [
+      {
+        question: "Is Replit free?",
+        answer:
+          "The Starter plan is free with a daily agent allowance and limited cloud credits. Paid plans add credits and more published apps.",
+      },
+      {
+        question: "Which languages does Replit support?",
+        answer:
+          "Replit supports most popular languages, including Python, JavaScript, TypeScript, Go and more.",
+      },
+    ],
+  },
+  {
+    name: "Terraform",
+    slug: "terraform",
+    tagline: "Infrastructure as Code by HashiCorp",
+    description:
+      "Terraform provisions and manages cloud infrastructure from declarative HCL configuration, with thousands of providers and HCP Terraform for remote runs and state.",
+    problemStatement:
+      "Clicking through cloud consoles creates undocumented, drifting infrastructure that is hard to reproduce.",
+    solution:
+      "Declarative configuration, plans that preview changes and state that tracks every managed resource.",
+    uniqueValue:
+      "The largest provider and module ecosystem in infrastructure as code, through the Terraform Registry.",
+    websiteUrl: "https://developer.hashicorp.com/terraform",
+    githubUrl: "https://github.com/hashicorp/terraform",
+    twitterUrl: "https://twitter.com/HashiCorp",
+    linkedinUrl: "https://linkedin.com/company/hashicorp",
+    useCases:
+      "Multi-cloud provisioning, reusable infrastructure modules, environment management and policy as code.",
+    keywords:
+      "terraform, infrastructure as code, iac, hcl, hashicorp, devops, cloud provisioning",
+    targetAudience:
+      "DevOps engineers, platform teams and SREs.",
+    metaTitle: "Terraform - Infrastructure as Code | LaunchNests",
+    metaDescription:
+      "Terraform provisions cloud infrastructure from declarative HCL with thousands of providers.",
+    aiContext:
+      "Terraform is HashiCorp's infrastructure as code tool, licensed under the Business Source License 1.1 since August 2023, so it is source-available rather than open source. HashiCorp is part of IBM.",
+    categoryName: "DevOps & Containers",
+    categorySlug: "devops-containers",
+    tags: ["iac", "devops", "infrastructure", "hcl", "cloud"],
+    platforms: ["CLI", "Linux", "macOS", "Windows", "Cloud"],
+    pricing: "Freemium",
+    tier: "premium",
+    faqs: [
+      {
+        question: "Is Terraform still open source?",
+        answer:
+          "No. Since August 2023 Terraform is under the Business Source License 1.1. OpenTofu is the open-source fork under MPL-2.0.",
+      },
+      {
+        question: "Is Terraform free to use?",
+        answer:
+          "The Terraform CLI is free to use. HCP Terraform has a free tier and paid plans for teams.",
+      },
+    ],
+  },
+  {
+    name: "Datadog",
+    slug: "datadog",
+    tagline: "Observability and Security Platform for Cloud Applications",
+    description:
+      "Datadog brings infrastructure monitoring, APM, log management, real user monitoring, synthetics and security into one SaaS platform.",
+    problemStatement:
+      "Metrics, traces and logs live in separate tools, so incidents take longer to diagnose.",
+    solution:
+      "One agent and one platform that correlate metrics, traces and logs, with dashboards and monitors across the stack.",
+    uniqueValue:
+      "Over a thousand integrations and a single product for infrastructure, application and security monitoring.",
+    websiteUrl: "https://www.datadoghq.com",
+    githubUrl: "https://github.com/DataDog",
+    twitterUrl: "https://twitter.com/datadoghq",
+    linkedinUrl: "https://linkedin.com/company/datadog",
+    useCases:
+      "Infrastructure monitoring, APM, log analytics, incident response, synthetic tests and cloud security.",
+    keywords:
+      "datadog, observability, monitoring, apm, logs, metrics, tracing",
+    targetAudience:
+      "SREs, DevOps engineers, platform teams and engineering leaders.",
+    metaTitle: "Datadog - Observability Platform | LaunchNests",
+    metaDescription:
+      "Datadog unifies infrastructure monitoring, APM, logs and security for cloud applications.",
+    aiContext:
+      "Datadog is a commercial observability platform priced per host, per GB of data and per product.",
+    categoryName: "Monitoring & Error Tracking",
+    categorySlug: "monitoring-error-tracking",
+    tags: ["monitoring", "observability", "apm", "logging", "metrics"],
+    platforms: ["Cloud", "Web"],
+    pricing: "Paid",
+    tier: "premium",
+    faqs: [
+      {
+        question: "How is Datadog priced?",
+        answer:
+          "Datadog prices each product separately, mostly per host for infrastructure and APM and per GB for logs.",
+      },
+      {
+        question: "Does Datadog support OpenTelemetry?",
+        answer:
+          "Yes. Datadog accepts OpenTelemetry metrics, traces and logs alongside its own agent.",
+      },
+    ],
+  },
 ]
 
 const ensureCategory = async (name: string, slug: string): Promise<string> => {
@@ -1641,6 +2189,62 @@ const ensureCategory = async (name: string, slug: string): Promise<string> => {
 
   return fallback.id
 }
+
+interface SeedLaunchWeek {
+  year: number
+  week: number
+  startDate: Date
+}
+
+// Row values for one catalog tool, shared by the full seed and the insert-only catalog script.
+export const buildSeedToolValues = (
+  item: SeedToolDefinition,
+  categoryId: string,
+  launch: SeedLaunchWeek,
+  now: Date
+) => ({
+    slug: item.slug,
+    submitterId: null,
+    name: item.name,
+    tagline: item.tagline,
+    description: item.description,
+    problemStatement: item.problemStatement,
+    solution: item.solution,
+    uniqueValue: item.uniqueValue,
+    websiteUrl: item.websiteUrl,
+    logoUrl: getFaviconUrl(item.websiteUrl),
+    githubUrl: item.githubUrl ?? null,
+    twitterUrl: item.twitterUrl ?? null,
+    linkedinUrl: item.linkedinUrl ?? null,
+    discordUrl: item.discordUrl ?? null,
+    appStoreUrl: null,
+    playStoreUrl: null,
+    chromeExtensionUrl: null,
+    images: [] as string[],
+    demoVideoUrl: null,
+    useCases: item.useCases,
+    keywords: item.keywords,
+    targetAudience: item.targetAudience,
+    metaTitle: item.metaTitle,
+    metaDescription: item.metaDescription,
+    aiContext: item.aiContext,
+    geoTarget: "Global",
+    asoCategory: "Developer Tools",
+    categoryId,
+    tags: item.tags,
+    platforms: item.platforms,
+    pricing: item.pricing,
+    tier: item.tier,
+    status: "approved" as const,
+    upvotesCount: 0,
+    buildsCount: 0,
+    commentsCount: 0,
+    viewsCount: 0,
+    launchYear: launch.year,
+    launchWeek: launch.week,
+    launchDate: launch.startDate,
+    updatedAt: now,
+})
 
 export const seedDatabase = async () => {
   console.log("🌱 Starting developer tools database seed...")
@@ -1683,51 +2287,12 @@ export const seedDatabase = async () => {
       categoryCache.set(item.categorySlug, categoryId)
     }
 
-    const toolLogoUrl = getFaviconUrl(item.websiteUrl)
-
-    const toolPayload = {
-      slug: item.slug,
-      submitterId: null,
-      name: item.name,
-      tagline: item.tagline,
-      description: item.description,
-      problemStatement: item.problemStatement,
-      solution: item.solution,
-      uniqueValue: item.uniqueValue,
-      websiteUrl: item.websiteUrl,
-      logoUrl: toolLogoUrl,
-      githubUrl: item.githubUrl ?? null,
-      twitterUrl: item.twitterUrl ?? null,
-      linkedinUrl: item.linkedinUrl ?? null,
-      discordUrl: item.discordUrl ?? null,
-      appStoreUrl: null,
-      playStoreUrl: null,
-      chromeExtensionUrl: null,
-      images: [] as string[],
-      demoVideoUrl: null,
-      useCases: item.useCases,
-      keywords: item.keywords,
-      targetAudience: item.targetAudience,
-      metaTitle: item.metaTitle,
-      metaDescription: item.metaDescription,
-      aiContext: item.aiContext,
-      geoTarget: "Global",
-      asoCategory: "Developer Tools",
+    const toolPayload = buildSeedToolValues(
+      item,
       categoryId,
-      tags: item.tags,
-      platforms: item.platforms,
-      pricing: item.pricing,
-      tier: item.tier,
-      status: "approved" as const,
-      upvotesCount: 0,
-      buildsCount: 0,
-      commentsCount: 0,
-      viewsCount: 0,
-      launchYear: currentYear,
-      launchWeek: currentWeek,
-      launchDate: weekStart,
-      updatedAt: now,
-    }
+      { year: currentYear, week: currentWeek, startDate: weekStart },
+      now
+    )
 
     const [upsertedTool] = await db
       .insert(tools)
@@ -1807,7 +2372,8 @@ export const seedDatabase = async () => {
 
 export const seed = seedDatabase
 
-if (process.argv[1]?.includes("seed")) {
+// Runs only when this file is the entry point, so importing the seed data never reseeds a database.
+if (process.argv[1]?.replace(/\\/g, "/").endsWith("db/seed.ts")) {
   seedDatabase()
     .then(() => process.exit(0))
     .catch((err) => {

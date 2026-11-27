@@ -2,11 +2,25 @@ import { PRICING, type Pricing } from "@/constants/plans"
 import type { ToolPairNotes } from "@/types/alternatives"
 import {
   CLOUDFLARE_PAIRS,
+  DATADOG_PAIRS,
   DOCKER_PAIRS,
   GITHUB_PAIRS,
   REDIS_PAIRS,
+  TERRAFORM_PAIRS,
   VERCEL_PAIRS,
 } from "@/constants/tool-comparisons/infra"
+import {
+  CLAUDE_CODE_PAIRS,
+  CURSOR_PAIRS,
+  GITHUB_COPILOT_PAIRS,
+  LOVABLE_PAIRS,
+  REPLIT_PAIRS,
+} from "@/constants/tool-comparisons/ai"
+import {
+  JIRA_PAIRS,
+  N8N_PAIRS,
+  ZAPIER_PAIRS,
+} from "@/constants/tool-comparisons/work"
 import {
   NEXTJS_PAIRS,
   PLAYWRIGHT_PAIRS,
@@ -15,6 +29,9 @@ import {
 } from "@/constants/tool-comparisons/dev"
 import {
   ALGOLIA_PAIRS,
+  CLERK_PAIRS,
+  FIREBASE_PAIRS,
+  MONGODB_PAIRS,
   OPENAI_API_PAIRS,
   POSTGRESQL_PAIRS,
   STRIPE_PAIRS,
@@ -38,6 +55,19 @@ export const TOOL_PAIR_NOTES: Readonly<Record<string, ToolPairNotes>> = {
   algolia: ALGOLIA_PAIRS,
   "openai-api": OPENAI_API_PAIRS,
   stripe: STRIPE_PAIRS,
+  "claude-code": CLAUDE_CODE_PAIRS,
+  cursor: CURSOR_PAIRS,
+  n8n: N8N_PAIRS,
+  zapier: ZAPIER_PAIRS,
+  "github-copilot": GITHUB_COPILOT_PAIRS,
+  lovable: LOVABLE_PAIRS,
+  clerk: CLERK_PAIRS,
+  mongodb: MONGODB_PAIRS,
+  firebase: FIREBASE_PAIRS,
+  jira: JIRA_PAIRS,
+  replit: REPLIT_PAIRS,
+  terraform: TERRAFORM_PAIRS,
+  datadog: DATADOG_PAIRS,
 }
 
 export const TOOL_COMPARISON_SEPARATOR = "-vs-"
