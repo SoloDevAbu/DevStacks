@@ -55,6 +55,7 @@ export const PATCH = withAdmin<{ id: string }>(async (req, { params, admin }) =>
       kind: isApproval
         ? MODERATION_EMAIL_KIND.EDIT_APPROVED
         : MODERATION_EMAIL_KIND.EDIT_REJECTED,
+      eventId: revision.id,
       listing: { itemType, name: item.name, slug: item.slug },
       reviewNote,
     })
