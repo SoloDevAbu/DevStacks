@@ -25,7 +25,7 @@ interface SeedFaq {
   answer: string
 }
 
-interface SeedToolDefinition {
+export interface SeedToolDefinition {
   name: string
   slug: string
   tagline: string
@@ -79,7 +79,7 @@ const getFaviconUrl = (websiteUrl?: string | null): string => {
   return `https://www.google.com/s2/favicons?domain=${domain}&sz=128`
 }
 
-const getISOWeekDetails = (date: Date) => {
+export const getISOWeekDetails = (date: Date) => {
   const d = new Date(
     Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())
   )
@@ -107,7 +107,7 @@ const getISOWeekDetails = (date: Date) => {
   return { year, week, startDate, endDate }
 }
 
-const seedToolsData: SeedToolDefinition[] = [
+export const seedToolsData: SeedToolDefinition[] = [
   {
     name: "Next.js",
     slug: "nextjs",
@@ -2190,6 +2190,62 @@ const ensureCategory = async (name: string, slug: string): Promise<string> => {
   return fallback.id
 }
 
+interface SeedLaunchWeek {
+  year: number
+  week: number
+  startDate: Date
+}
+
+// Row values for one catalog tool, shared by the full seed and the insert-only catalog script.
+export const buildSeedToolValues = (
+  item: SeedToolDefinition,
+  categoryId: string,
+  launch: SeedLaunchWeek,
+  now: Date
+) => ({
+    slug: item.slug,
+    submitterId: null,
+    name: item.name,
+    tagline: item.tagline,
+    description: item.description,
+    problemStatement: item.problemStatement,
+    solution: item.solution,
+    uniqueValue: item.uniqueValue,
+    websiteUrl: item.websiteUrl,
+    logoUrl: getFaviconUrl(item.websiteUrl),
+    githubUrl: item.githubUrl ?? null,
+    twitterUrl: item.twitterUrl ?? null,
+    linkedinUrl: item.linkedinUrl ?? null,
+    discordUrl: item.discordUrl ?? null,
+    appStoreUrl: null,
+    playStoreUrl: null,
+    chromeExtensionUrl: null,
+    images: [] as string[],
+    demoVideoUrl: null,
+    useCases: item.useCases,
+    keywords: item.keywords,
+    targetAudience: item.targetAudience,
+    metaTitle: item.metaTitle,
+    metaDescription: item.metaDescription,
+    aiContext: item.aiContext,
+    geoTarget: "Global",
+    asoCategory: "Developer Tools",
+    categoryId,
+    tags: item.tags,
+    platforms: item.platforms,
+    pricing: item.pricing,
+    tier: item.tier,
+    status: "approved" as const,
+    upvotesCount: 0,
+    buildsCount: 0,
+    commentsCount: 0,
+    viewsCount: 0,
+    launchYear: launch.year,
+    launchWeek: launch.week,
+    launchDate: launch.startDate,
+    updatedAt: now,
+})
+
 export const seedDatabase = async () => {
   console.log("🌱 Starting developer tools database seed...")
 
@@ -2231,51 +2287,12 @@ export const seedDatabase = async () => {
       categoryCache.set(item.categorySlug, categoryId)
     }
 
-    const toolLogoUrl = getFaviconUrl(item.websiteUrl)
-
-    const toolPayload = {
-      slug: item.slug,
-      submitterId: null,
-      name: item.name,
-      tagline: item.tagline,
-      description: item.description,
-      problemStatement: item.problemStatement,
-      solution: item.solution,
-      uniqueValue: item.uniqueValue,
-      websiteUrl: item.websiteUrl,
-      logoUrl: toolLogoUrl,
-      githubUrl: item.githubUrl ?? null,
-      twitterUrl: item.twitterUrl ?? null,
-      linkedinUrl: item.linkedinUrl ?? null,
-      discordUrl: item.discordUrl ?? null,
-      appStoreUrl: null,
-      playStoreUrl: null,
-      chromeExtensionUrl: null,
-      images: [] as string[],
-      demoVideoUrl: null,
-      useCases: item.useCases,
-      keywords: item.keywords,
-      targetAudience: item.targetAudience,
-      metaTitle: item.metaTitle,
-      metaDescription: item.metaDescription,
-      aiContext: item.aiContext,
-      geoTarget: "Global",
-      asoCategory: "Developer Tools",
+    const toolPayload = buildSeedToolValues(
+      item,
       categoryId,
-      tags: item.tags,
-      platforms: item.platforms,
-      pricing: item.pricing,
-      tier: item.tier,
-      status: "approved" as const,
-      upvotesCount: 0,
-      buildsCount: 0,
-      commentsCount: 0,
-      viewsCount: 0,
-      launchYear: currentYear,
-      launchWeek: currentWeek,
-      launchDate: weekStart,
-      updatedAt: now,
-    }
+      { year: currentYear, week: currentWeek, startDate: weekStart },
+      now
+    )
 
     const [upsertedTool] = await db
       .insert(tools)
@@ -2355,7 +2372,8 @@ export const seedDatabase = async () => {
 
 export const seed = seedDatabase
 
-if (process.argv[1]?.includes("seed")) {
+// Runs only when this file is the entry point, so importing the seed data never reseeds a database.
+if (process.argv[1]?.replace(/\\/g, "/").endsWith("db/seed.ts")) {
   seedDatabase()
     .then(() => process.exit(0))
     .catch((err) => {

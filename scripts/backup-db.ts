@@ -38,15 +38,6 @@ if (!connectionUrl) {
   }
 }
 
-if (!connectionUrl) {
-  console.error("❌ Error: No database connection URL provided!")
-  console.error("\nUsage options:")
-  console.error('  1. Pass URL directly:  bun scripts/backup-db.ts "postgresql://postgres:pass@host:5432/postgres"')
-  console.error('  2. Pass with --prod:   bun scripts/backup-db.ts --prod (reads PROD_DATABASE_URL from .env)')
-  console.error("  3. Default (.env):     bun scripts/backup-db.ts (reads DATABASE_URL from .env)")
-  process.exit(1)
-}
-
 // Detect label
 if (!customLabel) {
   if (isProd || connectionUrl.includes("supabase") || connectionUrl.includes("prod")) {
@@ -68,8 +59,6 @@ const maskUrl = (raw: string): string => {
     return raw.replace(/:([^:@]+)@/, ":******@")
   }
 }
-
-const sql = postgres(connectionUrl, { prepare: false })
 
 // Exact 25 tables in topological dependency order to respect foreign keys
 export const EXACT_25_TABLES_ORDER = [
@@ -105,12 +94,28 @@ export const EXACT_25_TABLES_ORDER = [
   "blogs",
 ] as const
 
+const JSONB_COLUMNS = new Set(["faqs"])
+
 export const formatSqlValue = (val: unknown, colName?: string): string => {
   if (val === null || val === undefined) return "NULL"
+  if (colName && JSONB_COLUMNS.has(colName)) {
+    const json = typeof val === "string" ? val : JSON.stringify(val)
+    const str = json.replace(/'/g, "''")
+    return `'${str}'::jsonb`
+  }
   if (typeof val === "boolean") return val ? "TRUE" : "FALSE"
   if (typeof val === "number") return String(val)
   if (val instanceof Date) return `'${val.toISOString()}'`
   if (Array.isArray(val)) {
+    if (
+      val.some(
+        (item) =>
+          item !== null && typeof item === "object" && !(item instanceof Date)
+      )
+    ) {
+      const str = JSON.stringify(val).replace(/'/g, "''")
+      return `'${str}'::jsonb`
+    }
     const isPlatform = colName === "platforms"
     const typeCast = isPlatform ? "::platform[]" : "::text[]"
     if (val.length === 0) return `ARRAY[]${typeCast}`
@@ -175,7 +180,16 @@ export const generateSqlRestore = (
 }
 
 const runBackup = async () => {
+  if (!connectionUrl) {
+    console.error("❌ Error: No database connection URL provided!")
+    console.error("\nUsage options:")
+    console.error('  1. Pass URL directly:  bun scripts/backup-db.ts "postgresql://postgres:pass@host:5432/postgres"')
+    console.error('  2. Pass with --prod:   bun scripts/backup-db.ts --prod (reads PROD_DATABASE_URL from .env)')
+    console.error("  3. Default (.env):     bun scripts/backup-db.ts (reads DATABASE_URL from .env)")
+    process.exit(1)
+  }
   const startTime = Date.now()
+  const sql = postgres(connectionUrl, { prepare: false })
   console.log("🔒 ========================================================")
   console.log(`📦 LaunchNests Database Backup [${customLabel.toUpperCase()} Snapshot]`)
   console.log("🔒 ========================================================\n")
