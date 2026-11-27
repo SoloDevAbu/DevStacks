@@ -1,15 +1,13 @@
 import { db } from "@/db"
-import { products, productFaqs, productTools, tools } from "@/db/schema"
+import { products, productFaqs, productTools, tools, type Product } from "@/db/schema"
 import { getOrCreateCategory } from "@/db/queries/categories/list"
 import { getFaviconUrl } from "@/utils/urls"
 import { eq, and, sql } from "drizzle-orm"
+import { isPaidTier } from "@/constants/plans"
+import { applyFreeTierGuardrails } from "@/lib/listings/tier-guardrails"
 import type { SubmitProductInput } from "@/lib/validation/product"
 
-export const updateProduct = async (
-  slug: string,
-  userId: string,
-  data: Partial<SubmitProductInput>
-) => {
+export const findOwnedProduct = async (slug: string, userId: string) => {
   const [existing] = await db
     .select()
     .from(products)
@@ -25,15 +23,23 @@ export const updateProduct = async (
   if (!existing) {
     throw new Error("Product not found or you are not authorized to edit it.")
   }
+  return existing
+}
 
+export const applyProductUpdate = async (
+  existing: Product,
+  input: Partial<SubmitProductInput>
+) => {
+  const data = applyFreeTierGuardrails(input, existing.tier)
   const {
     category,
     builtWithTools: toolsToLink,
-    faqs,
+    faqs: requestedFaqs,
     tags,
     platforms,
     ...rest
   } = data
+  const faqs = isPaidTier(existing.tier) ? requestedFaqs : undefined
 
   let categoryId = existing.categoryId
   if (category !== undefined && category && category.trim()) {

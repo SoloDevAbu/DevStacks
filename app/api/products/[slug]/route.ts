@@ -1,9 +1,9 @@
 import { type NextRequest, NextResponse, after } from "next/server"
 import { resolveProduct } from "@/lib/products/resolve-product"
 import { auth } from "@/lib/auth"
-import { updateProduct } from "@/db/queries/products/update"
+import { submitProductEdit } from "@/lib/listings/submit-edit"
 import { softDeleteProduct } from "@/db/queries/products/delete"
-import { submitProductSchema } from "@/lib/validation/product"
+import { updateProductSchema } from "@/lib/validation/product"
 import { revalidateCatalog } from "@/lib/cache/revalidate"
 import { pingListingChange } from "@/lib/seo/listing-indexnow"
 
@@ -57,12 +57,7 @@ export const PATCH = async (
       )
     }
 
-    const body = await req.json()
-    const updateSchema = submitProductSchema
-      .omit({ submitterId: true })
-      .partial()
-
-    const parsed = updateSchema.safeParse(body)
+    const parsed = updateProductSchema.safeParse(await req.json())
     if (!parsed.success) {
       return NextResponse.json(
         { error: "Validation failed", details: parsed.error.flatten() },
@@ -70,10 +65,17 @@ export const PATCH = async (
       )
     }
 
-    const updated = await updateProduct(slug, session.user.id, parsed.data)
+    const result = await submitProductEdit(slug, session.user.id, parsed.data)
+    if (result.queued) {
+      return NextResponse.json(
+        { data: result.item, revisionPending: true },
+        { status: 202 }
+      )
+    }
+
     revalidateCatalog({ productSlug: slug })
-    after(() => pingListingChange("product", updated))
-    return NextResponse.json({ data: updated }, { status: 200 })
+    after(() => pingListingChange("product", result.item))
+    return NextResponse.json({ data: result.item }, { status: 200 })
   } catch (err: unknown) {
     const message =
       err instanceof Error ? err.message : "Failed to update product"

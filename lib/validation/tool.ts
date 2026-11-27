@@ -67,3 +67,9 @@ export const submitToolSchema = z.object({
 })
 
 export type SubmitToolInput = z.infer<typeof submitToolSchema>
+
+export const updateToolSchema = submitToolSchema
+  .omit({ paymentId: true, launchYear: true, launchWeek: true })
+  .partial()
+
+export type UpdateToolInput = z.infer<typeof updateToolSchema>

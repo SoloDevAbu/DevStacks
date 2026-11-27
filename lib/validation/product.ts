@@ -108,3 +108,9 @@ export const submitProductSchema = z.object({
 
 export type SubmitProductInput = z.input<typeof submitProductSchema>
 export type SubmitProductData = z.output<typeof submitProductSchema>
+
+export const updateProductSchema = submitProductSchema
+  .omit({ submitterId: true, paymentId: true, launchYear: true, launchWeek: true })
+  .partial()
+
+export type UpdateProductInput = z.input<typeof updateProductSchema>

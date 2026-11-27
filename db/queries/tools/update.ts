@@ -1,15 +1,13 @@
 import { db } from "@/db"
-import { tools, toolFaqs } from "@/db/schema"
+import { tools, toolFaqs, type Tool } from "@/db/schema"
 import { getOrCreateCategory } from "@/db/queries/categories/list"
 import { getFaviconUrl } from "@/utils/urls"
 import { eq, and } from "drizzle-orm"
+import { isPaidTier } from "@/constants/plans"
+import { applyFreeTierGuardrails } from "@/lib/listings/tier-guardrails"
 import type { SubmitToolInput } from "@/lib/validation/tool"
 
-export const updateTool = async (
-  slug: string,
-  userId: string,
-  data: Partial<SubmitToolInput>
-) => {
+export const findOwnedTool = async (slug: string, userId: string) => {
   const [existing] = await db
     .select()
     .from(tools)
@@ -25,8 +23,16 @@ export const updateTool = async (
   if (!existing) {
     throw new Error("Tool not found or you are not authorized to edit it.")
   }
+  return existing
+}
 
-  const { category, faqs, tags, platforms, ...rest } = data
+export const applyToolUpdate = async (
+  existing: Tool,
+  input: Partial<SubmitToolInput>
+) => {
+  const data = applyFreeTierGuardrails(input, existing.tier)
+  const { category, faqs: requestedFaqs, tags, platforms, ...rest } = data
+  const faqs = isPaidTier(existing.tier) ? requestedFaqs : undefined
 
   let categoryId = existing.categoryId
   if (category !== undefined && category && category.trim()) {
