@@ -9,6 +9,9 @@
   "preview_urls": true,
   "vars": {
     "NEXT_CACHE_DO_QUEUE_REVALIDATION_TIMEOUT_MS": "30000",
+    "ADMIN_EMAILS": "abubakkar2502@gmail.com",
+    "DODO_PAYMENTS_ENVIRONMENT": "live_mode",
+    "EMAIL_FROM": "LaunchNests <noreply@launchnests.com>",
   },
   "compatibility_date": "2026-10-01",
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
