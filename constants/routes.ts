@@ -5,6 +5,12 @@ export const SUBMIT_LAUNCH_PARAMS = {
   TIER: "launchedTier",
 } as const
 
+// Query params that open a listing's dialog on the dashboard list, used by links in emails.
+export const DASHBOARD_LISTING_PARAMS = {
+  UPGRADE: "upgrade",
+  BADGE: "badge",
+} as const
+
 export const ROUTES = {
   HOME: "/",
   DISCOVER_POPULAR_BUILDING_BLOCKS: "/discover/popular-building-blocks",
@@ -65,6 +71,15 @@ export const ROUTES = {
   BLOG_PREVIEW: (slug: string) =>
     `/api/blog-preview?slug=${encodeURIComponent(slug)}`,
   ADMIN: "/admin",
+  ADMIN_SUBMISSIONS: "/admin/submissions",
+  ADMIN_SUBMISSION: (type: string, id: string) =>
+    `/admin/submissions/${encodeURIComponent(type)}/${encodeURIComponent(id)}`,
+  ADMIN_EDITS: "/admin/edits",
+  ADMIN_EDIT: (id: string) => `/admin/edits/${encodeURIComponent(id)}`,
+  ADMIN_LAUNCHES: "/admin/launches",
+  ADMIN_PAYMENTS: "/admin/payments",
+  ADMIN_ADS: "/admin/ads",
+  ADMIN_AUDIT: "/admin/audit",
   COMPARE_HUB: "/compare",
   GLOSSARY: "/glossary",
   FREE_TOOLS: "/free-tools",

@@ -3,9 +3,9 @@ import { getToolBySlug } from "@/db/queries/tools/get"
 import { db } from "@/db"
 import { tools } from "@/db/schema"
 import { auth } from "@/lib/auth"
-import { updateTool } from "@/db/queries/tools/update"
+import { submitToolEdit } from "@/lib/listings/submit-edit"
 import { softDeleteTool } from "@/db/queries/tools/delete"
-import { submitToolSchema } from "@/lib/validation/tool"
+import { updateToolSchema } from "@/lib/validation/tool"
 import { eq, sql } from "drizzle-orm"
 import { revalidateCatalog } from "@/lib/cache/revalidate"
 import { pingListingChange } from "@/lib/seo/listing-indexnow"
@@ -55,10 +55,7 @@ export const PATCH = async (
       return NextResponse.json({ error: "Missing tool slug" }, { status: 400 })
     }
 
-    const body = await req.json()
-    const updateSchema = submitToolSchema.partial()
-
-    const parsed = updateSchema.safeParse(body)
+    const parsed = updateToolSchema.safeParse(await req.json())
     if (!parsed.success) {
       return NextResponse.json(
         { error: "Validation failed", details: parsed.error.flatten() },
@@ -66,10 +63,17 @@ export const PATCH = async (
       )
     }
 
-    const updated = await updateTool(slug, session.user.id, parsed.data)
+    const result = await submitToolEdit(slug, session.user.id, parsed.data)
+    if (result.queued) {
+      return NextResponse.json(
+        { data: result.item, revisionPending: true },
+        { status: 202 }
+      )
+    }
+
     revalidateCatalog({ toolSlug: slug })
-    after(() => pingListingChange("tool", updated))
-    return NextResponse.json({ data: updated }, { status: 200 })
+    after(() => pingListingChange("tool", result.item))
+    return NextResponse.json({ data: result.item }, { status: 200 })
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : "Failed to update tool"
     return NextResponse.json({ error: message }, { status: 500 })

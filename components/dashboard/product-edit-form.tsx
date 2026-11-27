@@ -1,5 +1,7 @@
 "use client"
 
+import { LISTING_EDIT_MESSAGE } from "@/constants/moderation"
+import { ListingReviewNotice, type ListingReviewSummary } from "@/components/dashboard/listing-review-notice"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
@@ -45,9 +47,10 @@ interface ProductEditFormProps {
     categoryName?: string
     faqs?: Array<{ id?: string; question: string; answer: string }>
   }
+  review: ListingReviewSummary
 }
 
-export const ProductEditForm = ({ product }: ProductEditFormProps) => {
+export const ProductEditForm = ({ product, review }: ProductEditFormProps) => {
   const router = useRouter()
   const updateMutation = useUpdateProduct(product.slug)
 
@@ -96,7 +99,7 @@ export const ProductEditForm = ({ product }: ProductEditFormProps) => {
   )
 
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
-  const [isSuccess, setIsSuccess] = useState(false)
+  const [successMessage, setSuccessMessage] = useState<string | null>(null)
 
   const addFaq = () => {
     setFaqs((prev) => [...prev, { question: "", answer: "" }])
@@ -119,7 +122,7 @@ export const ProductEditForm = ({ product }: ProductEditFormProps) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     setErrorMessage(null)
-    setIsSuccess(false)
+    setSuccessMessage(null)
 
     if (
       !name.trim() ||
@@ -162,8 +165,10 @@ export const ProductEditForm = ({ product }: ProductEditFormProps) => {
     }
 
     updateMutation.mutate(payload, {
-      onSuccess: () => {
-        setIsSuccess(true)
+      onSuccess: ({ revisionPending }) => {
+        setSuccessMessage(
+          revisionPending ? LISTING_EDIT_MESSAGE.QUEUED : LISTING_EDIT_MESSAGE.APPLIED
+        )
         setTimeout(() => {
           router.push(ROUTES.DASHBOARD_PRODUCTS)
         }, 1200)
@@ -250,10 +255,12 @@ export const ProductEditForm = ({ product }: ProductEditFormProps) => {
           </div>
         )}
 
-        {isSuccess && (
+        <ListingReviewNotice review={review} />
+
+        {successMessage && (
           <div className="flex items-center gap-2 border-b border-emerald-200 bg-emerald-50 px-6 py-3 text-xs font-semibold text-emerald-800 md:px-8">
             <CheckCircle2 className="size-4 text-emerald-600" />
-            <span>Product updated successfully! Redirecting...</span>
+            <span>{successMessage}</span>
           </div>
         )}
 

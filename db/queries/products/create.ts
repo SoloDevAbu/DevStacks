@@ -1,3 +1,4 @@
+import { applyFreeTierGuardrails } from "@/lib/listings/tier-guardrails"
 import { db } from "@/db"
 import { products, productTools, tools, productFaqs, payments } from "@/db/schema"
 import type { NewProduct } from "@/db/schema"
@@ -42,12 +43,12 @@ export type CreateProductInput = Omit<
 }
 
 export const createProduct = async (data: CreateProductInput) => {
-  const { category, builtWithTools: toolsToLink, faqs, paymentId, ...rest } = data
+  const { category, builtWithTools: toolsToLink, faqs, paymentId, ...input } = data
 
-  let resolvedTier = rest.tier
+  let resolvedTier = input.tier
   let validPaymentId: string | null = null
 
-  if (paymentId && rest.submitterId) {
+  if (paymentId && input.submitterId) {
     const [payment] = await db
       .select({
         id: payments.id,
@@ -57,7 +58,7 @@ export const createProduct = async (data: CreateProductInput) => {
       .where(
         and(
           eq(payments.id, paymentId),
-          eq(payments.userId, rest.submitterId),
+          eq(payments.userId, input.submitterId),
           eq(payments.status, "succeeded"),
           eq(payments.paymentType, "listing"),
           isNull(payments.toolId),
@@ -73,23 +74,12 @@ export const createProduct = async (data: CreateProductInput) => {
   }
 
   const slot = await resolveAndValidateLaunchSlot({
-    launchYear: rest.launchYear ?? undefined,
-    launchWeek: rest.launchWeek ?? undefined,
+    launchYear: input.launchYear ?? undefined,
+    launchWeek: input.launchWeek ?? undefined,
     tier: resolvedTier ?? undefined,
   })
 
-  // Enforce server-side Free tier guardrails
-  if (slot.tier === "free") {
-    if (rest.images && rest.images.length > 1) {
-      rest.images = rest.images.slice(0, 1)
-    }
-    rest.metaTitle = undefined
-    rest.metaDescription = undefined
-    rest.aiContext = undefined
-    rest.geoTarget = undefined
-    rest.asoCategory = undefined
-    rest.keywords = undefined
-  }
+  const rest = applyFreeTierGuardrails(input, slot.tier)
 
   let categoryId = rest.categoryId
   if (!categoryId && category && category.trim()) {

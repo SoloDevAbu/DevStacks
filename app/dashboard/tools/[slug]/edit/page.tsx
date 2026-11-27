@@ -1,3 +1,4 @@
+import { loadListingForEdit } from "@/lib/listings/review-summary"
 import type { Metadata } from "next"
 import { headers } from "next/headers"
 import { redirect, notFound } from "next/navigation"
@@ -40,7 +41,8 @@ const ToolEditPage = async ({ params }: ToolEditPageProps) => {
     redirect(ROUTES.DASHBOARD_TOOLS)
   }
 
-  return <ToolEditForm tool={tool as any} />
+  const { listing, review } = await loadListingForEdit("tool", tool)
+  return <ToolEditForm tool={listing as any} review={review} />
 }
 
 export default ToolEditPage

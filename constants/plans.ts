@@ -164,3 +164,15 @@ export const isPaidTier = (tier?: string | null): tier is PaidTier =>
   PAID_TIERS.includes(tier as PaidTier)
 
 export const TIER_ORDER: readonly Tier[] = [TIER.FREE, TIER.PREMIUM, TIER.PREMIUM_PLUS]
+
+// Free listings keep one screenshot and none of the paid SEO/AI fields, on create and on edit.
+export const FREE_TIER_MAX_IMAGES = 1
+
+export const PAID_ONLY_LISTING_FIELDS = [
+  "metaTitle",
+  "metaDescription",
+  "aiContext",
+  "geoTarget",
+  "asoCategory",
+  "keywords",
+] as const

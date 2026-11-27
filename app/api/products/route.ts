@@ -1,8 +1,9 @@
-import { type NextRequest, NextResponse } from "next/server"
+import { type NextRequest, NextResponse, after } from "next/server"
 import { auth } from "@/lib/auth"
 import { getProducts } from "@/db/queries/products/list"
 import { createProduct } from "@/db/queries/products/create"
 import { submitProductSchema } from "@/lib/validation/product"
+import { sendSubmissionReceivedEmail } from "@/lib/email/submission"
 import { z } from "zod"
 
 const PRICING_OPTIONS = ["Free", "Freemium", "Paid", "Open Source"] as const
@@ -79,7 +80,7 @@ export const POST = async (req: NextRequest) => {
       )
     }
 
-    const { tags, builtWithTools, ...rest } = parsed.data
+    const { tags, builtWithTools, checkoutPending, ...rest } = parsed.data
     const product = await createProduct({
       ...rest,
       submitterId: session.user.id,
@@ -89,6 +90,15 @@ export const POST = async (req: NextRequest) => {
         ? builtWithTools
         : undefined,
     })
+
+    if (product && !checkoutPending) {
+      after(() =>
+        sendSubmissionReceivedEmail({
+          to: session.user.email,
+          listing: { ...product, itemType: "product" },
+        })
+      )
+    }
 
     return NextResponse.json({ data: product }, { status: 201 })
   } catch (err: unknown) {

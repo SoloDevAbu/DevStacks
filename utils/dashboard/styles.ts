@@ -110,3 +110,8 @@ export const analyticsTabTrigger = (isActive: boolean) =>
 
 export const visitorItemRow =
   "flex items-center justify-between gap-3 border-b border-dashed border-border bg-white px-6 py-3.5 transition-colors hover:bg-slate-50/50 md:px-8"
+
+export const listingReviewNotice =
+  "flex flex-col gap-1 border-b border-dashed border-amber-300 bg-amber-50/60 px-6 py-3 text-xs font-medium text-amber-900 md:px-8"
+
+export const listingReviewNoticeReason = "whitespace-pre-wrap font-normal text-amber-800"

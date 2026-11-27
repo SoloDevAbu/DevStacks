@@ -101,7 +101,7 @@ export const PRIVACY_CATEGORIES: PrivacyCategory[] = [
           "Authentication: Google OAuth via BetterAuth (secure identity verification).",
           "Payments & Billing: Dodo Payments Inc. (PCI-DSS compliant merchant of record and payment gateway handling sponsorships, invoices, and customer billing details).",
           "Analytics & Telemetry: Google LLC (Google Analytics 4 for aggregated site usage metrics) and Vercel Analytics.",
-          "Transactional Communications (Planned): Resend or equivalent email delivery providers (for future automated listing approval notices and editorial communications).",
+          "Transactional Communications: Resend Inc. (email delivery for listing approval, rejection and edit-review notices).",
           "Public AI Engine Indexing: Publicly available directory listings and open tech-stack data may be indexed by third-party search and answer engines (including Anthropic, OpenAI, Perplexity, and Google) via public endpoints (/llms.txt, /api/mcp). User-private dashboard data and account settings are strictly excluded.",
           "Legal Authorities: Where strictly mandated by court orders, applicable laws, or to defend platform integrity against malicious attack.",
         ],

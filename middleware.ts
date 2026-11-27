@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
+import { getSessionCookie } from "better-auth/cookies"
 import { rateLimit } from "@/lib/rate-limit"
+import { isAdminRoute } from "@/utils/admin/routes"
 import {
   MARKDOWN_MEDIA_TYPES,
   MARKDOWN_SUFFIX_ROUTES,
@@ -78,6 +80,7 @@ const getRateLimit = (method: string, pathname: string) => {
     pathname === "/api/tools" || pathname === "/api/products"
   // Free tools fan out to third-party sites and APIs on every call, so they get the tightest budget.
   if (pathname.startsWith("/api/free-tools/")) return 10
+  if (pathname.startsWith("/api/admin/") && method !== "GET") return 20
   if (method === "POST") return isCatalogEndpoint ? 10 : 30
   if (
     isCatalogEndpoint ||
@@ -139,6 +142,15 @@ export const middleware = (request: NextRequest) => {
         request: { headers: requestHeaders },
       })
     )
+
+  // Cheap first gate: no session cookie means no admin, so answer 404 without rendering. The real
+  // allowlist check runs in the admin layout, every admin page and every admin API route.
+  if (
+    isAdminRoute(pathname) &&
+    !getSessionCookie(request)
+  ) {
+    return rewriteWithHeaders(NOT_FOUND_PATH)
+  }
 
   if (pathname.startsWith("/api/") && !pathname.startsWith("/api/auth/")) {
     const method = request.method.toUpperCase()
@@ -206,6 +218,8 @@ export const middleware = (request: NextRequest) => {
 export const config = {
   matcher: [
     "/api/:path*",
+    "/admin",
+    "/admin/:path*",
     "/.well-known/mcp",
     "/index.md",
     "/launches/:path*",

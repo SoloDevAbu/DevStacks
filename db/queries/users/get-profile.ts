@@ -368,3 +368,12 @@ export const getMakersDirectory = async (
     productsCount: productCountMap.get(maker.id) ?? 0,
   }))
 }
+
+export const getUserContact = async (userId: string) => {
+  const [user] = await db
+    .select({ email: users.email, username: users.username, name: users.name })
+    .from(users)
+    .where(eq(users.id, userId))
+    .limit(1)
+  return user ?? null
+}
