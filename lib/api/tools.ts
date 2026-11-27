@@ -1,6 +1,7 @@
 import { apiClient } from "@/lib/api/axios-instance"
 import type { VoteResult } from "@/lib/api/users"
 import type { DbTool } from "@/types/entities"
+import { toListingUpdateResult } from "@/lib/api/listing-update"
 
 export type ToolListParams = {
   q?: string
@@ -62,7 +63,7 @@ export const updateToolApi = async (
   payload: Record<string, unknown>
 ) => {
   const { data } = await apiClient.patch(`/tools/${slug}`, payload)
-  return data.data
+  return toListingUpdateResult(data)
 }
 
 export const deleteToolApi = async (slug: string) => {

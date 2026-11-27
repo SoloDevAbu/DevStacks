@@ -1,5 +1,6 @@
 import { apiClient } from "@/lib/api/axios-instance"
 import type { VoteResult } from "@/lib/api/users"
+import { toListingUpdateResult } from "@/lib/api/listing-update"
 
 export type ProductListParams = {
   q?: string
@@ -56,7 +57,7 @@ export const updateProductApi = async (
   payload: Record<string, unknown>
 ) => {
   const { data } = await apiClient.patch(`/products/${slug}`, payload)
-  return data.data
+  return toListingUpdateResult(data)
 }
 
 export const deleteProductApi = async (slug: string) => {

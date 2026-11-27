@@ -1,3 +1,4 @@
+import { loadListingForEdit } from "@/lib/listings/review-summary"
 import type { Metadata } from "next"
 import { headers } from "next/headers"
 import { redirect, notFound } from "next/navigation"
@@ -40,7 +41,8 @@ const ProductEditPage = async ({ params }: ProductEditPageProps) => {
     redirect(ROUTES.DASHBOARD_PRODUCTS)
   }
 
-  return <ProductEditForm product={product as any} />
+  const { listing, review } = await loadListingForEdit("product", product)
+  return <ProductEditForm product={listing as any} review={review} />
 }
 
 export default ProductEditPage
