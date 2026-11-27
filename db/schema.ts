@@ -1,6 +1,7 @@
-import { defineRelations } from "drizzle-orm"
+import { defineRelations, sql } from "drizzle-orm"
 import {
   boolean,
+  check,
   index,
   integer,
   jsonb,
@@ -201,6 +202,11 @@ export const tools = pgTable(
 
     // Moderation
     status: statusEnum("status").notNull().default("pending"),
+    reviewNote: text("review_note"),
+    reviewedBy: text("reviewed_by").references(() => users.id, {
+      onDelete: "set null",
+    }),
+    reviewedAt: timestamp("reviewed_at", { withTimezone: true }),
 
     // Denormalised counters
     upvotesCount: integer("upvotes_count").notNull().default(0),
@@ -302,6 +308,11 @@ export const products = pgTable(
 
     // Moderation
     status: statusEnum("status").notNull().default("pending"),
+    reviewNote: text("review_note"),
+    reviewedBy: text("reviewed_by").references(() => users.id, {
+      onDelete: "set null",
+    }),
+    reviewedAt: timestamp("reviewed_at", { withTimezone: true }),
 
     // Denormalised counters (NO upvotesCount, NO buildsCount)
     likesCount: integer("likes_count").notNull().default(0),
@@ -973,6 +984,82 @@ export const blogs = pgTable(
 )
 
 // ---------------------------------------------------------------------------
+// listing_revisions — owner edits to approved listings, held until an admin reviews them
+// ---------------------------------------------------------------------------
+
+export const listingRevisions = pgTable(
+  "listing_revisions",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    itemType: launchItemTypeEnum("item_type").notNull(),
+    toolId: uuid("tool_id").references(() => tools.id, { onDelete: "cascade" }),
+    productId: uuid("product_id").references(() => products.id, {
+      onDelete: "cascade",
+    }),
+    submitterId: text("submitter_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    payload: jsonb("payload").$type<Record<string, unknown>>().notNull(),
+    baseUpdatedAt: timestamp("base_updated_at", {
+      withTimezone: true,
+    }).notNull(),
+    status: statusEnum("status").notNull().default("pending"),
+    reviewNote: text("review_note"),
+    reviewedBy: text("reviewed_by").references(() => users.id, {
+      onDelete: "set null",
+    }),
+    reviewedAt: timestamp("reviewed_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (t) => [
+    uniqueIndex("listing_revisions_pending_tool_uidx")
+      .on(t.toolId)
+      .where(sql`${t.status} = 'pending'`),
+    uniqueIndex("listing_revisions_pending_product_uidx")
+      .on(t.productId)
+      .where(sql`${t.status} = 'pending'`),
+    index("listing_revisions_status_created_at_idx").on(t.status, t.createdAt),
+    index("listing_revisions_submitter_id_idx").on(t.submitterId),
+    index("listing_revisions_reviewed_by_idx").on(t.reviewedBy),
+    check(
+      "listing_revisions_one_item_chk",
+      sql`num_nonnulls(${t.toolId}, ${t.productId}) = 1`
+    ),
+  ]
+)
+
+// ---------------------------------------------------------------------------
+// admin_audit_log — every admin action, with who did it
+// ---------------------------------------------------------------------------
+
+export const adminAuditLog = pgTable(
+  "admin_audit_log",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    adminId: text("admin_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "restrict" }),
+    action: text("action").notNull(),
+    targetType: text("target_type").notNull(),
+    targetId: text("target_id").notNull(),
+    metadata: jsonb("metadata").$type<Record<string, unknown>>(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (t) => [
+    index("admin_audit_log_created_at_idx").on(t.createdAt.desc()),
+    index("admin_audit_log_admin_id_idx").on(t.adminId),
+    index("admin_audit_log_target_idx").on(t.targetType, t.targetId),
+  ]
+)
+
+// ---------------------------------------------------------------------------
 // Relations (Drizzle ORM v1 API)
 // ---------------------------------------------------------------------------
 
@@ -1241,5 +1328,10 @@ export type NewFeedback = typeof feedbacks.$inferInsert
 
 export type Blog = typeof blogs.$inferSelect
 export type NewBlog = typeof blogs.$inferInsert
+
+export type ListingRevision = typeof listingRevisions.$inferSelect
+export type NewListingRevision = typeof listingRevisions.$inferInsert
+
+export type AdminAuditEntry = typeof adminAuditLog.$inferSelect
 
 export * from "./schema/ai"
