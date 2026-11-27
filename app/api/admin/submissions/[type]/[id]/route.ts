@@ -1,89 +1,93 @@
-import { type NextRequest, NextResponse, after } from "next/server"
-import { getAdminSession } from "@/lib/auth/admin"
+import { NextResponse, after } from "next/server"
+import { withAdmin } from "@/lib/auth/with-admin"
 import { updateSubmissionStatusAndTriggerBlog } from "@/db/queries/admin/submissions"
-import { z } from "zod"
+import { recordAdminAction } from "@/db/queries/admin/audit"
+import { getUserContact } from "@/db/queries/users/get-profile"
 import { revalidateCatalog } from "@/lib/cache/revalidate"
-import { getUsernameById } from "@/db/queries/users/get-profile"
 import { isBlogLive, isPubliclyVisible } from "@/lib/catalog/visibility"
 import { submitToIndexNow } from "@/lib/seo/indexnow"
+import { sendModerationEmail } from "@/lib/email/moderation"
+import { listingItemTypeSchema, submissionReviewSchema } from "@/lib/validation/admin"
 import { getListingPath } from "@/utils/urls"
 import { ROUTES } from "@/constants/routes"
+import { ADMIN_AUDIT_ACTION } from "@/constants/admin"
+import { MODERATION_EMAIL_KIND } from "@/constants/email"
+import { SUBMISSION_STATUS } from "@/constants/moderation"
 
-const statusSchema = z.object({
-  status: z.enum(["pending", "approved", "rejected"]),
-})
+const AUDIT_ACTION_BY_STATUS = {
+  [SUBMISSION_STATUS.APPROVED]: ADMIN_AUDIT_ACTION.SUBMISSION_APPROVED,
+  [SUBMISSION_STATUS.REJECTED]: ADMIN_AUDIT_ACTION.SUBMISSION_REJECTED,
+  [SUBMISSION_STATUS.PENDING]: ADMIN_AUDIT_ACTION.SUBMISSION_RESET,
+} as const
 
-export const PATCH = async (
-  req: NextRequest,
-  { params }: { params: Promise<{ type: string; id: string }> }
-) => {
-  try {
-    const { isAdmin } = await getAdminSession(req.headers)
+const EMAIL_KIND_BY_STATUS = {
+  [SUBMISSION_STATUS.APPROVED]: MODERATION_EMAIL_KIND.SUBMISSION_APPROVED,
+  [SUBMISSION_STATUS.REJECTED]: MODERATION_EMAIL_KIND.SUBMISSION_REJECTED,
+} as const
 
-    if (!isAdmin) {
-      return NextResponse.json(
-        { error: "Forbidden: Administrator permission required." },
-        { status: 403 }
-      )
-    }
-
+export const PATCH = withAdmin<{ type: string; id: string }>(
+  async (req, { params, admin }) => {
     const { type, id } = await params
-    if (type !== "tool" && type !== "product") {
-      return NextResponse.json(
-        { error: "Invalid item type. Must be 'tool' or 'product'." },
-        { status: 400 }
-      )
+    const itemType = listingItemTypeSchema.safeParse(type)
+    if (!itemType.success) {
+      return NextResponse.json({ error: "Invalid item type." }, { status: 400 })
     }
 
-    const body = await req.json()
-    const parsed = statusSchema.safeParse(body)
+    const parsed = submissionReviewSchema.safeParse(await req.json().catch(() => null))
     if (!parsed.success) {
       return NextResponse.json(
-        {
-          error:
-            "Invalid status. Must be 'pending', 'approved', or 'rejected'.",
-        },
+        { error: parsed.error.issues[0]?.message ?? "Invalid payload." },
         { status: 400 }
       )
     }
+    const { status, reviewNote } = parsed.data
 
     const result = await updateSubmissionStatusAndTriggerBlog({
-      itemType: type,
+      itemType: itemType.data,
       id,
-      status: parsed.data.status,
+      status,
+      reviewNote,
+      reviewerId: admin.id,
     })
-    // The maker's profile lists this submission, and is otherwise cached for a week.
-    const makerUsername = result.item.submitterId
-      ? await getUsernameById(result.item.submitterId).catch(() => null)
-      : null
+    const { item } = result
+
+    await recordAdminAction({
+      adminId: admin.id,
+      action: AUDIT_ACTION_BY_STATUS[status],
+      targetType: itemType.data,
+      targetId: id,
+      metadata: { name: item.name, slug: item.slug, reviewNote: reviewNote ?? null },
+    })
+
+    const maker = item.submitterId ? await getUserContact(item.submitterId) : null
     revalidateCatalog({
-      [type === "tool" ? "toolSlug" : "productSlug"]: result.item.slug,
+      [itemType.data === "tool" ? "toolSlug" : "productSlug"]: item.slug,
       blogSlug: result.blogResult?.blog?.slug,
-      makerUsername: makerUsername ?? undefined,
+      makerUsername: maker?.username ?? undefined,
     })
 
-    if (isPubliclyVisible(result.item)) {
-      const blog = result.blogResult?.blog
-      const paths = [
-        getListingPath({ itemKind: type, slug: result.item.slug }),
-        ...(blog && isBlogLive(blog) ? [ROUTES.BLOG_POST(blog.slug)] : []),
-      ]
-      after(() => submitToIndexNow(paths))
-    }
+    after(async () => {
+      if (isPubliclyVisible(item)) {
+        const blog = result.blogResult?.blog
+        await submitToIndexNow([
+          getListingPath({ itemKind: itemType.data, slug: item.slug }),
+          ...(blog && isBlogLive(blog) ? [ROUTES.BLOG_POST(blog.slug)] : []),
+        ])
+      }
+      if (maker?.email && status !== SUBMISSION_STATUS.PENDING) {
+        await sendModerationEmail({
+          to: maker.email,
+          kind: EMAIL_KIND_BY_STATUS[status],
+          listing: { itemType: itemType.data, name: item.name, slug: item.slug },
+          reviewNote,
+        })
+      }
+    })
 
-    return NextResponse.json(
-      {
-        success: true,
-        data: result.item,
-        blog: result.blogResult?.blog,
-        blogError: result.blogResult?.error,
-      },
-      { status: 200 }
-    )
-  } catch (err: unknown) {
-    const message =
-      err instanceof Error ? err.message : "Failed to update submission status."
-    console.error("[Admin Submissions PATCH Error]:", err)
-    return NextResponse.json({ error: message }, { status: 500 })
+    return NextResponse.json({
+      success: true,
+      data: { id: item.id, status: item.status },
+      blogError: result.blogResult?.error,
+    })
   }
-}
+)

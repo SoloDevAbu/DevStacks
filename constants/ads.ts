@@ -62,3 +62,30 @@ export const getAdDodoProductId = (
   }
   return undefined
 }
+
+// The states an admin may move an ad into, keyed by the state it is in now.
+export const ADMIN_AD_TRANSITIONS: Partial<Record<AdStatus, readonly AdStatus[]>> = {
+  [AD_STATUS.ACTIVE]: [AD_STATUS.PAUSED, AD_STATUS.REJECTED],
+  [AD_STATUS.PAUSED]: [AD_STATUS.ACTIVE, AD_STATUS.REJECTED],
+  [AD_STATUS.PENDING_PAYMENT]: [AD_STATUS.REJECTED],
+}
+
+export const ADMIN_AD_TARGET_STATUSES = [
+  AD_STATUS.ACTIVE,
+  AD_STATUS.PAUSED,
+  AD_STATUS.REJECTED,
+] as const
+
+export const AD_STATUS_LABEL: Record<AdStatus, string> = {
+  pending_payment: "Awaiting payment",
+  active: "Active",
+  paused: "Paused",
+  expired: "Expired",
+  rejected: "Rejected",
+}
+
+export const ADMIN_AD_ACTION_LABEL: Partial<Record<AdStatus, string>> = {
+  active: "Reactivate",
+  paused: "Pause",
+  rejected: "Reject",
+}

@@ -65,6 +65,15 @@ export const ROUTES = {
   BLOG_PREVIEW: (slug: string) =>
     `/api/blog-preview?slug=${encodeURIComponent(slug)}`,
   ADMIN: "/admin",
+  ADMIN_SUBMISSIONS: "/admin/submissions",
+  ADMIN_SUBMISSION: (type: string, id: string) =>
+    `/admin/submissions/${encodeURIComponent(type)}/${encodeURIComponent(id)}`,
+  ADMIN_EDITS: "/admin/edits",
+  ADMIN_EDIT: (id: string) => `/admin/edits/${encodeURIComponent(id)}`,
+  ADMIN_LAUNCHES: "/admin/launches",
+  ADMIN_PAYMENTS: "/admin/payments",
+  ADMIN_ADS: "/admin/ads",
+  ADMIN_AUDIT: "/admin/audit",
   COMPARE_HUB: "/compare",
   GLOSSARY: "/glossary",
   FREE_TOOLS: "/free-tools",

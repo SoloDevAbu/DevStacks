@@ -1,7 +1,9 @@
-import { type NextRequest, NextResponse } from "next/server"
+import { NextResponse } from "next/server"
 import { z } from "zod"
-import { getAdminSession } from "@/lib/auth/admin"
+import { withAdmin } from "@/lib/auth/with-admin"
 import { submitToIndexNow } from "@/lib/seo/indexnow"
+import { recordAdminAction } from "@/db/queries/admin/audit"
+import { ADMIN_AUDIT_ACTION, ADMIN_AUDIT_TARGET } from "@/constants/admin"
 
 export const dynamic = "force-dynamic"
 
@@ -11,15 +13,7 @@ const submitSchema = z.object({
 
 // Lets an admin resubmit pages by hand and see IndexNow's answer, for example after rotating the
 // key or editing a page outside the usual flows.
-export const POST = async (req: NextRequest) => {
-  const { isAdmin } = await getAdminSession(req.headers)
-  if (!isAdmin) {
-    return NextResponse.json(
-      { error: "Forbidden: Administrator permission required." },
-      { status: 403 }
-    )
-  }
-
+export const POST = withAdmin(async (req, { admin }) => {
   const parsed = submitSchema.safeParse(await req.json().catch(() => null))
   if (!parsed.success) {
     return NextResponse.json(
@@ -28,5 +22,13 @@ export const POST = async (req: NextRequest) => {
     )
   }
 
+  await recordAdminAction({
+    adminId: admin.id,
+    action: ADMIN_AUDIT_ACTION.INDEXNOW_SUBMITTED,
+    targetType: ADMIN_AUDIT_TARGET.PATHS,
+    targetId: String(parsed.data.paths.length),
+    metadata: { paths: parsed.data.paths },
+  })
+
   return NextResponse.json(await submitToIndexNow(parsed.data.paths))
-}
+})

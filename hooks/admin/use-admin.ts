@@ -1,44 +1,24 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
+import { useMutation } from "@tanstack/react-query"
+import { useRouter } from "next/navigation"
 import {
-  fetchAdminSubmissions,
-  updateAdminSubmissionStatus,
   regenerateAdminBlog,
-  type FetchAdminSubmissionsParams,
+  reviewAdminRevision,
+  reviewAdminSubmission,
+  updateAdminAdStatus,
 } from "@/lib/api/admin"
 
-export const ADMIN_SUBMISSIONS_KEY = (params?: FetchAdminSubmissionsParams) => [
-  "admin",
-  "submissions",
-  params,
-]
-
-export const useAdminSubmissions = (params?: FetchAdminSubmissionsParams) => {
-  return useQuery({
-    queryKey: ADMIN_SUBMISSIONS_KEY(params),
-    queryFn: () => fetchAdminSubmissions(params),
-    staleTime: 30_000,
-  })
+// Admin pages are Server Components, so a successful mutation re-renders them from the server.
+const useAdminMutation = <TVariables, TData>(
+  mutationFn: (variables: TVariables) => Promise<TData>
+) => {
+  const router = useRouter()
+  return useMutation({ mutationFn, onSuccess: () => router.refresh() })
 }
 
-export const useUpdateSubmissionStatus = () => {
-  const queryClient = useQueryClient()
+export const useReviewSubmission = () => useAdminMutation(reviewAdminSubmission)
 
-  return useMutation({
-    mutationFn: updateAdminSubmissionStatus,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin", "submissions"] })
-    },
-  })
-}
+export const useReviewRevision = () => useAdminMutation(reviewAdminRevision)
 
-export const useRegenerateBlog = () => {
-  const queryClient = useQueryClient()
+export const useUpdateAdStatus = () => useAdminMutation(updateAdminAdStatus)
 
-  return useMutation({
-    mutationFn: regenerateAdminBlog,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin", "submissions"] })
-    },
-  })
-}
-
+export const useRegenerateBlog = () => useAdminMutation(regenerateAdminBlog)
