@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import { usePathname } from "next/navigation"
+import { isAdminRoute } from "@/utils/admin/routes"
 // The sidebars and footer are rendered on the server by the root layout and passed in as slots,
 // so only the route check below ships as client code.
 interface AppLayoutShellProps {
@@ -35,6 +36,11 @@ export const AppLayoutShell = ({
 }: AppLayoutShellProps) => {
   const pathname = usePathname()
   const isFullWidth = isStandaloneComparisonRoute(pathname)
+
+  // The admin area renders its own sidebar layout, without the public sidebars or footer.
+  if (isAdminRoute(pathname)) {
+    return <>{children}</>
+  }
 
   if (isFullWidth) {
     return (
