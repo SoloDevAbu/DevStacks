@@ -1,3 +1,4 @@
+import { applyFreeTierGuardrails } from "@/lib/listings/tier-guardrails"
 import { db } from "@/db"
 import { tools, toolFaqs, payments } from "@/db/schema"
 import type { NewTool } from "@/db/schema"
@@ -37,12 +38,12 @@ export type CreateToolInput = Omit<
 }
 
 export const createTool = async (data: CreateToolInput) => {
-  const { category, faqs, paymentId, ...rest } = data
+  const { category, faqs, paymentId, ...input } = data
 
-  let resolvedTier = rest.tier
+  let resolvedTier = input.tier
   let validPaymentId: string | null = null
 
-  if (paymentId && rest.submitterId) {
+  if (paymentId && input.submitterId) {
     const [payment] = await db
       .select({
         id: payments.id,
@@ -52,7 +53,7 @@ export const createTool = async (data: CreateToolInput) => {
       .where(
         and(
           eq(payments.id, paymentId),
-          eq(payments.userId, rest.submitterId),
+          eq(payments.userId, input.submitterId),
           eq(payments.status, "succeeded"),
           eq(payments.paymentType, "listing"),
           isNull(payments.toolId),
@@ -68,23 +69,12 @@ export const createTool = async (data: CreateToolInput) => {
   }
 
   const slot = await resolveAndValidateLaunchSlot({
-    launchYear: rest.launchYear ?? undefined,
-    launchWeek: rest.launchWeek ?? undefined,
+    launchYear: input.launchYear ?? undefined,
+    launchWeek: input.launchWeek ?? undefined,
     tier: resolvedTier ?? undefined,
   })
 
-  // Enforce server-side Free tier guardrails
-  if (slot.tier === "free") {
-    if (rest.images && rest.images.length > 1) {
-      rest.images = rest.images.slice(0, 1)
-    }
-    rest.metaTitle = undefined
-    rest.metaDescription = undefined
-    rest.aiContext = undefined
-    rest.geoTarget = undefined
-    rest.asoCategory = undefined
-    rest.keywords = undefined
-  }
+  const rest = applyFreeTierGuardrails(input, slot.tier)
 
   let categoryId = rest.categoryId
   if (!categoryId && category && category.trim()) {

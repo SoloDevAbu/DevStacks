@@ -70,3 +70,19 @@ export const getLaunchWeekAvailability = async (): Promise<{
 
   return { weeks }
 }
+
+// Rejected launches don't hold a free slot.
+export const countFreeLaunchesBooked = async (isoYear: number, isoWeek: number) => {
+  const [booked] = await db
+    .select({ count: sql<number>`count(${launches.id})::int` })
+    .from(launches)
+    .where(
+      and(
+        eq(launches.isoYear, isoYear),
+        eq(launches.isoWeek, isoWeek),
+        eq(launches.tier, "free"),
+        ne(launches.status, "rejected")
+      )
+    )
+  return booked?.count ?? 0
+}

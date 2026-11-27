@@ -1,6 +1,6 @@
+import { countFreeLaunchesBooked } from "@/db/queries/launches/availability"
 import { db } from "@/db"
 import { launches } from "@/db/schema"
-import { and, eq, ne, sql } from "drizzle-orm"
 import { MAX_FREE_LAUNCHES_PER_WEEK } from "@/constants/launches"
 import { getISOWeekRange, getUpcomingLaunchWeeks } from "@/utils/iso-weeks"
 import { TIER, type Tier } from "@/constants/plans"
@@ -37,19 +37,7 @@ export const resolveAndValidateLaunchSlot = async ({
   const assignedTier: Tier = tier ?? TIER.FREE
 
   if (assignedTier === TIER.FREE) {
-    const [booked] = await db
-      .select({ count: sql<number>`count(${launches.id})::int` })
-      .from(launches)
-      .where(
-        and(
-          eq(launches.isoYear, targetYear),
-          eq(launches.isoWeek, targetWeek),
-          eq(launches.tier, "free"),
-          ne(launches.status, "rejected")
-        )
-      )
-
-    const bookedCount = booked?.count ?? 0
+    const bookedCount = await countFreeLaunchesBooked(targetYear, targetWeek)
     if (bookedCount >= MAX_FREE_LAUNCHES_PER_WEEK) {
       throw new Error(
         `Free launch slots for Week ${targetWeek} are full (${MAX_FREE_LAUNCHES_PER_WEEK}/${MAX_FREE_LAUNCHES_PER_WEEK} taken). Please select a later week or upgrade to Premium.`
